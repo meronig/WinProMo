@@ -166,22 +166,63 @@ CProcessEntityBlock* CProcessEditor::GetTargetBlock(CPoint point) {
 			if (hitCode == DEHT_BODY) {
 				// We found the object that was clicked
 				if (!currObj->IsSelected()) {
-					bool isValid = true;
-					// check that no circular dependencies exist with selected objects
-					for (int i = GetObjectCount() - 1; i >= 0; i--) {
-						CProcessEntityBlock* selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
-						if (selObj) {
-							if (selObj->IsSelected()) {
-								if (selObj->contains(currObj, true)) {
-									isValid = false;
-									break;
-								}
+					//drawing a new element
+					if (IsDrawing()) {
+						// new block
+						CProcessEntityBlock* newObj = dynamic_cast<CProcessEntityBlock*>(GetDrawingObject());
+						if (newObj) {
+							if (newObj->canBeNested(currObj)) {
+								return currObj;
+							}
+						}
+						// new edge
+						CProcessLineEdge* newEdge = dynamic_cast<CProcessLineEdge*>(GetDrawingObject());
+						if (newEdge) {
+							if (newEdge->canConnectSource(currObj)) {
+								return currObj;
 							}
 						}
 					}
-					if (isValid) {
-						return currObj;
+					//moving blocks
+					else if ((GetInteractMode() == MODE_MOVING)) {
+						bool isValid = true;
+						// check that no circular dependencies exist with selected objects
+						for (int i = GetObjectCount() - 1; i >= 0; i--) {
+							CProcessEntityBlock* selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+							if (selObj) {
+								if (selObj->IsSelected()) {
+									if (!(selObj->canBeNested(currObj))) {
+										isValid = false;
+										break;
+									}
+									/*if (selObj->contains(currObj, true)) {
+										isValid = false;
+										break;
+									}*/
+								}
+							}
+						}
+						if (isValid) {
+							return currObj;
+						}
 					}
+					//resizing (moving) edges
+					if (GetInteractMode() == MODE_RESIZING) {
+						CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(GetSelectedObject());
+						//use actual point rather than cursor position
+						if (edge) {
+							if (GetSubMode() == DEHT_BOTTOMRIGHT) {
+								if (edge->canConnectDestination(currObj)) {
+									return currObj;
+								}
+							}
+							else if (GetSubMode() == DEHT_TOPLEFT) {
+								if (edge->canConnectSource(currObj)) {
+									return currObj;
+								}
+							}
+						}
+					}			
 				}
 			}
 		}
@@ -533,10 +574,14 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 		//we may relax the constraint on selectcount
 		if ((GetInteractMode() == MODE_MOVING) || IsDrawing() || edge) {
-			/*check if we are dropping the object inside a block*/
-			CProcessEntityBlock* targetBlock = GetTargetBlock(target);
-			if (targetBlock) {
-				targetBlock->SetTarget(true);
+			//associate only one element at a time
+			//TODO: consider generalizing to multiple blocks (for sure, edges are not part of the selection)
+			if (GetSelectCount() <= 1) {
+				/*check if we are dropping the object inside a block*/
+				CProcessEntityBlock* targetBlock = GetTargetBlock(target);
+				if (targetBlock) {
+					targetBlock->SetTarget(true);
+				}
 			}
 		}
 
@@ -589,6 +634,7 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 			// Identify clicked block (if any)
 			CPoint virtpoint = point;
 			ScreenToVirtual(virtpoint);
+
 			parent = GetTargetBlock(virtpoint);
 
 		}

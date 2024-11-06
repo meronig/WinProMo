@@ -48,6 +48,7 @@ class CProcessEntityBlock : public CDiagramEntity
 		virtual void Highlight(CDC* dc, CRect rect);
 		virtual bool IsTarget();
 		virtual void SetTarget(BOOL isTarget);
+		virtual bool canBeNested(CProcessEntityBlock* block);
 		
 		virtual CPoint getIntersection(CPoint innerPoint, CPoint outerPoint);
 

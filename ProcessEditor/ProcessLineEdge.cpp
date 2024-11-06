@@ -160,6 +160,24 @@ HCURSOR CProcessLineEdge::GetCursor(int hit) const
 	return CDiagramLine::GetCursor(hit);
 }
 
+bool CProcessLineEdge::canConnectSource(CDiagramEntity* source)
+{
+	CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(source);
+	if (obj) {
+		return true;
+	}
+	return false;
+}
+
+bool CProcessLineEdge::canConnectDestination(CDiagramEntity* destination)
+{
+	CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(destination);
+	if (obj) {
+		return true;
+	}
+	return false;
+}
+
 
 CDiagramEntity* CProcessLineEdge::CreateFromString(const CString& str)
 /* ============================================================

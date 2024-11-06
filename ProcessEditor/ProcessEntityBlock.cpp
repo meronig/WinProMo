@@ -54,13 +54,13 @@ CProcessEntityBlock::~CProcessEntityBlock()
    ============================================================*/
 {
 
-	for (int i = 0; i < m_incomingEdges.GetSize(); i++) {
+	for (int i = m_incomingEdges.GetSize(); i > 0; i--) {
 		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(this->m_incomingEdges.GetAt(i));
 		if (edge) {
 			edge->SetDestination(NULL);
 		}
 	}
-	for (int i = 0; i < m_outgoingEdges.GetSize(); i++) {
+	for (int i = m_outgoingEdges.GetSize(); i > 0; i--) {
 		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(this->m_outgoingEdges.GetAt(i));
 		if (edge) {
 			edge->SetSource(NULL);
@@ -109,14 +109,17 @@ void CProcessEntityBlock::Draw(CDC* dc, CRect rect)
 	}
 
 	CFont font;
+	CString str;
+	//str.Format(_T("%d,%d"),m_incomingEdges.GetSize(), m_outgoingEdges.GetSize());
+	str = GetTitle();
 	font.CreateFont(-round(12.0 * GetZoom()), 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, _T("Courier New"));
 	dc->SelectObject(&font);
 	int mode = dc->SetBkMode(TRANSPARENT);
 	if (this->m_subblocks.IsEmpty()) {
-		dc->DrawText(GetTitle(), rect, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER);
+		dc->DrawText(str, rect, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER);
 	}
 	else {
-		dc->DrawText(GetTitle(), rect, DT_NOPREFIX | DT_SINGLELINE | DT_TOP | DT_CENTER);
+		dc->DrawText(str, rect, DT_NOPREFIX | DT_SINGLELINE | DT_TOP | DT_CENTER);
 	}
 	dc->SelectStockObject(DEFAULT_GUI_FONT);
 	dc->SetBkMode(mode);
@@ -142,6 +145,14 @@ bool CProcessEntityBlock::IsTarget()
 void CProcessEntityBlock::SetTarget(BOOL isTarget)
 {
 	m_target = isTarget;
+}
+
+bool CProcessEntityBlock::canBeNested(CProcessEntityBlock* block)
+{
+	if (contains(block, true)) {
+		return false;
+	}
+	return true;
 }
 
 CPoint CProcessEntityBlock::getIntersection(CPoint innerPoint, CPoint outerPoint)

@@ -27,6 +27,9 @@ public:
 
     virtual HCURSOR GetCursor(int hit) const;
 
+    virtual bool canConnectSource(CDiagramEntity* source);
+    virtual bool canConnectDestination(CDiagramEntity* destination);
+
 protected:
     virtual CString				GetDefaultGetString() const;
     virtual void	DrawSelectionMarkers( CDC* dc, CRect rect ) const;
