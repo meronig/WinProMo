@@ -1,6 +1,7 @@
 #include "../stdafx.h"
 #include "ProcessEditor.h"
 #include "ProcessEntityContainer.h"
+#include "ProcessControlFactory.h"
 
 #include <math.h>
 
@@ -650,7 +651,7 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 				//take a snapshot to undo changes
 				GetDiagramEntityContainer()->Snapshot();
 				//split the edge into two
-				CProcessLineEdge* newEdge = dynamic_cast<CProcessLineEdge*>(edge->Clone());
+				CProcessLineEdge* newEdge = new CProcessLineEdge;
 				//compute the length and position of both edges
 				CRect edgeRect = edge->GetRect();
 				CRect newEdgeRect(edgeRect);
@@ -969,4 +970,97 @@ void CProcessEditor::BottomAlignSelected()
 	PrepareForAlignment();
 	CDiagramEditor::BottomAlignSelected();
 	DoPostAlignment();
+}
+
+void CProcessEditor::Load(const CStringArray& stra)
+{
+	int max = stra.GetSize();
+
+	//First read: create objects
+	for (int t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			CDiagramEntity* obj = CProcessControlFactory::CreateFromString(str);
+			if (obj)
+				//m_objs.Add(obj);
+				AddObject(obj);
+
+			/*
+			CGSMEntity* obj;
+
+			obj = CGSMEntity::CreateFromString( str );
+			if( !obj )
+				obj = CDiagramLine::CreateFromString( str );
+
+			if( obj )
+				m_editor.AddObject( obj );
+			*/
+		}
+	}
+	//Second read: create logical links between objects
+	for (int t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			BOOL result = FALSE;
+			CTokenizer main(str, _T(":"));
+			CString header;
+			CString data;
+			if (main.GetSize() == 2)
+			{
+				main.GetAt(0, header);
+				main.GetAt(1, data);
+				header.TrimLeft();
+				header.TrimRight();
+				data.TrimLeft();
+				data.TrimRight();
+				// Note: code cannot be reused for derived classes
+				if (header == _T("process_block"))
+				{
+					CTokenizer tok(data.Left(data.GetLength() - 1));
+					int size = tok.GetSize();
+					if (size >= 8) {
+						CString nodeName;
+						CString parentName;
+						tok.GetAt(5, nodeName);
+						tok.GetAt(7, parentName);
+						CProcessEntityBlock* node = dynamic_cast<CProcessEntityBlock*>(GetNamedObject(nodeName));
+						if (node) {
+							CProcessEntityBlock* parent = dynamic_cast<CProcessEntityBlock*>(GetNamedObject(parentName));
+							if (parent) {
+								node->setParentBlock(parent);
+							}
+						}
+					}
+				}
+				else if (header == _T("process_edge")) {
+					CTokenizer tok(data.Left(data.GetLength() - 1));
+					int size = tok.GetSize();
+					if (size >= 9) {
+						CString nodeName;
+						CString sourceName;
+						CString destName;
+						tok.GetAt(5, nodeName);
+						tok.GetAt(7, sourceName);
+						tok.GetAt(8, destName);
+						CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(GetNamedObject(nodeName));
+						if (edge) {
+							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedObject(sourceName));
+							if (source) {
+								edge->SetSource(source);
+							}
+							CDiagramEntity* dest = dynamic_cast<CDiagramEntity*>(GetNamedObject(destName));
+							if (dest) {
+								edge->SetDestination(dest);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 }

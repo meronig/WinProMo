@@ -28,11 +28,12 @@ public:
 	// Command handlers
 	CDiagramEntity* GetNamedObject(const CString& name) const;
 
-	virtual void		Cut();
+	virtual void	Cut();
 	virtual void	LeftAlignSelected();
 	virtual void	RightAlignSelected();
 	virtual void	TopAlignSelected();
 	virtual void	BottomAlignSelected();
+	virtual void	Load(const CStringArray& stra);
 
 
 

@@ -1,4 +1,5 @@
 #include "ProcessLineEdge.h"
+#include "LinkFactory.h"
 #include "../stdafx.h"
 
 CProcessLineEdge::CProcessLineEdge()
@@ -20,6 +21,8 @@ CProcessLineEdge::CProcessLineEdge()
 	SetTitle(_T(""));
 
 	SetPropertyDialog(&m_dlg, CPropertyDialog::IDD);
+
+	SetName(CLinkFactory::GetID());
 
 	m_source = NULL;
 	m_dest = NULL;

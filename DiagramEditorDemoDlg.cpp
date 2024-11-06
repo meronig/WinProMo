@@ -11,7 +11,6 @@
 #include "DiagramEditor/DiagramLine.h"
 #include "ProcessEditor/ProcessEntityBlock.h"
 #include "ProcessEditor/ProcessLineEdge.h"
-#include "ProcessEditor/ProcessControlFactory.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -358,95 +357,10 @@ void CDiagramEditorDemoDlg::OnButtonLoad()
 
 		m_filename = _T( "" );
 		tf.ReadTextFile( m_filename, stra );
-		int max = stra.GetSize();
 
-		//First read: create objects
-		for( int t = 0; t < max ; t++ )
-		{
-			CString str = stra.GetAt( t );
-			if( !m_editor.FromString( str ) )
-			{
-				CDiagramEntity* obj = CProcessControlFactory::CreateFromString(str);
-				if (obj)
-					//m_objs.Add(obj);
-					m_editor.AddObject(obj);
+		m_editor.Load(stra);
 
-				/*
-				CGSMEntity* obj;
-
-				obj = CGSMEntity::CreateFromString( str );
-				if( !obj )
-					obj = CDiagramLine::CreateFromString( str );
-
-				if( obj )
-					m_editor.AddObject( obj );
-				*/
-			}
-		}
-		//Second read: create logical links between objects
-		for (int t = 0; t < max; t++)
-		{
-			CString str = stra.GetAt(t);
-			if (!m_editor.FromString(str))
-			{
-				BOOL result = FALSE;
-				CTokenizer main(str, _T(":"));
-				CString header;
-				CString data;
-				if (main.GetSize() == 2)
-				{
-					main.GetAt(0, header);
-					main.GetAt(1, data);
-					header.TrimLeft();
-					header.TrimRight();
-					data.TrimLeft();
-					data.TrimRight();
-					// Note: code cannot be reused for derived classes
-					if (header == _T("process_block"))
-					{
-						CTokenizer tok(data.Left(data.GetLength() - 1));
-						int size = tok.GetSize();
-						if (size >= 8) {
-							CString nodeName;
-							CString parentName;
-							tok.GetAt(5, nodeName);
-							tok.GetAt(7, parentName);
-							CProcessEntityBlock* node = dynamic_cast<CProcessEntityBlock*>(m_editor.GetNamedObject(nodeName));
-							if (node) {
-								CProcessEntityBlock* parent = dynamic_cast<CProcessEntityBlock*>(m_editor.GetNamedObject(parentName));
-								if (parent) {
-									node->setParentBlock(parent);
-								}
-							}
-						}
-					}
-					else if (header == _T("process_edge")) {
-						CTokenizer tok(data.Left(data.GetLength() - 1));
-						int size = tok.GetSize();
-						if (size >= 9) {
-							CString nodeName;
-							CString sourceName;
-							CString destName;
-							tok.GetAt(5, nodeName);
-							tok.GetAt(7, sourceName);
-							tok.GetAt(8, destName);
-							CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(m_editor.GetNamedObject(nodeName));
-							if (edge) {
-								CProcessEntityBlock* source = dynamic_cast<CProcessEntityBlock*>(m_editor.GetNamedObject(sourceName));
-								if (source) {
-									edge->SetSource(source);
-								}
-								CProcessEntityBlock* dest = dynamic_cast<CProcessEntityBlock*>(m_editor.GetNamedObject(destName));
-								if (dest) {
-									edge->SetDestination(dest);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
+		
 		m_editor.SetModified( FALSE );
 		m_editor.RedrawWindow();
 	}
