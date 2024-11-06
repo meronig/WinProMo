@@ -380,7 +380,8 @@ void CProcessEntityBlock::recomputeIntersectionLinks() {
 			}
 		}
 	}
-
+	
+	//recompute intersection for sub-blocks
 	for (int i = 0; i < this->m_subblocks.GetSize(); i++) {
 		CProcessEntityBlock* child = dynamic_cast<CProcessEntityBlock*>(this->m_subblocks.GetAt(i));
 		if (child) {

@@ -12,44 +12,44 @@ class CProcessEntityBlock : public CDiagramEntity
 		CProcessEntityBlock();
 		virtual ~CProcessEntityBlock();
 		virtual CDiagramEntity* Clone();
-		void MoveRect(double x, double y);
-		void SetRect(double left, double top, double right, double bottom);
+		virtual void MoveRect(double x, double y);
+		virtual void SetRect(double left, double top, double right, double bottom);
 		static	CDiagramEntity* CreateFromString(const CString& str);
 
 		// Overrides
 		virtual void Draw(CDC* dc, CRect rect);
 		virtual int		GetHitCode(CPoint point) const;
 		virtual HCURSOR GetCursor(int hit) const;
-		void			SetMoved(BOOL moved);
-		BOOL			GetMoved();
-
+		
+		virtual void	SetMoved(BOOL moved);
+		virtual BOOL	GetMoved();
 		
 		// Block-specific methods
-		void linkSubBlock(CProcessEntityBlock* subblock);
-		void unlinkSubBlock(CProcessEntityBlock* subblock);
-		void unlinkSubBlocks();
-		CObArray* getSubBlocks();
-		void setParentBlock(CProcessEntityBlock* parent);
-		CProcessEntityBlock* getParentBlock() const;
-		bool contains(CProcessEntityBlock* block, bool recursive);
+		virtual void linkSubBlock(CProcessEntityBlock* subblock);
+		virtual void unlinkSubBlock(CProcessEntityBlock* subblock);
+		virtual void unlinkSubBlocks();
+		virtual CObArray* getSubBlocks();
+		virtual void setParentBlock(CProcessEntityBlock* parent);
+		virtual CProcessEntityBlock* getParentBlock() const;
+		virtual bool contains(CProcessEntityBlock* block, bool recursive);
 
-		void linkOutgoingEdge(CProcessLineEdge* edge);
-		void unlinkOutgoingEdge(CProcessLineEdge* edge);
-		void unlinkOutgoingEdges();
-		CObArray* getOutgoingEdges();
-		void linkIncomingEdge(CProcessLineEdge* edge);
-		void unlinkIncomingEdge(CProcessLineEdge* edge);
-		void unlinkIncomingEdges();
-		CObArray* getIncomingEdges();
+		virtual void linkOutgoingEdge(CProcessLineEdge* edge);
+		virtual void unlinkOutgoingEdge(CProcessLineEdge* edge);
+		virtual void unlinkOutgoingEdges();
+		virtual CObArray* getOutgoingEdges();
+		virtual void linkIncomingEdge(CProcessLineEdge* edge);
+		virtual void unlinkIncomingEdge(CProcessLineEdge* edge);
+		virtual void unlinkIncomingEdges();
+		virtual CObArray* getIncomingEdges();
 
-		void recomputeIntersectionLinks();
+		virtual void recomputeIntersectionLinks();
 		
-		void autoResize();
-		void Highlight(CDC* dc, CRect rect);
-		bool IsTarget();
-		void SetTarget(BOOL isTarget);
+		virtual void autoResize();
+		virtual void Highlight(CDC* dc, CRect rect);
+		virtual bool IsTarget();
+		virtual void SetTarget(BOOL isTarget);
 		
-		CPoint getIntersection(CPoint innerPoint, CPoint outerPoint);
+		virtual CPoint getIntersection(CPoint innerPoint, CPoint outerPoint);
 
 	protected:
 		virtual CString				GetDefaultGetString() const;

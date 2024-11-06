@@ -263,14 +263,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 	//line: topleft or bottomright
 	//prevent moving: only resize+drawing allowed
 
-
-	// breaks target
-	/*
-	if (IsDrawing()) {
-		UnselectAll();
-	}
-	*/
-
+	
 	// when moving a block, move all connected elements accordingly
 	if (GetInteractMode() == MODE_MOVING) {
 
@@ -322,15 +315,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 						currObj->Select(false);
 					}
 				}
-				//currObj->Select(false);
 			}
-			/*selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(j));
-			if (selObj) {
-				if (selObj->IsSelected()) {
-					oldTop = selObj->GetTop();
-					oldLeft = selObj->GetLeft();
-				}
-			}*/
 		}
 		// may want to iterate among selected objects until one finds a block
 		selObj = dynamic_cast<CProcessEntityBlock*>(GetSelectedObject());
@@ -353,10 +338,6 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 				if (deltaLeft != 0 || deltaTop != 0) {
 					for (int i = 0; i < selObj->getSubBlocks()->GetSize(); i++) {
 						CProcessEntityBlock* subBlock = dynamic_cast<CProcessEntityBlock*>(selObj->getSubBlocks()->GetAt(i));
-						if (subBlock) {
-							/*new*/
-							//subBlock->MoveRect(deltaLeft, deltaTop);
-						}
 					}
 				}
 			}
@@ -552,7 +533,6 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 		//we may relax the constraint on selectcount
 		if ((GetInteractMode() == MODE_MOVING) || IsDrawing() || edge) {
-//		if ((GetInteractMode() == MODE_MOVING && GetSelectCount() == 1) || IsDrawing() || edge) {
 			/*check if we are dropping the object inside a block*/
 			CProcessEntityBlock* targetBlock = GetTargetBlock(target);
 			if (targetBlock) {
@@ -587,10 +567,7 @@ void CProcessEditor::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	//SetRedraw(FALSE);
 	CDiagramEditor::OnKeyDown(nChar, nRepCnt, nFlags);
 
-	//ModifyLinkedPositions();
-	//SetRedraw(TRUE);
-	//RedrawWindow();
-
+	
 }
 
 void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
@@ -606,19 +583,6 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 		//bottomdown is the resize mode set afterwards
 
 		if (objs) {
-
-			/*
-			if (goon)
-			{
-				// Clearing states
-				// If Ctrl is not held down, we
-				// clear all selections
-				if (!(nFlags & MK_CONTROL))
-					UnselectAll();
-
-				count = GetObjectCount();
-			}
-			*/
 
 			UnselectAll();
 
@@ -687,22 +651,15 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 
 	if (GetInteractMode() == MODE_MOVING) {
 
-		//trigger mouse movement, so to maintain hierarchy in case no movement is made
-		//side effect: cannot select lines except for edges
-		//OnMouseMove(nFlags, point);
-
+		
 		CProcessEntityBlock* selObj = NULL;
 		//for each object being selected
-		//relaxed
 		for (int i = 0; i < GetObjectCount(); i++) {
 			selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
-		//if(GetSelectCount()==1){
-		//	selObj = dynamic_cast<CProcessEntityBlock*>(GetSelectedObject());
 			if (selObj) {
 				if (selObj->IsSelected()) {
 					//trigger mouse movement, so to maintain hierarchy in case no movement is made
 					OnMouseMove(nFlags, point);
-					//bool hit = false;
 					//check which is the object being dropped, if any
 					currObj = objs->getTarget();
 					if (currObj) {
@@ -711,31 +668,11 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 							selObj->setParentBlock(currObj);
 						}
 					}
-					else
-						/*
-						for (int j = GetObjectCount() - 1; j >= 0; j--) {
-							currObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(j));
-							if (currObj) {
-
-								if (currObj->IsTarget()) {
-									hit = true;
-									// check if clicked object is not the object itself
-									if (selObj->getParentBlock() != currObj) {
-										// Set the parent to be that object
-										selObj->setParentBlock(currObj);
-									}
-									break;
-								}
-
-							}
-						}
-						*/
-						//if (!hit) {
+					else	
 					{
 						//no object got hit, then the selected one has no parent
 						selObj->setParentBlock(NULL);
 					}
-					selObj->autoResize();
 				}
 			}
 		}
@@ -746,11 +683,6 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 
 	//bug: never called when a new object is created, whereas it should
 	if (GetInteractMode() == MODE_RESIZING) {
-		CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(GetSelectedObject());
-		if (obj) {
-			obj->autoResize();
-
-		}
 		//resizing an edge
 		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(GetSelectedObject());
 		if (edge) {
@@ -767,20 +699,7 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 					edge->SetSource(currObj);
 				}
 			}
-			/*if (edge->GetDestination()) {
-				CPoint pt = edge->GetDestination()->getIntersection(edge->GetRect().BottomRight(), edge->GetRect().TopLeft());
-				if (pt.x >= 0) {
-					edge->SetBottom(pt.y);
-					edge->SetRight(pt.x);
-				}
-			}
-			if (edge->GetSource()) {
-				CPoint pt = edge->GetSource()->getIntersection(edge->GetRect().TopLeft(), edge->GetRect().BottomRight());
-				if (pt.x >= 0) {
-					edge->SetTop(pt.y);
-					edge->SetLeft(pt.x);
-				}
-			}*/
+			
 			//Need to reorder shapes according to nesting
 			static_cast<CProcessEntityContainer*>(objs)->reorder();
 		}
@@ -790,6 +709,8 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 	ResetTarget();
 
 	CDiagramEditor::OnLButtonUp(nFlags, point);
+	//do the auto-resize on all blocks
+	AutoResizeAll();
 	RedrawWindow();
 }
 
@@ -927,7 +848,7 @@ void CProcessEditor::PrepareForAlignment() {
 	}
 }
 
-void CProcessEditor::DoPostAlignment()
+void CProcessEditor::AutoResizeAll()
 {
 	CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
 	CProcessEntityBlock* selObj = NULL;
@@ -935,9 +856,9 @@ void CProcessEditor::DoPostAlignment()
 	for (int i = 0; i < GetObjectCount(); i++) {
 		selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
 		if (selObj) {
-			if (selObj->IsSelected()) {
+		//	if (selObj->IsSelected()) {
 				selObj->autoResize();
-			}
+		//	}
 		}
 	}
 	RedrawWindow();
@@ -948,28 +869,28 @@ void CProcessEditor::LeftAlignSelected()
 {
 	PrepareForAlignment();
 	CDiagramEditor::LeftAlignSelected();
-	DoPostAlignment();	
+	AutoResizeAll();	
 }
 
 void CProcessEditor::RightAlignSelected()
 {
 	PrepareForAlignment();
 	CDiagramEditor::RightAlignSelected();
-	DoPostAlignment();
+	AutoResizeAll();
 }
 
 void CProcessEditor::TopAlignSelected()
 {
 	PrepareForAlignment();
 	CDiagramEditor::TopAlignSelected();
-	DoPostAlignment();
+	AutoResizeAll();
 }
 
 void CProcessEditor::BottomAlignSelected()
 {
 	PrepareForAlignment();
 	CDiagramEditor::BottomAlignSelected();
-	DoPostAlignment();
+	AutoResizeAll();
 }
 
 void CProcessEditor::Load(const CStringArray& stra)

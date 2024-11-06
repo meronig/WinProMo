@@ -160,6 +160,7 @@ HCURSOR CProcessLineEdge::GetCursor(int hit) const
 	return CDiagramLine::GetCursor(hit);
 }
 
+
 CDiagramEntity* CProcessLineEdge::CreateFromString(const CString& str)
 /* ============================================================
 	Function :		CProcessLineEdge::CreateFromString

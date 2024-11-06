@@ -47,7 +47,7 @@ private:
 	virtual void DeselectChildBlocks(CProcessEntityBlock* block);
 	virtual void SelectChildBlocks(CProcessEntityBlock* block);
 	virtual void PrepareForAlignment();
-	virtual void DoPostAlignment();
+	virtual void AutoResizeAll();
 };
 
 #endif //_PROCESSEDITOR_H_

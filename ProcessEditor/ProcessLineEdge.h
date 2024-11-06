@@ -16,17 +16,16 @@ public:
     virtual	CDiagramEntity* Clone();
     static	CDiagramEntity* CreateFromString(const CString& str);
 
-    void SetSource(CDiagramEntity *source);
-    void SetDestination(CDiagramEntity *destination);
-    CDiagramEntity* GetSource() const;
-    CDiagramEntity* GetDestination() const;
+    virtual void SetSource(CDiagramEntity *source);
+    virtual void SetDestination(CDiagramEntity *destination);
+    virtual CDiagramEntity* GetSource() const;
+    virtual CDiagramEntity* GetDestination() const;
 
     // Overrides
     virtual void	Draw(CDC* dc, CRect rect);
 	virtual int		GetHitCode( const CPoint& point, const CRect& rect ) const;
 
     virtual HCURSOR GetCursor(int hit) const;
-
 
 protected:
     virtual CString				GetDefaultGetString() const;
