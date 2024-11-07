@@ -87,6 +87,33 @@ CDiagramEntity* CProcessLineEdge::Clone()
 	return obj;
 }
 
+void DrawArrow(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
+	
+	const float dx = static_cast<float>(p1.x - p0.x);
+	const float dy = static_cast<float>(p1.y - p0.y);
+	const auto length = sqrt(dx * dx + dy * dy);
+	if (head_length < 1 || length < head_length) return;
+
+	// ux,uy is a unit vector parallel to the line.
+	const auto ux = dx / length;
+	const auto uy = dy / length;
+
+	// vx,vy is a unit vector perpendicular to ux,uy
+	const auto vx = -uy;
+	const auto vy = ux;
+
+	const auto half_width = 0.5f * head_width;
+
+	const POINT arrow[3] =
+	{ p1,
+	  POINT{ round(p1.x - head_length * ux + half_width * vx),
+			 round(p1.y - head_length * uy + half_width * vy) },
+	  POINT{ round(p1.x - head_length * ux - half_width * vx),
+			 round(p1.y - head_length * uy - half_width * vy) }
+	};
+	dc->Polygon(arrow, 3);
+}
+
 void CProcessLineEdge::Draw(CDC* dc, CRect rect)
 /* ============================================================
 	Function :		CProcessLineEdge::Draw
@@ -110,6 +137,13 @@ void CProcessLineEdge::Draw(CDC* dc, CRect rect)
 	dc->MoveTo(rect.TopLeft());
 	dc->LineTo(rect.BottomRight());
 
+	//draw the arrow tip only if it is the last segment
+	CProcessLineEdge* dest = dynamic_cast<CProcessLineEdge*>(m_dest);
+	if (!dest) {
+		DrawArrow(dc, rect.TopLeft(), rect.BottomRight(), 10, 10);
+	}
+		
+	
 	CString str = GetTitle();
 	if (str.GetLength())
 	{
