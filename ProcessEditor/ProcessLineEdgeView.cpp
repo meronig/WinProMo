@@ -1,8 +1,10 @@
-#include "ProcessLineEdge.h"
+#include "ProcessLineEdgeView.h"
+#include "ProcessLineEdgeModel.h"
+#include "ProcessEntityBlockView.h"
 #include "LinkFactory.h"
 #include "../stdafx.h"
 
-CProcessLineEdge::CProcessLineEdge()
+CProcessLineEdgeView::CProcessLineEdgeView()
 /* ============================================================
 	Function :		CProcessLineEdge::CProcessLineEdge
 	Description :	Constructor
@@ -26,9 +28,11 @@ CProcessLineEdge::CProcessLineEdge()
 
 	m_source = NULL;
 	m_dest = NULL;
+	m_edgemodel = NULL;
+	setModel(new CProcessLineEdgeModel());
 }
 
-CProcessLineEdge::~CProcessLineEdge()
+CProcessLineEdgeView::~CProcessLineEdgeView()
 /* ============================================================
 	Function :		CProcessLineEdge::~CProcessLineEdge
 	Description :	Destructor
@@ -41,21 +45,17 @@ CProcessLineEdge::~CProcessLineEdge()
 
    ============================================================*/
 {
-	CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(m_source);
-	if (edge) {
-		edge->SetBottom(GetBottom());
-		edge->SetRight(GetRight());
-		edge->SetDestination(GetDestination());
+	if (m_source) {
+		m_source->SetBottom(GetBottom());
+		m_source->SetRight(GetRight());
+		m_source->SetDestination(GetDestination());
 	}
 	
-	
-	edge = dynamic_cast<CProcessLineEdge*>(m_dest);
-	if (edge) {
-		edge->SetTop(GetTop());
-		edge->SetLeft(GetLeft());
-		edge->SetSource(GetSource());
+	if (m_dest) {
+		m_dest->SetTop(GetTop());
+		m_dest->SetLeft(GetLeft());
+		m_dest->SetSource(GetSource());
 	}
-	
 	
 	SetSource(NULL);
 	SetDestination(NULL);
@@ -63,9 +63,11 @@ CProcessLineEdge::~CProcessLineEdge()
 	if (m_dlg.m_hWnd)
 		m_dlg.DestroyWindow();
 
+	setModel(NULL);
+
 }
 
-CDiagramEntity* CProcessLineEdge::Clone()
+CDiagramEntity* CProcessLineEdgeView::Clone()
 /* ============================================================
 	Function :		CProcessLineEdge::Clone
 	Description :	Clone this object to a new object.
@@ -80,14 +82,16 @@ CDiagramEntity* CProcessLineEdge::Clone()
 
 {
 
-	CProcessLineEdge* obj = new CProcessLineEdge;
+	CProcessLineEdgeView* obj = new CProcessLineEdgeView;
 	obj->Copy(this);
 	obj->m_source = NULL;
 	obj->m_dest = NULL;
+	//obj->setModel(this->getModel());
+	obj->setModel(new CProcessLineEdgeModel());
 	return obj;
 }
 
-void DrawArrow(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
+void CProcessLineEdgeView::DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
 	
 	const float dx = static_cast<float>(p1.x - p0.x);
 	const float dy = static_cast<float>(p1.y - p0.y);
@@ -114,7 +118,83 @@ void DrawArrow(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
 	dc->Polygon(arrow, 3);
 }
 
-void CProcessLineEdge::Draw(CDC* dc, CRect rect)
+void CProcessLineEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circleDiameter)
+{
+	// 1. Define the start and end points
+	int x1 = p0.x;
+	int y1 = p0.y;
+	int x2 = p1.x;
+	int y2 = p1.y;
+
+	// 2. Calculate the circle radius
+	int radius = circleDiameter / 2;
+
+	// 3. Find the center of the circle: it's the midpoint of (x1, y1) and the second intersection point (x3, y3)
+	int dx = x2 - x1;
+	int dy = y2 - y1;
+	float lineLength = sqrt(dx * dx + dy * dy);
+
+	// 4. Parametric form of the line
+	// Find t such that the distance from (x1, y1) to (x3, y3) equals the diameter of the circle
+	// We need t such that |t| = diameter / lineLength (scaled so that we can reach the exact distance)
+
+	float t = static_cast<float>(circleDiameter) / lineLength;
+
+	// 5. Find the second intersection point (x3, y3) by moving from (x1, y1) along the line in both directions
+	int x3 = static_cast<int>(x1 + t * dx);
+	int y3 = static_cast<int>(y1 + t * dy);
+
+	// 6. Calculate the center of the circle: midpoint of (x1, y1) and (x3, y3)
+	int centerX = (x1 + x3) / 2;
+	int centerY = (y1 + y3) / 2;
+
+	// 7. Calculate the bounding rectangle for the circle centered at (centerX, centerY)
+	CRect circleRect;
+	circleRect.left = centerX - radius;
+	circleRect.top = centerY - radius;
+	circleRect.right = centerX + radius;
+	circleRect.bottom = centerY + radius;
+
+	// 8. Draw the circle
+	dc->Ellipse(circleRect);
+}
+
+void CProcessLineEdgeView::Reposition()
+{
+	//new
+	if (m_source != NULL) {
+		CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(m_source);
+		if (obj) {
+			CPoint pt = obj->getIntersection(GetRect().TopLeft(), GetRect().BottomRight());
+			if (pt.x >= 0) {
+				SetTop(pt.y);
+				SetLeft(pt.x);
+			}
+		}
+		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(m_source);
+		if (edge) {
+			SetTop(edge->GetBottom());
+			SetLeft(edge->GetRight());
+		}
+	}
+	if (m_dest != NULL) {
+		CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(m_dest);
+		if (obj) {
+			CPoint pt = obj->getIntersection(GetRect().BottomRight(), GetRect().TopLeft());
+			if (pt.x >= 0) {
+				SetBottom(pt.y);
+				SetRight(pt.x);
+			}
+		}
+		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(m_dest);
+		if (edge) {
+			SetBottom(edge->GetTop());
+			SetRight(edge->GetLeft());
+		}
+	}
+}
+
+void CProcessLineEdgeView::Draw(CDC* dc, CRect rect)
 /* ============================================================
 	Function :		CProcessLineEdge::Draw
 	Description :	Draws the object.
@@ -138,9 +218,12 @@ void CProcessLineEdge::Draw(CDC* dc, CRect rect)
 	dc->LineTo(rect.BottomRight());
 
 	//draw the arrow tip only if it is the last segment
-	CProcessLineEdge* dest = dynamic_cast<CProcessLineEdge*>(m_dest);
-	if (!dest) {
-		DrawArrow(dc, rect.TopLeft(), rect.BottomRight(), 10, 10);
+	if (m_dest == NULL) {
+		DrawArrowHead(dc, rect.TopLeft(), rect.BottomRight(), 10, 10);
+	}
+
+	if (m_source == NULL) {
+		DrawArrowTail(dc, rect.TopLeft(), rect.BottomRight(), 10);
 	}
 		
 	
@@ -177,7 +260,7 @@ void CProcessLineEdge::Draw(CDC* dc, CRect rect)
 
 }
 
-int CProcessLineEdge::GetHitCode(const CPoint& point, const CRect& rect) const
+int CProcessLineEdgeView::GetHitCode(const CPoint& point, const CRect& rect) const
 {
 	CRect rectTest = GetSelectionMarkerRect(DEHT_CENTER, rect);
 	if (rectTest.PtInRect(point)) {
@@ -186,7 +269,7 @@ int CProcessLineEdge::GetHitCode(const CPoint& point, const CRect& rect) const
 	return CDiagramLine::GetHitCode(point, rect);
 }
 
-HCURSOR CProcessLineEdge::GetCursor(int hit) const
+HCURSOR CProcessLineEdgeView::GetCursor(int hit) const
 {
 	if (hit == DEHT_CENTER) {
 		return LoadCursor(NULL, IDC_SIZEALL);
@@ -194,26 +277,8 @@ HCURSOR CProcessLineEdge::GetCursor(int hit) const
 	return CDiagramLine::GetCursor(hit);
 }
 
-bool CProcessLineEdge::canConnectSource(CDiagramEntity* source)
-{
-	CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(source);
-	if (obj) {
-		return true;
-	}
-	return false;
-}
 
-bool CProcessLineEdge::canConnectDestination(CDiagramEntity* destination)
-{
-	CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(destination);
-	if (obj) {
-		return true;
-	}
-	return false;
-}
-
-
-CDiagramEntity* CProcessLineEdge::CreateFromString(const CString& str)
+CDiagramEntity* CProcessLineEdgeView::CreateFromString(const CString& str)
 /* ============================================================
 	Function :		CProcessLineEdge::CreateFromString
 	Description :	Static factory function that creates and
@@ -235,7 +300,7 @@ CDiagramEntity* CProcessLineEdge::CreateFromString(const CString& str)
    ============================================================*/
 {
 
-	CProcessLineEdge* obj = new CProcessLineEdge;
+	CProcessLineEdgeView* obj = new CProcessLineEdgeView;
 	if (!obj->FromString(str))
 	{
 		delete obj;
@@ -246,165 +311,129 @@ CDiagramEntity* CProcessLineEdge::CreateFromString(const CString& str)
 
 }
 
-void CProcessLineEdge::SetSource(CDiagramEntity *source)
+void CProcessLineEdgeView::SetSource(CDiagramEntity *source)
 {
+	//save the old source edge view
+	CProcessLineEdgeView* oldSourceView = m_source;
 
-	if (m_source != source) {
-
-		//set the new source	
-		CDiagramEntity* oldSource = m_source;
-		m_source = source;
-
-		if (oldSource) {
-			//if a previous source block exists, remove the reference from the old source block
-			CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(oldSource);
-			if (obj) {
-				for (int i = 0; i < obj->m_outgoingEdges.GetSize(); i++) {
-					if (obj->m_outgoingEdges.GetAt(i) == this) {
-						obj->m_outgoingEdges.RemoveAt(i);
-					}
-				}
-			}
-			//if a previous source edge exists, remove the reference from the old source edge
-			CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(oldSource);
-			if (edge) {
-				//edge->SetDestination(NULL);
-				edge->m_dest = NULL;
-			}
-		}
-
-		if (source) {
-			//if the new source block exists, add a reference to the new source block
-			CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(source);
-			if (obj) {
-				obj->m_outgoingEdges.Add(this);
-			}
-			//if the new source edge exists, add a reference to the new source edge
-			CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(m_source);
-			if (edge) {
-				edge->SetDestination(this);
-				//edge->m_dest = this;
-			}
-		}
+	CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(source);
+	//new source is a block view
+	if (blockView) {
+		//connect the elements at the model level
+		getModel()->SetSource(blockView->getModel());
+		//disconnect the edges at the view level
+		m_source = NULL;
 	}
-	//new
-	if (m_source != NULL) {
-		CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(m_source);
-		if (obj) {
-			CPoint pt = obj->getIntersection(GetRect().TopLeft(), GetRect().BottomRight());
-			if (pt.x >= 0) {
-				SetTop(pt.y);
-				SetLeft(pt.x);
-			}
-		}
-		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(m_source);
-		if (edge) {
-			SetTop(edge->GetBottom());
-			SetLeft(edge->GetRight());
-		}
-	}
-	if (m_dest != NULL) {
-		CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(m_dest);
-		if (obj) {
-			CPoint pt = obj->getIntersection(GetRect().BottomRight(), GetRect().TopLeft());
-			if (pt.x >= 0) {
-				SetBottom(pt.y);
-				SetRight(pt.x);
-			}
-		}
-		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(m_dest);
-		if (edge) {
-			SetBottom(edge->GetTop());
-			SetRight(edge->GetLeft());
-		}
-	}
-}
+	
+	//new source is an edge view
+	CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source);
 
-void CProcessLineEdge::SetDestination(CDiagramEntity *destination)
-{
-	if (m_dest != destination) {
+	// the source edge view has changed
+	if (source != oldSourceView) {
 
-		//set the new destination	
-		CDiagramEntity *oldDest = m_dest;
-		m_dest = destination;
-
-		if (oldDest) {
-			//if a previous destination block exists, remove the reference from the old destination block
-			CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(oldDest);
-			if (obj) {
-				for (int i = 0; i < obj->m_incomingEdges.GetSize(); i++) {
-					if (obj->m_incomingEdges.GetAt(i) == this) {
-						obj->m_incomingEdges.RemoveAt(i);
-					}
-				}
-			}
-			//if a previous destination edge exists, remove the reference from the old destination edge
-			CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(oldDest);
-			if (edge) {
-				edge->m_source = NULL;
-				//edge->SetSource(NULL);
-			}
+		if (edgeView) {
+			//just connect the two views
+			m_source = edgeView;
+			edgeView->SetDestination(this);
 		}
 
+		else {
+			m_source = NULL;
+		}
 		
-		if (destination) {
-			//if the new destination block exists, add a reference to the new destination block
-			CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(destination);
-			if (obj) {
-				obj->m_incomingEdges.Add(this);
-			}
-			//if a previous destination edge exists, remove the reference from the old destination edge
-			CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(m_dest);
-			if (edge) {
-				//edge->m_source = this;
-				edge->SetSource(this);
+		if (m_source != oldSourceView) {
+			//set the destination to null
+			if (oldSourceView) {
+				oldSourceView->m_dest = NULL;
 			}
 		}
+		
 	}
-	//new
-	if (m_source != NULL) {
-		CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(m_source);
-		if (obj) {
-			CPoint pt = obj->getIntersection(GetRect().TopLeft(), GetRect().BottomRight());
-			if (pt.x >= 0) {
-				SetTop(pt.y);
-				SetLeft(pt.x);
-			}
-		}
-		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(m_source);
-		if (edge) {
-			SetTop(edge->GetBottom());
-			SetLeft(edge->GetRight());
-		}
-	}
-	if (m_dest != NULL) {
-		CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(m_dest);
-		if (obj) {
-			CPoint pt = obj->getIntersection(GetRect().BottomRight(), GetRect().TopLeft());
-			if (pt.x >= 0) {
-				SetBottom(pt.y);
-				SetRight(pt.x);
-			}
-		}
-		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(m_dest);
-		if (edge) {
-			SetBottom(edge->GetTop());
-			SetRight(edge->GetLeft());
-		}
-	}
+	
+
+	Reposition();
+
 }
 
-CDiagramEntity* CProcessLineEdge::GetSource() const
+void CProcessLineEdgeView::SetDestination(CDiagramEntity *destination)
+{
+	//save the old source edge view
+	CProcessLineEdgeView* oldDestView = m_dest;
+
+	CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(destination);
+	//new source is a block view
+	if (blockView) {
+		//connect the elements at the model level
+		getModel()->SetDestination(blockView->getModel());
+		//disconnect the edges at the view level
+		m_dest = NULL;
+	}
+
+	//new source is an edge view
+	CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(destination);
+
+	if (oldDestView != destination) {
+
+		if (edgeView) {
+			//just connect the two views
+			m_dest = edgeView;
+			edgeView->SetSource(this);
+		}
+
+		else {
+			m_dest = NULL;
+		}
+
+		// the source edge view has changed
+		if (m_dest != oldDestView) {
+			//set the destination to null
+			if (oldDestView) {
+				oldDestView->m_source = NULL;
+			}
+		}
+	}
+
+	Reposition();
+
+}
+
+CDiagramEntity* CProcessLineEdgeView::GetSource() const
 {
 	return m_source;
 }
 
-CDiagramEntity* CProcessLineEdge::GetDestination() const
+CDiagramEntity* CProcessLineEdgeView::GetDestination() const
 {
 	return m_dest;
 }
 
-CString CProcessLineEdge::GetDefaultGetString() const
+CProcessLineEdgeModel* CProcessLineEdgeView::getModel() const
+{
+	return m_edgemodel;
+}
+
+void CProcessLineEdgeView::setModel(CProcessLineEdgeModel* model)
+{
+	if (m_edgemodel != model) {
+		CProcessLineEdgeModel* oldModel = m_edgemodel;
+		m_edgemodel = model;
+		
+		//link this class to the new model
+		if (model) {
+			model->linkView(this);
+		}
+		//unlink this class from the old model
+		if (oldModel) {
+			oldModel->unlinkView(this);
+			//if the old model has no views, delete it
+			if (oldModel->getViews()->GetSize() == 0) {
+				delete oldModel;
+			}
+		}
+	}
+}
+
+CString CProcessLineEdgeView::GetDefaultGetString() const
 {
 	/* ============================================================
 	Function :		CProcessLineEdge::GetDefaultString
@@ -465,7 +494,7 @@ CString CProcessLineEdge::GetDefaultGetString() const
 
 }
 
-void CProcessLineEdge::DrawSelectionMarkers(CDC* dc, CRect rect) const
+void CProcessLineEdgeView::DrawSelectionMarkers(CDC* dc, CRect rect) const
 {
 	CRect rectSelect;
 
@@ -476,7 +505,7 @@ void CProcessLineEdge::DrawSelectionMarkers(CDC* dc, CRect rect) const
 	CDiagramLine::DrawSelectionMarkers(dc, rect);
 }
 
-CRect CProcessLineEdge::GetSelectionMarkerRect(UINT marker, CRect rect) const
+CRect CProcessLineEdgeView::GetSelectionMarkerRect(UINT marker, CRect rect) const
 {
 	CRect rectMarker;
 	int horz = GetMarkerSize().cx / 2;

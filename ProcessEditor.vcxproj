@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ProcessEditor\ProcessModel.cpp" />
     <ClCompile Include="DiagramEditorDemo.cpp" />
     <ClCompile Include="DiagramEditorDemoDlg.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
@@ -36,15 +37,18 @@
     <ClCompile Include="ProcessEditor\ProcessControlFactory.cpp" />
     <ClCompile Include="ProcessEditor\ProcessEditor.cpp" />
     <ClCompile Include="ProcessEditor\ProcessEntityContainer.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessEntityBlock.cpp" />
+    <ClCompile Include="ProcessEditor\ProcessEntityBlockView.cpp" />
     <ClCompile Include="ProcessEditor\LinkFactory.cpp" />
     <ClCompile Include="ProcessEditor\PropertyDialog.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessLineEdge.cpp" />
+    <ClCompile Include="ProcessEditor\ProcessLineEdgeView.cpp" />
     <ClCompile Include="PaperSizeDialog.cpp" />
+    <ClCompile Include="ProcessEditor\ProcessEntityBlockModel.cpp" />
+    <ClCompile Include="ProcessEditor\ProcessLineEdgeModel.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="TextFile.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ProcessEditor\ProcessModel.h" />
     <ClInclude Include="DiagramEditorDemo.h" />
     <ClInclude Include="DiagramEditorDemoDlg.h" />
     <ClInclude Include="DiagramEditor\DiagramClipboardHandler.h" />
@@ -64,11 +68,13 @@
     <ClInclude Include="ProcessEditor\ProcessControlFactory.h" />
     <ClInclude Include="ProcessEditor\ProcessEditor.h" />
     <ClInclude Include="ProcessEditor\ProcessEntityContainer.h" />
-    <ClInclude Include="ProcessEditor\ProcessEntityBlock.h" />
+    <ClInclude Include="ProcessEditor\ProcessEntityBlockView.h" />
     <ClInclude Include="ProcessEditor\LinkFactory.h" />
     <ClInclude Include="ProcessEditor\PropertyDialog.h" />
-    <ClInclude Include="ProcessEditor\ProcessLineEdge.h" />
+    <ClInclude Include="ProcessEditor\ProcessLineEdgeView.h" />
     <ClInclude Include="PaperSizeDialog.h" />
+    <ClInclude Include="ProcessEditor\ProcessEntityBlockModel.h" />
+    <ClInclude Include="ProcessEditor\ProcessLineEdgeModel.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="TextFile.h" />

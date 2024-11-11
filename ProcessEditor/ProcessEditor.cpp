@@ -2,6 +2,7 @@
 #include "ProcessEditor.h"
 #include "ProcessEntityContainer.h"
 #include "ProcessControlFactory.h"
+#include "ProcessLineEdgeModel.h"
 
 #include <math.h>
 
@@ -105,7 +106,7 @@ void CProcessEditor::DrawObjects(CDC* dc, double zoom) const
 		if (GetInteractMode() == MODE_MOVING) {
 			for (int i = 0; i < GetObjectCount(); i++)
 			{
-				CProcessEntityBlock* block = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+				CProcessEntityBlockView* block = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 				if (block) {
 					if (block->IsSelected()) {
 						DrawObjectsR(block, dc, zoom);
@@ -117,7 +118,7 @@ void CProcessEditor::DrawObjects(CDC* dc, double zoom) const
 
 		// draws edges being reconnected (resized) over all the others
 		if (GetInteractMode() == MODE_RESIZING) {
-			CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(GetSelectedObject());
+			CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(GetSelectedObject());
 			if (edge) {
 				if (edge->IsSelected()) {
 					edge->DrawObject(dc, zoom);
@@ -151,12 +152,12 @@ void CProcessEditor::SaveObjects(CStringArray& stra)
 // CProcessEditor message handlers
 
 
-CProcessEntityBlock* CProcessEditor::GetTargetBlock(CPoint point) {
+CProcessEntityBlockView* CProcessEditor::GetTargetBlock(CPoint point) {
 	ResetTarget();
 
 	CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
 	for (int j = GetObjectCount() - 1; j >= 0; j--) {
-		CProcessEntityBlock* currObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(j));
+		CProcessEntityBlockView* currObj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(j));
 
 		if (currObj) {
 
@@ -169,16 +170,16 @@ CProcessEntityBlock* CProcessEditor::GetTargetBlock(CPoint point) {
 					//drawing a new element
 					if (IsDrawing()) {
 						// new block
-						CProcessEntityBlock* newObj = dynamic_cast<CProcessEntityBlock*>(GetDrawingObject());
+						CProcessEntityBlockView* newObj = dynamic_cast<CProcessEntityBlockView*>(GetDrawingObject());
 						if (newObj) {
-							if (newObj->canBeNested(currObj)) {
+							if (newObj->getModel()->canBeNested(currObj->getModel())) {
 								return currObj;
 							}
 						}
 						// new edge
-						CProcessLineEdge* newEdge = dynamic_cast<CProcessLineEdge*>(GetDrawingObject());
+						CProcessLineEdgeView* newEdge = dynamic_cast<CProcessLineEdgeView*>(GetDrawingObject());
 						if (newEdge) {
-							if (newEdge->canConnectSource(currObj)) {
+							if (newEdge->getModel()->canConnectSource(currObj->getModel())) {
 								return currObj;
 							}
 						}
@@ -188,10 +189,10 @@ CProcessEntityBlock* CProcessEditor::GetTargetBlock(CPoint point) {
 						bool isValid = true;
 						// check that no circular dependencies exist with selected objects
 						for (int i = GetObjectCount() - 1; i >= 0; i--) {
-							CProcessEntityBlock* selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+							CProcessEntityBlockView* selObj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 							if (selObj) {
 								if (selObj->IsSelected()) {
-									if (!(selObj->canBeNested(currObj))) {
+									if (!(selObj->getModel()->canBeNested(currObj->getModel()))) {
 										isValid = false;
 										break;
 									}
@@ -208,16 +209,16 @@ CProcessEntityBlock* CProcessEditor::GetTargetBlock(CPoint point) {
 					}
 					//resizing (moving) edges
 					if (GetInteractMode() == MODE_RESIZING) {
-						CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(GetSelectedObject());
+						CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(GetSelectedObject());
 						//use actual point rather than cursor position
 						if (edge) {
 							if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-								if (edge->canConnectDestination(currObj)) {
+								if (edge->getModel()->canConnectDestination(currObj->getModel())) {
 									return currObj;
 								}
 							}
 							else if (GetSubMode() == DEHT_TOPLEFT) {
-								if (edge->canConnectSource(currObj)) {
+								if (edge->getModel()->canConnectSource(currObj->getModel())) {
 									return currObj;
 								}
 							}
@@ -230,49 +231,70 @@ CProcessEntityBlock* CProcessEditor::GetTargetBlock(CPoint point) {
 	return NULL;
 }
 
-CProcessEntityBlock* CProcessEditor::GetConnectedBlock(CProcessLineEdge* line, BOOL backwards, BOOL ifSelected)
+CProcessEntityBlockView* CProcessEditor::GetConnectedBlock(CProcessLineEdgeView* line, BOOL backwards, BOOL ifSelected)
 {
-	CDiagramEntity* element;
-
+	CProcessEntityBlockModel* model = NULL;
 	if (backwards) {
-		element = line->GetSource();
+		model = dynamic_cast<CProcessEntityBlockModel*>(line->getModel()->GetSource());
+		if (model) {
+			return model->getMainView();
+		}
 	}
 	else {
-		element = line->GetDestination();
+		model = dynamic_cast<CProcessEntityBlockModel*>(line->getModel()->GetDestination());
+		if (model) {
+			return model->getMainView();
+		}
 	}
 
-	CProcessEntityBlock* block = dynamic_cast<CProcessEntityBlock*>(element);
-	if (block) {
-		return block;
-	}
-	CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(element);
-	if (edge) {
-		if (ifSelected) {
-			if (!edge->IsSelected()) {
-				return NULL;
-			}
-		}
-		return GetConnectedBlock(edge, backwards, ifSelected);
-	}
-		
+	// fix may need rework
+
+	//CDiagramEntity* element;
+
+	//if (backwards) {
+	//	element = line->GetSource();
+	//}
+	//else {
+	//	element = line->GetDestination();
+	//}
+
+	//CProcessEntityBlockView* block = dynamic_cast<CProcessEntityBlockView*>(element);
+	//if (block) {
+
+	//	return block;
+	//}
+	//CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(element);
+	//if (edge) {
+	//	if (ifSelected) {
+	//		if (!edge->IsSelected()) {
+	//			return NULL;
+	//		}
+	//	}
+	//	return GetConnectedBlock(edge, backwards, ifSelected);
+	//}
+	//	
 	return NULL;
 }
 
-void CProcessEditor::DeselectChildBlocks(CProcessEntityBlock* block)
+void CProcessEditor::DeselectChildBlocks(CProcessEntityBlockView* block)
 {
-	for (int i = 0; i < block->getSubBlocks()->GetSize(); i++) {
-		CProcessEntityBlock* subBlock = dynamic_cast<CProcessEntityBlock*>(block->getSubBlocks()->GetAt(i));
-		subBlock->Select(false);
-		DeselectChildBlocks(subBlock);
+	ASSERT(block->getModel()!=NULL);
+	CProcessEntityBlockModel* model = block->getModel();
+	for (int i = 0; i < model->getSubBlocks()->GetSize(); i++) {
+		CProcessEntityBlockModel* subBlock = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
+		subBlock->getMainView()->Select(false);
+		DeselectChildBlocks(subBlock->getMainView());
 	}
 }
 
-void CProcessEditor::SelectChildBlocks(CProcessEntityBlock* block)
+void CProcessEditor::SelectChildBlocks(CProcessEntityBlockView* block)
 {
-	for (int i = 0; i < block->getSubBlocks()->GetSize(); i++) {
-		CProcessEntityBlock* subBlock = dynamic_cast<CProcessEntityBlock*>(block->getSubBlocks()->GetAt(i));
-		subBlock->Select(true);
-		SelectChildBlocks(subBlock);
+	ASSERT(block->getModel() != NULL);
+	CProcessEntityBlockModel* model = block->getModel();
+	for (int i = 0; i < model->getSubBlocks()->GetSize(); i++) {
+		CProcessEntityBlockModel* subBlock = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
+		subBlock->getMainView()->Select(true);
+		SelectChildBlocks(subBlock->getMainView());
 	}
 }
 
@@ -308,13 +330,13 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 	// when moving a block, move all connected elements accordingly
 	if (GetInteractMode() == MODE_MOVING) {
 
-		CProcessEntityBlock* selObj = NULL;
-		CProcessLineEdge* selEdge = NULL;
+		CProcessEntityBlockView* selObj = NULL;
+		CProcessLineEdgeView* selEdge = NULL;
 
-		double oldTop = 0;
-		double oldLeft = 0;
-		double deltaTop = 0;
-		double deltaLeft = 0;
+		//double oldTop = 0;
+		//double oldLeft = 0;
+		//double deltaTop = 0;
+		//double deltaLeft = 0;
 
 		//BUG: when moving two child blocks, cannot determine target
 
@@ -326,18 +348,18 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 		CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
 		for (int j = GetObjectCount() - 1; j >= 0; j--) {
 			
-			selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(j));
+			selObj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(j));
 			if (selObj) {
 				if (selObj->IsSelected()) {
 					DeselectChildBlocks(selObj);
 				}
 			}
 			
-			CProcessLineEdge* currObj = dynamic_cast<CProcessLineEdge*>(objs->GetAt(j));
+			CProcessLineEdgeView* currObj = dynamic_cast<CProcessLineEdgeView*>(objs->GetAt(j));
 			if (currObj) {
 				if (currObj->IsSelected()) {
 					//find if a selected block exists on both ends. Otherwise, deselect
-					CProcessEntityBlock* block = GetConnectedBlock(currObj, true, true);
+					CProcessEntityBlockView* block = GetConnectedBlock(currObj, true, true);
 					if (block) {
 						if (!block->IsSelected()) {
 							currObj->Select(false);
@@ -359,30 +381,32 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 			}
 		}
 		// may want to iterate among selected objects until one finds a block
-		selObj = dynamic_cast<CProcessEntityBlock*>(GetSelectedObject());
-		if (selObj) {
-			oldTop = selObj->GetTop();
-			oldLeft = selObj->GetLeft();
-		}
+		//selObj = dynamic_cast<CProcessEntityBlockView*>(GetSelectedObject());
+		//if (selObj) {
+		//	oldTop = selObj->GetTop();
+		//	oldLeft = selObj->GetLeft();
+		//}
 
 
 		CDiagramEditor::OnMouseMove(nFlags, point);
 
-		if (selObj) {
-			deltaTop = selObj->GetTop() - oldTop;
-			deltaLeft = selObj->GetLeft() - oldLeft;
-		}
+		//if (selObj) {
+		//	deltaTop = selObj->GetTop() - oldTop;
+		//	deltaLeft = selObj->GetLeft() - oldLeft;
+		//}
 
 		//if only one object is selected, we need to manually trigger moverect to all child blocks
-		if (GetSelectCount() == 1) {
-			if (selObj) {
-				if (deltaLeft != 0 || deltaTop != 0) {
-					for (int i = 0; i < selObj->getSubBlocks()->GetSize(); i++) {
-						CProcessEntityBlock* subBlock = dynamic_cast<CProcessEntityBlock*>(selObj->getSubBlocks()->GetAt(i));
-					}
-				}
-			}
-		}
+		//looks dead code
+		//if (GetSelectCount() == 1) {
+		//	if (selObj) {
+		//		if (deltaLeft != 0 || deltaTop != 0) {
+		//			for (int i = 0; i < selObj->getModel()->getSubBlocks()->GetSize(); i++) {
+		//				//fix this is a model
+		//				CProcessEntityBlockView* subBlock = dynamic_cast<CProcessEntityBlockView*>(selObj->getModel()->getSubBlocks()->GetAt(i));
+		//			}
+		//		}
+		//	}
+		//}
 		
 	}
 	else if (GetInteractMode() == MODE_RESIZING){
@@ -405,7 +429,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 		if ((nFlags & MK_SHIFT) == MK_SHIFT) {
 
 			// handle shift key for edges: mainly snap them to horizontal, vertical or 45 degrees diagonal lines
-			CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(element);
+			CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(element);
 			if (edge) {
 				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
 					if ((abs(edge->GetBottom() - edge->GetTop())) / 2 > abs(edge->GetLeft() - edge->GetRight())) {
@@ -462,7 +486,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 				}
 			}
 			//handle shift key for nodes: keep proportions
-			CProcessEntityBlock* block = dynamic_cast<CProcessEntityBlock*>(element);
+			CProcessEntityBlockView* block = dynamic_cast<CProcessEntityBlockView*>(element);
 			if (block) {
 				double oldRatio = (oldBottom - oldTop) / (oldRight - oldLeft);
 				double deltaX = 0;
@@ -531,18 +555,18 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 			}
 		}
 	
-		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(element);
+		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(element);
 		if (edge) {
 			//check if edge is part of a multi-edge and, if so, keep it connected
 			if (edge->GetSource() != NULL) {
-				CProcessLineEdge* src = dynamic_cast<CProcessLineEdge*>(edge->GetSource());
+				CProcessLineEdgeView* src = dynamic_cast<CProcessLineEdgeView*>(edge->GetSource());
 				if (src) {
 					src->SetRight(edge->GetLeft());
 					src->SetBottom(edge->GetTop());
 				}
 			}
 			if (edge->GetDestination() != NULL) {
-				CProcessLineEdge* dest = dynamic_cast<CProcessLineEdge*>(edge->GetDestination());
+				CProcessLineEdgeView* dest = dynamic_cast<CProcessLineEdgeView*>(edge->GetDestination());
 				if (dest) {
 					dest->SetLeft(edge->GetRight());
 					dest->SetTop(edge->GetBottom());
@@ -558,9 +582,9 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 	{
 		CPoint target = point;
 		ScreenToVirtual(target);
-		CProcessLineEdge* edge = NULL;
+		CProcessLineEdgeView* edge = NULL;
 		if (GetInteractMode() == MODE_RESIZING) {
-			edge = dynamic_cast<CProcessLineEdge*>(GetSelectedObject());
+			edge = dynamic_cast<CProcessLineEdgeView*>(GetSelectedObject());
 			//use actual point rather than cursor position
 			if (edge) {
 				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
@@ -578,7 +602,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 			//TODO: consider generalizing to multiple blocks (for sure, edges are not part of the selection)
 			if (GetSelectCount() <= 1) {
 				/*check if we are dropping the object inside a block*/
-				CProcessEntityBlock* targetBlock = GetTargetBlock(target);
+				CProcessEntityBlockView* targetBlock = GetTargetBlock(target);
 				if (targetBlock) {
 					targetBlock->SetTarget(true);
 				}
@@ -620,7 +644,7 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 	BOOL goon = TRUE;
 	int count = 0;
 	CDiagramEntityContainer* objs = GetDiagramEntityContainer();
-	CProcessEntityBlock* parent = NULL;
+	CProcessEntityBlockView* parent = NULL;
 
 	if (IsDrawing()) {
 
@@ -643,25 +667,25 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 	// Create a new element as usual
 	CDiagramEditor::OnLButtonDown(nFlags, point);
 
-	
 	// Get the element being created (which will be selected)
 	if (GetSelectedObject() != NULL) {
-		CProcessEntityBlock* obj;
-		obj = dynamic_cast<CProcessEntityBlock*>(GetSelectedObject());
+		CProcessEntityBlockView* obj;
+		obj = dynamic_cast<CProcessEntityBlockView*>(GetSelectedObject());
 		if (obj) {
 			if (parent != NULL) {
-				obj->setParentBlock(parent);
+				obj->getModel()->setParentBlock(parent->getModel());
 				parent->autoResize();
 			}
 		}
-		CProcessLineEdge* edge;
-		edge = dynamic_cast<CProcessLineEdge*>(GetSelectedObject());
+		CProcessLineEdgeView* edge;
+		edge = dynamic_cast<CProcessLineEdgeView*>(GetSelectedObject());
 		if (edge) {
 			if (GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER) {
 				//take a snapshot to undo changes
 				GetDiagramEntityContainer()->Snapshot();
 				//split the edge into two
-				CProcessLineEdge* newEdge = new CProcessLineEdge;
+				CProcessLineEdgeView* newEdge = new CProcessLineEdgeView;
+				//fix make model consistent
 				//compute the length and position of both edges
 				CRect edgeRect = edge->GetRect();
 				CRect newEdgeRect(edgeRect);
@@ -675,6 +699,7 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 				//update edge links
 				newEdge->SetDestination(edge->GetDestination());
 				newEdge->SetSource(edge);
+				newEdge->setModel(edge->getModel());
 				//add new edge
 				AddObject(newEdge);
 				//switch to resizing the old edge
@@ -692,16 +717,16 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 
-	CProcessEntityBlock* currObj = NULL;
+	CProcessEntityBlockView* currObj = NULL;
 	CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
 
 	if (GetInteractMode() == MODE_MOVING) {
 
 		
-		CProcessEntityBlock* selObj = NULL;
+		CProcessEntityBlockView* selObj = NULL;
 		//for each object being selected
 		for (int i = 0; i < GetObjectCount(); i++) {
-			selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+			selObj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 			if (selObj) {
 				if (selObj->IsSelected()) {
 					//trigger mouse movement, so to maintain hierarchy in case no movement is made
@@ -709,15 +734,15 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 					//check which is the object being dropped, if any
 					currObj = objs->getTarget();
 					if (currObj) {
-						if (selObj->getParentBlock() != currObj) {
+						if (selObj->getModel()->getParentBlock() != currObj->getModel()) {
 							// Set the parent to be that object
-							selObj->setParentBlock(currObj);
+							selObj->getModel()->setParentBlock(currObj->getModel());
 						}
 					}
 					else	
 					{
 						//no object got hit, then the selected one has no parent
-						selObj->setParentBlock(NULL);
+						selObj->getModel()->setParentBlock(NULL);
 					}
 				}
 			}
@@ -730,22 +755,27 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 	//bug: never called when a new object is created, whereas it should
 	if (GetInteractMode() == MODE_RESIZING) {
 		//resizing an edge
-		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(GetSelectedObject());
+		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(GetSelectedObject());
 		if (edge) {
 			currObj = objs->getTarget();
-			if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-				CProcessLineEdge* destEdge = dynamic_cast<CProcessLineEdge*>(edge->GetDestination());
-				if (!destEdge) {
-					edge->SetDestination(currObj);
+			if (currObj) {
+				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
+					//fix: model
+					CProcessLineEdgeView* destEdge = dynamic_cast<CProcessLineEdgeView*>(edge->GetDestination());
+					if (!destEdge) {
+						edge->getModel()->SetDestination(currObj->getModel());
+						//edge->SetDestination(currObj);
+					}
+				}
+				else if (GetSubMode() == DEHT_TOPLEFT) {
+					//fix: model
+					CProcessLineEdgeView* srcEdge = dynamic_cast<CProcessLineEdgeView*>(edge->GetSource());
+					if (!srcEdge) {
+						edge->getModel()->SetSource(currObj->getModel());
+						//edge->SetSource(currObj);
+					}
 				}
 			}
-			else if (GetSubMode() == DEHT_TOPLEFT) {
-				CProcessLineEdge* srcEdge = dynamic_cast<CProcessLineEdge*>(edge->GetSource());
-				if (!srcEdge) {
-					edge->SetSource(currObj);
-				}
-			}
-			
 			//Need to reorder shapes according to nesting
 			static_cast<CProcessEntityContainer*>(objs)->reorder();
 		}
@@ -806,10 +836,10 @@ void CProcessEditor::Cut()
 		objs->Snapshot();
 		objs->CopyAllSelected();
 		for (int i = 0; i < objs->GetSize(); i++) {
-			CProcessEntityBlock* block = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+			CProcessEntityBlockView* block = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 			if (block) {
 				if (block->IsSelected()) {
-					block->unlinkSubBlocks();
+					block->getModel()->unlinkSubBlocks();
 				}
 			}
 
@@ -820,28 +850,28 @@ void CProcessEditor::Cut()
 
 //draws blocks hierarchically: subblocks are always drawn in the foreground, regardless
 //of current ordering, siblings follow the ordering in CProcessEntityContainer
-void CProcessEditor::DrawObjectsR(CProcessEntityBlock* block, CDC* dc, double zoom) const
+void CProcessEditor::DrawObjectsR(CProcessEntityBlockView* block, CDC* dc, double zoom) const
 {
 	block->DrawObject(dc, zoom);
 	int count = GetObjectCount();
 	for (int i = 0; i < count; i++)
 	{
 		CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
-		CProcessEntityBlock* child = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+		CProcessEntityBlockView* child = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 		if (child) {
-			if (block->contains(child, false)) {
+			if (block->getModel()->contains(child->getModel(), false)) {
 				DrawObjectsR(child, dc, zoom);
 			}
 		}
 	}
-	for (int i = 0; i < block->getIncomingEdges()->GetSize(); i++) {
-		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(block->getIncomingEdges()->GetAt(i));
+	for (int i = 0; i < block->getModel()->getIncomingEdges()->GetSize(); i++) {
+		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(block->getModel()->getIncomingEdges()->GetAt(i));
 		if (edge) {
 			edge->DrawObject(dc, zoom);
 		}
 	}
-	for (int i = 0; i < block->getOutgoingEdges()->GetSize(); i++) {
-		CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(block->getOutgoingEdges()->GetAt(i));
+	for (int i = 0; i < block->getModel()->getOutgoingEdges()->GetSize(); i++) {
+		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(block->getModel()->getOutgoingEdges()->GetAt(i));
 		if (edge) {
 			edge->DrawObject(dc, zoom);
 		}
@@ -854,15 +884,15 @@ void CProcessEditor::ResetTarget()
 	if (objs)
 	{
 		int count = 0;
-		CProcessEntityBlock* obj;
+		CProcessEntityBlockView* obj;
 		for (int i = 0; i < objs->GetSize(); i++) {
-			obj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+			obj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 			SetTarget(obj, FALSE);
 		}
 	}
 }
 
-void CProcessEditor::SetTarget(CProcessEntityBlock* obj, BOOL select)
+void CProcessEditor::SetTarget(CProcessEntityBlockView* obj, BOOL select)
 {
 	if (obj) {
 		CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
@@ -875,19 +905,19 @@ void CProcessEditor::SetTarget(CProcessEntityBlock* obj, BOOL select)
 
 void CProcessEditor::PrepareForAlignment() {
 
-	CProcessEntityBlock* currObj = NULL;
+	CProcessEntityBlockView* currObj = NULL;
 	CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
-	CProcessEntityBlock* selObj = NULL;
-	CProcessLineEdge* selEdge = NULL;
+	CProcessEntityBlockView* selObj = NULL;
+	CProcessLineEdgeView* selEdge = NULL;
 
 	for (int i = 0; i < GetObjectCount(); i++) {
-		selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+		selObj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 		if (selObj) {
 			if (selObj->IsSelected()) {
 				DeselectChildBlocks(selObj);
 			}
 		}
-		selEdge = dynamic_cast<CProcessLineEdge*>(objs->GetAt(i));
+		selEdge = dynamic_cast<CProcessLineEdgeView*>(objs->GetAt(i));
 		if (selEdge) {
 			selEdge->Select(false);
 		}
@@ -897,10 +927,10 @@ void CProcessEditor::PrepareForAlignment() {
 void CProcessEditor::AutoResizeAll()
 {
 	CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
-	CProcessEntityBlock* selObj = NULL;
+	CProcessEntityBlockView* selObj = NULL;
 
 	for (int i = 0; i < GetObjectCount(); i++) {
-		selObj = dynamic_cast<CProcessEntityBlock*>(objs->GetAt(i));
+		selObj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 		if (selObj) {
 		//	if (selObj->IsSelected()) {
 				selObj->autoResize();
@@ -994,11 +1024,11 @@ void CProcessEditor::Load(const CStringArray& stra)
 						CString parentName;
 						tok.GetAt(5, nodeName);
 						tok.GetAt(7, parentName);
-						CProcessEntityBlock* node = dynamic_cast<CProcessEntityBlock*>(GetNamedObject(nodeName));
+						CProcessEntityBlockView* node = dynamic_cast<CProcessEntityBlockView*>(GetNamedObject(nodeName));
 						if (node) {
-							CProcessEntityBlock* parent = dynamic_cast<CProcessEntityBlock*>(GetNamedObject(parentName));
+							CProcessEntityBlockView* parent = dynamic_cast<CProcessEntityBlockView*>(GetNamedObject(parentName));
 							if (parent) {
-								node->setParentBlock(parent);
+								node->getModel()->setParentBlock(parent->getModel());
 							}
 						}
 					}
@@ -1013,7 +1043,7 @@ void CProcessEditor::Load(const CStringArray& stra)
 						tok.GetAt(5, nodeName);
 						tok.GetAt(7, sourceName);
 						tok.GetAt(8, destName);
-						CProcessLineEdge* edge = dynamic_cast<CProcessLineEdge*>(GetNamedObject(nodeName));
+						CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(GetNamedObject(nodeName));
 						if (edge) {
 							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedObject(sourceName));
 							if (source) {

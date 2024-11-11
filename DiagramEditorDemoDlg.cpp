@@ -9,8 +9,8 @@
 
 #include "TextFile.h"
 #include "DiagramEditor/DiagramLine.h"
-#include "ProcessEditor/ProcessEntityBlock.h"
-#include "ProcessEditor/ProcessLineEdge.h"
+#include "ProcessEditor/ProcessEntityBlockView.h"
+#include "ProcessEditor/ProcessLineEdgeView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -238,7 +238,7 @@ void CDiagramEditorDemoDlg::OnButtonBox()
 	/*CDiagramEntity* obj = new CDiagramEntity;
 	m_editor.StartDrawingObject( obj );*/
 	m_editor.UnselectAll();
-	CProcessEntityBlock* obj = new CProcessEntityBlock;
+	CProcessEntityBlockView* obj = new CProcessEntityBlockView;
 	m_editor.StartDrawingObject(obj);
 
 }
@@ -250,7 +250,7 @@ void CDiagramEditorDemoDlg::OnButtonLine()
 	m_editor.StartDrawingObject( obj );
 	*/
 	m_editor.UnselectAll();
-	CProcessLineEdge* obj = new CProcessLineEdge;
+	CProcessLineEdgeView* obj = new CProcessLineEdgeView;
 	m_editor.StartDrawingObject(obj);
 
 }

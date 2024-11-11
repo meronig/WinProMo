@@ -18,7 +18,7 @@ public:
 
 private:
 // Private data
-	void ReplicateRelations(CObArray* source, CObArray* destination);
+	//void ReplicateRelations(CObArray* source, CObArray* destination);
 
 };
 

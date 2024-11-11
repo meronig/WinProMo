@@ -2,8 +2,8 @@
 #define _PROCESSEDITOR_H_
 
 #include "../DiagramEditor/DiagramEditor.h"
-#include "ProcessEntityBlock.h"
-#include "ProcessLineEdge.h"
+#include "ProcessEntityBlockView.h"
+#include "ProcessLineEdgeView.h"
 
 class CProcessEditor : public CDiagramEditor
 {
@@ -38,14 +38,14 @@ public:
 
 
 private:
-	virtual void DrawObjectsR(CProcessEntityBlock* block, CDC* dc, double zoom) const;
+	virtual void DrawObjectsR(CProcessEntityBlockView* block, CDC* dc, double zoom) const;
 	// Private helpers
 	virtual void ResetTarget();
-	virtual void SetTarget(CProcessEntityBlock* obj, BOOL select);
-	CProcessEntityBlock* GetTargetBlock(CPoint point);
-	CProcessEntityBlock* GetConnectedBlock(CProcessLineEdge* line, BOOL backwards, BOOL ifSelected);
-	virtual void DeselectChildBlocks(CProcessEntityBlock* block);
-	virtual void SelectChildBlocks(CProcessEntityBlock* block);
+	virtual void SetTarget(CProcessEntityBlockView* obj, BOOL select);
+	CProcessEntityBlockView* GetTargetBlock(CPoint point);
+	CProcessEntityBlockView* GetConnectedBlock(CProcessLineEdgeView* line, BOOL backwards, BOOL ifSelected);
+	virtual void DeselectChildBlocks(CProcessEntityBlockView* block);
+	virtual void SelectChildBlocks(CProcessEntityBlockView* block);
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
 };

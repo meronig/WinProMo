@@ -1,7 +1,7 @@
 #include "../stdafx.h"
 #include "ProcessEntityContainer.h"
 #include <math.h>
-//#include "ProcessEntityBlock.h"
+#include "ProcessEntityBlockModel.h"
 
 CProcessEntityContainer::CProcessEntityContainer()
 /* ============================================================
@@ -37,12 +37,12 @@ CProcessEntityContainer::~CProcessEntityContainer()
 }
 
 // may not be needed
-void CProcessEntityContainer::removeR(CProcessEntityBlock *block) {
-	CObArray* subblocks = block->getSubBlocks();
-	for (int i = 0; i < subblocks->GetSize(); i++) {
-		CProcessEntityBlock* subblock = dynamic_cast<CProcessEntityBlock*>(subblocks->GetAt(i));
-		if (subblock) {
-			removeR(subblock);
+void CProcessEntityContainer::removeR(CProcessEntityBlockView *block) {
+	CObArray* subBlockModels = block->getModel()->getSubBlocks();
+	for (int i = 0; i < subBlockModels->GetSize(); i++) {
+		CProcessEntityBlockModel* subBlockModel = dynamic_cast<CProcessEntityBlockModel*>(subBlockModels->GetAt(i));
+		if (subBlockModel) {
+			removeR(subBlockModel->getMainView());
 		}
 	}
 	this->Remove(block);
@@ -71,19 +71,19 @@ void CProcessEntityContainer::RemoveAt(int index)
 		
 		// change it, it won't work with derived classes
 		if (obj->GetType() == _T("process_block")) {
-			CProcessEntityBlock *block = dynamic_cast<CProcessEntityBlock*>(obj);
-			CObArray subblocks;
-			subblocks.Append(*(block->getSubBlocks()));
-			for (int i = 0; i < subblocks.GetSize(); i++) {
-				CProcessEntityBlock* subblock = NULL;
-				subblock = dynamic_cast<CProcessEntityBlock*>(subblocks.GetAt(i));
-				if (subblock) {
-					this->Remove(subblock);
+			CProcessEntityBlockView *block = dynamic_cast<CProcessEntityBlockView*>(obj);
+			CObArray subBlockModels;
+			subBlockModels.Append(*(block->getModel()->getSubBlocks()));
+			for (int i = 0; i < subBlockModels.GetSize(); i++) {
+				CProcessEntityBlockModel* subBlockModel = NULL;
+				subBlockModel = dynamic_cast<CProcessEntityBlockModel*>(subBlockModels.GetAt(i));
+				if (subBlockModel) {
+					this->Remove(subBlockModel->getMainView());
 				}
 			}
-			if (block->getParentBlock()) {
+			if (block->getModel()->getParentBlock()) {
 				//remove from parent
-				block->getParentBlock()->unlinkSubBlock(block);
+				block->getModel()->getParentBlock()->unlinkSubBlock(block->getModel());
 			}
 		}
 		CDiagramEntityContainer::RemoveAt(index);
@@ -150,19 +150,21 @@ void CProcessEntityContainer::ClearUndo()
 	
 }
 
-void CProcessEntityContainer::reorderR(CProcessEntityBlock* block, CObArray* m_newOrder) {
+void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray* m_newOrder) {
 	m_newOrder->Add(block);
 	//ASSERT(false);
-	CObArray *subblocks = block->getSubBlocks();
+	ASSERT(block->getModel());
+	CObArray *subBlockViews = block->getModel()->getSubBlocks();
 
 	int max = GetSize();
 
 	for (int t = 0; t < max; t++) {
-		CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(GetAt(t));
-		if (obj) {
-			for (int i = 0; i < subblocks->GetSize(); i++) {
-				if (obj == subblocks->GetAt(i)) {
-					reorderR(obj, m_newOrder);
+		CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(GetAt(t));
+		if (blockView) {
+			for (int i = 0; i < subBlockViews->GetSize(); i++) {
+				CProcessEntityBlockModel* subBlockModel = dynamic_cast<CProcessEntityBlockModel*>(subBlockViews->GetAt(i));
+				if (blockView == subBlockModel->getMainView()) {
+					reorderR(blockView, m_newOrder);
 				}
 			}
 		}
@@ -182,10 +184,10 @@ void CProcessEntityContainer::reorder()
 	{
 		CDiagramEntity *obj = dynamic_cast<CDiagramEntity*>(GetAt(t));
 		if (obj) {
-			CProcessEntityBlock* block = dynamic_cast<CProcessEntityBlock*>(obj);
-			if (block) {
-				if (block->getParentBlock() == NULL) {
-					reorderR(block, &m_newOrderNodes);
+			CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(obj);
+			if (blockView) {
+				if (blockView->getModel()->getParentBlock() == NULL) {
+					reorderR(blockView, &m_newOrderNodes);
 				}
 			}
 			else {
@@ -202,18 +204,18 @@ void CProcessEntityContainer::reorder()
 
 }
 
-void CProcessEntityContainer::SetTarget(CProcessEntityBlock* obj, BOOL select)
+void CProcessEntityContainer::SetTarget(CProcessEntityBlockView* obj, BOOL select)
 {
 	if (obj)
 		obj->SetTarget(select);
 }
 
-CProcessEntityBlock* CProcessEntityContainer::getTarget()
+CProcessEntityBlockView* CProcessEntityContainer::getTarget()
 {
-	CProcessEntityBlock* currObj = NULL;
+	CProcessEntityBlockView* currObj = NULL;
 
 	for (int j = GetSize() - 1; j >= 0; j--) {
-		currObj = dynamic_cast<CProcessEntityBlock*>(GetAt(j));
+		currObj = dynamic_cast<CProcessEntityBlockView*>(GetAt(j));
 		if (currObj) {
 			if (currObj->IsTarget()) {
 				return currObj;
@@ -249,7 +251,7 @@ double CProcessEntityContainer::Dist(CPoint point1, CPoint point2)
 
 }
 
-CProcessEntityBlock* CProcessEntityContainer::GetPrimarySelected()
+CProcessEntityBlockView* CProcessEntityContainer::GetPrimarySelected()
 /* ============================================================
 	Function :		CProcessEntityContainer::GetPrimarySelected
 	Description :	Returns the primary object of the two
@@ -265,7 +267,7 @@ CProcessEntityBlock* CProcessEntityContainer::GetPrimarySelected()
    ============================================================*/
 {
 
-	CProcessEntityBlock* result = NULL;
+	CProcessEntityBlockView* result = NULL;
 
 	if (GetSelectCount() == 2)
 	{
@@ -273,7 +275,7 @@ CProcessEntityBlock* CProcessEntityContainer::GetPrimarySelected()
 
 		for (int t = 0; t < max; t++)
 		{
-			CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(GetAt(t));
+			CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(GetAt(t));
 			if (obj && obj->IsSelected())
 			{
 				if (result == NULL)
@@ -286,7 +288,7 @@ CProcessEntityBlock* CProcessEntityContainer::GetPrimarySelected()
 
 }
 
-CProcessEntityBlock* CProcessEntityContainer::GetSecondarySelected()
+CProcessEntityBlockView* CProcessEntityContainer::GetSecondarySelected()
 /* ============================================================
 	Function :		CProcessEntityContainer::GetSecondarySelected
 	Description :	Returns the secondary object of the two
@@ -302,7 +304,7 @@ CProcessEntityBlock* CProcessEntityContainer::GetSecondarySelected()
    ============================================================*/
 {
 
-	CProcessEntityBlock* result = NULL;
+	CProcessEntityBlockView* result = NULL;
 
 	if (GetSelectCount() == 2)
 	{
@@ -310,7 +312,7 @@ CProcessEntityBlock* CProcessEntityContainer::GetSecondarySelected()
 
 		for (int t = 0; t < max; t++)
 		{
-			CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(GetAt(t));
+			CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(GetAt(t));
 			if (obj && obj->IsSelected())
 				result = obj;
 		}
@@ -339,7 +341,7 @@ int	CProcessEntityContainer::GetSelectCount()
 
 	for (int t = 0; t < max; t++)
 	{
-		CProcessEntityBlock* obj = dynamic_cast<CProcessEntityBlock*>(GetAt(t));
+		CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(GetAt(t));
 
 		if (obj && obj->IsSelected())
 			count++;

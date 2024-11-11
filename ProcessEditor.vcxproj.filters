@@ -66,7 +66,7 @@
     <ClCompile Include="ProcessEditor\ProcessEntityContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessEntityBlock.cpp">
+    <ClCompile Include="ProcessEditor\ProcessEntityBlockView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProcessEditor\LinkFactory.cpp">
@@ -84,7 +84,16 @@
     <ClCompile Include="ProcessEditor\ProcessClipboardHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessLineEdge.cpp">
+    <ClCompile Include="ProcessEditor\ProcessLineEdgeView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessEditor\ProcessEntityBlockModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessEditor\ProcessModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessEditor\ProcessLineEdgeModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,7 +158,7 @@
     <ClInclude Include="ProcessEditor\ProcessEntityContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessEntityBlock.h">
+    <ClInclude Include="ProcessEditor\ProcessEntityBlockView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProcessEditor\LinkFactory.h">
@@ -167,7 +176,16 @@
     <ClInclude Include="ProcessEditor\ProcessClipboardHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessLineEdge.h">
+    <ClInclude Include="ProcessEditor\ProcessLineEdgeView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessEditor\ProcessEntityBlockModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessEditor\ProcessModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessEditor\ProcessLineEdgeModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

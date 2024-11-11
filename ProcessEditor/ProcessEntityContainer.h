@@ -2,9 +2,9 @@
 #define _PROCESSENTITYCONTAINER_H_
 
 #include "../DiagramEditor/DiagramEntityContainer.h"
-#include "../DiagramEditor/DiagramEntity.h"
+//#include "../DiagramEditor/DiagramEntity.h"
 #include "../DiagramEditor/Tokenizer.h"
-#include "ProcessEntityBlock.h"
+#include "ProcessEntityBlockView.h"
 
 class CProcessEntityContainer : public CDiagramEntityContainer {
 public:
@@ -16,8 +16,8 @@ public:
 
 	// Selection
 	int					GetSelectCount();
-	CProcessEntityBlock* GetPrimarySelected();
-	CProcessEntityBlock* GetSecondarySelected();
+	CProcessEntityBlockView* GetPrimarySelected();
+	CProcessEntityBlockView* GetSecondarySelected();
 
 	// Overrides
 	virtual void	RemoveAt(int index);
@@ -27,13 +27,13 @@ public:
 	virtual void	ClearUndo();
 
 	virtual void reorder();
-	virtual void SetTarget(CProcessEntityBlock* obj, BOOL select);
-	virtual CProcessEntityBlock* getTarget();
+	virtual void SetTarget(CProcessEntityBlockView* obj, BOOL select);
+	virtual CProcessEntityBlockView* getTarget();
 
 private:
 	// Private helpers
 	double	Dist(CPoint point1, CPoint point2);
-	void reorderR(CProcessEntityBlock* block, CObArray* m_newOrder);
-	void removeR(CProcessEntityBlock* block);
+	void reorderR(CProcessEntityBlockView* block, CObArray* m_newOrder);
+	void removeR(CProcessEntityBlockView* block);
 };
 #endif //_PROCESSENTITYCONTAINER_H_

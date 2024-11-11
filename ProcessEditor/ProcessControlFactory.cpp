@@ -21,8 +21,8 @@
 #include "../stdafx.h"
 #include "ProcessControlFactory.h"
 
-#include "ProcessEntityBlock.h"
-#include "ProcessLineEdge.h"
+#include "ProcessEntityBlockView.h"
+#include "ProcessLineEdgeView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -54,10 +54,10 @@ CDiagramEntity* CProcessControlFactory::CreateFromString( const CString& str )
 {
 	CDiagramEntity* obj;
 
-	obj = CProcessEntityBlock::CreateFromString( str );
+	obj = CProcessEntityBlockView::CreateFromString( str );
 	
 	if( !obj )
-		obj = CProcessLineEdge::CreateFromString( str );
+		obj = CProcessLineEdgeView::CreateFromString( str );
 	
 	
 	return obj;
