@@ -21,10 +21,14 @@ public:
     virtual CProcessLineEdgeView* getLastSegment();
     virtual CProcessLineEdgeView* getFirstSegment();
 
+    static	CProcessModel* CreateFromString(const CString& str);
 
 protected:
     CProcessModel* m_source;
     CProcessModel* m_dest;
+
+    virtual CString				GetDefaultGetString() const;
+
 
 };
 

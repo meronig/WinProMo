@@ -48,6 +48,8 @@ private:
 	virtual void SelectChildBlocks(CProcessEntityBlockView* block);
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
+
+	CProcessModel* GetNamedModel(const CObArray& array, const CString& name) const;
 };
 
 #endif //_PROCESSEDITOR_H_

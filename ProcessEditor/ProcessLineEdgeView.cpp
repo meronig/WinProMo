@@ -19,7 +19,7 @@ CProcessLineEdgeView::CProcessLineEdgeView()
 {
 
 	SetMinimumSize(CSize(-1, -1));
-	SetType(_T("process_edge"));
+	SetType(_T("process_edge_view"));
 	SetTitle(_T(""));
 
 	SetPropertyDialog(&m_dlg, CPropertyDialog::IDD);
@@ -450,7 +450,15 @@ CString CProcessLineEdgeView::GetDefaultGetString() const
    ============================================================*/
    //ASSERT_VALID(false);
 
+	ASSERT_VALID(this->getModel());
+
 	CString str;
+
+	CString model = getModel()->GetName();
+	model.Replace(_T(":"), _T("\\colon"));
+	model.Replace(_T(";"), _T("\\semicolon"));
+	model.Replace(_T(","), _T("\\comma"));
+	model.Replace(_T("\r\n"), _T("\\newline"));
 
 	CString title = GetTitle();
 	title.Replace(_T(":"), _T("\\colon"));
@@ -488,7 +496,7 @@ CString CProcessLineEdgeView::GetDefaultGetString() const
 		destString.Replace(_T("\r\n"), _T("\\newline"));
 	}
 
-	str.Format(_T("%s:%f,%f,%f,%f,%s,%s,%i,%s,%s"), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup(), sourceString, destString);
+	str.Format(_T("%s:%f,%f,%f,%f,%s,%s,%i,%s,%s,%s"), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup(), model, sourceString, destString);
 
 	return str;
 

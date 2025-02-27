@@ -23,6 +23,7 @@
 
 #include "ProcessEntityBlockView.h"
 #include "ProcessLineEdgeView.h"
+#include "ProcessLineEdgeModel.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,7 +34,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CProcessControlFactory
 
-CDiagramEntity* CProcessControlFactory::CreateFromString( const CString& str )
+CDiagramEntity* CProcessControlFactory::CreateViewFromString( const CString& str )
 /* ============================================================
 	Function :		CProcessControlFactory::CreateFromString
 	Description :	The function returns an object from the 
@@ -60,5 +61,18 @@ CDiagramEntity* CProcessControlFactory::CreateFromString( const CString& str )
 		obj = CProcessLineEdgeView::CreateFromString( str );
 	
 	
+	return obj;
+}
+
+CProcessModel* CProcessControlFactory::CreateModelFromString(const CString& str)
+{
+	CProcessModel* obj;
+
+	obj = CProcessEntityBlockModel::CreateFromString(str);
+
+	if (!obj)
+		obj = CProcessLineEdgeModel::CreateFromString(str);
+
+
 	return obj;
 }

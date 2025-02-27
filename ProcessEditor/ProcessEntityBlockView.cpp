@@ -25,7 +25,7 @@ CProcessEntityBlockView::CProcessEntityBlockView()
 {
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
-	SetType(_T("process_block"));
+	SetType(_T("process_block_view"));
 
 	CString title;
 	title.LoadString(IDS_PROCESS_BLOCK);
@@ -101,8 +101,9 @@ void CProcessEntityBlockView::Draw(CDC* dc, CRect rect)
 
 	CFont font;
 	CString str;
-	str.Format(_T("%d,%d"), getModel()->getIncomingEdges()->GetSize(), getModel()->getOutgoingEdges()->GetSize());
-	//str = GetTitle();
+	/* uncomment line below for debug */
+	//str.Format(_T("%d,%d"), getModel()->getIncomingEdges()->GetSize(), getModel()->getOutgoingEdges()->GetSize());
+	str = GetTitle();
 	font.CreateFont(-round(12.0 * GetZoom()), 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, _T("Courier New"));
 	dc->SelectObject(&font);
 	int mode = dc->SetBkMode(TRANSPARENT);
@@ -324,10 +325,15 @@ CString CProcessEntityBlockView::GetDefaultGetString() const
    ============================================================*/
 	//ASSERT_VALID(false);
 	ASSERT_VALID(this->getModel());
-	CProcessEntityBlockModel* model = this->getModel();
-
+	
 	CString str;
-
+	
+	CString model = getModel()->GetName();
+	model.Replace(_T(":"), _T("\\colon"));
+	model.Replace(_T(";"), _T("\\semicolon"));
+	model.Replace(_T(","), _T("\\comma"));
+	model.Replace(_T("\r\n"), _T("\\newline"));
+	
 	CString title = GetTitle();
 	title.Replace(_T(":"), _T("\\colon"));
 	title.Replace(_T(";"), _T("\\semicolon"));
@@ -340,6 +346,8 @@ CString CProcessEntityBlockView::GetDefaultGetString() const
 	name.Replace(_T(","), _T("\\comma"));
 	name.Replace(_T("\r\n"), _T("\\newline"));
 
+	/*
+	* moved to model
 	CString parentString = _T("");
 
 	
@@ -356,7 +364,9 @@ CString CProcessEntityBlockView::GetDefaultGetString() const
 	}
 	
 	str.Format(_T("%s:%f,%f,%f,%f,%s,%s,%i,%s"), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup(), parentString);
-
+	*/
+	str.Format(_T("%s:%f,%f,%f,%f,%s,%s,%i,%s"), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup(), model);
+	
 	return str;
 
 }
@@ -378,7 +388,6 @@ CDiagramEntity* CProcessEntityBlockView::Clone()
 	//Hierarchy is not copied: if multiple blocks are selected, they become root nodes
 	CProcessEntityBlockView* obj = new CProcessEntityBlockView;
 	obj->Copy(this);
-	//obj->setModel(this->getModel());
 	obj->setModel(new CProcessEntityBlockModel());
 	return obj;
 
@@ -469,7 +478,6 @@ void CProcessEntityBlockView::SetRect(double left, double top, double right, dou
 
 	}
 	
-	/* new */
 	double deltaY = GetTop() - top;
 	double deltaX = GetLeft() - left;
 

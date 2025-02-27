@@ -145,7 +145,39 @@ void CProcessEditor::SaveObjects(CStringArray& stra)
 	CDiagramEditor::SaveObjects(stra);
 	CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
 
+	// TODO: save model elements
 
+	CObArray models;
+
+	int i;
+	for (i = 0; i < objs->GetSize(); i++) {
+		CProcessEntityBlockView* currObjBlock = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
+		if (currObjBlock) {
+			models.Add(currObjBlock->getModel());
+		}
+		CProcessLineEdgeView* currObjEdge = dynamic_cast<CProcessLineEdgeView*>(objs->GetAt(i));
+		if (currObjEdge) {
+			models.Add(currObjEdge->getModel());
+		}
+	}
+
+	for (i = 0; i < models.GetSize(); i++) {
+		CProcessModel* currModel = dynamic_cast<CProcessModel*>(models.GetAt(i));
+		bool found = false;
+		for (int j = 0; j < i; j++) {
+			CProcessModel* prevModel = dynamic_cast<CProcessModel*>(models.GetAt(j));
+			if (prevModel == currModel) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			stra.Add(currModel->GetString());
+		}
+		else {
+
+		}
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -162,7 +194,6 @@ CProcessEntityBlockView* CProcessEditor::GetTargetBlock(CPoint point) {
 		if (currObj) {
 
 			CPoint virtpoint(point);
-			//ScreenToVirtual(virtpoint);
 			int hitCode = currObj->GetHitCode(virtpoint);
 			if (hitCode == DEHT_BODY) {
 				// We found the object that was clicked
@@ -196,10 +227,6 @@ CProcessEntityBlockView* CProcessEditor::GetTargetBlock(CPoint point) {
 										isValid = false;
 										break;
 									}
-									/*if (selObj->contains(currObj, true)) {
-										isValid = false;
-										break;
-									}*/
 								}
 							}
 						}
@@ -247,32 +274,6 @@ CProcessEntityBlockView* CProcessEditor::GetConnectedBlock(CProcessLineEdgeView*
 		}
 	}
 
-	// fix may need rework
-
-	//CDiagramEntity* element;
-
-	//if (backwards) {
-	//	element = line->GetSource();
-	//}
-	//else {
-	//	element = line->GetDestination();
-	//}
-
-	//CProcessEntityBlockView* block = dynamic_cast<CProcessEntityBlockView*>(element);
-	//if (block) {
-
-	//	return block;
-	//}
-	//CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(element);
-	//if (edge) {
-	//	if (ifSelected) {
-	//		if (!edge->IsSelected()) {
-	//			return NULL;
-	//		}
-	//	}
-	//	return GetConnectedBlock(edge, backwards, ifSelected);
-	//}
-	//	
 	return NULL;
 }
 
@@ -333,11 +334,6 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 		CProcessEntityBlockView* selObj = NULL;
 		CProcessLineEdgeView* selEdge = NULL;
 
-		//double oldTop = 0;
-		//double oldLeft = 0;
-		//double deltaTop = 0;
-		//double deltaLeft = 0;
-
 		//BUG: when moving two child blocks, cannot determine target
 
 		//We have issues with snaps
@@ -380,34 +376,9 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 				}
 			}
 		}
-		// may want to iterate among selected objects until one finds a block
-		//selObj = dynamic_cast<CProcessEntityBlockView*>(GetSelectedObject());
-		//if (selObj) {
-		//	oldTop = selObj->GetTop();
-		//	oldLeft = selObj->GetLeft();
-		//}
-
-
+		
 		CDiagramEditor::OnMouseMove(nFlags, point);
 
-		//if (selObj) {
-		//	deltaTop = selObj->GetTop() - oldTop;
-		//	deltaLeft = selObj->GetLeft() - oldLeft;
-		//}
-
-		//if only one object is selected, we need to manually trigger moverect to all child blocks
-		//looks dead code
-		//if (GetSelectCount() == 1) {
-		//	if (selObj) {
-		//		if (deltaLeft != 0 || deltaTop != 0) {
-		//			for (int i = 0; i < selObj->getModel()->getSubBlocks()->GetSize(); i++) {
-		//				//fix this is a model
-		//				CProcessEntityBlockView* subBlock = dynamic_cast<CProcessEntityBlockView*>(selObj->getModel()->getSubBlocks()->GetAt(i));
-		//			}
-		//		}
-		//	}
-		//}
-		
 	}
 	else if (GetInteractMode() == MODE_RESIZING){
 
@@ -633,7 +604,6 @@ void CProcessEditor::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
    ============================================================*/
 {
 
-	//SetRedraw(FALSE);
 	CDiagramEditor::OnKeyDown(nChar, nRepCnt, nFlags);
 
 	
@@ -685,7 +655,6 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 				GetDiagramEntityContainer()->Snapshot();
 				//split the edge into two
 				CProcessLineEdgeView* newEdge = new CProcessLineEdgeView;
-				//fix make model consistent
 				//compute the length and position of both edges
 				CRect edgeRect = edge->GetRect();
 				CRect newEdgeRect(edgeRect);
@@ -760,19 +729,15 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 			currObj = objs->getTarget();
 			if (currObj) {
 				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-					//fix: model
 					CProcessLineEdgeView* destEdge = dynamic_cast<CProcessLineEdgeView*>(edge->GetDestination());
 					if (!destEdge) {
 						edge->getModel()->SetDestination(currObj->getModel());
-						//edge->SetDestination(currObj);
 					}
 				}
 				else if (GetSubMode() == DEHT_TOPLEFT) {
-					//fix: model
 					CProcessLineEdgeView* srcEdge = dynamic_cast<CProcessLineEdgeView*>(edge->GetSource());
 					if (!srcEdge) {
 						edge->getModel()->SetSource(currObj->getModel());
-						//edge->SetSource(currObj);
 					}
 				}
 			}
@@ -823,7 +788,6 @@ CDiagramEntity* CProcessEditor::GetNamedObject(const CString& name) const
 			result = obj;
 	}
 
-	//return dynamic_cast<CProcessEntityBlock*>(result);
 	return result;
 
 }
@@ -932,12 +896,26 @@ void CProcessEditor::AutoResizeAll()
 	for (int i = 0; i < GetObjectCount(); i++) {
 		selObj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 		if (selObj) {
-		//	if (selObj->IsSelected()) {
-				selObj->autoResize();
-		//	}
+			selObj->autoResize();
 		}
 	}
 	RedrawWindow();
+}
+
+CProcessModel* CProcessEditor::GetNamedModel(const CObArray& array, const CString& name) const
+{
+	CProcessModel* result = NULL;
+
+	int count = array.GetSize();
+	CProcessModel* obj;
+	for (int t = 0; t < count; t++)
+	{
+		obj = dynamic_cast<CProcessModel*>(array.GetAt(t));
+		if (obj && obj->GetName() == name)
+			result = obj;
+	}
+
+	return result;
 }
 
 
@@ -973,30 +951,25 @@ void CProcessEditor::Load(const CStringArray& stra)
 {
 	int max = stra.GetSize();
 
-	//First read: create objects
+	CObArray models;
+
+	//First read: create model and view elements
 	for (int t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
 		if (!FromString(str))
 		{
-			CDiagramEntity* obj = CProcessControlFactory::CreateFromString(str);
+			CDiagramEntity* obj = CProcessControlFactory::CreateViewFromString(str);
 			if (obj)
-				//m_objs.Add(obj);
 				AddObject(obj);
 
-			/*
-			CGSMEntity* obj;
-
-			obj = CGSMEntity::CreateFromString( str );
-			if( !obj )
-				obj = CDiagramLine::CreateFromString( str );
-
-			if( obj )
-				m_editor.AddObject( obj );
-			*/
+			CProcessModel* model = CProcessControlFactory::CreateModelFromString(str);
+			if (model)
+				models.Add(model);
 		}
 	}
-	//Second read: create logical links between objects
+
+	//Second read: create logical links between elements
 	for (int t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
@@ -1015,43 +988,99 @@ void CProcessEditor::Load(const CStringArray& stra)
 				data.TrimLeft();
 				data.TrimRight();
 				// Note: code cannot be reused for derived classes
-				if (header == _T("process_block"))
+				if (header == _T("process_block_view"))
 				{
 					CTokenizer tok(data.Left(data.GetLength() - 1));
 					int size = tok.GetSize();
 					if (size >= 8) {
 						CString nodeName;
-						CString parentName;
+						CString modelName;
 						tok.GetAt(5, nodeName);
-						tok.GetAt(7, parentName);
-						CProcessEntityBlockView* node = dynamic_cast<CProcessEntityBlockView*>(GetNamedObject(nodeName));
-						if (node) {
-							CProcessEntityBlockView* parent = dynamic_cast<CProcessEntityBlockView*>(GetNamedObject(parentName));
-							if (parent) {
-								node->getModel()->setParentBlock(parent->getModel());
+						tok.GetAt(7, modelName);
+						CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(GetNamedObject(nodeName));
+						if (blockView) {
+							CProcessEntityBlockModel* blockModel = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, modelName));
+							if (blockModel) {
+								blockView->setModel(blockModel);
+							}
+							else {
+								//input file is malformed: create a new model to avoid inconsistencies
+								blockView->setModel(new CProcessEntityBlockModel);
 							}
 						}
 					}
 				}
-				else if (header == _T("process_edge")) {
+				else if (header == _T("process_block_model")) {
 					CTokenizer tok(data.Left(data.GetLength() - 1));
 					int size = tok.GetSize();
-					if (size >= 9) {
+					if (size >= 2) {
 						CString nodeName;
+						CString parentName;
+						tok.GetAt(0, nodeName);
+						tok.GetAt(1, parentName);
+						CProcessEntityBlockModel* blockModel = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, nodeName));
+						if (blockModel) {
+							CProcessEntityBlockModel* parent = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, parentName));
+							if (parent) {
+								blockModel->setParentBlock(parent);
+							}
+						}
+					}
+				}
+				else if (header == _T("process_edge_view")) {
+					CTokenizer tok(data.Left(data.GetLength() - 1));
+					int size = tok.GetSize();
+					if (size >= 10) {
+						CString nodeName;
+						CString modelName;
 						CString sourceName;
 						CString destName;
 						tok.GetAt(5, nodeName);
-						tok.GetAt(7, sourceName);
-						tok.GetAt(8, destName);
-						CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(GetNamedObject(nodeName));
-						if (edge) {
+						tok.GetAt(7, modelName);
+						tok.GetAt(8, sourceName);
+						tok.GetAt(9, destName);
+						CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(GetNamedObject(nodeName));
+						if (edgeView) {
+							CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(GetNamedModel(models, modelName));
+							if (edgeModel) {
+								edgeView->setModel(edgeModel);
+							}
+							else {
+								//input file is malformed: create a new model to avoid inconsistencies
+								edgeView->setModel(new CProcessLineEdgeModel);
+							}
+						
 							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedObject(sourceName));
 							if (source) {
-								edge->SetSource(source);
+								edgeView->SetSource(source);
 							}
 							CDiagramEntity* dest = dynamic_cast<CDiagramEntity*>(GetNamedObject(destName));
 							if (dest) {
-								edge->SetDestination(dest);
+								edgeView->SetDestination(dest);
+							}
+						}
+						
+					}
+				}
+				else if (header == _T("process_edge_model")) {
+					CTokenizer tok(data.Left(data.GetLength() - 1));
+					int size = tok.GetSize();
+					if (size >= 3) {
+						CString nodeName;
+						CString sourceName;
+						CString destName;
+						tok.GetAt(0, nodeName);
+						tok.GetAt(1, sourceName);
+						tok.GetAt(2, destName);
+						CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(GetNamedModel(models, nodeName));
+						if (edgeModel) {
+							CProcessEntityBlockModel* source = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, sourceName));
+							if (source) {
+								edgeModel->SetSource(source);
+							}
+							CProcessEntityBlockModel* dest = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, destName));
+							if (dest) {
+								edgeModel->SetDestination(dest);
 							}
 						}
 					}

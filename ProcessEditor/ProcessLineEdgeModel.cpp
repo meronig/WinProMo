@@ -1,5 +1,7 @@
 #include "ProcessLineEdgeModel.h"
 #include "ProcessEntityBlockModel.h"
+#include "LinkFactory.h"
+
 
 CProcessLineEdgeModel::CProcessLineEdgeModel()
 /* ============================================================
@@ -14,6 +16,8 @@ CProcessLineEdgeModel::CProcessLineEdgeModel()
 
    ============================================================*/
 {
+	SetType(_T("process_edge_model"));
+	SetName(CLinkFactory::GetID());
 
 	m_source = NULL;
 	m_dest = NULL;
@@ -214,4 +218,88 @@ CProcessLineEdgeView* CProcessLineEdgeModel::getFirstSegment()
 		}
 	}
 	return NULL;
+}
+
+
+CProcessModel* CProcessLineEdgeModel::CreateFromString(const CString& str)
+/* ============================================================
+	Function :		CProcessEntityBlock::CreateFromString
+	Description :	Static factory function that creates and
+					returns an instance of this class if str
+					is a valid representation.
+
+	Return :		CDiagramEntity*		-	The object, or NULL
+											if str is not a
+											representation of
+											this type.
+	Parameters :	const CString& str	-	The string to create
+											from.
+
+	Usage :			Can be used as a factory for text file loads.
+					Each object type should have its own
+					version - the default one is a model
+					implementation.
+
+   ============================================================*/
+{
+
+	CProcessLineEdgeModel* obj = new CProcessLineEdgeModel;
+	if (!obj->FromString(str))
+	{
+		delete obj;
+		obj = NULL;
+	}
+
+	return obj;
+
+}
+
+CString CProcessLineEdgeModel::GetDefaultGetString() const
+{
+	/* ============================================================
+	Function :		CProcessEntityBlock::GetDefaultString
+	Description :	Gets the default properties of the object
+					as a string.
+	Access :		Protected
+
+	Return :		CString	-	Resulting string
+	Parameters :	none
+
+	Usage :			Call as a part of the saving of objects
+					to disk.
+
+   ============================================================*/
+
+	CString str;
+
+	CString name = GetName();
+	name.Replace(_T(":"), _T("\\colon"));
+	name.Replace(_T(";"), _T("\\semicolon"));
+	name.Replace(_T(","), _T("\\comma"));
+	name.Replace(_T("\r\n"), _T("\\newline"));
+
+	CString sourceString = _T("");
+	CString destString = _T("");
+
+
+	if (m_source) {
+		sourceString = m_source->GetName();
+		sourceString.Replace(_T(":"), _T("\\colon"));
+		sourceString.Replace(_T(";"), _T("\\semicolon"));
+		sourceString.Replace(_T(","), _T("\\comma"));
+		sourceString.Replace(_T("\r\n"), _T("\\newline"));
+	}
+
+	if (m_dest) {
+		destString = m_dest->GetName();
+		destString.Replace(_T(":"), _T("\\colon"));
+		destString.Replace(_T(";"), _T("\\semicolon"));
+		destString.Replace(_T(","), _T("\\comma"));
+		destString.Replace(_T("\r\n"), _T("\\newline"));
+	}
+
+	str.Format(_T("%s:%s,%s,%s"), GetType(), name, sourceString, destString);
+
+	return str;
+
 }

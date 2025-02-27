@@ -33,6 +33,9 @@ public:
 	virtual void unlinkIncomingEdges();
 	virtual CObArray* getIncomingEdges();
 	virtual CProcessEntityBlockView* getMainView() const;
+
+	static	CProcessModel* CreateFromString(const CString& str);
+
 	
 
 protected:
@@ -40,5 +43,8 @@ protected:
 	CObArray m_outgoingEdges;
 	CObArray m_incomingEdges;
 	CProcessEntityBlockModel* parentBlock;
+
+	virtual CString				GetDefaultGetString() const;
+
 };
 #endif //_PROCESSENTITYBLOCKMODEL_H_

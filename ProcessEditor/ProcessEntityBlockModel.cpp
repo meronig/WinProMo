@@ -1,8 +1,13 @@
 #include "ProcessEntityBlockModel.h"
 #include "ProcessLineEdgeModel.h"
+#include "LinkFactory.h"
+
 
 CProcessEntityBlockModel::CProcessEntityBlockModel() {
+	SetType(_T("process_block_model"));
+	SetName(CLinkFactory::GetID());
 	this->parentBlock = NULL;
+
 }
 
 CProcessEntityBlockModel::~CProcessEntityBlockModel() {
@@ -185,4 +190,77 @@ CProcessEntityBlockView* CProcessEntityBlockModel::getMainView() const
 	return view;
 }
 
+CProcessModel* CProcessEntityBlockModel::CreateFromString(const CString& str)
+/* ============================================================
+	Function :		CProcessEntityBlock::CreateFromString
+	Description :	Static factory function that creates and
+					returns an instance of this class if str
+					is a valid representation.
 
+	Return :		CDiagramEntity*		-	The object, or NULL
+											if str is not a
+											representation of
+											this type.
+	Parameters :	const CString& str	-	The string to create
+											from.
+
+	Usage :			Can be used as a factory for text file loads.
+					Each object type should have its own
+					version - the default one is a model
+					implementation.
+
+   ============================================================*/
+{
+
+	CProcessEntityBlockModel* obj = new CProcessEntityBlockModel;
+	if (!obj->FromString(str))
+	{
+		delete obj;
+		obj = NULL;
+	}
+
+	return obj;
+
+}
+
+CString CProcessEntityBlockModel::GetDefaultGetString() const
+{
+	/* ============================================================
+	Function :		CProcessEntityBlock::GetDefaultString
+	Description :	Gets the default properties of the object
+					as a string.
+	Access :		Protected
+
+	Return :		CString	-	Resulting string
+	Parameters :	none
+
+	Usage :			Call as a part of the saving of objects
+					to disk.
+
+   ============================================================*/
+   
+	CString str;
+
+	CString name = GetName();
+	name.Replace(_T(":"), _T("\\colon"));
+	name.Replace(_T(";"), _T("\\semicolon"));
+	name.Replace(_T(","), _T("\\comma"));
+	name.Replace(_T("\r\n"), _T("\\newline"));
+
+	CString parentString = _T("");
+
+
+	if (parentBlock) {
+		parentString = parentBlock->GetName();
+		parentString.Replace(_T(":"), _T("\\colon"));
+		parentString.Replace(_T(";"), _T("\\semicolon"));
+		parentString.Replace(_T(","), _T("\\comma"));
+		parentString.Replace(_T("\r\n"), _T("\\newline"));
+		
+	}
+
+	str.Format(_T("%s:%s,%s"), GetType(), name, parentString);
+
+	return str;
+
+}

@@ -2,12 +2,14 @@
 #define _PROCESSCONTROLFACTORY_H_
 
 #include "../DiagramEditor/DiagramEntity.h"
+#include "ProcessModel.h"
 
 class CProcessControlFactory {
 
 public:
 // Implementation
-	static CDiagramEntity* CreateFromString( const CString& str );
+	static CDiagramEntity* CreateViewFromString( const CString& str );
+	static CProcessModel* CreateModelFromString(const CString& str);
 
 };
 
