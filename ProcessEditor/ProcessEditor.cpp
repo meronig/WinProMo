@@ -145,8 +145,6 @@ void CProcessEditor::SaveObjects(CStringArray& stra)
 	CDiagramEditor::SaveObjects(stra);
 	CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
 
-	// TODO: save model elements
-
 	CObArray models;
 
 	int i;
@@ -173,9 +171,6 @@ void CProcessEditor::SaveObjects(CStringArray& stra)
 		}
 		if (!found) {
 			stra.Add(currModel->GetString());
-		}
-		else {
-
 		}
 	}
 }
@@ -738,6 +733,21 @@ void CProcessEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 					CProcessLineEdgeView* srcEdge = dynamic_cast<CProcessLineEdgeView*>(edge->GetSource());
 					if (!srcEdge) {
 						edge->getModel()->SetSource(currObj->getModel());
+					}
+				}
+			}
+			//no target, unlink models
+			else {
+				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
+					CProcessLineEdgeView* destEdge = dynamic_cast<CProcessLineEdgeView*>(edge->GetDestination());
+					if (!destEdge) {
+						edge->getModel()->SetDestination(NULL);
+					}
+				}
+				else if (GetSubMode() == DEHT_TOPLEFT) {
+					CProcessLineEdgeView* srcEdge = dynamic_cast<CProcessLineEdgeView*>(edge->GetSource());
+					if (!srcEdge) {
+						edge->getModel()->SetSource(NULL);
 					}
 				}
 			}
