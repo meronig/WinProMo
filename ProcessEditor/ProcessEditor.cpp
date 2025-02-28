@@ -997,18 +997,21 @@ void CProcessEditor::Load(const CStringArray& stra)
 				header.TrimRight();
 				data.TrimLeft();
 				data.TrimRight();
-				// Note: code cannot be reused for derived classes
-				if (header == _T("process_block_view"))
-				{
-					CTokenizer tok(data.Left(data.GetLength() - 1));
-					int size = tok.GetSize();
-					if (size >= 8) {
-						CString nodeName;
-						CString modelName;
-						tok.GetAt(5, nodeName);
-						tok.GetAt(7, modelName);
-						CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(GetNamedObject(nodeName));
-						if (blockView) {
+
+				CString nodeName;
+				CString modelName;
+
+				CTokenizer tok(data.Left(data.GetLength() - 1));
+				int size = tok.GetSize();
+
+				if (size >= 1) {
+					tok.GetAt(0, nodeName);
+					
+					//current element is a block view
+					CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(GetNamedObject(nodeName));
+					if (blockView) {
+						if (size >= 8) {
+							tok.GetAt(7, modelName);
 							CProcessEntityBlockModel* blockModel = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, modelName));
 							if (blockModel) {
 								blockView->setModel(blockModel);
@@ -1019,38 +1022,19 @@ void CProcessEditor::Load(const CStringArray& stra)
 							}
 						}
 					}
-				}
-				else if (header == _T("process_block_model")) {
-					CTokenizer tok(data.Left(data.GetLength() - 1));
-					int size = tok.GetSize();
-					if (size >= 2) {
-						CString nodeName;
-						CString parentName;
-						tok.GetAt(0, nodeName);
-						tok.GetAt(1, parentName);
-						CProcessEntityBlockModel* blockModel = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, nodeName));
-						if (blockModel) {
-							CProcessEntityBlockModel* parent = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, parentName));
-							if (parent) {
-								blockModel->setParentBlock(parent);
-							}
-						}
-					}
-				}
-				else if (header == _T("process_edge_view")) {
-					CTokenizer tok(data.Left(data.GetLength() - 1));
-					int size = tok.GetSize();
-					if (size >= 10) {
-						CString nodeName;
-						CString modelName;
-						CString sourceName;
-						CString destName;
-						tok.GetAt(5, nodeName);
-						tok.GetAt(7, modelName);
-						tok.GetAt(8, sourceName);
-						tok.GetAt(9, destName);
-						CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(GetNamedObject(nodeName));
-						if (edgeView) {
+					
+					//current element is an edge view
+					CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(GetNamedObject(nodeName));
+					if (edgeView) {
+
+						if (size >= 10) {
+							CString modelName;
+							CString sourceName;
+							CString destName;
+							tok.GetAt(7, modelName);
+							tok.GetAt(8, sourceName);
+							tok.GetAt(9, destName);
+
 							CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(GetNamedModel(models, modelName));
 							if (edgeModel) {
 								edgeView->setModel(edgeModel);
@@ -1059,7 +1043,7 @@ void CProcessEditor::Load(const CStringArray& stra)
 								//input file is malformed: create a new model to avoid inconsistencies
 								edgeView->setModel(new CProcessLineEdgeModel);
 							}
-						
+
 							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedObject(sourceName));
 							if (source) {
 								edgeView->SetSource(source);
@@ -1069,21 +1053,31 @@ void CProcessEditor::Load(const CStringArray& stra)
 								edgeView->SetDestination(dest);
 							}
 						}
-						
 					}
-				}
-				else if (header == _T("process_edge_model")) {
-					CTokenizer tok(data.Left(data.GetLength() - 1));
-					int size = tok.GetSize();
-					if (size >= 3) {
-						CString nodeName;
-						CString sourceName;
-						CString destName;
-						tok.GetAt(0, nodeName);
-						tok.GetAt(1, sourceName);
-						tok.GetAt(2, destName);
-						CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(GetNamedModel(models, nodeName));
-						if (edgeModel) {
+
+					//current element is a block model
+					CProcessEntityBlockModel* blockModel = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, nodeName));
+					if (blockModel) {
+						if (size >= 2) {
+							CString parentName;
+							tok.GetAt(1, parentName);
+
+							CProcessEntityBlockModel* parent = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, parentName));
+							if (parent) {
+								blockModel->setParentBlock(parent);
+							}
+						}
+					}
+
+					//current element is an edge model
+					CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(GetNamedModel(models, nodeName));
+					if (edgeModel) {
+						if (size >= 3) {
+							CString sourceName;
+							CString destName;
+							tok.GetAt(1, sourceName);
+							tok.GetAt(2, destName);
+
 							CProcessEntityBlockModel* source = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, sourceName));
 							if (source) {
 								edgeModel->SetSource(source);
@@ -1095,6 +1089,7 @@ void CProcessEditor::Load(const CStringArray& stra)
 						}
 					}
 				}
+
 			}
 		}
 	}

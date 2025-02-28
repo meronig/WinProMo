@@ -36,6 +36,8 @@ public:
 
 protected:
     virtual CString				GetDefaultGetString() const;
+    virtual BOOL				GetDefaultFromString(CString& str);
+
     virtual void	DrawSelectionMarkers( CDC* dc, CRect rect ) const;
     virtual CRect	GetSelectionMarkerRect(UINT marker, CRect rect) const;
     virtual void DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_length, int head_width);

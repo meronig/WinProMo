@@ -346,28 +346,87 @@ CString CProcessEntityBlockView::GetDefaultGetString() const
 	name.Replace(_T(","), _T("\\comma"));
 	name.Replace(_T("\r\n"), _T("\\newline"));
 
-	/*
-	* moved to model
-	CString parentString = _T("");
-
-	
-	if (model->getParentBlock() != NULL) {
-		CProcessEntityBlockView* parent = model->getParentBlock()->getMainView();
-		if (parent) {
-			parentString = parent->GetName();
-			parentString.Replace(_T(":"), _T("\\colon"));
-			parentString.Replace(_T(";"), _T("\\semicolon"));
-			parentString.Replace(_T(","), _T("\\comma"));
-			parentString.Replace(_T("\r\n"), _T("\\newline"));
-		}
-		
-	}
-	
-	str.Format(_T("%s:%f,%f,%f,%f,%s,%s,%i,%s"), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup(), parentString);
-	*/
-	str.Format(_T("%s:%f,%f,%f,%f,%s,%s,%i,%s"), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup(), model);
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s"), GetType(), name, GetLeft(), GetTop(), GetRight(), GetBottom(), title, GetGroup(), model);
 	
 	return str;
+
+}
+
+BOOL CProcessEntityBlockView::GetDefaultFromString(CString& str)
+/* ============================================================
+	Function :		CDiagramEntity::GetDefaultFromString
+	Description :	Gets the default properties from "str"
+	Access :		Protected
+
+	Return :		BOOL			-	"TRUE" if the default
+										properties could be loaded ok.
+	Parameters :	CString& str	-	"CString" to get the
+										default properties from.
+
+	Usage :			Call as a part of loading the object from
+					disk. The default object properties will
+					be stripped from "str" and the object
+					properties set from the data.
+
+   ============================================================*/
+{
+	BOOL result = FALSE;
+	CString data(str);
+	if (data[data.GetLength() - 1] == _TCHAR(';'))
+		data = data.Left(data.GetLength() - 1); // Strip the ';'
+
+	CTokenizer tok(data);
+	int size = tok.GetSize();
+	if (size >= 7)
+	{
+		CString name;
+		double left;
+		double top;
+		double right;
+		double bottom;
+		CString title;
+		int group;
+		int count = 0;
+
+		tok.GetAt(count++, name);
+		tok.GetAt(count++, left);
+		tok.GetAt(count++, top);
+		tok.GetAt(count++, right);
+		tok.GetAt(count++, bottom);
+		tok.GetAt(count++, title);
+		tok.GetAt(count++, group);
+
+		SetRect(left, top, right, bottom);
+
+		title.Replace(_T("\\colon"), _T(":"));
+		title.Replace(_T("\\semicolon"), _T(";"));
+		title.Replace(_T("\\comma"), _T(","));
+		title.Replace(_T("\\newline"), _T("\r\n"));
+
+		name.Replace(_T("\\colon"), _T(":"));
+		name.Replace(_T("\\semicolon"), _T(";"));
+		name.Replace(_T("\\comma"), _T(","));
+		name.Replace(_T("\\newline"), _T("\r\n"));
+
+		SetTitle(title);
+		SetName(name);
+		SetGroup(group);
+
+		// Rebuild rest of string
+		str = _T("");
+		for (int t = count; t < size; t++)
+		{
+			tok.GetAt(t, data);
+
+			str += data;
+			if (t < size - 1)
+				str += _T(",");
+		}
+
+		result = TRUE;
+	}
+
+	return result;
 
 }
 

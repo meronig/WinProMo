@@ -39,6 +39,7 @@ class CProcessEntityBlockView : public CDiagramEntity
 
 	protected:
 		virtual CString				GetDefaultGetString() const;
+		virtual BOOL				GetDefaultFromString(CString& str);
 		bool m_target;
 
 	private:

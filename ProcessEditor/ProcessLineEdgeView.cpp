@@ -2,6 +2,7 @@
 #include "ProcessLineEdgeModel.h"
 #include "ProcessEntityBlockView.h"
 #include "LinkFactory.h"
+#include "../DiagramEditor/Tokenizer.h"
 #include "../stdafx.h"
 
 CProcessLineEdgeView::CProcessLineEdgeView()
@@ -496,11 +497,90 @@ CString CProcessLineEdgeView::GetDefaultGetString() const
 		destString.Replace(_T("\r\n"), _T("\\newline"));
 	}
 
-	str.Format(_T("%s:%f,%f,%f,%f,%s,%s,%i,%s,%s,%s"), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup(), model, sourceString, destString);
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s"), GetType(), name, GetLeft(), GetTop(), GetRight(), GetBottom(), title, GetGroup(), model, sourceString, destString);
 
 	return str;
 
 }
+
+BOOL CProcessLineEdgeView::GetDefaultFromString(CString& str)
+/* ============================================================
+	Function :		CDiagramEntity::GetDefaultFromString
+	Description :	Gets the default properties from "str"
+	Access :		Protected
+
+	Return :		BOOL			-	"TRUE" if the default
+										properties could be loaded ok.
+	Parameters :	CString& str	-	"CString" to get the
+										default properties from.
+
+	Usage :			Call as a part of loading the object from
+					disk. The default object properties will
+					be stripped from "str" and the object
+					properties set from the data.
+
+   ============================================================*/
+{
+	BOOL result = FALSE;
+	CString data(str);
+	if (data[data.GetLength() - 1] == _TCHAR(';'))
+		data = data.Left(data.GetLength() - 1); // Strip the ';'
+
+	CTokenizer tok(data);
+	int size = tok.GetSize();
+	if (size >= 7)
+	{
+		CString name;
+		double left;
+		double top;
+		double right;
+		double bottom;
+		CString title;
+		int group;
+		int count = 0;
+
+		tok.GetAt(count++, name);
+		tok.GetAt(count++, left);
+		tok.GetAt(count++, top);
+		tok.GetAt(count++, right);
+		tok.GetAt(count++, bottom);
+		tok.GetAt(count++, title);
+		tok.GetAt(count++, group);
+
+		CDiagramEntity::SetRect(left, top, right, bottom);
+
+		title.Replace(_T("\\colon"), _T(":"));
+		title.Replace(_T("\\semicolon"), _T(";"));
+		title.Replace(_T("\\comma"), _T(","));
+		title.Replace(_T("\\newline"), _T("\r\n"));
+
+		name.Replace(_T("\\colon"), _T(":"));
+		name.Replace(_T("\\semicolon"), _T(";"));
+		name.Replace(_T("\\comma"), _T(","));
+		name.Replace(_T("\\newline"), _T("\r\n"));
+
+		SetTitle(title);
+		SetName(name);
+		SetGroup(group);
+
+		// Rebuild rest of string
+		str = _T("");
+		for (int t = count; t < size; t++)
+		{
+			tok.GetAt(t, data);
+
+			str += data;
+			if (t < size - 1)
+				str += _T(",");
+		}
+
+		result = TRUE;
+	}
+
+	return result;
+
+}
+
 
 void CProcessLineEdgeView::DrawSelectionMarkers(CDC* dc, CRect rect) const
 {
