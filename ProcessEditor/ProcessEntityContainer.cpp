@@ -67,11 +67,8 @@ void CProcessEntityContainer::RemoveAt(int index)
 	{
 		CString name = obj->GetName();
 		
-		// current behavior: delete all child blocks
-		
-		// change it, it won't work with derived classes
-		if (obj->GetType() == _T("process_block")) {
-			CProcessEntityBlockView *block = dynamic_cast<CProcessEntityBlockView*>(obj);
+		CProcessEntityBlockView *block = dynamic_cast<CProcessEntityBlockView*>(obj);
+		if (block){
 			CObArray subBlockModels;
 			subBlockModels.Append(*(block->getModel()->getSubBlocks()));
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {

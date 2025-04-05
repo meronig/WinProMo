@@ -4,6 +4,7 @@
 #include "LinkFactory.h"
 #include "../DiagramEditor/Tokenizer.h"
 #include "../stdafx.h"
+#include <math.h>
 
 CProcessLineEdgeView::CProcessLineEdgeView()
 /* ============================================================
@@ -94,29 +95,31 @@ CDiagramEntity* CProcessLineEdgeView::Clone()
 
 void CProcessLineEdgeView::DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
 	
+	
 	const float dx = static_cast<float>(p1.x - p0.x);
 	const float dy = static_cast<float>(p1.y - p0.y);
-	const auto length = sqrt(dx * dx + dy * dy);
+	const float length = sqrt(dx * dx + dy * dy);
 	if (head_length < 1 || length < head_length) return;
 
 	// ux,uy is a unit vector parallel to the line.
-	const auto ux = dx / length;
-	const auto uy = dy / length;
+	const float ux = dx / length;
+	const float uy = dy / length;
 
 	// vx,vy is a unit vector perpendicular to ux,uy
-	const auto vx = -uy;
-	const auto vy = ux;
+	const float vx = -uy;
+	const float vy = ux;
 
-	const auto half_width = 0.5f * head_width;
+	const float half_width = 0.5f * head_width;
 
-	const POINT arrow[3] =
-	{ p1,
-	  POINT{ round(p1.x - head_length * ux + half_width * vx),
-			 round(p1.y - head_length * uy + half_width * vy) },
-	  POINT{ round(p1.x - head_length * ux - half_width * vx),
-			 round(p1.y - head_length * uy - half_width * vy) }
-	};
+	
+	CPoint arrow[3];
+	arrow[0] = p1;
+	arrow[1] = CPoint (round(p1.x - head_length * ux + half_width * vx),
+			 round(p1.y - head_length * uy + half_width * vy) );
+	arrow[2] = CPoint ( round(p1.x - head_length * ux - half_width * vx),
+			 round(p1.y - head_length * uy - half_width * vy) );
 	dc->Polygon(arrow, 3);
+	
 }
 
 void CProcessLineEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circleDiameter)
@@ -133,7 +136,7 @@ void CProcessLineEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circle
 	// 3. Find the center of the circle: it's the midpoint of (x1, y1) and the second intersection point (x3, y3)
 	int dx = x2 - x1;
 	int dy = y2 - y1;
-	float lineLength = sqrt(dx * dx + dy * dy);
+	float lineLength = sqrt((double)dx * dx + dy * dy);
 
 	// 4. Parametric form of the line
 	// Find t such that the distance from (x1, y1) to (x3, y3) equals the diameter of the circle
