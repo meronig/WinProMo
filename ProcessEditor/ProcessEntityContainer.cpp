@@ -102,6 +102,7 @@ void CProcessEntityContainer::Undo()
    ============================================================*/
 {
 
+	//TODO: handle object relations (also override Redo)
 	CDiagramEntityContainer::Undo();
 
 
@@ -121,6 +122,7 @@ void CProcessEntityContainer::Snapshot()
    ============================================================*/
 {
 
+	//TODO: add code to preserve object relations
 	CDiagramEntityContainer::Snapshot();
 	
 	//CObArray* undo = new CObArray;
