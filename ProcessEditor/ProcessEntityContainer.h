@@ -22,13 +22,17 @@ public:
 	// Overrides
 	virtual void	RemoveAt(int index);
 
-	virtual void	Undo();
-	virtual void	Snapshot();
-	virtual void	ClearUndo();
-
 	virtual void reorder();
 	virtual void SetTarget(CProcessEntityBlockView* obj, BOOL select);
 	virtual CProcessEntityBlockView* getTarget();
+
+	void ReplicateRelations(CObArray* source, CObArray* destination);
+
+protected:
+	// Overrides
+	void			AddCurrentToStack(CObArray& arr);
+	void			GetCurrentFromStack(CObArray& arr);
+
 
 private:
 	// Private helpers

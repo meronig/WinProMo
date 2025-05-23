@@ -2,6 +2,9 @@
 #include "ProcessEntityContainer.h"
 #include <math.h>
 #include "ProcessEntityBlockModel.h"
+#include "ProcessEntityBlockView.h"
+#include "ProcessLineEdgeModel.h"
+#include "ProcessLineEdgeView.h"
 
 CProcessEntityContainer::CProcessEntityContainer()
 /* ============================================================
@@ -88,65 +91,76 @@ void CProcessEntityContainer::RemoveAt(int index)
 
 }
 
+void CProcessEntityContainer::ReplicateRelations(CObArray* source, CObArray* destination) {
+	ASSERT(destination->GetSize() == source->GetSize());
 
-void CProcessEntityContainer::Undo()
-/* ============================================================
-	Function :		CProcessEntityContainer::Undo
-	Description :	Undo the latest operation
+	//preserve links for edgeViews and cardinalities with model
+	for (int i = 0; i < source->GetSize(); i++) {
+		CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(i));
+		CProcessLineEdgeView* newEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(i));
+		if (edgeView && newEdgeView) {
+			if (edgeView->GetSource() != NULL) {
+				for (int j = 0; j < source->GetSize(); j++) {
+					CProcessLineEdgeView* sourceEdgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(j));
+					CProcessLineEdgeView* newSourceEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(j));
+					if (edgeView->GetSource() == sourceEdgeView) {
+						newEdgeView->SetSource(newSourceEdgeView);
+						newEdgeView->setModel(newSourceEdgeView->getModel());
+					}
+				}
+			}
+		}
+	}
+	for (int i = 0; i < source->GetSize(); i++) {
+		//preserve links for edgeModels
+		CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(i));
+		CProcessLineEdgeView* newEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(i));
+		if (edgeView && newEdgeView) {
+			CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(edgeView->getModel());
+			CProcessLineEdgeModel* newEdgeModel = dynamic_cast<CProcessLineEdgeModel*>(newEdgeView->getModel());
+			if (edgeModel && newEdgeModel) {
+				if (edgeModel->GetSource() != NULL || edgeModel->GetDestination() != NULL) {
+					for (int j = 0; j < source->GetSize(); j++) {
+						CProcessEntityBlockView* connectedBlockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(j));
+						CProcessEntityBlockView* newConnectedBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(j));
+						if (connectedBlockView && newConnectedBlockView) {
+							CProcessEntityBlockModel* connectedBlockModel = connectedBlockView->getModel();
+							CProcessEntityBlockModel* newConnectedBlockModel = newConnectedBlockView->getModel();
 
-	Return :		void
-	Parameters :	none
+							if (edgeModel->GetSource() == connectedBlockModel) {
+								newEdgeModel->SetSource(newConnectedBlockModel);
+							}
+							if (edgeModel->GetDestination() == connectedBlockModel) {
+								newEdgeModel->SetDestination(newConnectedBlockModel);
+							}
+						}
+					}
+				}
+			}
+		}
+		//preserve nesting for nodes
+		CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(i));
+		CProcessEntityBlockView* newBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(i));
+		if (blockView && newBlockView) {
+			CProcessEntityBlockModel* blockModel = blockView->getModel();
+			CProcessEntityBlockModel* newBlockModel = newBlockView->getModel();
+			if (blockModel->getParentBlock() != NULL) {
+				for (int j = 0; j < source->GetSize(); j++) {
+					CProcessEntityBlockView* parentBlockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(j));
+					CProcessEntityBlockView* newParentBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(j));
+					if (parentBlockView && newParentBlockView) {
+						CProcessEntityBlockModel* parentBlockModel = parentBlockView->getModel();
+						CProcessEntityBlockModel* newParentBlockModel = newParentBlockView->getModel();
+						if (blockModel->getParentBlock() == parentBlockModel) {
+							newBlockModel->setParentBlock(newParentBlockModel);
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
 
-	Usage :			Overridden to also undo link operations.
-
-   ============================================================*/
-{
-
-	//TODO: handle object relations (also override Redo)
-	CDiagramEntityContainer::Undo();
-
-
-}
-
-void CProcessEntityContainer::Snapshot()
-/* ============================================================
-	Function :		CProcessEntityContainer::Snapshot
-	Description :	Creates a snapshot of the current data
-					state for the undo-functionality.
-
-	Return :		void
-	Parameters :	none
-
-	Usage :			Overridden to save the link state as well.
-
-   ============================================================*/
-{
-
-	//TODO: add code to preserve object relations
-	CDiagramEntityContainer::Snapshot();
-	
-	//CObArray* undo = new CObArray;
-
-	
-	
-}
-
-void CProcessEntityContainer::ClearUndo()
-/* ============================================================
-	Function :		CProcessEntityContainer::ClearUndo
-	Description :	Clears the undo-array
-
-	Return :		void
-	Parameters :	none
-
-	Usage :			Overridden to also clear the link undo
-					states.
-
-   ============================================================*/
-{
-
-	CDiagramEntityContainer::ClearUndo();
-	
 }
 
 void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray* m_newOrder) {
@@ -348,4 +362,106 @@ int	CProcessEntityContainer::GetSelectCount()
 
 	return count;
 
+}
+
+
+void CProcessEntityContainer::GetCurrentFromStack(CObArray& arr)
+/* ============================================================
+	Function :		CProcessEntityContainer::GetCurrentFromStack
+	Description :	Sets the current objects from "arr".
+	Access :		Private
+
+	Return :		void
+	Parameters :	CObArray& arr	-	Array to add current
+										object state from
+
+	Usage :			Called to get the current object state from
+					"arr"
+
+   ============================================================*/
+{
+	if (arr.GetSize())
+	{
+		// We remove all current data
+		RemoveAll();
+
+		// We get the entry from the undo-stack
+		// and clone it into the container data
+		CUndoItem* item = static_cast<CUndoItem*>(arr.GetAt(arr.GetUpperBound()));
+		if (item)
+		{
+			int count = (item->arr).GetSize();
+			for (int t = 0; t < count; t++)
+			{
+
+				CDiagramEntity* obj = static_cast<CDiagramEntity*>((item->arr).GetAt(t));
+				Add(obj->Clone());
+
+			}
+
+			// Set the saved virtual size as well
+			SetVirtualSize(item->pt);
+
+			//Replicate relations
+			ReplicateRelations(&item->arr, GetData());
+
+			delete item;
+			arr.RemoveAt(arr.GetUpperBound());
+
+		}
+	}
+}
+
+void CProcessEntityContainer::AddCurrentToStack(CObArray& arr)
+/* ============================================================
+	Function :		CProcessEntityContainer::AddCurrentToStack
+	Description :	Adds the current objects to "arr".
+	Access :		Private
+
+	Return :		void
+	Parameters :	CObArray& arr	-	Array to add current
+										object state to
+
+	Usage :			Called to add the current object state to
+					"arr"
+
+   ============================================================*/
+{
+
+	if (GetUndoStackSize())
+	{
+		CUndoItem* item = new CUndoItem;
+
+		while (!item && arr.GetSize())
+		{
+
+			// We seem - however unlikely -
+			// to be out of memory.
+			// Remove first element in
+			// the stack and try again
+			delete arr.GetAt(0);
+			arr.RemoveAt(0);
+			item = new CUndoItem;
+
+		}
+
+		if (item)
+		{
+
+			// Save current virtual size
+			item->pt = GetVirtualSize();
+
+			// Save all objects
+			int count = GetData()->GetSize();
+			for (int t = 0; t < count; t++)
+				(item->arr).Add(GetAt(t)->Clone());
+
+			//Replicate relations
+			ReplicateRelations(GetData(), &item->arr);
+
+			// Add to undo stack
+			arr.Add(item);
+
+		}
+	}
 }

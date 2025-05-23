@@ -13,7 +13,6 @@
 #include "../stdafx.h"
 #include "ProcessClipboardHandler.h"
 #include "LinkFactory.h"
-#include "../DiagramEditor/DiagramEntityContainer.h"
 #include "ProcessEntityContainer.h"
 #include "ProcessLineEdgeView.h"
 #include "ProcessLineEdgeModel.h"
@@ -89,6 +88,8 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 
    ============================================================*/
 {
+	CProcessEntityContainer* processContainer = static_cast<CProcessEntityContainer*>(container);
+	
 	CDWordArray	oldgroup;
 	CDWordArray	newgroup;
 
@@ -131,92 +132,21 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 		}
 
 		clone->SetGroup(group);
-		clone->SetParent(container);
-		container->Add(clone);
+		clone->SetParent(processContainer);
+		processContainer->Add(clone);
 	}
 	//todo: reactivate
-	ReplicateRelations(paste, &clones);
+	processContainer->ReplicateRelations(paste, &clones);
 
 	//CDiagramClipboardHandler::Paste( container );
 	//int max = m_pasteLinks.GetSize();
-	CProcessEntityContainer* flow = static_cast< CProcessEntityContainer* >( container );
 	/*for( int t = 0 ; t < max ; t++ )
 		flow->AddLink( ( static_cast< CFlowchartLink* >( m_pasteLinks[ t ] ) )->Clone() );*/
 
 }
 
 
-void CProcessClipboardHandler::ReplicateRelations(CObArray* source, CObArray* destination) {
-	ASSERT(destination->GetSize() == source->GetSize());
 
-	//preserve links for edgeViews and cardinalities with model
-	for (int i = 0; i < source->GetSize(); i++) {
-		CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(i));
-		CProcessLineEdgeView* newEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(i));
-		if (edgeView && newEdgeView) {
-			if (edgeView->GetSource() != NULL) {
-				for (int j = 0; j < source->GetSize(); j++) {
-					CProcessLineEdgeView* sourceEdgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(j));
-					CProcessLineEdgeView* newSourceEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(j));
-					if (edgeView->GetSource() == sourceEdgeView) {
-						newEdgeView->SetSource(newSourceEdgeView);
-						newEdgeView->setModel(newSourceEdgeView->getModel());
-					}
-				}
-			}
-		}
-	}
-	for (int i = 0; i < source->GetSize(); i++) {
-		//preserve links for edgeModels
-		CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(i));
-		CProcessLineEdgeView* newEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(i));
-		if (edgeView && newEdgeView) {
-			CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(edgeView->getModel());
-			CProcessLineEdgeModel* newEdgeModel = dynamic_cast<CProcessLineEdgeModel*>(newEdgeView->getModel());
-			if (edgeModel && newEdgeModel) {
-				if (edgeModel->GetSource() != NULL || edgeModel->GetDestination() != NULL) {
-					for (int j = 0; j < source->GetSize(); j++) {
-						CProcessEntityBlockView* connectedBlockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(j));
-						CProcessEntityBlockView* newConnectedBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(j));
-						if (connectedBlockView && newConnectedBlockView) {
-							CProcessEntityBlockModel* connectedBlockModel = connectedBlockView->getModel();
-							CProcessEntityBlockModel* newConnectedBlockModel = newConnectedBlockView->getModel();
-							
-							if (edgeModel->GetSource() == connectedBlockModel) {
-								newEdgeModel->SetSource(newConnectedBlockModel);
-							}
-							if (edgeModel->GetDestination() == connectedBlockModel) {
-								newEdgeModel->SetDestination(newConnectedBlockModel);
-							}
-						}
-					}
-				}
-			}
-		}
-		//preserve nesting for nodes
-		CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(i));
-		CProcessEntityBlockView* newBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(i));
-		if (blockView && newBlockView) {
-			CProcessEntityBlockModel* blockModel = blockView->getModel();
-			CProcessEntityBlockModel* newBlockModel = newBlockView->getModel();
-			if (blockModel->getParentBlock() != NULL) {
-				for (int j = 0; j < source->GetSize(); j++) {
-					CProcessEntityBlockView* parentBlockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(j));
-					CProcessEntityBlockView* newParentBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(j));
-					if (parentBlockView && newParentBlockView) {
-						CProcessEntityBlockModel* parentBlockModel = parentBlockView->getModel();
-						CProcessEntityBlockModel* newParentBlockModel = newParentBlockView->getModel();
-						if (blockModel->getParentBlock() == parentBlockModel) {
-							newBlockModel->setParentBlock(newParentBlockModel);
-							break;
-						}
-					}
-				}
-			}
-		}
-	}
-
-}
 
 void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* container )
 /* ============================================================
@@ -235,7 +165,7 @@ void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* contain
 {
 	
 	CDiagramClipboardHandler::CopyAllSelected( container );
-	CProcessEntityContainer* flow = static_cast< CProcessEntityContainer* >( container );
+	CProcessEntityContainer* processContainer = static_cast< CProcessEntityContainer* >( container );
 	/*CObArray* links = flow->GetLinkArray();
 
 	int max = links->GetSize();
@@ -247,7 +177,7 @@ void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* contain
 
 	CObArray originals;
 	CObArray* paste = GetData();
-	CObArray* arr = container->GetData();
+	CObArray* arr = processContainer->GetData();
 
 	int max = arr->GetSize();
 	
@@ -260,7 +190,7 @@ void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* contain
 		}
 	}
 	//todo: reactivate
-	ReplicateRelations(&originals, paste);
+	processContainer->ReplicateRelations(&originals, paste);
 
 
 	//for( int t = 0; t < max ; t++ )

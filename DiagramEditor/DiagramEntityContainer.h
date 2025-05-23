@@ -84,6 +84,11 @@ protected:
 	CObArray*				GetUndo();
 	int						Find( CDiagramEntity* obj );
 
+	// Changed visibility wrt original implementation
+	virtual void			AddCurrentToStack(CObArray& arr);
+	virtual void			GetCurrentFromStack(CObArray& arr);
+
+
 private:
 
 	// Data
@@ -102,9 +107,6 @@ private:
 	// Helpers
 	void			Swap( int index1, int index2 );
 	void			SetAt( int index, CDiagramEntity* obj );
-
-	void			AddCurrentToStack( CObArray& arr );
-	void			GetCurrentFromStack( CObArray& arr );
 
 };
 

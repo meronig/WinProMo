@@ -18,8 +18,7 @@ public:
 
 private:
 // Private data
-	void ReplicateRelations(CObArray* source, CObArray* destination);
-
+	
 };
 
 #endif // _PROCESSCLIPBOARDHANDLER_H_

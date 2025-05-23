@@ -265,10 +265,11 @@ void CDiagramEditorDemoDlg::OnCheckSnap()
 void CDiagramEditorDemoDlg::OnCheckShowGrid() 
 {
 
-	//m_editor.ShowGrid( m_grid.GetCheck() );
+	m_editor.ShowGrid( m_grid.GetCheck() );
 	//deselezionare linea
 	//selezionare figli
-	m_editor.LeftAlignSelected();
+	//m_editor.LeftAlignSelected();
+	//m_editor.Redo();
 	
 }
 
