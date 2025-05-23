@@ -50,6 +50,7 @@ private:
 	virtual void AutoResizeAll();
 
 	CProcessModel* GetNamedModel(const CObArray& array, const CString& name) const;
+	void DeleteModel(CObArray& array, const CString& name);
 };
 
 #endif //_PROCESSEDITOR_H_

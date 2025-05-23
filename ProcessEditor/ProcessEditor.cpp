@@ -928,6 +928,18 @@ CProcessModel* CProcessEditor::GetNamedModel(const CObArray& array, const CStrin
 	return result;
 }
 
+void CProcessEditor::DeleteModel(CObArray& array, const CString& name)
+{
+	int count = array.GetSize();
+	CProcessModel* obj;
+	for (int t = 0; t < count; t++)
+	{
+		obj = dynamic_cast<CProcessModel*>(array.GetAt(t));
+		if (obj && obj->GetName() == name)
+			array.RemoveAt(t);
+	}
+}
+
 
 void CProcessEditor::LeftAlignSelected()
 {
@@ -969,13 +981,16 @@ void CProcessEditor::Load(const CStringArray& stra)
 		CString str = stra.GetAt(t);
 		if (!FromString(str))
 		{
+			//check for unicity
 			CDiagramEntity* obj = CProcessControlFactory::CreateViewFromString(str);
 			if (obj)
-				AddObject(obj);
+				if(!GetNamedObject(obj->GetName()))
+					AddObject(obj);
 
 			CProcessModel* model = CProcessControlFactory::CreateModelFromString(str);
 			if (model)
-				models.Add(model);
+				if(!GetNamedModel(models, model->GetName()))
+					models.Add(model);
 		}
 	}
 
@@ -1014,6 +1029,10 @@ void CProcessEditor::Load(const CStringArray& stra)
 							tok.GetAt(7, modelName);
 							CProcessEntityBlockModel* blockModel = dynamic_cast<CProcessEntityBlockModel*>(GetNamedModel(models, modelName));
 							if (blockModel) {
+								//required to avoid dangling pointers in case of malformed input files
+								CProcessModel* oldMod = blockView->getModel();
+								if(oldMod)
+									DeleteModel(models, oldMod->GetName());
 								blockView->setModel(blockModel);
 							}
 							else {
@@ -1037,6 +1056,9 @@ void CProcessEditor::Load(const CStringArray& stra)
 
 							CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(GetNamedModel(models, modelName));
 							if (edgeModel) {
+								CProcessModel* oldMod = edgeView->getModel();
+								if (oldMod)
+									DeleteModel(models, oldMod->GetName());
 								edgeView->setModel(edgeModel);
 							}
 							else {
