@@ -163,10 +163,62 @@ void CProcessEntityContainer::ReplicateRelations(CObArray* source, CObArray* des
 
 }
 
-void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray* m_newOrder) {
-	m_newOrder->Add(block);
-	//ASSERT(false);
+void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray* newOrder) {
 	ASSERT(block->getModel());
+	newOrder->Add(block);
+	//check for connected incoming edges
+	CObArray* edges = block->getModel()->getIncomingEdges();
+	if (edges) {
+		for (int i = 0; i < edges->GetSize(); i++) {
+			CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(edges->GetAt(i));
+			if (edgeModel) {
+				CObArray* views = edgeModel->getViews();
+				CProcessEntityBlockModel* sourceModel = dynamic_cast<CProcessEntityBlockModel*>(edgeModel->GetSource());
+				if (sourceModel) {
+					for (int j = 0; j < newOrder->GetSize(); j++) {
+						//source node has already been explored
+						if (newOrder->GetAt(j) == sourceModel->getMainView()) {
+							//add all edge views
+							newOrder->Append(*views);
+						}
+					}
+				}
+				//no source node exists
+				else {
+					//add all edge views
+					newOrder->Append(*views);
+				}
+			}
+		}
+	}
+
+	//check for connected outgoing edges
+	edges = block->getModel()->getOutgoingEdges();
+	if (edges) {
+		for (int i = 0; i < edges->GetSize(); i++) {
+			CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(edges->GetAt(i));
+			if (edgeModel) {
+				CObArray* views = edgeModel->getViews();
+				CProcessEntityBlockModel* destModel = dynamic_cast<CProcessEntityBlockModel*>(edgeModel->GetDestination());
+				if (destModel) {
+					for (int j = 0; j < newOrder->GetSize(); j++) {
+						//destination node has already been explored
+						if (newOrder->GetAt(j) == destModel->getMainView()) {
+							//add all edge views
+							newOrder->Append(*views);
+						}
+					}
+				}
+				//no destination node exists
+				else {
+					//add all edge views
+					newOrder->Append(*views);
+				}
+			}
+		}
+	}
+
+
 	CObArray *subBlockViews = block->getModel()->getSubBlocks();
 
 	int max = GetSize();
@@ -177,7 +229,7 @@ void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray*
 			for (int i = 0; i < subBlockViews->GetSize(); i++) {
 				CProcessEntityBlockModel* subBlockModel = dynamic_cast<CProcessEntityBlockModel*>(subBlockViews->GetAt(i));
 				if (blockView == subBlockModel->getMainView()) {
-					reorderR(blockView, m_newOrder);
+					reorderR(blockView, newOrder);
 				}
 			}
 		}
@@ -188,10 +240,8 @@ void CProcessEntityContainer::reorder()
 {
 	int count = 0;
 	int max = GetSize();
-	CObArray *m_obj;
-	CObArray m_newOrderNodes;
-	CObArray m_newOrderEdges;
-
+	CObArray *objs;
+	CObArray newOrder;
 
 	for (int t = 0; t < max; t++)
 	{
@@ -200,20 +250,23 @@ void CProcessEntityContainer::reorder()
 			CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(obj);
 			if (blockView) {
 				if (blockView->getModel()->getParentBlock() == NULL) {
-					reorderR(blockView, &m_newOrderNodes);
+					reorderR(blockView, &newOrder);
 				}
 			}
-			else {
-				m_newOrderEdges.Add(obj);
+			CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(obj);
+			if (edgeView) {
+				//edge is disconnected, so add it immediately
+				if (!(edgeView->getModel()->GetSource() || edgeView->getModel()->GetDestination())) {
+					newOrder.Add(edgeView);
+				}
 			}
 		}
 	}
 
-	m_obj = GetData();
-	m_obj->RemoveAll();
+	objs = GetData();
+	objs->RemoveAll();
 
-	m_obj->Append(m_newOrderNodes);
-	m_obj->Append(m_newOrderEdges);
+	objs->Append(newOrder);
 
 }
 
