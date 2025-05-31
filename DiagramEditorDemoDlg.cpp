@@ -11,6 +11,7 @@
 #include "DiagramEditor/DiagramLine.h"
 #include "ProcessEditor/ProcessEntityBlockView.h"
 #include "ProcessEditor/ProcessLineEdgeView.h"
+#include "ProcessEditor/ProcessControlFactory.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -355,13 +356,14 @@ void CDiagramEditorDemoDlg::OnButtonLoad()
 
 		CTextFile	tf( _T( "txt" ) );
 		CStringArray	stra;
+		CProcessControlFactory fact;
 
 		m_filename = _T( "" );
 		tf.ReadTextFile( m_filename, stra );
 
-		m_editor.Load(stra);
 
-		
+		m_editor.Load(stra, fact);
+
 		m_editor.SetModified( FALSE );
 		m_editor.RedrawWindow();
 	}

@@ -448,6 +448,7 @@ CDiagramEntity* CProcessEntityBlockView::Clone()
 	CProcessEntityBlockView* obj = new CProcessEntityBlockView;
 	obj->Copy(this);
 	obj->setModel(new CProcessEntityBlockModel());
+	obj->SetName(CLinkFactory::GetID());
 	return obj;
 
 }

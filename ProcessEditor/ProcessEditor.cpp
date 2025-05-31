@@ -1,7 +1,6 @@
 #include "../stdafx.h"
 #include "ProcessEditor.h"
 #include "ProcessEntityContainer.h"
-#include "ProcessControlFactory.h"
 #include "ProcessLineEdgeModel.h"
 
 #include <math.h>
@@ -969,7 +968,7 @@ void CProcessEditor::BottomAlignSelected()
 	AutoResizeAll();
 }
 
-void CProcessEditor::Load(const CStringArray& stra)
+void CProcessEditor::Load(const CStringArray& stra, CProcessControlFactory& fact)
 {
 	int max = stra.GetSize();
 
@@ -982,12 +981,12 @@ void CProcessEditor::Load(const CStringArray& stra)
 		if (!FromString(str))
 		{
 			//check for unicity
-			CDiagramEntity* obj = CProcessControlFactory::CreateViewFromString(str);
+			CDiagramEntity* obj = fact.CreateViewFromString(str);
 			if (obj)
 				if(!GetNamedObject(obj->GetName()))
 					AddObject(obj);
 
-			CProcessModel* model = CProcessControlFactory::CreateModelFromString(str);
+			CProcessModel* model = fact.CreateModelFromString(str);
 			if (model)
 				if(!GetNamedModel(models, model->GetName()))
 					models.Add(model);

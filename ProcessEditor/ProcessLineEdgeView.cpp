@@ -89,6 +89,7 @@ CDiagramEntity* CProcessLineEdgeView::Clone()
 	obj->m_source = NULL;
 	obj->m_dest = NULL;
 	//obj->setModel(this->getModel());
+	obj->SetName(CLinkFactory::GetID());
 	obj->setModel(new CProcessLineEdgeModel());
 	return obj;
 }

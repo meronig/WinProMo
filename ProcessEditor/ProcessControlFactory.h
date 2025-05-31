@@ -8,8 +8,8 @@ class CProcessControlFactory {
 
 public:
 // Implementation
-	static CDiagramEntity* CreateViewFromString( const CString& str );
-	static CProcessModel* CreateModelFromString(const CString& str);
+	CDiagramEntity* CreateViewFromString( const CString& str );
+	CProcessModel* CreateModelFromString(const CString& str);
 
 };
 

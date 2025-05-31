@@ -4,6 +4,8 @@
 #include "../DiagramEditor/DiagramEditor.h"
 #include "ProcessEntityBlockView.h"
 #include "ProcessLineEdgeView.h"
+#include "ProcessControlFactory.h"
+
 
 class CProcessEditor : public CDiagramEditor
 {
@@ -33,7 +35,7 @@ public:
 	virtual void	RightAlignSelected();
 	virtual void	TopAlignSelected();
 	virtual void	BottomAlignSelected();
-	virtual void	Load(const CStringArray& stra);
+	virtual void	Load(const CStringArray& stra, CProcessControlFactory& fact);
 
 
 
