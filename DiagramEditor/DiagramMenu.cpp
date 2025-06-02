@@ -34,7 +34,7 @@
 					members are accessible.
 
    ========================================================================*/
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "DiagramMenu.h"
 #include "DiagramEditor.h"
 

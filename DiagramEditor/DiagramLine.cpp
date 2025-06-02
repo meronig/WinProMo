@@ -21,7 +21,7 @@
 
    ========================================================================*/
 
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "DiagramLine.h"
 #include "Tokenizer.h"
 

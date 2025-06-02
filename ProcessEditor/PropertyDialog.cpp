@@ -22,7 +22,7 @@
 					must be added to the project.
    ========================================================================*/
 
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "ProcessEditor.h"
 #include "PropertyDialog.h"
 

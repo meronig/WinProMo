@@ -32,7 +32,7 @@ class CProcessEntityBlockView : public CDiagramEntity
 		
 		virtual void autoResize();
 		virtual void Highlight(CDC* dc, CRect rect);
-		virtual bool IsTarget();
+		virtual BOOL IsTarget();
 		virtual void SetTarget(BOOL isTarget);
 		
 		virtual CPoint getIntersection(CPoint innerPoint, CPoint outerPoint);
@@ -40,7 +40,7 @@ class CProcessEntityBlockView : public CDiagramEntity
 	protected:
 		virtual CString				GetDefaultGetString() const;
 		virtual BOOL				GetDefaultFromString(CString& str);
-		bool m_target;
+		BOOL m_target;
 
 	private:
 		CPropertyDialog	m_dlg;

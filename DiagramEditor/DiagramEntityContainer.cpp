@@ -60,7 +60,7 @@
 
    ========================================================================*/
 
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "DiagramEntityContainer.h"
 #include "DiagramEntity.h"
 #include "Tokenizer.h"
@@ -1028,7 +1028,7 @@ void CDiagramEntityContainer::GetCurrentFromStack( CObArray& arr )
 			}
 
 			// Set the saved virtual size as well
-			SetVirtualSize( item->pt );
+			SetVirtualSize( CSize(item->pt) );
 
 			delete item;
 			arr.RemoveAt( arr.GetUpperBound() );
@@ -1074,7 +1074,7 @@ void CDiagramEntityContainer::AddCurrentToStack( CObArray& arr )
 		{
 
 			// Save current virtual size
-			item->pt = GetVirtualSize();
+			item->pt = CPoint(GetVirtualSize());
 
 			// Save all objects
 			int count = m_objs.GetSize();
@@ -1561,9 +1561,10 @@ void CDiagramEntityContainer::PasteToPosition( const CPoint& pos )
 		{
 			double left = 0;
 			double top = 0;
+			int t = 0;
 
 			// Find the top-left corner object and position in the private clipboard
-			for( int t = 0 ; t < max ; t++ )
+			for( t = 0 ; t < max ; t++ )
 			{
 				CDiagramEntity* entity = static_cast< CDiagramEntity* >( arr->GetAt( t ) );
 				if( entity )
@@ -1589,7 +1590,7 @@ void CDiagramEntityContainer::PasteToPosition( const CPoint& pos )
 			double diffy = ( pos.y - top ) - 10;
 
 			// Loop the clipboard, copying to new, applying difference
-			for(int t = 0 ; t < max ; t++ )
+			for( t = 0 ; t < max ; t++ )
 			{
 				CDiagramEntity* entity = static_cast< CDiagramEntity* >( arr->GetAt( t ) );
 				if( entity )

@@ -16,7 +16,7 @@
 
    ========================================================================*/
 
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "UndoItem.h"
 
 // Construction/destruction

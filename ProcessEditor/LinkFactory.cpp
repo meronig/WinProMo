@@ -15,7 +15,8 @@
 					session.
 
    ========================================================================*/
-#include "../stdafx.h"
+
+#include "stdafx.h"
 #include "LinkFactory.h"
 
 int CLinkFactory::s_currentID = 0;

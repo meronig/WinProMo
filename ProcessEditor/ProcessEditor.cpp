@@ -1,4 +1,4 @@
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "ProcessEditor.h"
 #include "ProcessEntityContainer.h"
 #include "ProcessLineEdgeModel.h"
@@ -160,11 +160,11 @@ void CProcessEditor::SaveObjects(CStringArray& stra)
 
 	for (i = 0; i < models.GetSize(); i++) {
 		CProcessModel* currModel = dynamic_cast<CProcessModel*>(models.GetAt(i));
-		bool found = false;
+		BOOL found = FALSE;
 		for (int j = 0; j < i; j++) {
 			CProcessModel* prevModel = dynamic_cast<CProcessModel*>(models.GetAt(j));
 			if (prevModel == currModel) {
-				found = true;
+				found = TRUE;
 				break;
 			}
 		}
@@ -211,14 +211,14 @@ CProcessEntityBlockView* CProcessEditor::GetTargetBlock(CPoint point) {
 					}
 					//moving blocks
 					else if ((GetInteractMode() == MODE_MOVING)) {
-						bool isValid = true;
+						BOOL isValid = TRUE;
 						// check that no circular dependencies exist with selected objects
 						for (int i = GetObjectCount() - 1; i >= 0; i--) {
 							CProcessEntityBlockView* selObj = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 							if (selObj) {
 								if (selObj->IsSelected()) {
 									if (!(selObj->getModel()->canBeNested(currObj->getModel()))) {
-										isValid = false;
+										isValid = FALSE;
 										break;
 									}
 								}
@@ -277,7 +277,7 @@ void CProcessEditor::DeselectChildBlocks(CProcessEntityBlockView* block)
 	CProcessEntityBlockModel* model = block->getModel();
 	for (int i = 0; i < model->getSubBlocks()->GetSize(); i++) {
 		CProcessEntityBlockModel* subBlock = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
-		subBlock->getMainView()->Select(false);
+		subBlock->getMainView()->Select(FALSE);
 		DeselectChildBlocks(subBlock->getMainView());
 	}
 }
@@ -288,7 +288,7 @@ void CProcessEditor::SelectChildBlocks(CProcessEntityBlockView* block)
 	CProcessEntityBlockModel* model = block->getModel();
 	for (int i = 0; i < model->getSubBlocks()->GetSize(); i++) {
 		CProcessEntityBlockModel* subBlock = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
-		subBlock->getMainView()->Select(true);
+		subBlock->getMainView()->Select(TRUE);
 		SelectChildBlocks(subBlock->getMainView());
 	}
 }
@@ -349,23 +349,23 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 			if (currObj) {
 				if (currObj->IsSelected()) {
 					//find if a selected block exists on both ends. Otherwise, deselect
-					CProcessEntityBlockView* block = GetConnectedBlock(currObj, true, true);
+					CProcessEntityBlockView* block = GetConnectedBlock(currObj, TRUE, TRUE);
 					if (block) {
 						if (!block->IsSelected()) {
-							currObj->Select(false);
+							currObj->Select(FALSE);
 						}
 					}
 					else {
-						currObj->Select(false);
+						currObj->Select(FALSE);
 					}
-					block = GetConnectedBlock(currObj, false, true);
+					block = GetConnectedBlock(currObj, FALSE, TRUE);
 					if (block) {
 						if (!block->IsSelected()) {
-							currObj->Select(false);
+							currObj->Select(FALSE);
 						}
 					}
 					else {
-						currObj->Select(false);
+						currObj->Select(FALSE);
 					}
 				}
 			}
@@ -569,7 +569,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 				/*check if we are dropping the object inside a block*/
 				CProcessEntityBlockView* targetBlock = GetTargetBlock(target);
 				if (targetBlock) {
-					targetBlock->SetTarget(true);
+					targetBlock->SetTarget(TRUE);
 				}
 			}
 		}
@@ -658,7 +658,7 @@ void CProcessEditor::OnLButtonDown(UINT nFlags, CPoint point)
 				newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
 				newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
 				newEdge->SetRect(newEdgeRect);
-				newEdge->Select(false);
+				newEdge->Select(FALSE);
 				//update edge links
 				newEdge->SetDestination(edge->GetDestination());
 				newEdge->SetSource(edge);
@@ -825,25 +825,26 @@ void CProcessEditor::Cut()
 //of current ordering, siblings follow the ordering in CProcessEntityContainer
 void CProcessEditor::DrawObjectsR(CProcessEntityBlockView* block, CDC* dc, double zoom) const
 {
+	int i = 0;
 	block->DrawObject(dc, zoom);
 	int count = GetObjectCount();
-	for (int i = 0; i < count; i++)
+	for (i = 0; i < count; i++)
 	{
 		CProcessEntityContainer* objs = static_cast<CProcessEntityContainer*>(GetDiagramEntityContainer());
 		CProcessEntityBlockView* child = dynamic_cast<CProcessEntityBlockView*>(objs->GetAt(i));
 		if (child) {
-			if (block->getModel()->contains(child->getModel(), false)) {
+			if (block->getModel()->contains(child->getModel(), FALSE)) {
 				DrawObjectsR(child, dc, zoom);
 			}
 		}
 	}
-	for (int i = 0; i < block->getModel()->getIncomingEdges()->GetSize(); i++) {
+	for (i = 0; i < block->getModel()->getIncomingEdges()->GetSize(); i++) {
 		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(block->getModel()->getIncomingEdges()->GetAt(i));
 		if (edge) {
 			edge->DrawObject(dc, zoom);
 		}
 	}
-	for (int i = 0; i < block->getModel()->getOutgoingEdges()->GetSize(); i++) {
+	for (i = 0; i < block->getModel()->getOutgoingEdges()->GetSize(); i++) {
 		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(block->getModel()->getOutgoingEdges()->GetAt(i));
 		if (edge) {
 			edge->DrawObject(dc, zoom);
@@ -892,7 +893,7 @@ void CProcessEditor::PrepareForAlignment() {
 		}
 		selEdge = dynamic_cast<CProcessLineEdgeView*>(objs->GetAt(i));
 		if (selEdge) {
-			selEdge->Select(false);
+			selEdge->Select(FALSE);
 		}
 	}
 }
@@ -971,11 +972,12 @@ void CProcessEditor::BottomAlignSelected()
 void CProcessEditor::Load(const CStringArray& stra, CProcessControlFactory& fact)
 {
 	int max = stra.GetSize();
+	int t = 0;
 
 	CObArray models;
 
 	//First read: create model and view elements
-	for (int t = 0; t < max; t++)
+	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
 		if (!FromString(str))
@@ -994,7 +996,7 @@ void CProcessEditor::Load(const CStringArray& stra, CProcessControlFactory& fact
 	}
 
 	//Second read: create logical links between elements
-	for (int t = 0; t < max; t++)
+	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
 		if (!FromString(str))

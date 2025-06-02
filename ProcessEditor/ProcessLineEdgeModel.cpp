@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ProcessLineEdgeModel.h"
 #include "ProcessEntityBlockModel.h"
 #include "LinkFactory.h"
@@ -174,22 +175,22 @@ CProcessModel* CProcessLineEdgeModel::GetDestination() const
 }
 
 
-bool CProcessLineEdgeModel::canConnectSource(CProcessModel* source)
+BOOL CProcessLineEdgeModel::canConnectSource(CProcessModel* source)
 {
 	CProcessEntityBlockModel* obj = dynamic_cast<CProcessEntityBlockModel*>(source);
 	if (obj) {
-		return true;
+		return TRUE;
 	}
-	return false;
+	return FALSE;
 }
 
-bool CProcessLineEdgeModel::canConnectDestination(CProcessModel* destination)
+BOOL CProcessLineEdgeModel::canConnectDestination(CProcessModel* destination)
 {
 	CProcessEntityBlockModel* obj = dynamic_cast<CProcessEntityBlockModel*>(destination);
 	if (obj) {
-		return true;
+		return TRUE;
 	}
-	return false;
+	return FALSE;
 }
 
 CProcessLineEdgeView* CProcessLineEdgeModel::getLastSegment()
@@ -273,10 +274,10 @@ CString CProcessLineEdgeModel::GetDefaultGetString() const
 	CString str;
 
 	CString name = GetName();
-	name.Replace(_T(":"), _T("\\colon"));
-	name.Replace(_T(";"), _T("\\semicolon"));
-	name.Replace(_T(","), _T("\\comma"));
-	name.Replace(_T("\r\n"), _T("\\newline"));
+	CDiagramEntity::CStringReplace(name, _T(":"), _T("\\colon"));
+	CDiagramEntity::CStringReplace(name, _T(";"), _T("\\semicolon"));
+	CDiagramEntity::CStringReplace(name, _T(","), _T("\\comma"));
+	CDiagramEntity::CStringReplace(name, _T("\r\n"), _T("\\newline"));
 
 	CString sourceString = _T("");
 	CString destString = _T("");
@@ -284,18 +285,18 @@ CString CProcessLineEdgeModel::GetDefaultGetString() const
 
 	if (m_source) {
 		sourceString = m_source->GetName();
-		sourceString.Replace(_T(":"), _T("\\colon"));
-		sourceString.Replace(_T(";"), _T("\\semicolon"));
-		sourceString.Replace(_T(","), _T("\\comma"));
-		sourceString.Replace(_T("\r\n"), _T("\\newline"));
+		CDiagramEntity::CStringReplace(sourceString, _T(":"), _T("\\colon"));
+		CDiagramEntity::CStringReplace(sourceString, _T(";"), _T("\\semicolon"));
+		CDiagramEntity::CStringReplace(sourceString, _T(","), _T("\\comma"));
+		CDiagramEntity::CStringReplace(sourceString, _T("\r\n"), _T("\\newline"));
 	}
 
 	if (m_dest) {
 		destString = m_dest->GetName();
-		destString.Replace(_T(":"), _T("\\colon"));
-		destString.Replace(_T(";"), _T("\\semicolon"));
-		destString.Replace(_T(","), _T("\\comma"));
-		destString.Replace(_T("\r\n"), _T("\\newline"));
+		CDiagramEntity::CStringReplace(destString, _T(":"), _T("\\colon"));
+		CDiagramEntity::CStringReplace(destString, _T(";"), _T("\\semicolon"));
+		CDiagramEntity::CStringReplace(destString, _T(","), _T("\\comma"));
+		CDiagramEntity::CStringReplace(destString, _T("\r\n"), _T("\\newline"));
 	}
 
 	str.Format(_T("%s:%s,%s,%s"), GetType(), name, sourceString, destString);

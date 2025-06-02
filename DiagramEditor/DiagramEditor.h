@@ -257,7 +257,9 @@ protected:
 	//}}AFX_MSG
 
 	virtual afx_msg void OnObjectCommand( UINT nID );
+#if _MSC_VERSION > 1100 //identify exact version
 	virtual afx_msg BOOL OnMouseWheel( UINT nFlags, short zDelta, CPoint pt );
+#endif
 	virtual afx_msg void OnMButtonDown( UINT nFlags, CPoint point );
 	afx_msg void OnKillFocus( CWnd* pNewWnd );
 	afx_msg void OnTimer( UINT_PTR nIDEvent );

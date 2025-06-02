@@ -30,7 +30,7 @@
 
    ========================================================================*/
 
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "DiagramPropertyDlg.h"
 
 #ifdef _DEBUG

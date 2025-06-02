@@ -18,7 +18,8 @@
 					editor data.
 
    ========================================================================*/
-#include "../stdafx.h"
+
+#include "stdafx.h"
 #include "ProcessControlFactory.h"
 
 #include "ProcessEntityBlockView.h"

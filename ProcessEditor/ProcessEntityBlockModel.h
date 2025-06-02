@@ -21,8 +21,8 @@ public:
 	virtual CObArray* getSubBlocks();
 	virtual void setParentBlock(CProcessEntityBlockModel* parent);
 	virtual CProcessEntityBlockModel* getParentBlock() const;
-	virtual bool contains(CProcessEntityBlockModel* block, bool recursive);
-	virtual bool canBeNested(CProcessEntityBlockModel* block);
+	virtual BOOL contains(CProcessEntityBlockModel* block, BOOL recursive);
+	virtual BOOL canBeNested(CProcessEntityBlockModel* block);
 
 	virtual void linkOutgoingEdge(CProcessLineEdgeModel* edge);
 	virtual void unlinkOutgoingEdge(CProcessLineEdgeModel* edge);

@@ -16,8 +16,8 @@ public:
     virtual void SetDestination(CProcessModel* destination);
     virtual CProcessModel* GetSource() const;
     virtual CProcessModel* GetDestination() const;
-    virtual bool canConnectSource(CProcessModel* source);
-    virtual bool canConnectDestination(CProcessModel* destination);
+    virtual BOOL canConnectSource(CProcessModel* source);
+    virtual BOOL canConnectDestination(CProcessModel* destination);
     virtual CProcessLineEdgeView* getLastSegment();
     virtual CProcessLineEdgeView* getFirstSegment();
 

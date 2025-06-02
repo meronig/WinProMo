@@ -1,7 +1,7 @@
+#include "stdafx.h"
 #include "ProcessEntityBlockModel.h"
 #include "ProcessLineEdgeModel.h"
 #include "LinkFactory.h"
-
 
 CProcessEntityBlockModel::CProcessEntityBlockModel() {
 	SetType(_T("process_block_model"));
@@ -11,13 +11,14 @@ CProcessEntityBlockModel::CProcessEntityBlockModel() {
 }
 
 CProcessEntityBlockModel::~CProcessEntityBlockModel() {
-	for (int i = m_incomingEdges.GetSize() - 1; i >= 0; i--) {
+	int i = 0;
+	for (i = m_incomingEdges.GetSize() - 1; i >= 0; i--) {
 		CProcessLineEdgeModel* edge = dynamic_cast<CProcessLineEdgeModel*>(this->m_incomingEdges.GetAt(i));
 		if (edge) {
 			edge->SetDestination(NULL);
 		}
 	}
-	for (int i = m_outgoingEdges.GetSize() - 1; i >= 0; i--) {
+	for (i = m_outgoingEdges.GetSize() - 1; i >= 0; i--) {
 		CProcessLineEdgeModel* edge = dynamic_cast<CProcessLineEdgeModel*>(this->m_outgoingEdges.GetAt(i));
 		if (edge) {
 			edge->SetSource(NULL);
@@ -33,18 +34,18 @@ CProcessModel* CProcessEntityBlockModel::Clone() {
 	return obj;
 }
 
-bool CProcessEntityBlockModel::canBeNested(CProcessEntityBlockModel* block)
+BOOL CProcessEntityBlockModel::canBeNested(CProcessEntityBlockModel* block)
 {
-	if (contains(block, true)) {
-		return false;
+	if (contains(block, TRUE)) {
+		return FALSE;
 	}
-	return true;
+	return TRUE;
 }
 
 void CProcessEntityBlockModel::linkSubBlock(CProcessEntityBlockModel* subblock)
 {
-	if (subblock->contains(this, true)) {
-		//ASSERT(false);
+	if (subblock->contains(this, TRUE)) {
+		ASSERT(FALSE);
 		//better to throw an exception
 		return;
 	}
@@ -101,8 +102,8 @@ CProcessEntityBlockModel* CProcessEntityBlockModel::getParentBlock() const
 	return this->parentBlock;
 }
 
-bool CProcessEntityBlockModel::contains(CProcessEntityBlockModel* block, bool recursive) {
-	bool contains = false;
+BOOL CProcessEntityBlockModel::contains(CProcessEntityBlockModel* block, BOOL recursive) {
+	BOOL contains = FALSE;
 	/*if (this == block) {
 		contains = true;
 	}
@@ -112,11 +113,11 @@ bool CProcessEntityBlockModel::contains(CProcessEntityBlockModel* block, bool re
 		CProcessEntityBlockModel* child = dynamic_cast<CProcessEntityBlockModel*>(this->m_subblocks.GetAt(i));
 		if (child) {
 			if (child == block) {
-				contains = true;
+				contains = TRUE;
 			}
 			if (recursive) {
-				if (child->contains(block, true)) {
-					contains = true;
+				if (child->contains(block, TRUE)) {
+					contains = TRUE;
 				}
 			}
 		}
@@ -242,20 +243,20 @@ CString CProcessEntityBlockModel::GetDefaultGetString() const
 	CString str;
 
 	CString name = GetName();
-	name.Replace(_T(":"), _T("\\colon"));
-	name.Replace(_T(";"), _T("\\semicolon"));
-	name.Replace(_T(","), _T("\\comma"));
-	name.Replace(_T("\r\n"), _T("\\newline"));
+	CDiagramEntity::CStringReplace(name, _T(":"), _T("\\colon"));
+	CDiagramEntity::CStringReplace(name, _T(";"), _T("\\semicolon"));
+	CDiagramEntity::CStringReplace(name, _T(","), _T("\\comma"));
+	CDiagramEntity::CStringReplace(name, _T("\r\n"), _T("\\newline"));
 
 	CString parentString = _T("");
 
 
 	if (parentBlock) {
 		parentString = parentBlock->GetName();
-		parentString.Replace(_T(":"), _T("\\colon"));
-		parentString.Replace(_T(";"), _T("\\semicolon"));
-		parentString.Replace(_T(","), _T("\\comma"));
-		parentString.Replace(_T("\r\n"), _T("\\newline"));
+		CDiagramEntity::CStringReplace(parentString, _T(":"), _T("\\colon"));
+		CDiagramEntity::CStringReplace(parentString, _T(";"), _T("\\semicolon"));
+		CDiagramEntity::CStringReplace(parentString, _T(","), _T("\\comma"));
+		CDiagramEntity::CStringReplace(parentString, _T("\r\n"), _T("\\newline"));
 		
 	}
 

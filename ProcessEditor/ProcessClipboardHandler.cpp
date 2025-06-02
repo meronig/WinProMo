@@ -10,7 +10,7 @@
 					CObArray.
 
    ========================================================================*/
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "ProcessClipboardHandler.h"
 #include "LinkFactory.h"
 #include "ProcessEntityContainer.h"
@@ -61,8 +61,6 @@ void CProcessClipboardHandler::Copy( CDiagramEntity* obj )
 
    ============================================================*/
 {
-	ASSERT(false);
-
 	if( obj )
 	{
 		ClearPaste();
@@ -95,9 +93,10 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 
 	CObArray* paste = GetData();
 	CObArray clones;
+	int t = 0;
 
 	int max = paste->GetSize();
-	for (int t = 0; t < max; t++)
+	for (t = 0; t < max; t++)
 	{
 		CDiagramEntity* obj = static_cast<CDiagramEntity*>(paste->GetAt(t));
 		if (obj->GetGroup())
@@ -116,7 +115,7 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 		}
 	}
 
-	for (int t = 0; t < max; t++)
+	for (t = 0; t < max; t++)
 	{
 		CDiagramEntity* obj = static_cast<CDiagramEntity*>(paste->GetAt(t));
 		CDiagramEntity* clone = obj->Clone();

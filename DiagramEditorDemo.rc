@@ -180,13 +180,6 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Swedish (Sweden) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_SVE)
-LANGUAGE LANG_SWEDISH, SUBLANG_SWEDISH
-#pragma code_page(1252)
-
-/////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
@@ -292,7 +285,6 @@ END
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\DiagramEditorDemo.ico"
 
-#endif    // Swedish (Sweden) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

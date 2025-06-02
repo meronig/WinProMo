@@ -22,7 +22,7 @@
 					"CDiagramEntityContainer"'s can share the same clipboard 
 					handler.
    ========================================================================*/
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "DiagramClipboardHandler.h"
 #include "DiagramEntityContainer.h"
 #include "GroupFactory.h"
@@ -189,9 +189,10 @@ void CDiagramClipboardHandler::Paste( CDiagramEntityContainer* container )
 
 	CDWordArray	oldgroup;
 	CDWordArray	newgroup;
+	int t = 0;
 
 	int max = m_paste.GetSize();
-	for( int t = 0 ; t < max ; t++ )
+	for(t = 0 ; t < max ; t++ )
 	{
 		CDiagramEntity* obj = static_cast< CDiagramEntity* >( m_paste.GetAt( t ) );
 		if( obj->GetGroup() )
@@ -210,7 +211,7 @@ void CDiagramClipboardHandler::Paste( CDiagramEntityContainer* container )
 		}
 	}
 
-	for(int t = 0 ; t < max ; t++ )
+	for(t = 0 ; t < max ; t++ )
 	{
 		CDiagramEntity* obj = static_cast< CDiagramEntity* >( m_paste.GetAt( t ) );
 		CDiagramEntity* clone = obj->Clone();

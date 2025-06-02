@@ -1,4 +1,4 @@
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "ProcessEntityContainer.h"
 #include <math.h>
 #include "ProcessEntityBlockModel.h"
@@ -94,8 +94,9 @@ void CProcessEntityContainer::RemoveAt(int index)
 void CProcessEntityContainer::ReplicateRelations(CObArray* source, CObArray* destination) {
 	ASSERT(destination->GetSize() == source->GetSize());
 
+	int i = 0;
 	//preserve links for edgeViews and cardinalities with model
-	for (int i = 0; i < source->GetSize(); i++) {
+	for (i = 0; i < source->GetSize(); i++) {
 		CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(i));
 		CProcessLineEdgeView* newEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(i));
 		if (edgeView && newEdgeView) {
@@ -111,7 +112,7 @@ void CProcessEntityContainer::ReplicateRelations(CObArray* source, CObArray* des
 			}
 		}
 	}
-	for (int i = 0; i < source->GetSize(); i++) {
+	for (i = 0; i < source->GetSize(); i++) {
 		//preserve links for edgeModels
 		CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(i));
 		CProcessLineEdgeView* newEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(i));
@@ -453,7 +454,7 @@ void CProcessEntityContainer::GetCurrentFromStack(CObArray& arr)
 			}
 
 			// Set the saved virtual size as well
-			SetVirtualSize(item->pt);
+			SetVirtualSize(CSize(item->pt));
 
 			//Replicate relations
 			ReplicateRelations(&item->arr, GetData());
@@ -502,7 +503,7 @@ void CProcessEntityContainer::AddCurrentToStack(CObArray& arr)
 		{
 
 			// Save current virtual size
-			item->pt = GetVirtualSize();
+			item->pt = CPoint(GetVirtualSize());
 
 			// Save all objects
 			int count = GetData()->GetSize();

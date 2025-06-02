@@ -1,6 +1,6 @@
+#include "stdafx.h"
 #include "ProcessEntityBlockView.h"
 #include "LinkFactory.h"
-#include "../stdafx.h"
 #include "../DiagramEditor/Tokenizer.h"
 #include "ProcessLineEdgeView.h"
 #include "ProcessLineEdgeModel.h"
@@ -30,7 +30,7 @@ CProcessEntityBlockView::CProcessEntityBlockView()
 	CString title;
 	title.LoadString(IDS_PROCESS_BLOCK);
 	SetTitle(title);
-	this->m_target = false;
+	this->m_target = FALSE;
 
 	SetPropertyDialog(&m_dlg, CPropertyDialog::IDD);
 
@@ -108,7 +108,7 @@ void CProcessEntityBlockView::Draw(CDC* dc, CRect rect)
 	dc->SelectObject(&font);
 	int mode = dc->SetBkMode(TRANSPARENT);
 	
-	if (this->getModel()->getSubBlocks()->IsEmpty()) {
+	if (this->getModel()->getSubBlocks()->GetSize() == 0) {
 		dc->DrawText(str, rect, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER);
 	}
 	else {
@@ -130,7 +130,7 @@ void CProcessEntityBlockView::Highlight(CDC* dc, CRect rect) {
 	dc->SelectObject(pOldPen);
 }
 
-bool CProcessEntityBlockView::IsTarget()
+BOOL CProcessEntityBlockView::IsTarget()
 {
 	return m_target;
 }
@@ -206,8 +206,9 @@ void CProcessEntityBlockView::recomputeIntersectionLinks() {
 	ASSERT_VALID(this->getModel());
 	CProcessEntityBlockModel* model = this->getModel();
 	//recompute intersection for edges
+	int i = 0;
 	
-	for (int i = 0; i < model->getIncomingEdges()->GetSize(); i++) {
+	for (i = 0; i < model->getIncomingEdges()->GetSize(); i++) {
 		CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(model->getIncomingEdges()->GetAt(i));
 		if (edgeModel) {
 			CProcessLineEdgeView* edgeView = edgeModel->getLastSegment();
@@ -221,7 +222,7 @@ void CProcessEntityBlockView::recomputeIntersectionLinks() {
 
 	}
 
-	for (int i = 0; i < model->getOutgoingEdges()->GetSize(); i++) {
+	for (i = 0; i < model->getOutgoingEdges()->GetSize(); i++) {
 		CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(model->getOutgoingEdges()->GetAt(i));
 		if (edgeModel) {
 			CProcessLineEdgeView* edgeView = edgeModel->getFirstSegment();
@@ -235,7 +236,7 @@ void CProcessEntityBlockView::recomputeIntersectionLinks() {
 	}
 	
 	//recompute intersection for sub-blocks
-	for (int i = 0; i < model->getSubBlocks()->GetSize(); i++) {
+	for (i = 0; i < model->getSubBlocks()->GetSize(); i++) {
 		CProcessEntityBlockModel* childModel = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
 		if (childModel) {
 			CProcessEntityBlockView* childView = dynamic_cast<CProcessEntityBlockView*>(childModel->getMainView());
@@ -329,22 +330,22 @@ CString CProcessEntityBlockView::GetDefaultGetString() const
 	CString str;
 	
 	CString model = getModel()->GetName();
-	model.Replace(_T(":"), _T("\\colon"));
-	model.Replace(_T(";"), _T("\\semicolon"));
-	model.Replace(_T(","), _T("\\comma"));
-	model.Replace(_T("\r\n"), _T("\\newline"));
+	CStringReplace(model, _T(":"), _T("\\colon"));
+	CStringReplace(model, _T(";"), _T("\\semicolon"));
+	CStringReplace(model, _T(","), _T("\\comma"));
+	CStringReplace(model, _T("\r\n"), _T("\\newline"));
 	
 	CString title = GetTitle();
-	title.Replace(_T(":"), _T("\\colon"));
-	title.Replace(_T(";"), _T("\\semicolon"));
-	title.Replace(_T(","), _T("\\comma"));
-	title.Replace(_T("\r\n"), _T("\\newline"));
+	CStringReplace(title, _T(":"), _T("\\colon"));
+	CStringReplace(title, _T(";"), _T("\\semicolon"));
+	CStringReplace(title, _T(","), _T("\\comma"));
+	CStringReplace(title, _T("\r\n"), _T("\\newline"));
 
 	CString name = GetName();
-	name.Replace(_T(":"), _T("\\colon"));
-	name.Replace(_T(";"), _T("\\semicolon"));
-	name.Replace(_T(","), _T("\\comma"));
-	name.Replace(_T("\r\n"), _T("\\newline"));
+	CStringReplace(name, _T(":"), _T("\\colon"));
+	CStringReplace(name, _T(";"), _T("\\semicolon"));
+	CStringReplace(name, _T(","), _T("\\comma"));
+	CStringReplace(name, _T("\r\n"), _T("\\newline"));
 
 	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s"), GetType(), name, GetLeft(), GetTop(), GetRight(), GetBottom(), title, GetGroup(), model);
 	
@@ -398,15 +399,15 @@ BOOL CProcessEntityBlockView::GetDefaultFromString(CString& str)
 
 		SetRect(left, top, right, bottom);
 
-		title.Replace(_T("\\colon"), _T(":"));
-		title.Replace(_T("\\semicolon"), _T(";"));
-		title.Replace(_T("\\comma"), _T(","));
-		title.Replace(_T("\\newline"), _T("\r\n"));
+		CStringReplace(title, _T("\\colon"), _T(":"));
+		CStringReplace(title, _T("\\semicolon"), _T(";"));
+		CStringReplace(title, _T("\\comma"), _T(","));
+		CStringReplace(title, _T("\\newline"), _T("\r\n"));
 
-		name.Replace(_T("\\colon"), _T(":"));
-		name.Replace(_T("\\semicolon"), _T(";"));
-		name.Replace(_T("\\comma"), _T(","));
-		name.Replace(_T("\\newline"), _T("\r\n"));
+		CStringReplace(name, _T("\\colon"), _T(":"));
+		CStringReplace(name, _T("\\semicolon"), _T(";"));
+		CStringReplace(name, _T("\\comma"), _T(","));
+		CStringReplace(name, _T("\\newline"), _T("\r\n"));
 
 		SetTitle(title);
 		SetName(name);
@@ -458,9 +459,9 @@ void CProcessEntityBlockView::SetRect(double left, double top, double right, dou
 	ASSERT_VALID(this->getModel());
 	CProcessEntityBlockModel* model = this->getModel();
 	//note: reposition links
-	
+	int i = 0;
 
-	for (int i = 0; i < model->getIncomingEdges()->GetSize(); i++) {
+	for (i = 0; i < model->getIncomingEdges()->GetSize(); i++) {
 		double newRight = 0;
 		double newBottom = 0;
 		CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(model->getIncomingEdges()->GetAt(i));
@@ -499,7 +500,7 @@ void CProcessEntityBlockView::SetRect(double left, double top, double right, dou
 
 	}
 
-	for (int i = 0; i < model->getOutgoingEdges()->GetSize(); i++) {
+	for (i = 0; i < model->getOutgoingEdges()->GetSize(); i++) {
 		double newTop = 0;
 		double newLeft = 0;
 		CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(model->getOutgoingEdges()->GetAt(i));
@@ -543,7 +544,7 @@ void CProcessEntityBlockView::SetRect(double left, double top, double right, dou
 
 	if (deltaX != 0 || deltaY != 0) {
 
-		for (int i = 0; i < model->getSubBlocks()->GetCount(); i++) {
+		for (i = 0; i < model->getSubBlocks()->GetSize(); i++) {
 			CProcessEntityBlockModel* childModel = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
 			if (childModel) {
 				CProcessEntityBlockView* childView = dynamic_cast<CProcessEntityBlockView*>(childModel->getMainView());

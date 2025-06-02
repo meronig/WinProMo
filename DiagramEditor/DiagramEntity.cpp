@@ -61,7 +61,7 @@
 					than the default ones.
 
    ========================================================================*/
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "DiagramEntity.h"
 #include "DiagramEntityContainer.h"
 #include "Tokenizer.h"
@@ -298,16 +298,16 @@ BOOL CDiagramEntity::GetDefaultFromString( CString& str )
 
 		SetRect( left, top, right, bottom );
 
-		title.Replace( _T( "\\colon" ), _T( ":" ) );
-		title.Replace( _T( "\\semicolon" ), _T( ";" ) );
-		title.Replace( _T( "\\comma" ), _T( "," ) );
-		title.Replace( _T( "\\newline" ), _T( "\r\n" ) );
-
-		name.Replace( _T( "\\colon" ), _T( ":" ) );
-		name.Replace( _T( "\\semicolon" ), _T( ";" ) );
-		name.Replace( _T( "\\comma" ), _T( "," ) );
-		name.Replace( _T( "\\newline" ), _T( "\r\n" ) );
-
+		CStringReplace(title, _T( "\\colon" ), _T( ":" ) );
+		CStringReplace(title, _T( "\\semicolon" ), _T( ";" ) );
+		CStringReplace(title, _T( "\\comma" ), _T( "," ) );
+		CStringReplace(title, _T( "\\newline" ), _T( "\r\n" ) );
+		
+		CStringReplace(name, _T( "\\colon" ), _T( ":" ) );
+		CStringReplace(name, _T( "\\semicolon" ), _T( ";" ) );
+		CStringReplace(name, _T( "\\comma" ), _T( "," ) );
+		CStringReplace(name, _T( "\\newline" ), _T( "\r\n" ) );
+		
 		SetTitle( title );
 		SetName( name );
 		SetGroup( group );
@@ -430,17 +430,17 @@ CString CDiagramEntity::GetDefaultGetString() const
 	CString str;
 
 	CString title = GetTitle();
-	title.Replace( _T( ":" ), _T( "\\colon" ) );
-	title.Replace( _T( ";" ), _T( "\\semicolon" ) );
-	title.Replace( _T( "," ), _T( "\\comma" ) );
-	title.Replace( _T( "\r\n" ), _T( "\\newline" ) );
+	CStringReplace(title, _T( ":" ), _T( "\\colon" ) );
+	CStringReplace(title, _T( ";" ), _T( "\\semicolon" ) );
+	CStringReplace(title, _T( "," ), _T( "\\comma" ) );
+	CStringReplace(title, _T( "\r\n" ), _T( "\\newline" ) );
 
 	CString name = GetName();
-	name.Replace( _T( ":" ), _T( "\\colon" ) );
-	name.Replace( _T( ";" ), _T( "\\semicolon" ) );
-	name.Replace( _T( "," ), _T( "\\comma" ) );
-	name.Replace( _T( "\r\n" ), _T( "\\newline" ) );
-
+	CStringReplace(name, _T( ":" ), _T( "\\colon" ) );
+	CStringReplace(name, _T( ";" ), _T( "\\semicolon" ) );
+	CStringReplace(name, _T( "," ), _T( "\\comma" ) );
+	CStringReplace(name, _T( "\r\n" ), _T( "\\newline" ) );
+	
 	str.Format( _T( "%s:%f,%f,%f,%f,%s,%s,%i" ), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup() );
 
 	return str;
@@ -1837,3 +1837,17 @@ int CDiagramEntity::GetHitCode( const CPoint& point, const CRect& rect ) const
 
 }
 
+void CDiagramEntity::CStringReplace(CString& str, const CString& from, const CString& to)
+{
+    int pos = 0;
+    int fromLen = from.GetLength();
+    int toLen = to.GetLength();
+	
+	if (from.IsEmpty())
+		return;
+
+    while ((pos = str.Find(from)) != -1)
+    {
+        str = str.Left(pos) + to + str.Mid(pos + fromLen);
+    }
+}

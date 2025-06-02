@@ -1,9 +1,9 @@
+#include "stdafx.h"
 #include "ProcessLineEdgeView.h"
 #include "ProcessLineEdgeModel.h"
 #include "ProcessEntityBlockView.h"
 #include "LinkFactory.h"
 #include "../DiagramEditor/Tokenizer.h"
-#include "../stdafx.h"
 #include <math.h>
 
 CProcessLineEdgeView::CProcessLineEdgeView()
@@ -460,22 +460,22 @@ CString CProcessLineEdgeView::GetDefaultGetString() const
 	CString str;
 
 	CString model = getModel()->GetName();
-	model.Replace(_T(":"), _T("\\colon"));
-	model.Replace(_T(";"), _T("\\semicolon"));
-	model.Replace(_T(","), _T("\\comma"));
-	model.Replace(_T("\r\n"), _T("\\newline"));
+	CStringReplace(model, _T(":"), _T("\\colon"));
+	CStringReplace(model, _T(";"), _T("\\semicolon"));
+	CStringReplace(model, _T(","), _T("\\comma"));
+	CStringReplace(model, _T("\r\n"), _T("\\newline"));
 
 	CString title = GetTitle();
-	title.Replace(_T(":"), _T("\\colon"));
-	title.Replace(_T(";"), _T("\\semicolon"));
-	title.Replace(_T(","), _T("\\comma"));
-	title.Replace(_T("\r\n"), _T("\\newline"));
+	CStringReplace(title, _T(":"), _T("\\colon"));
+	CStringReplace(title, _T(";"), _T("\\semicolon"));
+	CStringReplace(title, _T(","), _T("\\comma"));
+	CStringReplace(title, _T("\r\n"), _T("\\newline"));
 
 	CString name = GetName();
-	name.Replace(_T(":"), _T("\\colon"));
-	name.Replace(_T(";"), _T("\\semicolon"));
-	name.Replace(_T(","), _T("\\comma"));
-	name.Replace(_T("\r\n"), _T("\\newline"));
+	CStringReplace(name, _T(":"), _T("\\colon"));
+	CStringReplace(name, _T(";"), _T("\\semicolon"));
+	CStringReplace(name, _T(","), _T("\\comma"));
+	CStringReplace(name, _T("\r\n"), _T("\\newline"));
 
 	CString sourceString = _T("");
 
@@ -483,10 +483,10 @@ CString CProcessLineEdgeView::GetDefaultGetString() const
 
 	if (source) {
 		sourceString = source->GetName();
-		sourceString.Replace(_T(":"), _T("\\colon"));
-		sourceString.Replace(_T(";"), _T("\\semicolon"));
-		sourceString.Replace(_T(","), _T("\\comma"));
-		sourceString.Replace(_T("\r\n"), _T("\\newline"));
+		CStringReplace(sourceString, _T(":"), _T("\\colon"));
+		CStringReplace(sourceString, _T(";"), _T("\\semicolon"));
+		CStringReplace(sourceString, _T(","), _T("\\comma"));
+		CStringReplace(sourceString, _T("\r\n"), _T("\\newline"));
 	}
 
 	CString destString = _T("");
@@ -495,10 +495,10 @@ CString CProcessLineEdgeView::GetDefaultGetString() const
 
 	if (dest) {
 		destString = dest->GetName();
-		destString.Replace(_T(":"), _T("\\colon"));
-		destString.Replace(_T(";"), _T("\\semicolon"));
-		destString.Replace(_T(","), _T("\\comma"));
-		destString.Replace(_T("\r\n"), _T("\\newline"));
+		CStringReplace(destString, _T(":"), _T("\\colon"));
+		CStringReplace(destString, _T(";"), _T("\\semicolon"));
+		CStringReplace(destString, _T(","), _T("\\comma"));
+		CStringReplace(destString, _T("\r\n"), _T("\\newline"));
 	}
 
 	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s"), GetType(), name, GetLeft(), GetTop(), GetRight(), GetBottom(), title, GetGroup(), model, sourceString, destString);
@@ -553,15 +553,15 @@ BOOL CProcessLineEdgeView::GetDefaultFromString(CString& str)
 
 		CDiagramEntity::SetRect(left, top, right, bottom);
 
-		title.Replace(_T("\\colon"), _T(":"));
-		title.Replace(_T("\\semicolon"), _T(";"));
-		title.Replace(_T("\\comma"), _T(","));
-		title.Replace(_T("\\newline"), _T("\r\n"));
+		CStringReplace(title, _T("\\colon"), _T(":"));
+		CStringReplace(title, _T("\\semicolon"), _T(";"));
+		CStringReplace(title, _T("\\comma"), _T(","));
+		CStringReplace(title, _T("\\newline"), _T("\r\n"));
 
-		name.Replace(_T("\\colon"), _T(":"));
-		name.Replace(_T("\\semicolon"), _T(";"));
-		name.Replace(_T("\\comma"), _T(","));
-		name.Replace(_T("\\newline"), _T("\r\n"));
+		CStringReplace(name, _T("\\colon"), _T(":"));
+		CStringReplace(name, _T("\\semicolon"), _T(";"));
+		CStringReplace(name, _T("\\comma"), _T(","));
+		CStringReplace(name, _T("\\newline"), _T("\r\n"));
 
 		SetTitle(title);
 		SetName(name);

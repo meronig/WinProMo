@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ProcessModel.h"
 #include "../DiagramEditor/Tokenizer.h"
 
@@ -129,10 +130,10 @@ BOOL CProcessModel::GetDefaultFromString(CString& str)
 
 		tok.GetAt(count++, name);
 		
-		name.Replace(_T("\\colon"), _T(":"));
-		name.Replace(_T("\\semicolon"), _T(";"));
-		name.Replace(_T("\\comma"), _T(","));
-		name.Replace(_T("\\newline"), _T("\r\n"));
+		CDiagramEntity::CStringReplace(name, _T("\\colon"), _T(":"));
+		CDiagramEntity::CStringReplace(name, _T("\\semicolon"), _T(";"));
+		CDiagramEntity::CStringReplace(name, _T("\\comma"), _T(","));
+		CDiagramEntity::CStringReplace(name, _T("\\newline"), _T("\r\n"));
 
 		SetName(name);
 		
@@ -254,10 +255,10 @@ CString CProcessModel::GetDefaultGetString() const
 	CString str;
 
 	CString name = GetName();
-	name.Replace(_T(":"), _T("\\colon"));
-	name.Replace(_T(";"), _T("\\semicolon"));
-	name.Replace(_T(","), _T("\\comma"));
-	name.Replace(_T("\r\n"), _T("\\newline"));
+	CDiagramEntity::CStringReplace(name, _T(":"), _T("\\colon"));
+	CDiagramEntity::CStringReplace(name, _T(";"), _T("\\semicolon"));
+	CDiagramEntity::CStringReplace(name, _T(","), _T("\\comma"));
+	CDiagramEntity::CStringReplace(name, _T("\r\n"), _T("\\newline"));
 
 	str.Format(_T("%s:%s"), GetType(), name);
 

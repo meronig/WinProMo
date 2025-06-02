@@ -167,7 +167,7 @@
 					23/6  2006	Minor layout changes and removal of redundant scrollbar handling (Alexey Shalnov)
   ========================================================================*/
 
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "DiagramEditor.h"
 #include <math.h>
 
@@ -290,7 +290,7 @@ void CDiagramEditor::Clear()
 	m_interactMode = MODE_NONE;
 	m_zoom = 1.0;
 	m_bgResizeSelected = FALSE;
-	m_deltaPoint = CSize( 0, 0 );
+	m_deltaPoint = CPoint(CSize( 0, 0 ));
 	m_multiSelObj = NULL;
 	m_subModeSelected = NULL;
 	m_drawing = FALSE;
@@ -474,7 +474,9 @@ BEGIN_MESSAGE_MAP( CDiagramEditor, CWnd )
 
 	ON_WM_KILLFOCUS()
 	ON_WM_TIMER()
+#if _MSC_VERSION > 1100
 	ON_WM_MOUSEWHEEL()
+#endif
 	ON_COMMAND_RANGE( CMD_START, CMD_END, OnObjectCommand )
 
 	ON_COMMAND( ID_EDIT_CUT, OnEditCut )
@@ -2063,7 +2065,9 @@ void CDiagramEditor::OnLButtonDown( UINT nFlags, CPoint point )
 
 				// Offset from top-left corner
 				// in the anchor object.
-				m_deltaPoint = point - CPoint( startx, starty );
+				//m_deltaPoint = point - CPoint( startx, starty );
+				m_deltaPoint.x = point.x - startx;
+				m_deltaPoint.y = point.y - starty;
 
 			}
 		}
@@ -2216,7 +2220,9 @@ void CDiagramEditor::OnLButtonDown( UINT nFlags, CPoint point )
 						starty = rect.bottom;
 					if( GetSelectCount() > 1 )
 						m_multiSelObj = obj;
-					m_deltaPoint = point - CPoint( startx, starty );
+					//m_deltaPoint = point - CPoint( startx, starty );
+					m_deltaPoint.x = point.x - startx;
+					m_deltaPoint.y = point.y - starty;
 				}
 				else if( !( nFlags & MK_CONTROL ) )
 				{
@@ -5777,6 +5783,8 @@ BOOL CDiagramEditor::ZoomToFit( CSize size )
 /////////////////////////////////////////////////////////////////////////////
 // CDiagramEditor mouse wheel handling
 
+#if _MSC_VERSION > 1100
+
 BOOL CDiagramEditor::OnMouseWheel( UINT nFlags, short zDelta, CPoint pt )
 /* ============================================================
 	Function :		CDiagramEditor::OnMouseWheel
@@ -5825,6 +5833,8 @@ BOOL CDiagramEditor::OnMouseWheel( UINT nFlags, short zDelta, CPoint pt )
 	return CWnd::OnMouseWheel( nFlags, zDelta, pt );
 
 }
+
+#endif
 
 /////////////////////////////////////////////////////////////////////////////
 // CDiagramEditor panning

@@ -24,7 +24,7 @@
 								building (Enrico Detoma)
    ========================================================================*/
 
-#include "../stdafx.h"
+#include "stdafx.h"
 #include "Tokenizer.h"
 
 
