@@ -60,40 +60,40 @@
     <ClCompile Include="TextFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessEditor.cpp">
+    <ClCompile Include="ProMoEditor\ProMoEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessEntityContainer.cpp">
+    <ClCompile Include="ProMoEditor\ProMoEntityContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessEntityBlockView.cpp">
+    <ClCompile Include="ProMoEditor\ProMoBlockView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\LinkFactory.cpp">
+    <ClCompile Include="ProMoEditor\ProMoNameFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DiagramEditor\DiagramPropertyDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\PropertyDialog.cpp">
+    <ClCompile Include="ProMoEditor\PropertyDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessControlFactory.cpp">
+    <ClCompile Include="ProMoEditor\ProMoControlFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessClipboardHandler.cpp">
+    <ClCompile Include="ProMoEditor\ProMoClipboardHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessLineEdgeView.cpp">
+    <ClCompile Include="ProMoEditor\ProMoEdgeView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessEntityBlockModel.cpp">
+    <ClCompile Include="ProMoEditor\ProMoBlockModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessModel.cpp">
+    <ClCompile Include="ProMoEditor\ProMoModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessEditor\ProcessLineEdgeModel.cpp">
+    <ClCompile Include="ProMoEditor\ProMoEdgeModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,40 +152,40 @@
     <ClInclude Include="TextFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessEditor.h">
+    <ClInclude Include="ProMoEditor\ProMoEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessEntityContainer.h">
+    <ClInclude Include="ProMoEditor\ProMoEntityContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessEntityBlockView.h">
+    <ClInclude Include="ProMoEditor\ProMoBlockView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\LinkFactory.h">
+    <ClInclude Include="ProMoEditor\ProMoNameFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DiagramEditor\DiagramPropertyDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\PropertyDialog.h">
+    <ClInclude Include="ProMoEditor\PropertyDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessControlFactory.h">
+    <ClInclude Include="ProMoEditor\ProMoControlFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessClipboardHandler.h">
+    <ClInclude Include="ProMoEditor\ProMoClipboardHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessLineEdgeView.h">
+    <ClInclude Include="ProMoEditor\ProMoEdgeView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessEntityBlockModel.h">
+    <ClInclude Include="ProMoEditor\ProMoBlockModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessModel.h">
+    <ClInclude Include="ProMoEditor\ProMoModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProcessEditor\ProcessLineEdgeModel.h">
+    <ClInclude Include="ProMoEditor\ProMoEdgeModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

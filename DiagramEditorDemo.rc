@@ -80,6 +80,32 @@ BEGIN
     LTEXT           "Text:",IDC_STATIC,5,0,17,8
 END
 
+IDD_DIALOG_PAPER_SIZE DIALOG 0, 0, 152, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Paper size"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,95,5,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,95,22,50,14
+    LTEXT           "Width:",IDC_STATIC,5,5,25,10
+    LTEXT           "Height:",IDC_STATIC,5,25,25,10
+    EDITTEXT        IDC_EDIT_WIDTH,30,5,55,15,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_HEIGHT,30,25,55,15,ES_AUTOHSCROLL
+END
+
+IDD_DIALOG_GRID_SIZE DIALOG 0, 0, 152, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Grid size"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,95,5,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,95,22,50,14
+    LTEXT           "Width:",IDC_STATIC,5,5,25,10
+    LTEXT           "Height:",IDC_STATIC,5,25,25,10
+    EDITTEXT        IDC_EDIT_WIDTH,30,5,55,15,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_HEIGHT,30,25,55,15,ES_AUTOHSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -162,82 +188,6 @@ END
 #endif    // APSTUDIO_INVOKED
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE
-BEGIN
-    IDS_ABOUTBOX            "&About DiagramEditorDemo..."
-    IDS_CHANGED_SAVE        "Your work is changed. Do you want to save it?"
-    IDS_SAVED               "The work is saved"
-    IDS_PROCESS_BLOCK       "Block"
-END
-
-#endif    // English (United States) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Dialog
-//
-
-IDD_DIALOG_PAPER_SIZE DIALOG 0, 0, 152, 55
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Paper size"
-FONT 8, "MS Sans Serif"
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,95,5,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,95,22,50,14
-    LTEXT           "Width:",IDC_STATIC,5,5,25,10
-    LTEXT           "Height:",IDC_STATIC,5,25,25,10
-    EDITTEXT        IDC_EDIT_WIDTH,30,5,55,15,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_HEIGHT,30,25,55,15,ES_AUTOHSCROLL
-END
-
-IDD_DIALOG_GRID_SIZE DIALOG 0, 0, 152, 55
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Grid size"
-FONT 8, "MS Sans Serif"
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,95,5,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,95,22,50,14
-    LTEXT           "Width:",IDC_STATIC,5,5,25,10
-    LTEXT           "Height:",IDC_STATIC,5,25,25,10
-    EDITTEXT        IDC_EDIT_WIDTH,30,5,55,15,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_HEIGHT,30,25,55,15,ES_AUTOHSCROLL
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// DESIGNINFO
-//
-
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
-BEGIN
-    IDD_DIALOG_PAPER_SIZE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 145
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 48
-    END
-
-    IDD_DIALOG_GRID_SIZE, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 145
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 48
-    END
-END
-#endif    // APSTUDIO_INVOKED
-
-
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -285,6 +235,21 @@ END
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\DiagramEditorDemo.ico"
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_ABOUTBOX            "&About DiagramEditorDemo..."
+    IDS_CHANGED_SAVE        "Your work is changed. Do you want to save it?"
+    IDS_SAVED               "The work is saved"
+    IDS_PROMO_BLOCK         "Block"
+END
+
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

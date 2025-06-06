@@ -17,11 +17,11 @@
    ========================================================================*/
 
 #include "stdafx.h"
-#include "LinkFactory.h"
+#include "ProMoNameFactory.h"
 
-int CLinkFactory::s_currentID = 0;
+int CProMoNameFactory::s_currentID = 0;
 
-CString CLinkFactory::GetID()
+CString CProMoNameFactory::GetID()
 /* ============================================================
 	Function :		CLinkFactory::GetID
 	Description :	Returns a unique int every time it is 
@@ -37,8 +37,8 @@ CString CLinkFactory::GetID()
 {
 	CString str;
 
-	str.Format( _T( "%i" ), CLinkFactory::s_currentID );
-	CLinkFactory::s_currentID++;
+	str.Format( _T( "%i" ), CProMoNameFactory::s_currentID );
+	CProMoNameFactory::s_currentID++;
 
 	return str;
 

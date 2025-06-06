@@ -9,9 +9,9 @@
 
 #include "TextFile.h"
 #include "DiagramEditor/DiagramLine.h"
-#include "ProcessEditor/ProcessEntityBlockView.h"
-#include "ProcessEditor/ProcessLineEdgeView.h"
-#include "ProcessEditor/ProcessControlFactory.h"
+#include "ProMoEditor/ProMoBlockView.h"
+#include "ProMoEditor/ProMoEdgeView.h"
+#include "ProMoEditor/ProMoControlFactory.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -240,7 +240,7 @@ void CDiagramEditorDemoDlg::OnButtonBox()
 	/*CDiagramEntity* obj = new CDiagramEntity;
 	m_editor.StartDrawingObject( obj );*/
 	m_editor.UnselectAll();
-	CProcessEntityBlockView* obj = new CProcessEntityBlockView;
+	CProMoBlockView* obj = new CProMoBlockView;
 	m_editor.StartDrawingObject(obj);
 
 }
@@ -252,7 +252,7 @@ void CDiagramEditorDemoDlg::OnButtonLine()
 	m_editor.StartDrawingObject( obj );
 	*/
 	m_editor.UnselectAll();
-	CProcessLineEdgeView* obj = new CProcessLineEdgeView;
+	CProMoEdgeView* obj = new CProMoEdgeView;
 	m_editor.StartDrawingObject(obj);
 
 }
@@ -357,7 +357,7 @@ void CDiagramEditorDemoDlg::OnButtonLoad()
 
 		CTextFile	tf( _T( "txt" ) );
 		CStringArray	stra;
-		CProcessControlFactory fact;
+		CProMoControlFactory fact;
 
 		m_filename = _T( "" );
 		tf.ReadTextFile( m_filename, stra );

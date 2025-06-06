@@ -1,10 +1,10 @@
-#ifndef _PROCESSMODEL_H_
-#define _PROCESSMODEL_H_
+#ifndef _PROMOMODEL_H_
+#define _PROMOMODEL_H_
 
 #include "../StdAfx.h"
 #include "../DiagramEditor/DiagramEntity.h"
 
-class CProcessModel : public CObject
+class CProMoModel : public CObject
 {
 public:
 	virtual void linkView(CDiagramEntity* view);
@@ -15,7 +15,7 @@ public:
 	virtual BOOL	FromString(const CString& str);
 	virtual CString	Export(UINT format = 0) const;
 	virtual CString	GetString() const;
-	static	CProcessModel* CreateFromString(const CString& str);
+	static	CProMoModel* CreateFromString(const CString& str);
 
 	BOOL			LoadFromString(CString& data);
 
@@ -40,4 +40,4 @@ private:
 
 };
 
-#endif //_PROCESSMODEL_H_
+#endif //_PROMOMODEL_H_

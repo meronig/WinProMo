@@ -1,22 +1,22 @@
-#ifndef _PROCESSLINEEDGEVIEW_H_
-#define _PROCESSLINEEDGEVIEW_H_
+#ifndef _PROMOEDGEVIEW_H_
+#define _PROMOEDGEVIEW_H_
 
 //#include "../DiagramEditor/DiagramEntity.h"
 #include "../DiagramEditor/DiagramLine.h"
 #include "PropertyDialog.h"
-#include "ProcessEntityBlockView.h"
+#include "ProMoBlockView.h"
 //#include "ProcessLineEdgeModel.h"
 
 
 
 #define DEHT_CENTER		10
 
-class CProcessLineEdgeView :
+class CProMoEdgeView :
     public CDiagramLine
 {
 public:
-    CProcessLineEdgeView();
-    virtual ~CProcessLineEdgeView();
+    CProMoEdgeView();
+    virtual ~CProMoEdgeView();
     virtual	CDiagramEntity* Clone();
     static	CDiagramEntity* CreateFromString(const CString& str);
 
@@ -24,8 +24,8 @@ public:
     virtual void SetDestination(CDiagramEntity *destination);
     virtual CDiagramEntity* GetSource() const;
     virtual CDiagramEntity* GetDestination() const;
-    virtual CProcessLineEdgeModel* getModel() const;
-    virtual void setModel(CProcessLineEdgeModel* model);
+    virtual CProMoEdgeModel* getModel() const;
+    virtual void setModel(CProMoEdgeModel* model);
 
 
     // Overrides
@@ -46,10 +46,10 @@ protected:
 	
 
 private:
-    CProcessLineEdgeView *m_source;
-    CProcessLineEdgeView *m_dest;
+    CProMoEdgeView *m_source;
+    CProMoEdgeView *m_dest;
     CPropertyDialog	m_dlg;
-    CProcessLineEdgeModel* m_edgemodel;
+    CProMoEdgeModel* m_edgemodel;
 };
 
-#endif //_PROCESSLINEEDGEVIEW_H_
+#endif //_PROMOEDGEVIEW_H_

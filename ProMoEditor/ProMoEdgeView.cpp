@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "ProcessLineEdgeView.h"
-#include "ProcessLineEdgeModel.h"
-#include "ProcessEntityBlockView.h"
-#include "LinkFactory.h"
+#include "ProMoEdgeView.h"
+#include "ProMoEdgeModel.h"
+#include "ProMoBlockView.h"
+#include "ProMoNameFactory.h"
 #include "../DiagramEditor/Tokenizer.h"
 #include <math.h>
 
-CProcessLineEdgeView::CProcessLineEdgeView()
+CProMoEdgeView::CProMoEdgeView()
 /* ============================================================
 	Function :		CProcessLineEdge::CProcessLineEdge
 	Description :	Constructor
@@ -21,20 +21,20 @@ CProcessLineEdgeView::CProcessLineEdgeView()
 {
 
 	SetMinimumSize(CSize(-1, -1));
-	SetType(_T("process_edge_view"));
+	SetType(_T("promo_edge_view"));
 	SetTitle(_T(""));
 
 	SetPropertyDialog(&m_dlg, CPropertyDialog::IDD);
 
-	SetName(CLinkFactory::GetID());
+	SetName(CProMoNameFactory::GetID());
 
 	m_source = NULL;
 	m_dest = NULL;
 	m_edgemodel = NULL;
-	setModel(new CProcessLineEdgeModel());
+	setModel(new CProMoEdgeModel());
 }
 
-CProcessLineEdgeView::~CProcessLineEdgeView()
+CProMoEdgeView::~CProMoEdgeView()
 /* ============================================================
 	Function :		CProcessLineEdge::~CProcessLineEdge
 	Description :	Destructor
@@ -69,7 +69,7 @@ CProcessLineEdgeView::~CProcessLineEdgeView()
 
 }
 
-CDiagramEntity* CProcessLineEdgeView::Clone()
+CDiagramEntity* CProMoEdgeView::Clone()
 /* ============================================================
 	Function :		CProcessLineEdge::Clone
 	Description :	Clone this object to a new object.
@@ -84,17 +84,17 @@ CDiagramEntity* CProcessLineEdgeView::Clone()
 
 {
 
-	CProcessLineEdgeView* obj = new CProcessLineEdgeView;
+	CProMoEdgeView* obj = new CProMoEdgeView;
 	obj->Copy(this);
 	obj->m_source = NULL;
 	obj->m_dest = NULL;
 	//obj->setModel(this->getModel());
-	obj->SetName(CLinkFactory::GetID());
-	obj->setModel(new CProcessLineEdgeModel());
+	obj->SetName(CProMoNameFactory::GetID());
+	obj->setModel(new CProMoEdgeModel());
 	return obj;
 }
 
-void CProcessLineEdgeView::DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
+void CProMoEdgeView::DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
 	
 	
 	const double dx = static_cast<double>(p1.x) - static_cast<double>(p0.x);
@@ -123,7 +123,7 @@ void CProcessLineEdgeView::DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_l
 	
 }
 
-void CProcessLineEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circleDiameter)
+void CProMoEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circleDiameter)
 {
 	// 1. Define the start and end points
 	int x1 = p0.x;
@@ -164,11 +164,11 @@ void CProcessLineEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circle
 	dc->Ellipse(circleRect);
 }
 
-void CProcessLineEdgeView::Reposition()
+void CProMoEdgeView::Reposition()
 {
 	//new
 	if (m_source != NULL) {
-		CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(m_source);
+		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_source);
 		if (obj) {
 			CPoint pt = obj->getIntersection(GetRect().TopLeft(), GetRect().BottomRight());
 			if (pt.x >= 0) {
@@ -176,14 +176,14 @@ void CProcessLineEdgeView::Reposition()
 				SetLeft(pt.x);
 			}
 		}
-		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(m_source);
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(m_source);
 		if (edge) {
 			SetTop(edge->GetBottom());
 			SetLeft(edge->GetRight());
 		}
 	}
 	if (m_dest != NULL) {
-		CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(m_dest);
+		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_dest);
 		if (obj) {
 			CPoint pt = obj->getIntersection(GetRect().BottomRight(), GetRect().TopLeft());
 			if (pt.x >= 0) {
@@ -191,7 +191,7 @@ void CProcessLineEdgeView::Reposition()
 				SetRight(pt.x);
 			}
 		}
-		CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(m_dest);
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(m_dest);
 		if (edge) {
 			SetBottom(edge->GetTop());
 			SetRight(edge->GetLeft());
@@ -199,7 +199,7 @@ void CProcessLineEdgeView::Reposition()
 	}
 }
 
-void CProcessLineEdgeView::Draw(CDC* dc, CRect rect)
+void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 /* ============================================================
 	Function :		CProcessLineEdge::Draw
 	Description :	Draws the object.
@@ -265,7 +265,7 @@ void CProcessLineEdgeView::Draw(CDC* dc, CRect rect)
 
 }
 
-int CProcessLineEdgeView::GetHitCode(const CPoint& point, const CRect& rect) const
+int CProMoEdgeView::GetHitCode(const CPoint& point, const CRect& rect) const
 {
 	CRect rectTest = GetSelectionMarkerRect(DEHT_CENTER, rect);
 	if (rectTest.PtInRect(point)) {
@@ -274,7 +274,7 @@ int CProcessLineEdgeView::GetHitCode(const CPoint& point, const CRect& rect) con
 	return CDiagramLine::GetHitCode(point, rect);
 }
 
-HCURSOR CProcessLineEdgeView::GetCursor(int hit) const
+HCURSOR CProMoEdgeView::GetCursor(int hit) const
 {
 	if (hit == DEHT_CENTER) {
 		return LoadCursor(NULL, IDC_SIZEALL);
@@ -283,7 +283,7 @@ HCURSOR CProcessLineEdgeView::GetCursor(int hit) const
 }
 
 
-CDiagramEntity* CProcessLineEdgeView::CreateFromString(const CString& str)
+CDiagramEntity* CProMoEdgeView::CreateFromString(const CString& str)
 /* ============================================================
 	Function :		CProcessLineEdge::CreateFromString
 	Description :	Static factory function that creates and
@@ -305,7 +305,7 @@ CDiagramEntity* CProcessLineEdgeView::CreateFromString(const CString& str)
    ============================================================*/
 {
 
-	CProcessLineEdgeView* obj = new CProcessLineEdgeView;
+	CProMoEdgeView* obj = new CProMoEdgeView;
 	if (!obj->FromString(str))
 	{
 		delete obj;
@@ -316,12 +316,12 @@ CDiagramEntity* CProcessLineEdgeView::CreateFromString(const CString& str)
 
 }
 
-void CProcessLineEdgeView::SetSource(CDiagramEntity *source)
+void CProMoEdgeView::SetSource(CDiagramEntity *source)
 {
 	//save the old source edge view
-	CProcessLineEdgeView* oldSourceView = m_source;
+	CProMoEdgeView* oldSourceView = m_source;
 
-	CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(source);
+	CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(source);
 	//new source is a block view
 	if (blockView) {
 		//connect the elements at the model level
@@ -331,7 +331,7 @@ void CProcessLineEdgeView::SetSource(CDiagramEntity *source)
 	}
 	
 	//new source is an edge view
-	CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source);
+	CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source);
 
 	// the source edge view has changed
 	if (source != oldSourceView) {
@@ -360,12 +360,12 @@ void CProcessLineEdgeView::SetSource(CDiagramEntity *source)
 
 }
 
-void CProcessLineEdgeView::SetDestination(CDiagramEntity *destination)
+void CProMoEdgeView::SetDestination(CDiagramEntity *destination)
 {
 	//save the old source edge view
-	CProcessLineEdgeView* oldDestView = m_dest;
+	CProMoEdgeView* oldDestView = m_dest;
 
-	CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(destination);
+	CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(destination);
 	//new source is a block view
 	if (blockView) {
 		//connect the elements at the model level
@@ -375,7 +375,7 @@ void CProcessLineEdgeView::SetDestination(CDiagramEntity *destination)
 	}
 
 	//new source is an edge view
-	CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(destination);
+	CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(destination);
 
 	if (oldDestView != destination) {
 
@@ -402,25 +402,25 @@ void CProcessLineEdgeView::SetDestination(CDiagramEntity *destination)
 
 }
 
-CDiagramEntity* CProcessLineEdgeView::GetSource() const
+CDiagramEntity* CProMoEdgeView::GetSource() const
 {
 	return m_source;
 }
 
-CDiagramEntity* CProcessLineEdgeView::GetDestination() const
+CDiagramEntity* CProMoEdgeView::GetDestination() const
 {
 	return m_dest;
 }
 
-CProcessLineEdgeModel* CProcessLineEdgeView::getModel() const
+CProMoEdgeModel* CProMoEdgeView::getModel() const
 {
 	return m_edgemodel;
 }
 
-void CProcessLineEdgeView::setModel(CProcessLineEdgeModel* model)
+void CProMoEdgeView::setModel(CProMoEdgeModel* model)
 {
 	if (m_edgemodel != model) {
-		CProcessLineEdgeModel* oldModel = m_edgemodel;
+		CProMoEdgeModel* oldModel = m_edgemodel;
 		m_edgemodel = model;
 		
 		//link this class to the new model
@@ -438,7 +438,7 @@ void CProcessLineEdgeView::setModel(CProcessLineEdgeModel* model)
 	}
 }
 
-CString CProcessLineEdgeView::GetDefaultGetString() const
+CString CProMoEdgeView::GetDefaultGetString() const
 {
 	/* ============================================================
 	Function :		CProcessLineEdge::GetDefaultString
@@ -507,7 +507,7 @@ CString CProcessLineEdgeView::GetDefaultGetString() const
 
 }
 
-BOOL CProcessLineEdgeView::GetDefaultFromString(CString& str)
+BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
 /* ============================================================
 	Function :		CDiagramEntity::GetDefaultFromString
 	Description :	Gets the default properties from "str"
@@ -586,7 +586,7 @@ BOOL CProcessLineEdgeView::GetDefaultFromString(CString& str)
 }
 
 
-void CProcessLineEdgeView::DrawSelectionMarkers(CDC* dc, CRect rect) const
+void CProMoEdgeView::DrawSelectionMarkers(CDC* dc, CRect rect) const
 {
 	CRect rectSelect;
 
@@ -597,7 +597,7 @@ void CProcessLineEdgeView::DrawSelectionMarkers(CDC* dc, CRect rect) const
 	CDiagramLine::DrawSelectionMarkers(dc, rect);
 }
 
-CRect CProcessLineEdgeView::GetSelectionMarkerRect(UINT marker, CRect rect) const
+CRect CProMoEdgeView::GetSelectionMarkerRect(UINT marker, CRect rect) const
 {
 	CRect rectMarker;
 	int horz = GetMarkerSize().cx / 2;

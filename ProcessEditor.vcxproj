@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ProcessEditor\ProcessModel.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoModel.cpp" />
     <ClCompile Include="DiagramEditorDemo.cpp" />
     <ClCompile Include="DiagramEditorDemoDlg.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
@@ -33,22 +33,22 @@
     <ClCompile Include="DiagramEditor\Tokenizer.cpp" />
     <ClCompile Include="DiagramEditor\UndoItem.cpp" />
     <ClCompile Include="GridSizeDialog.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessClipboardHandler.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessControlFactory.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessEditor.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessEntityContainer.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessEntityBlockView.cpp" />
-    <ClCompile Include="ProcessEditor\LinkFactory.cpp" />
-    <ClCompile Include="ProcessEditor\PropertyDialog.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessLineEdgeView.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoClipboardHandler.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoControlFactory.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoEditor.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoEntityContainer.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoBlockView.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoNameFactory.cpp" />
+    <ClCompile Include="ProMoEditor\PropertyDialog.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoEdgeView.cpp" />
     <ClCompile Include="PaperSizeDialog.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessEntityBlockModel.cpp" />
-    <ClCompile Include="ProcessEditor\ProcessLineEdgeModel.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoBlockModel.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoEdgeModel.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="TextFile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ProcessEditor\ProcessModel.h" />
+    <ClInclude Include="ProMoEditor\ProMoModel.h" />
     <ClInclude Include="DiagramEditorDemo.h" />
     <ClInclude Include="DiagramEditorDemoDlg.h" />
     <ClInclude Include="DiagramEditor\DiagramClipboardHandler.h" />
@@ -64,17 +64,17 @@
     <ClInclude Include="DiagramEditor\Tokenizer.h" />
     <ClInclude Include="DiagramEditor\UndoItem.h" />
     <ClInclude Include="GridSizeDialog.h" />
-    <ClInclude Include="ProcessEditor\ProcessClipboardHandler.h" />
-    <ClInclude Include="ProcessEditor\ProcessControlFactory.h" />
-    <ClInclude Include="ProcessEditor\ProcessEditor.h" />
-    <ClInclude Include="ProcessEditor\ProcessEntityContainer.h" />
-    <ClInclude Include="ProcessEditor\ProcessEntityBlockView.h" />
-    <ClInclude Include="ProcessEditor\LinkFactory.h" />
-    <ClInclude Include="ProcessEditor\PropertyDialog.h" />
-    <ClInclude Include="ProcessEditor\ProcessLineEdgeView.h" />
+    <ClInclude Include="ProMoEditor\ProMoClipboardHandler.h" />
+    <ClInclude Include="ProMoEditor\ProMoControlFactory.h" />
+    <ClInclude Include="ProMoEditor\ProMoEditor.h" />
+    <ClInclude Include="ProMoEditor\ProMoEntityContainer.h" />
+    <ClInclude Include="ProMoEditor\ProMoBlockView.h" />
+    <ClInclude Include="ProMoEditor\ProMoNameFactory.h" />
+    <ClInclude Include="ProMoEditor\PropertyDialog.h" />
+    <ClInclude Include="ProMoEditor\ProMoEdgeView.h" />
     <ClInclude Include="PaperSizeDialog.h" />
-    <ClInclude Include="ProcessEditor\ProcessEntityBlockModel.h" />
-    <ClInclude Include="ProcessEditor\ProcessLineEdgeModel.h" />
+    <ClInclude Include="ProMoEditor\ProMoBlockModel.h" />
+    <ClInclude Include="ProMoEditor\ProMoEdgeModel.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="TextFile.h" />
@@ -94,6 +94,7 @@
     <Keyword>MFCProj</Keyword>
     <RootNamespace>ProcessEditor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>WinProMo</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

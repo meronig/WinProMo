@@ -3,15 +3,15 @@
 
 #include "../DiagramEditor/DiagramEntity.h"
 #include "PropertyDialog.h"
-#include "ProcessEntityBlockModel.h"
-class CProcessEntityBlockView : public CDiagramEntity
+#include "ProMoBlockModel.h"
+class CProMoBlockView : public CDiagramEntity
 {
 
 	public:
-		friend class CProcessLineEdgeView;
+		friend class CProMoEdgeView;
 		// Construction/initialization/destruction
-		CProcessEntityBlockView();
-		virtual ~CProcessEntityBlockView();
+		CProMoBlockView();
+		virtual ~CProMoBlockView();
 		virtual CDiagramEntity* Clone();
 		virtual void SetRect(double left, double top, double right, double bottom);
 		static	CDiagramEntity* CreateFromString(const CString& str);
@@ -27,8 +27,8 @@ class CProcessEntityBlockView : public CDiagramEntity
 		// Block-specific methods
 		
 		virtual void recomputeIntersectionLinks();
-		virtual CProcessEntityBlockModel* getModel() const;
-		virtual void setModel(CProcessEntityBlockModel*);
+		virtual CProMoBlockModel* getModel() const;
+		virtual void setModel(CProMoBlockModel*);
 		
 		virtual void autoResize();
 		virtual void Highlight(CDC* dc, CRect rect);
@@ -45,7 +45,7 @@ class CProcessEntityBlockView : public CDiagramEntity
 	private:
 		CPropertyDialog	m_dlg;
 		BOOL			m_moved;
-		CProcessEntityBlockModel* m_blockmodel;
+		CProMoBlockModel* m_blockmodel;
 
 };
 #endif //_PROCESSENTITYBLOCKVIEW_H_

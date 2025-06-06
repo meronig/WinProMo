@@ -23,7 +23,7 @@
    ========================================================================*/
 
 #include "stdafx.h"
-#include "ProcessEditor.h"
+#include "ProMoEditor.h"
 #include "PropertyDialog.h"
 
 #ifdef _DEBUG

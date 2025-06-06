@@ -1,14 +1,14 @@
-#ifndef _PROCESSCLIPBOARDHANDLER_H_
-#define _PROCESSCLIPBOARDHANDLER_H_
+#ifndef _PROMOCLIPBOARDHANDLER_H_
+#define _PROMOCLIPBOARDHANDLER_H_
 
 #include "../DiagramEditor/DiagramClipboardHandler.h"
 
-class CProcessClipboardHandler : public CDiagramClipboardHandler
+class CProMoClipboardHandler : public CDiagramClipboardHandler
 {
 public:
 // Construction/initialization/desturction
-	CProcessClipboardHandler();
-	virtual ~CProcessClipboardHandler();
+	CProMoClipboardHandler();
+	virtual ~CProMoClipboardHandler();
 
 // Overrides
 	virtual void	Copy( CDiagramEntity* obj );
@@ -21,4 +21,4 @@ private:
 	
 };
 
-#endif // _PROCESSCLIPBOARDHANDLER_H_
+#endif // _PROMOCLIPBOARDHANDLER_H_

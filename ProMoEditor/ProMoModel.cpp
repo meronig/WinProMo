@@ -1,15 +1,15 @@
 #include "stdafx.h"
-#include "ProcessModel.h"
+#include "ProMoModel.h"
 #include "../DiagramEditor/Tokenizer.h"
 
 
 
-void CProcessModel::linkView(CDiagramEntity* view)
+void CProMoModel::linkView(CDiagramEntity* view)
 {
 	m_views.Add(view);
 }
 
-void CProcessModel::unlinkView(CDiagramEntity* view)
+void CProMoModel::unlinkView(CDiagramEntity* view)
 {
 	for (int i = static_cast<int>(m_views.GetSize()) - 1; i >= 0 ; i--) {
 		CDiagramEntity* tempView = dynamic_cast<CDiagramEntity*>(m_views.GetAt(i));
@@ -21,17 +21,17 @@ void CProcessModel::unlinkView(CDiagramEntity* view)
 	}
 }
 
-void CProcessModel::unlinkViews()
+void CProMoModel::unlinkViews()
 {
 	m_views.RemoveAll();
 }
 
-CObArray* CProcessModel::getViews()
+CObArray* CProMoModel::getViews()
 {
 	return &m_views;
 }
 
-BOOL CProcessModel::FromString(const CString& str)
+BOOL CProMoModel::FromString(const CString& str)
 /* ============================================================
 	Function :		CDiagramEntity::FromString
 	Description :	Sets the values for an object from "str".
@@ -63,7 +63,7 @@ BOOL CProcessModel::FromString(const CString& str)
 
 }
 
-CString CProcessModel::GetHeaderFromString(CString& str)
+CString CProMoModel::GetHeaderFromString(CString& str)
 /* ============================================================
 	Function :		CDiagramEntity::GetHeaderFromString
 	Description :	Gets the header from "str".
@@ -98,7 +98,7 @@ CString CProcessModel::GetHeaderFromString(CString& str)
 
 }
 
-BOOL CProcessModel::GetDefaultFromString(CString& str)
+BOOL CProMoModel::GetDefaultFromString(CString& str)
 /* ============================================================
 	Function :		CDiagramEntity::GetDefaultFromString
 	Description :	Gets the default properties from "str"
@@ -155,7 +155,7 @@ BOOL CProcessModel::GetDefaultFromString(CString& str)
 
 }
 
-BOOL CProcessModel::LoadFromString(CString& data)
+BOOL CProMoModel::LoadFromString(CString& data)
 /* ============================================================
 	Function :		CDiagramEntity::LoadFromString
 	Description :	Loads the object from "data".
@@ -181,7 +181,7 @@ BOOL CProcessModel::LoadFromString(CString& data)
 
 }
 
-CProcessModel* CProcessModel::CreateFromString(const CString& str)
+CProMoModel* CProMoModel::CreateFromString(const CString& str)
 /* ============================================================
 	Function :		CDiagramEntity::CreateFromString
 	Description :	Static factory function that creates and
@@ -204,7 +204,7 @@ CProcessModel* CProcessModel::CreateFromString(const CString& str)
    ============================================================*/
 {
 
-	CProcessModel* obj = new CProcessModel;
+	CProMoModel* obj = new CProMoModel;
 	if (!obj->FromString(str))
 	{
 		delete obj;
@@ -215,7 +215,7 @@ CProcessModel* CProcessModel::CreateFromString(const CString& str)
 
 }
 
-CString CProcessModel::GetString() const
+CString CProMoModel::GetString() const
 /* ============================================================
 	Function :		CDiagramEntity::GetString
 	Description :	Creates a string representing the object.
@@ -237,7 +237,7 @@ CString CProcessModel::GetString() const
 
 }
 
-CString CProcessModel::GetDefaultGetString() const
+CString CProMoModel::GetDefaultGetString() const
 /* ============================================================
 	Function :		CDiagramEntity::GetDefaultString
 	Description :	Gets the default properties of the object
@@ -265,7 +265,7 @@ CString CProcessModel::GetDefaultGetString() const
 	return str;
 }
 
-CString CProcessModel::GetType() const
+CString CProMoModel::GetType() const
 /* ============================================================
 	Function :		CDiagramEntity::GetType
 	Description :	Returns the object type.
@@ -283,7 +283,7 @@ CString CProcessModel::GetType() const
 	return m_type;
 }
 
-void CProcessModel::SetType(CString type)
+void CProMoModel::SetType(CString type)
 /* ============================================================
 	Function :		CDiagramEntity::SetType
 	Description :	Set the object type.
@@ -302,7 +302,7 @@ void CProcessModel::SetType(CString type)
 	m_type = type;
 }
 
-CString CProcessModel::GetName() const
+CString CProMoModel::GetName() const
 /* ============================================================
 	Function :		CDiagramEntity::GetName
 	Description :	Gets the Name property
@@ -323,7 +323,7 @@ CString CProcessModel::GetName() const
 
 }
 
-void CProcessModel::SetName(CString name)
+void CProMoModel::SetName(CString name)
 /* ============================================================
 	Function :		CDiagramEntity::SetName
 	Description :	Sets the Name property
@@ -343,7 +343,7 @@ void CProcessModel::SetName(CString name)
 
 }
 
-CString CProcessModel::Export(UINT /*format*/) const
+CString CProMoModel::Export(UINT /*format*/) const
 /* ============================================================
 	Function :		CDiagramEntity::Export
 	Description :	Exports the object to format

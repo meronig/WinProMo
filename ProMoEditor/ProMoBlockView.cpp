@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "ProcessEntityBlockView.h"
-#include "LinkFactory.h"
+#include "ProMoBlockView.h"
+#include "ProMoNameFactory.h"
 #include "../DiagramEditor/Tokenizer.h"
-#include "ProcessLineEdgeView.h"
-#include "ProcessLineEdgeModel.h"
+#include "ProMoEdgeView.h"
+#include "ProMoEdgeModel.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -11,7 +11,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-CProcessEntityBlockView::CProcessEntityBlockView()
+CProMoBlockView::CProMoBlockView()
 /* ============================================================
 	Function :		CProcessEntityBlock::CProcessEntityBlock
 	Description :	constructor
@@ -25,11 +25,11 @@ CProcessEntityBlockView::CProcessEntityBlockView()
 {
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
-	SetType(_T("process_block_view"));
+	SetType(_T("promo_block_view"));
 
 	CString title;
 	BOOL result;
-	result = title.LoadString(IDS_PROCESS_BLOCK);
+	result = title.LoadString(IDS_PROMO_BLOCK);
 	if (result) {
 		SetTitle(title);
 	}
@@ -37,15 +37,15 @@ CProcessEntityBlockView::CProcessEntityBlockView()
 
 	SetPropertyDialog(&m_dlg, CPropertyDialog::IDD);
 
-	SetName(CLinkFactory::GetID());
+	SetName(CProMoNameFactory::GetID());
 
 	SetMoved(FALSE);
 
 	m_blockmodel = NULL;
-	setModel(new CProcessEntityBlockModel());
+	setModel(new CProMoBlockModel());
 }
 
-CProcessEntityBlockView::~CProcessEntityBlockView()
+CProMoBlockView::~CProMoBlockView()
 /* ============================================================
 	Function :		CProcessEntityBlock::~CProcessEntityBlock
 	Description :	destructor
@@ -65,7 +65,7 @@ CProcessEntityBlockView::~CProcessEntityBlockView()
 
 }
 
-void CProcessEntityBlockView::Draw(CDC* dc, CRect rect)
+void CProMoBlockView::Draw(CDC* dc, CRect rect)
 /* ============================================================
 	Function :		CProcessEntityBlock::Draw
 	Description :	Draws the object.
@@ -121,7 +121,7 @@ void CProcessEntityBlockView::Draw(CDC* dc, CRect rect)
 	dc->SetBkMode(mode);
 }
 
-void CProcessEntityBlockView::Highlight(CDC* dc, CRect rect) {
+void CProMoBlockView::Highlight(CDC* dc, CRect rect) {
 	CPen p;
 	p.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
 	CPen *pOldPen = dc->SelectObject(&p);
@@ -133,17 +133,17 @@ void CProcessEntityBlockView::Highlight(CDC* dc, CRect rect) {
 	dc->SelectObject(pOldPen);
 }
 
-BOOL CProcessEntityBlockView::IsTarget()
+BOOL CProMoBlockView::IsTarget()
 {
 	return m_target;
 }
 
-void CProcessEntityBlockView::SetTarget(BOOL isTarget)
+void CProMoBlockView::SetTarget(BOOL isTarget)
 {
 	m_target = isTarget;
 }
 
-CPoint CProcessEntityBlockView::getIntersection(CPoint innerPoint, CPoint outerPoint)
+CPoint CProMoBlockView::getIntersection(CPoint innerPoint, CPoint outerPoint)
 {
 	CRect r = GetRect();
 	
@@ -204,16 +204,16 @@ CPoint CProcessEntityBlockView::getIntersection(CPoint innerPoint, CPoint outerP
 }
 
 
-void CProcessEntityBlockView::recomputeIntersectionLinks() {
+void CProMoBlockView::recomputeIntersectionLinks() {
 	ASSERT_VALID(this->getModel());
-	CProcessEntityBlockModel* model = this->getModel();
+	CProMoBlockModel* model = this->getModel();
 	//recompute intersection for edges
 	int i = 0;
 	
 	for (i = 0; i < model->getIncomingEdges()->GetSize(); i++) {
-		CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(model->getIncomingEdges()->GetAt(i));
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->getIncomingEdges()->GetAt(i));
 		if (edgeModel) {
-			CProcessLineEdgeView* edgeView = edgeModel->getLastSegment();
+			CProMoEdgeView* edgeView = edgeModel->getLastSegment();
 			//destination: bottomright
 			CPoint pt = getIntersection(edgeView->GetRect().BottomRight(), edgeView->GetRect().TopLeft());
 			if (pt.x >= 0) {
@@ -225,9 +225,9 @@ void CProcessEntityBlockView::recomputeIntersectionLinks() {
 	}
 
 	for (i = 0; i < model->getOutgoingEdges()->GetSize(); i++) {
-		CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(model->getOutgoingEdges()->GetAt(i));
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->getOutgoingEdges()->GetAt(i));
 		if (edgeModel) {
-			CProcessLineEdgeView* edgeView = edgeModel->getFirstSegment();
+			CProMoEdgeView* edgeView = edgeModel->getFirstSegment();
 			//destination: topleft
 			CPoint pt = getIntersection(edgeView->GetRect().TopLeft(), edgeView->GetRect().BottomRight());
 			if (pt.x >= 0) {
@@ -239,9 +239,9 @@ void CProcessEntityBlockView::recomputeIntersectionLinks() {
 	
 	//recompute intersection for sub-blocks
 	for (i = 0; i < model->getSubBlocks()->GetSize(); i++) {
-		CProcessEntityBlockModel* childModel = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
+		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->getSubBlocks()->GetAt(i));
 		if (childModel) {
-			CProcessEntityBlockView* childView = dynamic_cast<CProcessEntityBlockView*>(childModel->getMainView());
+			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->getMainView());
 			if (childView) {
 				childView->recomputeIntersectionLinks();
 			}
@@ -250,15 +250,15 @@ void CProcessEntityBlockView::recomputeIntersectionLinks() {
 
 }
 
-CProcessEntityBlockModel* CProcessEntityBlockView::getModel() const
+CProMoBlockModel* CProMoBlockView::getModel() const
 {
 	return m_blockmodel;
 }
 
-void CProcessEntityBlockView::setModel(CProcessEntityBlockModel* model)
+void CProMoBlockView::setModel(CProMoBlockModel* model)
 {
 	if (m_blockmodel != model) {
-		CProcessEntityBlockModel* oldModel = m_blockmodel;
+		CProMoBlockModel* oldModel = m_blockmodel;
 		m_blockmodel = model;
 
 		//link this class to the new model
@@ -276,14 +276,14 @@ void CProcessEntityBlockView::setModel(CProcessEntityBlockModel* model)
 	}
 }
 
-void CProcessEntityBlockView::autoResize()
+void CProMoBlockView::autoResize()
 {
 	ASSERT_VALID(this->getModel());
-	CProcessEntityBlockModel* model = this->getModel();
+	CProMoBlockModel* model = this->getModel();
 	for (int i = 0; i < model->getSubBlocks()->GetSize(); i++) {
-		CProcessEntityBlockModel* childModel = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
+		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->getSubBlocks()->GetAt(i));
 		if (childModel) {
-			CProcessEntityBlockView* childView = dynamic_cast<CProcessEntityBlockView*>(childModel->getMainView());
+			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->getMainView());
 			if (childView) {
 				if (childView->GetBottom() > this->GetBottom()) {
 					this->SetRect(GetLeft(), GetTop(), GetRight(), childView->GetBottom() + 5);
@@ -311,7 +311,7 @@ void CProcessEntityBlockView::autoResize()
 	}
 }
 
-CString CProcessEntityBlockView::GetDefaultGetString() const
+CString CProMoBlockView::GetDefaultGetString() const
 {
 	/* ============================================================
 	Function :		CProcessEntityBlock::GetDefaultString
@@ -355,7 +355,7 @@ CString CProcessEntityBlockView::GetDefaultGetString() const
 
 }
 
-BOOL CProcessEntityBlockView::GetDefaultFromString(CString& str)
+BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 /* ============================================================
 	Function :		CDiagramEntity::GetDefaultFromString
 	Description :	Gets the default properties from "str"
@@ -433,7 +433,7 @@ BOOL CProcessEntityBlockView::GetDefaultFromString(CString& str)
 
 }
 
-CDiagramEntity* CProcessEntityBlockView::Clone()
+CDiagramEntity* CProMoBlockView::Clone()
 /* ============================================================
 	Function :		CProcessEntityBlock::Clone
 	Description :	Clone this object to a new object.
@@ -448,27 +448,27 @@ CDiagramEntity* CProcessEntityBlockView::Clone()
 {
 
 	//Hierarchy is not copied: if multiple blocks are selected, they become root nodes
-	CProcessEntityBlockView* obj = new CProcessEntityBlockView;
+	CProMoBlockView* obj = new CProMoBlockView;
 	obj->Copy(this);
-	obj->setModel(new CProcessEntityBlockModel());
-	obj->SetName(CLinkFactory::GetID());
+	obj->setModel(new CProMoBlockModel());
+	obj->SetName(CProMoNameFactory::GetID());
 	return obj;
 
 }
 
-void CProcessEntityBlockView::SetRect(double left, double top, double right, double bottom)
+void CProMoBlockView::SetRect(double left, double top, double right, double bottom)
 {
 	ASSERT_VALID(this->getModel());
-	CProcessEntityBlockModel* model = this->getModel();
+	CProMoBlockModel* model = this->getModel();
 	//note: reposition links
 	int i = 0;
 
 	for (i = 0; i < model->getIncomingEdges()->GetSize(); i++) {
 		double newRight = 0;
 		double newBottom = 0;
-		CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(model->getIncomingEdges()->GetAt(i));
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->getIncomingEdges()->GetAt(i));
 		if (edgeModel) {
-			CProcessLineEdgeView* edgeView = edgeModel->getLastSegment();
+			CProMoEdgeView* edgeView = edgeModel->getLastSegment();
 			//destination: bottomright
 			if (!edgeView->IsSelected()) {
 				if (GetBottom() - 1 < edgeView->GetBottom() && edgeView->GetBottom() < GetBottom() + 1) {
@@ -505,9 +505,9 @@ void CProcessEntityBlockView::SetRect(double left, double top, double right, dou
 	for (i = 0; i < model->getOutgoingEdges()->GetSize(); i++) {
 		double newTop = 0;
 		double newLeft = 0;
-		CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(model->getOutgoingEdges()->GetAt(i));
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->getOutgoingEdges()->GetAt(i));
 		if (edgeModel) {
-			CProcessLineEdgeView* edgeView = edgeModel->getFirstSegment();
+			CProMoEdgeView* edgeView = edgeModel->getFirstSegment();
 			if (!edgeView->IsSelected()) {
 				//destination: topleft
 				if (GetBottom() - 1 < edgeView->GetTop() && edgeView->GetTop() < GetBottom() + 1) {
@@ -547,9 +547,9 @@ void CProcessEntityBlockView::SetRect(double left, double top, double right, dou
 	if (deltaX != 0 || deltaY != 0) {
 
 		for (i = 0; i < model->getSubBlocks()->GetSize(); i++) {
-			CProcessEntityBlockModel* childModel = dynamic_cast<CProcessEntityBlockModel*>(model->getSubBlocks()->GetAt(i));
+			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->getSubBlocks()->GetAt(i));
 			if (childModel) {
-				CProcessEntityBlockView* childView = dynamic_cast<CProcessEntityBlockView*>(childModel->getMainView());
+				CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->getMainView());
 				if (childView) {
 					//move child nodes that are not selected (otherwise they will be moved twice)
 					if (!childView->IsSelected()) {
@@ -565,7 +565,7 @@ void CProcessEntityBlockView::SetRect(double left, double top, double right, dou
 
 }
 
-CDiagramEntity* CProcessEntityBlockView::CreateFromString(const CString& str)
+CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str)
 /* ============================================================
 	Function :		CProcessEntityBlock::CreateFromString
 	Description :	Static factory function that creates and
@@ -587,7 +587,7 @@ CDiagramEntity* CProcessEntityBlockView::CreateFromString(const CString& str)
    ============================================================*/
 {
 
-	CProcessEntityBlockView* obj = new CProcessEntityBlockView;
+	CProMoBlockView* obj = new CProMoBlockView;
 	if (!obj->FromString(str))
 	{
 		delete obj;
@@ -598,7 +598,7 @@ CDiagramEntity* CProcessEntityBlockView::CreateFromString(const CString& str)
 
 }
 
-int CProcessEntityBlockView::GetHitCode(CPoint point) const
+int CProMoBlockView::GetHitCode(CPoint point) const
 /* ============================================================
 	Function :		CProcessEntityBlock::GetHitCode
 	Description :	Returns the hit point constant for point.
@@ -623,7 +623,7 @@ int CProcessEntityBlockView::GetHitCode(CPoint point) const
 
 }
 
-HCURSOR CProcessEntityBlockView::GetCursor(int /*hit*/) const
+HCURSOR CProMoBlockView::GetCursor(int /*hit*/) const
 /* ============================================================
 	Function :		CProcessEntityBlock::GetCursor
 	Description :	Returns the cursor for the given hit point.
@@ -644,7 +644,7 @@ HCURSOR CProcessEntityBlockView::GetCursor(int /*hit*/) const
 }
 
 
-void CProcessEntityBlockView::SetMoved(BOOL moved)
+void CProMoBlockView::SetMoved(BOOL moved)
 /* ============================================================
 	Function :		CProcessEntityBlock::SetMoved
 	Description :	Sets the moved-flag of the object.
@@ -665,7 +665,7 @@ void CProcessEntityBlockView::SetMoved(BOOL moved)
 
 }
 
-BOOL CProcessEntityBlockView::GetMoved()
+BOOL CProMoBlockView::GetMoved()
 /* ============================================================
 	Function :		CProcessEntityBlock::GetMoved
 	Description :	Gets the moved-flag of the object.

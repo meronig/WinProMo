@@ -1,18 +1,18 @@
-#ifndef _PROCESSEDITOR_H_
-#define _PROCESSEDITOR_H_
+#ifndef _PROMOEDITOR_H_
+#define _PROMOEDITOR_H_
 
 #include "../DiagramEditor/DiagramEditor.h"
-#include "ProcessEntityBlockView.h"
-#include "ProcessLineEdgeView.h"
-#include "ProcessControlFactory.h"
+#include "ProMoBlockView.h"
+#include "ProMoEdgeView.h"
+#include "ProMoControlFactory.h"
 
 
-class CProcessEditor : public CDiagramEditor
+class CProMoEditor : public CDiagramEditor
 {
 public:
 	// Construction/initialization/destruction
-	CProcessEditor();
-	virtual ~CProcessEditor();
+	CProMoEditor();
+	virtual ~CProMoEditor();
 
 protected:
 	// Overrides:
@@ -35,24 +35,24 @@ public:
 	virtual void	RightAlignSelected();
 	virtual void	TopAlignSelected();
 	virtual void	BottomAlignSelected();
-	virtual void	Load(const CStringArray& stra, CProcessControlFactory& fact);
+	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
 
 
 
 private:
-	virtual void DrawObjectsR(CProcessEntityBlockView* block, CDC* dc, double zoom) const;
+	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
 	// Private helpers
 	virtual void ResetTarget();
-	virtual void SetTarget(CProcessEntityBlockView* obj, BOOL select);
-	CProcessEntityBlockView* GetTargetBlock(CPoint point);
-	CProcessEntityBlockView* GetConnectedBlock(CProcessLineEdgeView* line, BOOL backwards, BOOL ifSelected);
-	virtual void DeselectChildBlocks(CProcessEntityBlockView* block);
-	virtual void SelectChildBlocks(CProcessEntityBlockView* block);
+	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
+	CProMoBlockView* GetTargetBlock(CPoint point);
+	CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards, BOOL ifSelected);
+	virtual void DeselectChildBlocks(CProMoBlockView* block);
+	virtual void SelectChildBlocks(CProMoBlockView* block);
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
 
-	CProcessModel* GetNamedModel(const CObArray& array, const CString& name) const;
+	CProMoModel* GetNamedModel(const CObArray& array, const CString& name) const;
 	void DeleteModel(CObArray& array, const CString& name);
 };
 
-#endif //_PROCESSEDITOR_H_
+#endif //_PROMOEDITOR_H_

@@ -20,11 +20,11 @@
    ========================================================================*/
 
 #include "stdafx.h"
-#include "ProcessControlFactory.h"
+#include "ProMoControlFactory.h"
 
-#include "ProcessEntityBlockView.h"
-#include "ProcessLineEdgeView.h"
-#include "ProcessLineEdgeModel.h"
+#include "ProMoBlockView.h"
+#include "ProMoEdgeView.h"
+#include "ProMoEdgeModel.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,7 +35,7 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CProcessControlFactory
 
-CDiagramEntity* CProcessControlFactory::CreateViewFromString( const CString& str )
+CDiagramEntity* CProMoControlFactory::CreateViewFromString( const CString& str )
 /* ============================================================
 	Function :		CProcessControlFactory::CreateFromString
 	Description :	The function returns an object from the 
@@ -56,23 +56,23 @@ CDiagramEntity* CProcessControlFactory::CreateViewFromString( const CString& str
 {
 	CDiagramEntity* obj;
 
-	obj = CProcessEntityBlockView::CreateFromString( str );
+	obj = CProMoBlockView::CreateFromString( str );
 	
 	if( !obj )
-		obj = CProcessLineEdgeView::CreateFromString( str );
+		obj = CProMoEdgeView::CreateFromString( str );
 	
 	
 	return obj;
 }
 
-CProcessModel* CProcessControlFactory::CreateModelFromString(const CString& str)
+CProMoModel* CProMoControlFactory::CreateModelFromString(const CString& str)
 {
-	CProcessModel* obj;
+	CProMoModel* obj;
 
-	obj = CProcessEntityBlockModel::CreateFromString(str);
+	obj = CProMoBlockModel::CreateFromString(str);
 
 	if (!obj)
-		obj = CProcessLineEdgeModel::CreateFromString(str);
+		obj = CProMoEdgeModel::CreateFromString(str);
 
 
 	return obj;

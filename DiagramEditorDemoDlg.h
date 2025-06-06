@@ -4,13 +4,13 @@
 #if !defined(AFX_DIAGRAMEDITORDEMODLG_H__5BF6AB73_E2FA_4020_94F1_DDA7E9C4713F__INCLUDED_)
 #define AFX_DIAGRAMEDITORDEMODLG_H__5BF6AB73_E2FA_4020_94F1_DDA7E9C4713F__INCLUDED_
 
-#if _MSC_VER > 1000
+#if _MSC_VER >= 1020 // pragma once introduced with MSVC 4.2
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 
-#include "ProcessEditor/ProcessEditor.h"
-#include "ProcessEditor/ProcessEntityContainer.h"
-#include "ProcessEditor/ProcessClipboardHandler.h"
+#include "ProMoEditor/ProMoEditor.h"
+#include "ProMoEditor/ProMoEntityContainer.h"
+#include "ProMoEditor/ProMoClipboardHandler.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CDiagramEditorDemoDlg dialog
@@ -65,12 +65,12 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CProcessEditor			m_editor;
+	CProMoEditor			m_editor;
 	CString					m_filename;
 
 	//NEW
-	CProcessEntityContainer	m_objs;
-	CProcessClipboardHandler	m_clip;
+	CProMoEntityContainer	m_objs;
+	CProMoClipboardHandler	m_clip;
 
 };
 

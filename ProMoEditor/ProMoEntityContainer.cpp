@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "ProcessEntityContainer.h"
+#include "ProMoEntityContainer.h"
 #include <math.h>
-#include "ProcessEntityBlockModel.h"
-#include "ProcessEntityBlockView.h"
-#include "ProcessLineEdgeModel.h"
-#include "ProcessLineEdgeView.h"
+#include "ProMoBlockModel.h"
+#include "ProMoBlockView.h"
+#include "ProMoEdgeModel.h"
+#include "ProMoEdgeView.h"
 
-CProcessEntityContainer::CProcessEntityContainer()
+CProMoEntityContainer::CProMoEntityContainer()
 /* ============================================================
 	Function :		CProcessEntityContainer::CProcessEntityContainer
 	Description :	constructor
@@ -21,7 +21,7 @@ CProcessEntityContainer::CProcessEntityContainer()
 	SetUndoStackSize(10);
 }
 
-CProcessEntityContainer::~CProcessEntityContainer()
+CProMoEntityContainer::~CProMoEntityContainer()
 /* ============================================================
 	Function :		CProcessEntityContainer::~CProcessEntityContainer
 	Description :	destructor
@@ -40,10 +40,10 @@ CProcessEntityContainer::~CProcessEntityContainer()
 }
 
 // may not be needed
-void CProcessEntityContainer::removeR(CProcessEntityBlockView *block) {
+void CProMoEntityContainer::removeR(CProMoBlockView *block) {
 	CObArray* subBlockModels = block->getModel()->getSubBlocks();
 	for (int i = 0; i < subBlockModels->GetSize(); i++) {
-		CProcessEntityBlockModel* subBlockModel = dynamic_cast<CProcessEntityBlockModel*>(subBlockModels->GetAt(i));
+		CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels->GetAt(i));
 		if (subBlockModel) {
 			removeR(subBlockModel->getMainView());
 		}
@@ -51,7 +51,7 @@ void CProcessEntityContainer::removeR(CProcessEntityBlockView *block) {
 	this->Remove(block);
 }
 
-void CProcessEntityContainer::RemoveAt(int index)
+void CProMoEntityContainer::RemoveAt(int index)
 /* ============================================================
 	Function :		CProcessEntityContainer::RemoveAt
 	Description :	Removes the object at index. Will also
@@ -70,13 +70,13 @@ void CProcessEntityContainer::RemoveAt(int index)
 	{
 		CString name = obj->GetName();
 		
-		CProcessEntityBlockView *block = dynamic_cast<CProcessEntityBlockView*>(obj);
+		CProMoBlockView *block = dynamic_cast<CProMoBlockView*>(obj);
 		if (block){
 			CObArray subBlockModels;
 			subBlockModels.Append(*(block->getModel()->getSubBlocks()));
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {
-				CProcessEntityBlockModel* subBlockModel = NULL;
-				subBlockModel = dynamic_cast<CProcessEntityBlockModel*>(subBlockModels.GetAt(i));
+				CProMoBlockModel* subBlockModel = NULL;
+				subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
 				if (subBlockModel) {
 					this->Remove(subBlockModel->getMainView());
 				}
@@ -91,19 +91,19 @@ void CProcessEntityContainer::RemoveAt(int index)
 
 }
 
-void CProcessEntityContainer::ReplicateRelations(CObArray* source, CObArray* destination) {
+void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* destination) {
 	ASSERT(destination->GetSize() == source->GetSize());
 
 	int i = 0;
 	//preserve links for edgeViews and cardinalities with model
 	for (i = 0; i < source->GetSize(); i++) {
-		CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(i));
-		CProcessLineEdgeView* newEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(i));
+		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
+		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(i));
 		if (edgeView && newEdgeView) {
 			if (edgeView->GetSource() != NULL) {
 				for (int j = 0; j < source->GetSize(); j++) {
-					CProcessLineEdgeView* sourceEdgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(j));
-					CProcessLineEdgeView* newSourceEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(j));
+					CProMoEdgeView* sourceEdgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(j));
+					CProMoEdgeView* newSourceEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(j));
 					if (edgeView->GetSource() == sourceEdgeView) {
 						newEdgeView->SetSource(newSourceEdgeView);
 						newEdgeView->setModel(newSourceEdgeView->getModel());
@@ -114,19 +114,19 @@ void CProcessEntityContainer::ReplicateRelations(CObArray* source, CObArray* des
 	}
 	for (i = 0; i < source->GetSize(); i++) {
 		//preserve links for edgeModels
-		CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(source->GetAt(i));
-		CProcessLineEdgeView* newEdgeView = dynamic_cast<CProcessLineEdgeView*>(destination->GetAt(i));
+		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
+		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(i));
 		if (edgeView && newEdgeView) {
-			CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(edgeView->getModel());
-			CProcessLineEdgeModel* newEdgeModel = dynamic_cast<CProcessLineEdgeModel*>(newEdgeView->getModel());
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edgeView->getModel());
+			CProMoEdgeModel* newEdgeModel = dynamic_cast<CProMoEdgeModel*>(newEdgeView->getModel());
 			if (edgeModel && newEdgeModel) {
 				if (edgeModel->GetSource() != NULL || edgeModel->GetDestination() != NULL) {
 					for (int j = 0; j < source->GetSize(); j++) {
-						CProcessEntityBlockView* connectedBlockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(j));
-						CProcessEntityBlockView* newConnectedBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(j));
+						CProMoBlockView* connectedBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
+						CProMoBlockView* newConnectedBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
 						if (connectedBlockView && newConnectedBlockView) {
-							CProcessEntityBlockModel* connectedBlockModel = connectedBlockView->getModel();
-							CProcessEntityBlockModel* newConnectedBlockModel = newConnectedBlockView->getModel();
+							CProMoBlockModel* connectedBlockModel = connectedBlockView->getModel();
+							CProMoBlockModel* newConnectedBlockModel = newConnectedBlockView->getModel();
 
 							if (edgeModel->GetSource() == connectedBlockModel) {
 								newEdgeModel->SetSource(newConnectedBlockModel);
@@ -140,18 +140,18 @@ void CProcessEntityContainer::ReplicateRelations(CObArray* source, CObArray* des
 			}
 		}
 		//preserve nesting for nodes
-		CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(i));
-		CProcessEntityBlockView* newBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(i));
+		CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(source->GetAt(i));
+		CProMoBlockView* newBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(i));
 		if (blockView && newBlockView) {
-			CProcessEntityBlockModel* blockModel = blockView->getModel();
-			CProcessEntityBlockModel* newBlockModel = newBlockView->getModel();
+			CProMoBlockModel* blockModel = blockView->getModel();
+			CProMoBlockModel* newBlockModel = newBlockView->getModel();
 			if (blockModel->getParentBlock() != NULL) {
 				for (int j = 0; j < source->GetSize(); j++) {
-					CProcessEntityBlockView* parentBlockView = dynamic_cast<CProcessEntityBlockView*>(source->GetAt(j));
-					CProcessEntityBlockView* newParentBlockView = dynamic_cast<CProcessEntityBlockView*>(destination->GetAt(j));
+					CProMoBlockView* parentBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
+					CProMoBlockView* newParentBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
 					if (parentBlockView && newParentBlockView) {
-						CProcessEntityBlockModel* parentBlockModel = parentBlockView->getModel();
-						CProcessEntityBlockModel* newParentBlockModel = newParentBlockView->getModel();
+						CProMoBlockModel* parentBlockModel = parentBlockView->getModel();
+						CProMoBlockModel* newParentBlockModel = newParentBlockView->getModel();
 						if (blockModel->getParentBlock() == parentBlockModel) {
 							newBlockModel->setParentBlock(newParentBlockModel);
 							break;
@@ -164,17 +164,17 @@ void CProcessEntityContainer::ReplicateRelations(CObArray* source, CObArray* des
 
 }
 
-void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray* newOrder) {
+void CProMoEntityContainer::reorderR(CProMoBlockView* block, CObArray* newOrder) {
 	ASSERT(block->getModel());
 	newOrder->Add(block);
 	//check for connected incoming edges
 	CObArray* edges = block->getModel()->getIncomingEdges();
 	if (edges) {
 		for (int i = 0; i < edges->GetSize(); i++) {
-			CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(edges->GetAt(i));
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
 			if (edgeModel) {
 				CObArray* views = edgeModel->getViews();
-				CProcessEntityBlockModel* sourceModel = dynamic_cast<CProcessEntityBlockModel*>(edgeModel->GetSource());
+				CProMoBlockModel* sourceModel = dynamic_cast<CProMoBlockModel*>(edgeModel->GetSource());
 				if (sourceModel) {
 					for (int j = 0; j < newOrder->GetSize(); j++) {
 						//source node has already been explored
@@ -197,10 +197,10 @@ void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray*
 	edges = block->getModel()->getOutgoingEdges();
 	if (edges) {
 		for (int i = 0; i < edges->GetSize(); i++) {
-			CProcessLineEdgeModel* edgeModel = dynamic_cast<CProcessLineEdgeModel*>(edges->GetAt(i));
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
 			if (edgeModel) {
 				CObArray* views = edgeModel->getViews();
-				CProcessEntityBlockModel* destModel = dynamic_cast<CProcessEntityBlockModel*>(edgeModel->GetDestination());
+				CProMoBlockModel* destModel = dynamic_cast<CProMoBlockModel*>(edgeModel->GetDestination());
 				if (destModel) {
 					//do not include self-loops
 					if (destModel != block->getModel()) {
@@ -228,10 +228,10 @@ void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray*
 	int max = GetSize();
 
 	for (int t = 0; t < max; t++) {
-		CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(GetAt(t));
+		CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(GetAt(t));
 		if (blockView) {
 			for (int i = 0; i < subBlockViews->GetSize(); i++) {
-				CProcessEntityBlockModel* subBlockModel = dynamic_cast<CProcessEntityBlockModel*>(subBlockViews->GetAt(i));
+				CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockViews->GetAt(i));
 				if (blockView == subBlockModel->getMainView()) {
 					reorderR(blockView, newOrder);
 				}
@@ -240,7 +240,7 @@ void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray*
 	}
 }
 
-void CProcessEntityContainer::reorder()
+void CProMoEntityContainer::reorder()
 {
 	int count = 0;
 	int max = GetSize();
@@ -251,13 +251,13 @@ void CProcessEntityContainer::reorder()
 	{
 		CDiagramEntity *obj = dynamic_cast<CDiagramEntity*>(GetAt(t));
 		if (obj) {
-			CProcessEntityBlockView* blockView = dynamic_cast<CProcessEntityBlockView*>(obj);
+			CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(obj);
 			if (blockView) {
 				if (blockView->getModel()->getParentBlock() == NULL) {
 					reorderR(blockView, &newOrder);
 				}
 			}
-			CProcessLineEdgeView* edgeView = dynamic_cast<CProcessLineEdgeView*>(obj);
+			CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(obj);
 			if (edgeView) {
 				//edge is disconnected, so add it immediately
 				if (!(edgeView->getModel()->GetSource() || edgeView->getModel()->GetDestination())) {
@@ -274,18 +274,18 @@ void CProcessEntityContainer::reorder()
 
 }
 
-void CProcessEntityContainer::SetTarget(CProcessEntityBlockView* obj, BOOL select)
+void CProMoEntityContainer::SetTarget(CProMoBlockView* obj, BOOL select)
 {
 	if (obj)
 		obj->SetTarget(select);
 }
 
-CProcessEntityBlockView* CProcessEntityContainer::getTarget()
+CProMoBlockView* CProMoEntityContainer::getTarget()
 {
-	CProcessEntityBlockView* currObj = NULL;
+	CProMoBlockView* currObj = NULL;
 
 	for (int j = GetSize() - 1; j >= 0; j--) {
-		currObj = dynamic_cast<CProcessEntityBlockView*>(GetAt(j));
+		currObj = dynamic_cast<CProMoBlockView*>(GetAt(j));
 		if (currObj) {
 			if (currObj->IsTarget()) {
 				return currObj;
@@ -296,7 +296,7 @@ CProcessEntityBlockView* CProcessEntityContainer::getTarget()
 }
 
 
-double CProcessEntityContainer::Dist(CPoint point1, CPoint point2)
+double CProMoEntityContainer::Dist(CPoint point1, CPoint point2)
 /* ============================================================
 	Function :		CProcessEntityContainer::Dist
 	Description :	Calculates the distance between point1 and
@@ -321,7 +321,7 @@ double CProcessEntityContainer::Dist(CPoint point1, CPoint point2)
 
 }
 
-CProcessEntityBlockView* CProcessEntityContainer::GetPrimarySelected()
+CProMoBlockView* CProMoEntityContainer::GetPrimarySelected()
 /* ============================================================
 	Function :		CProcessEntityContainer::GetPrimarySelected
 	Description :	Returns the primary object of the two
@@ -337,7 +337,7 @@ CProcessEntityBlockView* CProcessEntityContainer::GetPrimarySelected()
    ============================================================*/
 {
 
-	CProcessEntityBlockView* result = NULL;
+	CProMoBlockView* result = NULL;
 
 	if (GetSelectCount() == 2)
 	{
@@ -345,7 +345,7 @@ CProcessEntityBlockView* CProcessEntityContainer::GetPrimarySelected()
 
 		for (int t = 0; t < max; t++)
 		{
-			CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(GetAt(t));
+			CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(GetAt(t));
 			if (obj && obj->IsSelected())
 			{
 				if (result == NULL)
@@ -358,7 +358,7 @@ CProcessEntityBlockView* CProcessEntityContainer::GetPrimarySelected()
 
 }
 
-CProcessEntityBlockView* CProcessEntityContainer::GetSecondarySelected()
+CProMoBlockView* CProMoEntityContainer::GetSecondarySelected()
 /* ============================================================
 	Function :		CProcessEntityContainer::GetSecondarySelected
 	Description :	Returns the secondary object of the two
@@ -374,7 +374,7 @@ CProcessEntityBlockView* CProcessEntityContainer::GetSecondarySelected()
    ============================================================*/
 {
 
-	CProcessEntityBlockView* result = NULL;
+	CProMoBlockView* result = NULL;
 
 	if (GetSelectCount() == 2)
 	{
@@ -382,7 +382,7 @@ CProcessEntityBlockView* CProcessEntityContainer::GetSecondarySelected()
 
 		for (int t = 0; t < max; t++)
 		{
-			CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(GetAt(t));
+			CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(GetAt(t));
 			if (obj && obj->IsSelected())
 				result = obj;
 		}
@@ -392,7 +392,7 @@ CProcessEntityBlockView* CProcessEntityContainer::GetSecondarySelected()
 
 }
 
-int	CProcessEntityContainer::GetSelectCount()
+int	CProMoEntityContainer::GetSelectCount()
 /* ============================================================
 	Function :		int	CProcessEntityContainer::GetSelectCount
 	Description :	Returns the number of currently selected
@@ -411,7 +411,7 @@ int	CProcessEntityContainer::GetSelectCount()
 
 	for (int t = 0; t < max; t++)
 	{
-		CProcessEntityBlockView* obj = dynamic_cast<CProcessEntityBlockView*>(GetAt(t));
+		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(GetAt(t));
 
 		if (obj && obj->IsSelected())
 			count++;
@@ -422,7 +422,7 @@ int	CProcessEntityContainer::GetSelectCount()
 }
 
 
-void CProcessEntityContainer::GetCurrentFromStack(CObArray& arr)
+void CProMoEntityContainer::GetCurrentFromStack(CObArray& arr)
 /* ============================================================
 	Function :		CProcessEntityContainer::GetCurrentFromStack
 	Description :	Sets the current objects from "arr".
@@ -469,7 +469,7 @@ void CProcessEntityContainer::GetCurrentFromStack(CObArray& arr)
 	}
 }
 
-void CProcessEntityContainer::AddCurrentToStack(CObArray& arr)
+void CProMoEntityContainer::AddCurrentToStack(CObArray& arr)
 /* ============================================================
 	Function :		CProcessEntityContainer::AddCurrentToStack
 	Description :	Adds the current objects to "arr".

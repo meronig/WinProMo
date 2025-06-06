@@ -11,14 +11,14 @@
 
    ========================================================================*/
 #include "stdafx.h"
-#include "ProcessClipboardHandler.h"
-#include "LinkFactory.h"
-#include "ProcessEntityContainer.h"
-#include "ProcessLineEdgeView.h"
-#include "ProcessLineEdgeModel.h"
+#include "ProMoClipboardHandler.h"
+#include "ProMoNameFactory.h"
+#include "ProMoEntityContainer.h"
+#include "ProMoEdgeView.h"
+#include "ProMoEdgeModel.h"
 #include "../DiagramEditor/GroupFactory.h"
 
-CProcessClipboardHandler::CProcessClipboardHandler()
+CProMoClipboardHandler::CProMoClipboardHandler()
 /* ============================================================
 	Function :		CProcessClipboardHandler::CProcessClipboardHandler
 	Description :	constructor
@@ -32,7 +32,7 @@ CProcessClipboardHandler::CProcessClipboardHandler()
 {
 }
 
-CProcessClipboardHandler::~CProcessClipboardHandler()
+CProMoClipboardHandler::~CProMoClipboardHandler()
 /* ============================================================
 	Function :		CProcessClipboardHandler::~CProcessClipboardHandler
 	Description :	destructor
@@ -49,7 +49,7 @@ CProcessClipboardHandler::~CProcessClipboardHandler()
 
 }
 
-void CProcessClipboardHandler::Copy( CDiagramEntity* obj )
+void CProMoClipboardHandler::Copy( CDiagramEntity* obj )
 /* ============================================================
 	Function :		CProcessClipboardHandler::Copy
 	Description :	Copies obj to the paste array
@@ -67,13 +67,13 @@ void CProcessClipboardHandler::Copy( CDiagramEntity* obj )
 		CDiagramEntity* newobj = obj->Clone();
 		newobj->Select( TRUE );
 		newobj->MoveRect( 10, 10 );
-		newobj->SetName( CLinkFactory::GetID() );
+		newobj->SetName( CProMoNameFactory::GetID() );
 		GetData()->Add( newobj );
 	}
 
 }
 
-void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
+void CProMoClipboardHandler::Paste( CDiagramEntityContainer* container )
 /* ============================================================
 	Function :		CProcessClipboardHandler::Paste
 	Description :	Pastes the contents of the paste array to 
@@ -86,7 +86,7 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 
    ============================================================*/
 {
-	CProcessEntityContainer* processContainer = static_cast<CProcessEntityContainer*>(container);
+	CProMoEntityContainer* processContainer = static_cast<CProMoEntityContainer*>(container);
 	
 	CDWordArray	oldgroup;
 	CDWordArray	newgroup;
@@ -143,7 +143,7 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 
 
 
-void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* container )
+void CProMoClipboardHandler::CopyAllSelected( CDiagramEntityContainer* container )
 /* ============================================================
 	Function :		CProcessClipboardHandler::CopyAllSelected
 	Description :	Copies all the selected items to the paste 
@@ -160,7 +160,7 @@ void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* contain
 {
 	
 	CDiagramClipboardHandler::CopyAllSelected( container );
-	CProcessEntityContainer* processContainer = static_cast< CProcessEntityContainer* >( container );
+	CProMoEntityContainer* processContainer = static_cast< CProMoEntityContainer* >( container );
 	/*CObArray* links = flow->GetLinkArray();
 
 	int max = links->GetSize();
@@ -189,7 +189,7 @@ void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* contain
 
 }
 
-void CProcessClipboardHandler::ClearPaste()
+void CProMoClipboardHandler::ClearPaste()
 /* ============================================================
 	Function :		CProcessClipboardHandler::ClearPaste
 	Description :	Clears the paste array.
