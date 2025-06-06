@@ -8,7 +8,7 @@
 
 CProMoEdgeView::CProMoEdgeView()
 /* ============================================================
-	Function :		CProcessLineEdge::CProcessLineEdge
+	Function :		CProMoEdgeView::CProMoEdgeView
 	Description :	Constructor
 	Access :		Public
 
@@ -36,7 +36,7 @@ CProMoEdgeView::CProMoEdgeView()
 
 CProMoEdgeView::~CProMoEdgeView()
 /* ============================================================
-	Function :		CProcessLineEdge::~CProcessLineEdge
+	Function :		CProMoEdgeView::~CProMoEdgeView
 	Description :	Destructor
 	Access :		Public
 
@@ -71,7 +71,7 @@ CProMoEdgeView::~CProMoEdgeView()
 
 CDiagramEntity* CProMoEdgeView::Clone()
 /* ============================================================
-	Function :		CProcessLineEdge::Clone
+	Function :		CProMoEdgeView::Clone
 	Description :	Clone this object to a new object.
 
 	Return :		CDiagramEntity*	-	The new object.
@@ -88,7 +88,6 @@ CDiagramEntity* CProMoEdgeView::Clone()
 	obj->Copy(this);
 	obj->m_source = NULL;
 	obj->m_dest = NULL;
-	//obj->setModel(this->getModel());
 	obj->SetName(CProMoNameFactory::GetID());
 	obj->setModel(new CProMoEdgeModel());
 	return obj;
@@ -166,7 +165,6 @@ void CProMoEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circleDiamet
 
 void CProMoEdgeView::Reposition()
 {
-	//new
 	if (m_source != NULL) {
 		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_source);
 		if (obj) {
@@ -201,7 +199,7 @@ void CProMoEdgeView::Reposition()
 
 void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 /* ============================================================
-	Function :		CProcessLineEdge::Draw
+	Function :		CProMoEdgeView::Draw
 	Description :	Draws the object.
 
 	Return :		void
@@ -285,7 +283,7 @@ HCURSOR CProMoEdgeView::GetCursor(int hit) const
 
 CDiagramEntity* CProMoEdgeView::CreateFromString(const CString& str)
 /* ============================================================
-	Function :		CProcessLineEdge::CreateFromString
+	Function :		CProMoEdgeView::CreateFromString
 	Description :	Static factory function that creates and
 					returns an instance of this class if str
 					is a valid representation.
@@ -441,7 +439,7 @@ void CProMoEdgeView::setModel(CProMoEdgeModel* model)
 CString CProMoEdgeView::GetDefaultGetString() const
 {
 	/* ============================================================
-	Function :		CProcessLineEdge::GetDefaultString
+	Function :		CProMoEdgeView::GetDefaultString
 	Description :	Gets the default properties of the object
 					as a string.
 	Access :		Protected
@@ -453,7 +451,6 @@ CString CProMoEdgeView::GetDefaultGetString() const
 					to disk.
 
    ============================================================*/
-   //ASSERT_VALID(false);
 
 	ASSERT_VALID(this->getModel());
 
@@ -509,7 +506,7 @@ CString CProMoEdgeView::GetDefaultGetString() const
 
 BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
 /* ============================================================
-	Function :		CDiagramEntity::GetDefaultFromString
+	Function :		CProMoEdgeView::GetDefaultFromString
 	Description :	Gets the default properties from "str"
 	Access :		Protected
 

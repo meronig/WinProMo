@@ -33,7 +33,7 @@ CObArray* CProMoModel::getViews()
 
 BOOL CProMoModel::FromString(const CString& str)
 /* ============================================================
-	Function :		CDiagramEntity::FromString
+	Function :		CProMoModel::FromString
 	Description :	Sets the values for an object from "str".
 	Access :		Public
 
@@ -65,7 +65,7 @@ BOOL CProMoModel::FromString(const CString& str)
 
 CString CProMoModel::GetHeaderFromString(CString& str)
 /* ============================================================
-	Function :		CDiagramEntity::GetHeaderFromString
+	Function :		CProMoModel::GetHeaderFromString
 	Description :	Gets the header from "str".
 	Access :		Protected
 
@@ -100,7 +100,7 @@ CString CProMoModel::GetHeaderFromString(CString& str)
 
 BOOL CProMoModel::GetDefaultFromString(CString& str)
 /* ============================================================
-	Function :		CDiagramEntity::GetDefaultFromString
+	Function :		CProMoModel::GetDefaultFromString
 	Description :	Gets the default properties from "str"
 	Access :		Protected
 
@@ -157,7 +157,7 @@ BOOL CProMoModel::GetDefaultFromString(CString& str)
 
 BOOL CProMoModel::LoadFromString(CString& data)
 /* ============================================================
-	Function :		CDiagramEntity::LoadFromString
+	Function :		CProMoModel::LoadFromString
 	Description :	Loads the object from "data".
 	Access :		Public
 
@@ -183,13 +183,13 @@ BOOL CProMoModel::LoadFromString(CString& data)
 
 CProMoModel* CProMoModel::CreateFromString(const CString& str)
 /* ============================================================
-	Function :		CDiagramEntity::CreateFromString
+	Function :		CProMoModel::CreateFromString
 	Description :	Static factory function that creates and
 					returns an instance of this class if "str"
 					is a valid representation.
 	Access :		Public
 
-	Return :		CDiagramEntity*		-	The object, or "NULL"
+	Return :		CProMoModel*		-	The object, or "NULL"
 											if "str" is not a
 											representation of
 											this type.
@@ -217,7 +217,7 @@ CProMoModel* CProMoModel::CreateFromString(const CString& str)
 
 CString CProMoModel::GetString() const
 /* ============================================================
-	Function :		CDiagramEntity::GetString
+	Function :		CProMoModel::GetString
 	Description :	Creates a string representing the object.
 	Access :		Public
 
@@ -239,7 +239,7 @@ CString CProMoModel::GetString() const
 
 CString CProMoModel::GetDefaultGetString() const
 /* ============================================================
-	Function :		CDiagramEntity::GetDefaultString
+	Function :		CProMoModel::GetDefaultString
 	Description :	Gets the default properties of the object
 					as a string.
 	Access :		Protected
@@ -267,7 +267,7 @@ CString CProMoModel::GetDefaultGetString() const
 
 CString CProMoModel::GetType() const
 /* ============================================================
-	Function :		CDiagramEntity::GetType
+	Function :		CProMoModel::GetType
 	Description :	Returns the object type.
 	Access :		Public
 
@@ -285,7 +285,7 @@ CString CProMoModel::GetType() const
 
 void CProMoModel::SetType(CString type)
 /* ============================================================
-	Function :		CDiagramEntity::SetType
+	Function :		CProMoModel::SetType
 	Description :	Set the object type.
 	Access :		Public
 
@@ -304,7 +304,7 @@ void CProMoModel::SetType(CString type)
 
 CString CProMoModel::GetName() const
 /* ============================================================
-	Function :		CDiagramEntity::GetName
+	Function :		CProMoModel::GetName
 	Description :	Gets the Name property
 	Access :		Public
 
@@ -325,7 +325,7 @@ CString CProMoModel::GetName() const
 
 void CProMoModel::SetName(CString name)
 /* ============================================================
-	Function :		CDiagramEntity::SetName
+	Function :		CProMoModel::SetName
 	Description :	Sets the Name property
 	Access :		Public
 
@@ -345,7 +345,7 @@ void CProMoModel::SetName(CString name)
 
 CString CProMoModel::Export(UINT /*format*/) const
 /* ============================================================
-	Function :		CDiagramEntity::Export
+	Function :		CProMoModel::Export
 	Description :	Exports the object to format
 	Access :		Public
 

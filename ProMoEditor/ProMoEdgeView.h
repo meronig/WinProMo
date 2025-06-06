@@ -1,11 +1,9 @@
 #ifndef _PROMOEDGEVIEW_H_
 #define _PROMOEDGEVIEW_H_
 
-//#include "../DiagramEditor/DiagramEntity.h"
 #include "../DiagramEditor/DiagramLine.h"
 #include "PropertyDialog.h"
 #include "ProMoBlockView.h"
-//#include "ProcessLineEdgeModel.h"
 
 
 

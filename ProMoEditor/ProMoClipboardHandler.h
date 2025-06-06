@@ -14,7 +14,6 @@ public:
 	virtual void	Copy( CDiagramEntity* obj );
 	virtual void	Paste( CDiagramEntityContainer* container );
 	virtual void	CopyAllSelected( CDiagramEntityContainer* container );
-	virtual void	ClearPaste();
 
 private:
 // Private data

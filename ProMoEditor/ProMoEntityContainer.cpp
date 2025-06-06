@@ -8,7 +8,7 @@
 
 CProMoEntityContainer::CProMoEntityContainer()
 /* ============================================================
-	Function :		CProcessEntityContainer::CProcessEntityContainer
+	Function :		CProMoEntityContainer::CProMoEntityContainer
 	Description :	constructor
 
 	Return :		void
@@ -23,7 +23,7 @@ CProMoEntityContainer::CProMoEntityContainer()
 
 CProMoEntityContainer::~CProMoEntityContainer()
 /* ============================================================
-	Function :		CProcessEntityContainer::~CProcessEntityContainer
+	Function :		CProMoEntityContainer::~CProMoEntityContainer
 	Description :	destructor
 
 	Return :		void
@@ -34,7 +34,6 @@ CProMoEntityContainer::~CProMoEntityContainer()
    ============================================================*/
 {
 
-	//ClearLinks();
 	ClearUndo();
 
 }
@@ -53,7 +52,7 @@ void CProMoEntityContainer::removeR(CProMoBlockView *block) {
 
 void CProMoEntityContainer::RemoveAt(int index)
 /* ============================================================
-	Function :		CProcessEntityContainer::RemoveAt
+	Function :		CProMoEntityContainer::RemoveAt
 	Description :	Removes the object at index. Will also
 					remove all links refering to this object.
 
@@ -296,105 +295,9 @@ CProMoBlockView* CProMoEntityContainer::getTarget()
 }
 
 
-double CProMoEntityContainer::Dist(CPoint point1, CPoint point2)
-/* ============================================================
-	Function :		CProcessEntityContainer::Dist
-	Description :	Calculates the distance between point1 and
-					point2.
-
-	Return :		double			-	Resulting distance
-	Parameters :	CPoint point1	-	First point to test
-					CPoint point2	-	Second point to test
-
-	Usage :			Used to find the closest link points between
-					two objects.
-
-   ============================================================*/
-{
-
-	double width = abs(point1.x - point2.x);
-	double height = abs(point1.y - point2.y);
-
-	double hyp = _hypot(width, height);
-
-	return hyp;
-
-}
-
-CProMoBlockView* CProMoEntityContainer::GetPrimarySelected()
-/* ============================================================
-	Function :		CProcessEntityContainer::GetPrimarySelected
-	Description :	Returns the primary object of the two
-					currently selected.
-
-	Return :		CProcessEntityBlock*	-	Primary object or
-											NULL if none.
-	Parameters :	none
-
-	Usage :			Returns NULL if not exactly two objects are
-					selected.
-
-   ============================================================*/
-{
-
-	CProMoBlockView* result = NULL;
-
-	if (GetSelectCount() == 2)
-	{
-		int max = GetSize();
-
-		for (int t = 0; t < max; t++)
-		{
-			CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(GetAt(t));
-			if (obj && obj->IsSelected())
-			{
-				if (result == NULL)
-					result = obj;
-			}
-		}
-	}
-
-	return result;
-
-}
-
-CProMoBlockView* CProMoEntityContainer::GetSecondarySelected()
-/* ============================================================
-	Function :		CProcessEntityContainer::GetSecondarySelected
-	Description :	Returns the secondary object of the two
-					currently selected.
-
-	Return :		CProcessEntityBlock*	-	secondary object or
-											NULL if none.
-	Parameters :	none
-
-	Usage :			Returns NULL if not exactly two objects are
-					selected.
-
-   ============================================================*/
-{
-
-	CProMoBlockView* result = NULL;
-
-	if (GetSelectCount() == 2)
-	{
-		int max = GetSize();
-
-		for (int t = 0; t < max; t++)
-		{
-			CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(GetAt(t));
-			if (obj && obj->IsSelected())
-				result = obj;
-		}
-	}
-
-	return result;
-
-}
-
 int	CProMoEntityContainer::GetSelectCount()
 /* ============================================================
-	Function :		int	CProcessEntityContainer::GetSelectCount
+	Function :		int	CProMoEntityContainer::GetSelectCount
 	Description :	Returns the number of currently selected
 					objects.
 
@@ -424,7 +327,7 @@ int	CProMoEntityContainer::GetSelectCount()
 
 void CProMoEntityContainer::GetCurrentFromStack(CObArray& arr)
 /* ============================================================
-	Function :		CProcessEntityContainer::GetCurrentFromStack
+	Function :		CProMoEntityContainer::GetCurrentFromStack
 	Description :	Sets the current objects from "arr".
 	Access :		Private
 
@@ -471,7 +374,7 @@ void CProMoEntityContainer::GetCurrentFromStack(CObArray& arr)
 
 void CProMoEntityContainer::AddCurrentToStack(CObArray& arr)
 /* ============================================================
-	Function :		CProcessEntityContainer::AddCurrentToStack
+	Function :		CProMoEntityContainer::AddCurrentToStack
 	Description :	Adds the current objects to "arr".
 	Access :		Private
 

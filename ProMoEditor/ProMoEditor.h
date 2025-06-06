@@ -22,7 +22,6 @@ protected:
 
 	// Message handlers
 	virtual afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	virtual afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	virtual afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	virtual afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 
@@ -36,8 +35,6 @@ public:
 	virtual void	TopAlignSelected();
 	virtual void	BottomAlignSelected();
 	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
-
-
 
 private:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;

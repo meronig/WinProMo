@@ -1,17 +1,17 @@
 /* ==========================================================================
-	CLinkFactory
+	CProMoNameFactory
 
 	Author :		Johan Rosengren, Abstrakt Mekanik AB
 
 	Date :			2004-04-29
 
-	Purpose :		CLinkFactory is a simple class with one single static 
+	Purpose :		CProMoNameFactory is a simple class with one single static 
 					function, returning and updating a single static int 
 					value to use as a unique id for drawing objects.	
 
 	Description :	See below
 
-	Usage :			Call CLinkFactory::GetID to get a unique id during this 
+	Usage :			Call CProMoNameFactory::GetID to get a unique id during this 
 					session.
 
    ========================================================================*/
@@ -23,7 +23,7 @@ int CProMoNameFactory::s_currentID = 0;
 
 CString CProMoNameFactory::GetID()
 /* ============================================================
-	Function :		CLinkFactory::GetID
+	Function :		CProMoNameFactory::GetID
 	Description :	Returns a unique int every time it is 
 					called.
 					

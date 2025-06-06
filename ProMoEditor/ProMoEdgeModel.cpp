@@ -6,7 +6,7 @@
 
 CProMoEdgeModel::CProMoEdgeModel()
 /* ============================================================
-	Function :		CProcessLineEdge::CProcessLineEdge
+	Function :		CProMoEdgeModel::CProMoEdgeModel
 	Description :	Constructor
 	Access :		Public
 
@@ -26,7 +26,7 @@ CProMoEdgeModel::CProMoEdgeModel()
 
 CProMoEdgeModel::~CProMoEdgeModel()
 /* ============================================================
-	Function :		CProcessLineEdge::~CProcessLineEdge
+	Function :		CProMoEdgeModel::~CProMoEdgeModel
 	Description :	Destructor
 	Access :		Public
 
@@ -57,10 +57,10 @@ CProMoEdgeModel::~CProMoEdgeModel()
 
 CProMoModel* CProMoEdgeModel::Clone()
 /* ============================================================
-	Function :		CProcessLineEdge::Clone
+	Function :		CProMoEdgeModel::Clone
 	Description :	Clone this object to a new object.
 
-	Return :		CDiagramEntity*	-	The new object.
+	Return :		CProMoModel*	-	The new object.
 	Parameters :	none
 
 	Usage :			Call to create a clone of the object. The
@@ -71,7 +71,6 @@ CProMoModel* CProMoEdgeModel::Clone()
 {
 
 	CProMoEdgeModel* obj = new CProMoEdgeModel;
-	//obj->Copy(this);
 	obj->m_source = NULL;
 	obj->m_dest = NULL;
 	return obj;
@@ -224,12 +223,12 @@ CProMoEdgeView* CProMoEdgeModel::getFirstSegment()
 
 CProMoModel* CProMoEdgeModel::CreateFromString(const CString& str)
 /* ============================================================
-	Function :		CProcessEntityBlock::CreateFromString
+	Function :		CProMoEdgeModel::CreateFromString
 	Description :	Static factory function that creates and
 					returns an instance of this class if str
 					is a valid representation.
 
-	Return :		CDiagramEntity*		-	The object, or NULL
+	Return :		CProMoModel*		-	The object, or NULL
 											if str is not a
 											representation of
 											this type.
@@ -258,7 +257,7 @@ CProMoModel* CProMoEdgeModel::CreateFromString(const CString& str)
 CString CProMoEdgeModel::GetDefaultGetString() const
 {
 	/* ============================================================
-	Function :		CProcessEntityBlock::GetDefaultString
+	Function :		CProMoEdgeModel::GetDefaultString
 	Description :	Gets the default properties of the object
 					as a string.
 	Access :		Protected

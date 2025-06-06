@@ -1,9 +1,9 @@
 /* ==========================================================================
-	CFlowchartControlFactory
+	CProMoControlFactory
 
 	Author :		Giovanni Meroni
 
-	Purpose :		CProcessControlFactory is a factory-class with one 
+	Purpose :		CProMoControlFactory is a factory-class with one 
 					single member, allowing the creation of CDiagramEntity-
 					derived objects from a string.	
 
@@ -13,7 +13,7 @@
 					resulting pointer is then returned and can be added to 
 					the application data.
 
-	Usage :			Call CProcessControlFactory::CreateFromString and if 
+	Usage :			Call CProMoControlFactory::CreateFromString and if 
 					a non-NULL pointer is returned, add it to the 
 					editor data.
 
@@ -33,11 +33,11 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CProcessControlFactory
+// CProMoControlFactory
 
 CDiagramEntity* CProMoControlFactory::CreateViewFromString( const CString& str )
 /* ============================================================
-	Function :		CProcessControlFactory::CreateFromString
+	Function :		CProMoControlFactory::CreateFromString
 	Description :	The function returns an object from the 
 					parameter str.
 					

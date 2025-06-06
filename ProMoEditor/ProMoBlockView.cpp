@@ -13,7 +13,7 @@ static char THIS_FILE[] = __FILE__;
 
 CProMoBlockView::CProMoBlockView()
 /* ============================================================
-	Function :		CProcessEntityBlock::CProcessEntityBlock
+	Function :		CProMoBlockView::CProMoBlockView
 	Description :	constructor
 
 	Return :		void
@@ -39,15 +39,13 @@ CProMoBlockView::CProMoBlockView()
 
 	SetName(CProMoNameFactory::GetID());
 
-	SetMoved(FALSE);
-
 	m_blockmodel = NULL;
 	setModel(new CProMoBlockModel());
 }
 
 CProMoBlockView::~CProMoBlockView()
 /* ============================================================
-	Function :		CProcessEntityBlock::~CProcessEntityBlock
+	Function :		CProMoBlockView::~CProMoBlockView
 	Description :	destructor
 
 	Return :		void
@@ -67,7 +65,7 @@ CProMoBlockView::~CProMoBlockView()
 
 void CProMoBlockView::Draw(CDC* dc, CRect rect)
 /* ============================================================
-	Function :		CProcessEntityBlock::Draw
+	Function :		CProMoBlockView::Draw
 	Description :	Draws the object.
 
 	Return :		void
@@ -314,7 +312,7 @@ void CProMoBlockView::autoResize()
 CString CProMoBlockView::GetDefaultGetString() const
 {
 	/* ============================================================
-	Function :		CProcessEntityBlock::GetDefaultString
+	Function :		CProMoBlockView::GetDefaultString
 	Description :	Gets the default properties of the object
 					as a string.
 	Access :		Protected
@@ -326,7 +324,6 @@ CString CProMoBlockView::GetDefaultGetString() const
 					to disk.
 
    ============================================================*/
-	//ASSERT_VALID(false);
 	ASSERT_VALID(this->getModel());
 	
 	CString str;
@@ -435,7 +432,7 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 
 CDiagramEntity* CProMoBlockView::Clone()
 /* ============================================================
-	Function :		CProcessEntityBlock::Clone
+	Function :		CProMoBlockView::Clone
 	Description :	Clone this object to a new object.
 
 	Return :		CDiagramEntity*	-	The new object.
@@ -567,7 +564,7 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 
 CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str)
 /* ============================================================
-	Function :		CProcessEntityBlock::CreateFromString
+	Function :		CProMoBlockView::CreateFromString
 	Description :	Static factory function that creates and
 					returns an instance of this class if str
 					is a valid representation.
@@ -600,7 +597,7 @@ CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str)
 
 int CProMoBlockView::GetHitCode(CPoint point) const
 /* ============================================================
-	Function :		CProcessEntityBlock::GetHitCode
+	Function :		CProMoBlockView::GetHitCode
 	Description :	Returns the hit point constant for point.
 
 	Return :		int				-	The hit point,
@@ -625,7 +622,7 @@ int CProMoBlockView::GetHitCode(CPoint point) const
 
 HCURSOR CProMoBlockView::GetCursor(int /*hit*/) const
 /* ============================================================
-	Function :		CProcessEntityBlock::GetCursor
+	Function :		CProMoBlockView::GetCursor
 	Description :	Returns the cursor for the given hit point.
 
 	Return :		HCURSOR	-	The cursor to show
@@ -640,50 +637,6 @@ HCURSOR CProMoBlockView::GetCursor(int /*hit*/) const
 
 	HCURSOR cursor = LoadCursor(NULL, IDC_SIZEALL);
 	return cursor;
-
-}
-
-
-void CProMoBlockView::SetMoved(BOOL moved)
-/* ============================================================
-	Function :		CProcessEntityBlock::SetMoved
-	Description :	Sets the moved-flag of the object.
-
-	Return :		void
-	Parameters :	BOOL moved	-	TRUE if the object is moved
-									while moving linked objects,
-									FALSE if not.
-
-	Usage :			To avoid infinite recursion while moving
-					linked objects, we use a flag to mark this
-					object as already moved.
-
-   ============================================================*/
-{
-
-	m_moved = moved;
-
-}
-
-BOOL CProMoBlockView::GetMoved()
-/* ============================================================
-	Function :		CProcessEntityBlock::GetMoved
-	Description :	Gets the moved-flag of the object.
-
-	Return :		BOOL	-	TRUE if the object is moved
-									while moving linked objects,
-									FALSE if not.
-
-	Parameters :	none
-
-	Usage :			To avoid infinite recursion while moving
-					linked objects, we use a flag to mark this
-					object as already moved.
-
-   ============================================================*/
-{
-
-	return m_moved;
 
 }
 

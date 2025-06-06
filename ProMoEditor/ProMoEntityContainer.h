@@ -2,7 +2,6 @@
 #define _PROMOENTITYCONTAINER_H_
 
 #include "../DiagramEditor/DiagramEntityContainer.h"
-//#include "../DiagramEditor/DiagramEntity.h"
 #include "../DiagramEditor/Tokenizer.h"
 #include "ProMoBlockView.h"
 
@@ -16,8 +15,6 @@ public:
 
 	// Selection
 	int					GetSelectCount();
-	CProMoBlockView* GetPrimarySelected();
-	CProMoBlockView* GetSecondarySelected();
 
 	// Overrides
 	virtual void	RemoveAt(int index);
@@ -36,7 +33,6 @@ protected:
 
 private:
 	// Private helpers
-	double	Dist(CPoint point1, CPoint point2);
 	void reorderR(CProMoBlockView* block, CObArray* m_newOrder);
 	void removeR(CProMoBlockView* block);
 };

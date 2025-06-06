@@ -1,5 +1,5 @@
-#ifndef _PROCESSENTITYBLOCKVIEW_H_
-#define _PROCESSENTITYBLOCKVIEW_H_
+#ifndef _PROMOBLOCKVIEW_H_
+#define _PROMOBLOCKVIEW_H_
 
 #include "../DiagramEditor/DiagramEntity.h"
 #include "PropertyDialog.h"
@@ -20,9 +20,6 @@ class CProMoBlockView : public CDiagramEntity
 		virtual void Draw(CDC* dc, CRect rect);
 		virtual int		GetHitCode(CPoint point) const;
 		virtual HCURSOR GetCursor(int hit) const;
-		
-		virtual void	SetMoved(BOOL moved);
-		virtual BOOL	GetMoved();
 		
 		// Block-specific methods
 		
@@ -48,5 +45,5 @@ class CProMoBlockView : public CDiagramEntity
 		CProMoBlockModel* m_blockmodel;
 
 };
-#endif //_PROCESSENTITYBLOCKVIEW_H_
+#endif //_PROMOBLOCKVIEW_H_
 

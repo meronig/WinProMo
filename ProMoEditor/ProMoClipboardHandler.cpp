@@ -1,9 +1,9 @@
 /* ==========================================================================
-	CProcessClipboardHandler
+	CProMoClipboardHandler
 
 	Author :		Giovanni Meroni
 
-	Purpose :		CProcessClipboardHandler is a clipboard handler that 
+	Purpose :		CProMoClipboardHandler is a clipboard handler that 
 					includes links in the clipboard.	
 
 	Description :	Links are saved and loaded to/from  a separate 
@@ -20,7 +20,7 @@
 
 CProMoClipboardHandler::CProMoClipboardHandler()
 /* ============================================================
-	Function :		CProcessClipboardHandler::CProcessClipboardHandler
+	Function :		CProMoClipboardHandler::CProMoClipboardHandler
 	Description :	constructor
 					
 	Return :		void
@@ -34,7 +34,7 @@ CProMoClipboardHandler::CProMoClipboardHandler()
 
 CProMoClipboardHandler::~CProMoClipboardHandler()
 /* ============================================================
-	Function :		CProcessClipboardHandler::~CProcessClipboardHandler
+	Function :		CProMoClipboardHandler::~CProMoClipboardHandler
 	Description :	destructor
 					
 	Return :		void
@@ -51,7 +51,7 @@ CProMoClipboardHandler::~CProMoClipboardHandler()
 
 void CProMoClipboardHandler::Copy( CDiagramEntity* obj )
 /* ============================================================
-	Function :		CProcessClipboardHandler::Copy
+	Function :		CProMoClipboardHandler::Copy
 	Description :	Copies obj to the paste array
 					
 	Return :		void
@@ -75,14 +75,15 @@ void CProMoClipboardHandler::Copy( CDiagramEntity* obj )
 
 void CProMoClipboardHandler::Paste( CDiagramEntityContainer* container )
 /* ============================================================
-	Function :		CProcessClipboardHandler::Paste
+	Function :		CProMoClipboardHandler::Paste
 	Description :	Pastes the contents of the paste array to 
 					the data array.
 					
 	Return :		void
 	Parameters :	none
 
-	Usage :			Overridden to paste links as well.
+	Usage :			Overridden to preserve relations between
+					nodes and edges.
 
    ============================================================*/
 {
@@ -145,31 +146,22 @@ void CProMoClipboardHandler::Paste( CDiagramEntityContainer* container )
 
 void CProMoClipboardHandler::CopyAllSelected( CDiagramEntityContainer* container )
 /* ============================================================
-	Function :		CProcessClipboardHandler::CopyAllSelected
+	Function :		CProMoClipboardHandler::CopyAllSelected
 	Description :	Copies all the selected items to the paste 
 					array.
 					
 	Return :		void
 	Parameters :	none
 
-	Usage :			Overridden to add links as well. New ids 
-					are assigned to the copied objects, and the 
-					copied links are updated.
+	Usage :			Overridden to preserve relations between
+					nodes and edges.
 
    ============================================================*/
 {
 	
 	CDiagramClipboardHandler::CopyAllSelected( container );
 	CProMoEntityContainer* processContainer = static_cast< CProMoEntityContainer* >( container );
-	/*CObArray* links = flow->GetLinkArray();
-
-	int max = links->GetSize();
-	for( int t = 0; t < max ; t++ )
-	{
-		CFlowchartLink* link = static_cast< CFlowchartLink* >( links->GetAt(t ) );
-		m_pasteLinks.Add( link->Clone() );
-	}*/
-
+	
 	CObArray originals;
 	CObArray* paste = GetData();
 	CObArray* arr = processContainer->GetData();
@@ -186,30 +178,6 @@ void CProMoClipboardHandler::CopyAllSelected( CDiagramEntityContainer* container
 	}
 	
 	processContainer->ReplicateRelations(&originals, paste);
-
-}
-
-void CProMoClipboardHandler::ClearPaste()
-/* ============================================================
-	Function :		CProcessClipboardHandler::ClearPaste
-	Description :	Clears the paste array.
-					
-	Return :		void
-	Parameters :	none
-
-	Usage :			Overridden to clear the paste link array as 
-					well.
-
-   ============================================================*/
-{
-
-	CDiagramClipboardHandler::ClearPaste();
-
-	/*int max = m_pasteLinks.GetSize();
-	for( int t = max - 1 ; t >= 0 ; t-- )
-		delete m_pasteLinks[t];
-
-	m_pasteLinks.RemoveAll();*/
 
 }
 

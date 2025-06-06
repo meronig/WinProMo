@@ -12,11 +12,11 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 /////////////////////////////////////////////////////////////////////////////
-// CProcessEditor
+// CProMoEditor
 
 CProMoEditor::CProMoEditor()
 /* ============================================================
-	Function :		CProcessEditor::CProcessEditor
+	Function :		CProMoEditor::CProMoEditor
 	Description :	constructor
 
 	Return :		void
@@ -30,13 +30,12 @@ CProMoEditor::CProMoEditor()
 	SetBackgroundColor(RGB(250, 250, 230));
 	SetSnapToGrid(FALSE);
 	SetRestraints(RESTRAINT_VIRTUAL);
-	//SetPopupMenu(new CFlowchartMenu);
-
+	
 }
 
 CProMoEditor::~CProMoEditor()
 /* ============================================================
-	Function :		CProcessEditor::~CProcessEditor
+	Function :		CProMoEditor::~CProMoEditor
 	Description :	destructor
 
 	Return :		void
@@ -53,7 +52,7 @@ CProMoEditor::~CProMoEditor()
 
 void CProMoEditor::DrawGrid(CDC* dc, CRect /*rect*/, double zoom) const
 /* ============================================================
-	Function :		CProcessEditor::DrawGrid
+	Function :		CProMoEditor::DrawGrid
 	Description :	Draws the editor grid. We override this to
 					draw the grid as a series of dots.
 
@@ -82,7 +81,7 @@ void CProMoEditor::DrawGrid(CDC* dc, CRect /*rect*/, double zoom) const
 
 void CProMoEditor::DrawObjects(CDC* dc, double zoom) const
 /* ============================================================
-	Function :		CProcessEditor::DrawObjects
+	Function :		CProMoEditor::DrawObjects
 	Description :	Draws the object
 
 	Return :		void
@@ -129,14 +128,14 @@ void CProMoEditor::DrawObjects(CDC* dc, double zoom) const
 
 void CProMoEditor::SaveObjects(CStringArray& stra)
 /* ============================================================
-	Function :		CProcessEditor::SaveObjects
+	Function :		CProMoEditor::SaveObjects
 	Description :	Saves all the objects to a CStringArray.
 
 	Return :		void
 	Parameters :	CStringArray& stra	-	CStringArray to
 											save to.
 
-	Usage :			Overridden to save the edges as well.
+	Usage :			Overridden to save the model as well.
 
    ============================================================*/
 {
@@ -175,7 +174,7 @@ void CProMoEditor::SaveObjects(CStringArray& stra)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CProcessEditor message handlers
+// CProMoEditor message handlers
 
 
 CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point) {
@@ -296,7 +295,7 @@ void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
 
 void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 /* ============================================================
-	Function :		CProcessEditor::OnMouseMove
+	Function :		CProMoEditor::OnMouseMove
 	Description :	Handler for WM_MOUSEMOVE. We add handling
 					to close screen redraws as we are moving
 					lots of stuff (all the attached objects in
@@ -580,29 +579,6 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 }
 
-void CProMoEditor::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
-/* ============================================================
-	Function :		CProcessEditor::OnKeyDown
-	Description :	Handles the WM_KEYDOWN-message. We
-					override this as objects might be moved and
-					we will have to move unlinked objects as
-					well.
-
-	Return :		void
-	Parameters :	UINT nChar		-	Not used
-					UINT nRepCnt	-	Not used
-					UINT nFlags		-	Not used
-
-	Usage :			Called from MFC
-
-   ============================================================*/
-{
-
-	CDiagramEditor::OnKeyDown(nChar, nRepCnt, nFlags);
-
-	
-}
-
 void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	BOOL goon = TRUE;
@@ -766,12 +742,12 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 
 
 /////////////////////////////////////////////////////////////////////////////
-// CProcessEditor private helpers
+// CProMoEditor private helpers
 
 
 CDiagramEntity* CProMoEditor::GetNamedObject(const CString& name) const
 /* ============================================================
-	Function :		CProcessEditor::GetNamedObject
+	Function :		CProMoEditor::GetNamedObject
 	Description :	Returns the object with the name attribute
 					name.
 
