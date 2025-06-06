@@ -28,8 +28,11 @@ CProcessEntityBlockView::CProcessEntityBlockView()
 	SetType(_T("process_block_view"));
 
 	CString title;
-	title.LoadString(IDS_PROCESS_BLOCK);
-	SetTitle(title);
+	BOOL result;
+	result = title.LoadString(IDS_PROCESS_BLOCK);
+	if (result) {
+		SetTitle(title);
+	}
 	this->m_target = FALSE;
 
 	SetPropertyDialog(&m_dlg, CPropertyDialog::IDD);
@@ -186,9 +189,8 @@ CPoint CProcessEntityBlockView::getIntersection(CPoint innerPoint, CPoint outerP
 			}
 			
 			CPoint result;
-
-			result.x = t * xY + (1 - t) * xX;
-			result.y = t * yY + (1 - t) * yX;
+			result.x = static_cast<LONG>(t * xY + (1 - t) * xX);
+			result.y = static_cast<LONG>(t * yY + (1 - t) * yX);
 
 			/* uncomment for debugging */
 			/*msg.Format(_T("intersection: (%d, %d)"), result.x, result.y);
@@ -347,7 +349,7 @@ CString CProcessEntityBlockView::GetDefaultGetString() const
 	CStringReplace(name, _T(","), _T("\\comma"));
 	CStringReplace(name, _T("\r\n"), _T("\\newline"));
 
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s"), GetType(), name, GetLeft(), GetTop(), GetRight(), GetBottom(), title, GetGroup(), model);
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model);
 	
 	return str;
 

@@ -95,13 +95,13 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 	CObArray clones;
 	int t = 0;
 
-	int max = paste->GetSize();
+	int max = static_cast<int>(paste->GetSize());
 	for (t = 0; t < max; t++)
 	{
 		CDiagramEntity* obj = static_cast<CDiagramEntity*>(paste->GetAt(t));
 		if (obj->GetGroup())
 		{
-			int size = oldgroup.GetSize();
+			int size = static_cast<int>(oldgroup.GetSize());
 			BOOL found = FALSE;
 			for (int i = 0; i < size; i++)
 				if (obj->GetGroup() == static_cast<int> (oldgroup[i]))
@@ -124,7 +124,7 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 		int group = 0;
 		if (obj->GetGroup())
 		{
-			int size = oldgroup.GetSize();
+			int size = static_cast<int>(oldgroup.GetSize());
 			for (int i = 0; i < size; i++)
 				if (obj->GetGroup() == static_cast<int>(oldgroup[i]))
 					group = newgroup[i];
@@ -134,14 +134,10 @@ void CProcessClipboardHandler::Paste( CDiagramEntityContainer* container )
 		clone->SetParent(processContainer);
 		processContainer->Add(clone);
 	}
-	//todo: reactivate
+	
 	processContainer->ReplicateRelations(paste, &clones);
 
-	//CDiagramClipboardHandler::Paste( container );
-	//int max = m_pasteLinks.GetSize();
-	/*for( int t = 0 ; t < max ; t++ )
-		flow->AddLink( ( static_cast< CFlowchartLink* >( m_pasteLinks[ t ] ) )->Clone() );*/
-
+	
 }
 
 
@@ -178,7 +174,7 @@ void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* contain
 	CObArray* paste = GetData();
 	CObArray* arr = processContainer->GetData();
 
-	int max = arr->GetSize();
+	int max = static_cast<int>(arr->GetSize());
 	
 	for (int t = 0; t < max; t++)
 	{
@@ -188,28 +184,8 @@ void CProcessClipboardHandler::CopyAllSelected( CDiagramEntityContainer* contain
 			originals.Add(obj);
 		}
 	}
-	//todo: reactivate
+	
 	processContainer->ReplicateRelations(&originals, paste);
-
-
-	//for( int t = 0; t < max ; t++ )
-	//{
-	//	CDiagramEntity* obj = static_cast< CDiagramEntity* >( paste->GetAt( t ) );
-	//	CString newID = CLinkFactory::GetID();
-
-	//	/*int maxlinks = m_pasteLinks.GetSize();
-	//	for( int i = 0 ; i < maxlinks ; i++ )
-	//	{
-	//		CFlowchartLink* link = static_cast< CFlowchartLink* >( m_pasteLinks[ i ] );
-	//		if( link->from == obj->GetName() )
-	//			link->from = newID;
-	//		if( link->to == obj->GetName() )
-	//			link->to = newID;
-	//	}*/
-
-	//	obj->SetName( newID );
-
-	//}
 
 }
 

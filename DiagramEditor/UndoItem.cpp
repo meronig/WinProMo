@@ -49,7 +49,7 @@ CUndoItem::~CUndoItem()
    ============================================================*/
 {
 
-	int max = arr.GetSize();
+	int max = static_cast<int>(arr.GetSize());
 	for (int t = 0 ; t < max ; t++ )
 		delete arr.GetAt( t );
 	arr.RemoveAll();

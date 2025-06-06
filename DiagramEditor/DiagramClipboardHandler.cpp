@@ -113,7 +113,7 @@ void CDiagramClipboardHandler::CopyAllSelected( CDiagramEntityContainer* contain
 	ClearPaste();
 	CObArray* arr = container->GetData();
 
-	int	max = arr->GetSize();
+	int	max = static_cast<int>(arr->GetSize());
 	for( int t = 0 ; t < max ; t++ )
 	{
 		CDiagramEntity* obj = static_cast< CDiagramEntity* >( arr->GetAt( t ) );
@@ -145,7 +145,7 @@ int CDiagramClipboardHandler::ObjectsInPaste()
    ============================================================*/
 {
 
-	return m_paste.GetSize();
+	return static_cast<int>(m_paste.GetSize());
 
 }
 
@@ -164,7 +164,7 @@ void CDiagramClipboardHandler::ClearPaste()
    ============================================================*/
 {
 
-	int count = m_paste.GetSize() - 1;
+	int count = static_cast<int>(m_paste.GetSize()) - 1;
 	for( int t = count ; t >= 0 ; t-- )
 		delete static_cast< CDiagramEntity* >( m_paste.GetAt( t ) );
 	m_paste.RemoveAll();
@@ -191,13 +191,13 @@ void CDiagramClipboardHandler::Paste( CDiagramEntityContainer* container )
 	CDWordArray	newgroup;
 	int t = 0;
 
-	int max = m_paste.GetSize();
+	int max = static_cast<int>(m_paste.GetSize());
 	for(t = 0 ; t < max ; t++ )
 	{
 		CDiagramEntity* obj = static_cast< CDiagramEntity* >( m_paste.GetAt( t ) );
 		if( obj->GetGroup() )
 		{
-			int size = oldgroup.GetSize();
+			int size = static_cast<int>(oldgroup.GetSize());
 			BOOL found = FALSE;
 			for( int i = 0 ; i < size ; i++ )
 				if( obj->GetGroup() == static_cast< int > ( oldgroup[ i ] ) )
@@ -219,7 +219,7 @@ void CDiagramClipboardHandler::Paste( CDiagramEntityContainer* container )
 		int group = 0;
 		if( obj->GetGroup() )
 		{
-			int size = oldgroup.GetSize();
+			int size = static_cast<int>(oldgroup.GetSize());
 			for( int i = 0 ; i < size ; i++ )
 				if( obj->GetGroup() == static_cast< int >( oldgroup[ i ] ) )
 					group = newgroup[ i ];

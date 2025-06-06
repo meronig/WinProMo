@@ -104,7 +104,7 @@ int CTokenizer::GetSize(  ) const
    ============================================================*/
 {
 
-	return m_stra.GetSize();
+	return static_cast<int>(m_stra.GetSize());
 
 }
 

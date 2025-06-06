@@ -226,7 +226,7 @@ BOOL CTextFile::WriteTextFile( CString& filename, const CStringArray& contents )
 		if( file.Open( filename, CFile::modeWrite | CFile::modeCreate, &feError ) )
 		{
 
-			int max = contents.GetSize();
+			int max = static_cast<int>(contents.GetSize());
 			for( int t = 0 ; t < max ; t++ )
 				file.WriteString( contents[ t ] + m_eol );
 
@@ -395,7 +395,7 @@ BOOL CTextFile::AppendFile( CString& filename, const CStringArray& contents )
 
 			file.SeekToEnd();
 
-			int max = contents.GetSize();
+			int max = static_cast<int>(contents.GetSize());
 			for( int t = 0 ; t < max ; t++ )
 				file.WriteString( contents[ t ] + m_eol );
 
@@ -492,7 +492,7 @@ BOOL CTextFile::Load( CString& filename, CListBox* list )
 		{
 
 			// Set to listbox
-			int max = contents.GetSize();
+			int max = static_cast<int>(contents.GetSize());
 			for( int t = 0 ; t < max ; t++ )
 				if( contents[ t ].GetLength() )
 					list->AddString( contents[ t ] );

@@ -12,13 +12,13 @@ CProcessEntityBlockModel::CProcessEntityBlockModel() {
 
 CProcessEntityBlockModel::~CProcessEntityBlockModel() {
 	int i = 0;
-	for (i = m_incomingEdges.GetSize() - 1; i >= 0; i--) {
+	for (i = static_cast<int>(m_incomingEdges.GetSize()) - 1; i >= 0; i--) {
 		CProcessLineEdgeModel* edge = dynamic_cast<CProcessLineEdgeModel*>(this->m_incomingEdges.GetAt(i));
 		if (edge) {
 			edge->SetDestination(NULL);
 		}
 	}
-	for (i = m_outgoingEdges.GetSize() - 1; i >= 0; i--) {
+	for (i = static_cast<int>(m_outgoingEdges.GetSize()) - 1; i >= 0; i--) {
 		CProcessLineEdgeModel* edge = dynamic_cast<CProcessLineEdgeModel*>(this->m_outgoingEdges.GetAt(i));
 		if (edge) {
 			edge->SetSource(NULL);
@@ -260,7 +260,7 @@ CString CProcessEntityBlockModel::GetDefaultGetString() const
 		
 	}
 
-	str.Format(_T("%s:%s,%s"), GetType(), name, parentString);
+	str.Format(_T("%s:%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, (LPCTSTR)parentString);
 
 	return str;
 

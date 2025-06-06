@@ -331,7 +331,7 @@ private:
 
 	CPoint		m_panOrigin;
 	BOOL		m_panning;
-	UINT		m_panningTimer;
+	UINT_PTR	m_panningTimer;
 
 	CPoint		m_savedMousePoint;	// The position of the mouse when clicking the editor
 	CPoint		m_pastePosition;

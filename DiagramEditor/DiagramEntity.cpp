@@ -441,7 +441,7 @@ CString CDiagramEntity::GetDefaultGetString() const
 	CStringReplace(name, _T( "," ), _T( "\\comma" ) );
 	CStringReplace(name, _T( "\r\n" ), _T( "\\newline" ) );
 	
-	str.Format( _T( "%s:%f,%f,%f,%f,%s,%s,%i" ), GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), title, name, GetGroup() );
+	str.Format( _T( "%s:%f,%f,%f,%f,%s,%s,%i" ), (LPCTSTR)GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, (LPCTSTR)name, GetGroup() );
 
 	return str;
 }

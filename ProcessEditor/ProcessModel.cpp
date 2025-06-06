@@ -11,7 +11,7 @@ void CProcessModel::linkView(CDiagramEntity* view)
 
 void CProcessModel::unlinkView(CDiagramEntity* view)
 {
-	for (int i = m_views.GetSize() - 1; i >= 0 ; i--) {
+	for (int i = static_cast<int>(m_views.GetSize()) - 1; i >= 0 ; i--) {
 		CDiagramEntity* tempView = dynamic_cast<CDiagramEntity*>(m_views.GetAt(i));
 		if (tempView) {
 			if (tempView == view) {
@@ -260,7 +260,7 @@ CString CProcessModel::GetDefaultGetString() const
 	CDiagramEntity::CStringReplace(name, _T(","), _T("\\comma"));
 	CDiagramEntity::CStringReplace(name, _T("\r\n"), _T("\\newline"));
 
-	str.Format(_T("%s:%s"), GetType(), name);
+	str.Format(_T("%s:%s"), (LPCTSTR)GetType(), (LPCTSTR)name);
 
 	return str;
 }

@@ -2522,10 +2522,10 @@ void CDiagramEditor::OnMouseMove( UINT nFlags, CPoint point )
 				CRect newRect = obj->GetRect();
 				if( oldRect != newRect )
 				{
-					double offsetright = newRect.right - oldRect.right;
-					double offsetbottom = newRect.bottom - oldRect.bottom;
-					double offsetleft = newRect.left - oldRect.left;
-					double offsettop = newRect.top - oldRect.top;
+					double offsetright = static_cast<double>(newRect.right) - static_cast<double>(oldRect.right);
+					double offsetbottom = static_cast<double>(newRect.bottom) - static_cast<double>(oldRect.bottom);
+					double offsetleft = static_cast<double>(newRect.left) - static_cast<double>(oldRect.left);
+					double offsettop = static_cast<double>(newRect.top) - static_cast<double>(oldRect.top);
 					CDiagramEntity* otherobj = NULL;
 
 					// Find other objects in the group
@@ -3347,10 +3347,10 @@ void CDiagramEditor::InsideRestraints( double& x, double& y )
 			}
 		}
 
-		double leftedge = 0;
-		double rightedge = 0;
-		double topedge = 0;
-		double bottomedge = 0;
+		LONG leftedge = 0;
+		LONG rightedge = 0;
+		LONG topedge = 0;
+		LONG bottomedge = 0;
 
 		if( m_restraint == RESTRAINT_VIRTUAL )
 		{
@@ -3483,24 +3483,24 @@ void CDiagramEditor::AdjustForRestraints( double& left, double& top, double& rig
 			top = bottom + height;
 		}
 
-		if( right > GetVirtualSize().cx - m_rightMargin )
+		if( right > static_cast<double>(GetVirtualSize().cx) - m_rightMargin )
 		{
-			right = ( GetVirtualSize().cx - m_rightMargin );
+			right = static_cast<double>( GetVirtualSize().cx) - m_rightMargin ;
 			left = right - width;
 		}
-		if( bottom > GetVirtualSize().cy - m_bottomMargin )
+		if( bottom > static_cast<double>(GetVirtualSize().cy) - m_bottomMargin )
 		{
-			bottom = ( GetVirtualSize().cy - m_bottomMargin );
+			bottom = static_cast<double>( GetVirtualSize().cy) - m_bottomMargin ;
 			top = bottom - height;
 		}
-		if( left > GetVirtualSize().cx - m_rightMargin )
+		if( left > static_cast<double>(GetVirtualSize().cx) - m_rightMargin )
 		{
-			left = ( GetVirtualSize().cx - m_rightMargin );
+			left = static_cast<double>( GetVirtualSize().cx) - m_rightMargin ;
 			right = left - width;
 		}
-		if( top > GetVirtualSize().cy - m_bottomMargin )
+		if( top > static_cast<double>(GetVirtualSize().cy) - m_bottomMargin )
 		{
-			top = ( GetVirtualSize().cy - m_bottomMargin );
+			top = static_cast<double>( GetVirtualSize().cy) - m_bottomMargin ;
 			bottom = top - height;
 		}
 	}
@@ -3538,9 +3538,9 @@ void CDiagramEditor::AdjustForRestraints( double& xpos, double& ypos )
 	else if( m_restraint == RESTRAINT_MARGIN )
 	{
 		xpos = max( xpos, m_leftMargin );
-		xpos = min( xpos, GetVirtualSize().cx - m_rightMargin );
+		xpos = min( xpos, static_cast<double>(GetVirtualSize().cx) - m_rightMargin );
 		ypos = max( ypos, m_topMargin );
-		ypos = min( ypos, GetVirtualSize().cy - m_bottomMargin );
+		ypos = min( ypos, static_cast<double>(GetVirtualSize().cy) - m_bottomMargin );
 	}
 
 }
@@ -3970,10 +3970,10 @@ void CDiagramEditor::ScreenToVirtual( CRect& rect ) const
 	if( !::GetScrollInfo( m_hWnd, SB_VERT, &siv ) )
 		siv.nPos = 0;
 
-	rect.SetRect( round( static_cast< double >( rect.left	+ sih.nPos ) / GetZoom() ), 
-				  round( static_cast< double >( rect.top	+ siv.nPos ) / GetZoom() ), 
-				  round( static_cast< double >( rect.right	+ sih.nPos ) / GetZoom() ), 
-				  round( static_cast< double >( rect.bottom	+ siv.nPos ) / GetZoom() ) );
+	rect.SetRect( round(( static_cast< double >( rect.left)	+ sih.nPos ) / GetZoom() ), 
+				  round(( static_cast< double >( rect.top)	+ siv.nPos ) / GetZoom() ), 
+				  round(( static_cast< double >( rect.right)	+ sih.nPos ) / GetZoom() ), 
+				  round(( static_cast< double >( rect.bottom)	+ siv.nPos ) / GetZoom() ) );
 
 }
 
@@ -4010,8 +4010,8 @@ void CDiagramEditor::ScreenToVirtual( CPoint& point ) const
 	if( !::GetScrollInfo( m_hWnd, SB_VERT, &siv ) )
 		siv.nPos = 0;
 
-	point.x = round( static_cast< double >( point.x + sih.nPos ) / GetZoom() );
-	point.y = round( static_cast< double >( point.y + siv.nPos ) / GetZoom() );
+	point.x = round(( static_cast< double >( point.x) + sih.nPos ) / GetZoom() );
+	point.y = round(( static_cast< double >( point.y) + siv.nPos ) / GetZoom() );
 
 }
 
@@ -4047,8 +4047,8 @@ void CDiagramEditor::ScreenToVirtual( CSize& size ) const
 	if( !::GetScrollInfo( m_hWnd, SB_VERT, &siv ) )
 		siv.nPos = 0;
 
-	size.cx = round( static_cast< double >( size.cx + sih.nPos ) / GetZoom() );
-	size.cy = round( static_cast< double >( size.cy + siv.nPos ) / GetZoom() );
+	size.cx = round(( static_cast< double >( size.cx) + sih.nPos ) / GetZoom() );
+	size.cy = round(( static_cast< double >( size.cy) + siv.nPos ) / GetZoom() );
 
 }
 

@@ -10,7 +10,7 @@
 					copying, pasting and undo. It is completely separated 
 					from "CDiagramEditor" to allow the package to be used 
 					in a doc/view app. This is also the reason why some 
-					functionality is accessible in both this class and ïn
+					functionality is accessible in both this class and ï¿½n
 					"CDiagramEditor".
 
 	Description :	The class contains a "CObArray" with the instances of 
@@ -265,7 +265,7 @@ int CDiagramEntityContainer::GetSize() const
    ============================================================*/
 {
 
-	return m_objs.GetSize();
+	return static_cast<int>(m_objs.GetSize());
 
 }
 
@@ -378,7 +378,7 @@ void CDiagramEntityContainer::RemoveAll()
    ============================================================*/
 {
 
-	int max = m_objs.GetSize();
+	int max = static_cast<int>(m_objs.GetSize());
 	if( max )
 	{
 
@@ -411,11 +411,11 @@ void CDiagramEntityContainer::RemoveAllSelected()
    ============================================================*/
 {
 
-	int max = m_objs.GetSize() - 1;
+	int max = static_cast<int>(m_objs.GetSize()) - 1;
 	for( int t = max ; t >= 0 ; t-- )
 		if( GetAt( t )->IsSelected() )
-			RemoveAt( t );
-
+				RemoveAt( t );
+	
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -846,7 +846,7 @@ void CDiagramEntityContainer::SendMessageToObjects( int command, BOOL selected, 
 {
 
 	BOOL stop = FALSE;
-	int max = m_objs.GetSize();
+	int max = static_cast<int>(m_objs.GetSize());
 	for( int t = 0 ; t < max ; t++ )
 	{
 		CDiagramEntity* obj = GetAt( t );
@@ -910,7 +910,7 @@ void CDiagramEntityContainer::Swap( int index1, int index2 )
    ============================================================*/
 {
 
-	int max = m_objs.GetSize();
+	int max = static_cast<int>(m_objs.GetSize());
 	if( index1 >= 0 && index1 < max && index2 >= 0 && index2 < max )
 	{
 		CDiagramEntity* obj1 = GetAt( index1 );
@@ -1018,7 +1018,7 @@ void CDiagramEntityContainer::GetCurrentFromStack( CObArray& arr )
 		CUndoItem* item = static_cast< CUndoItem* >( arr.GetAt( arr.GetUpperBound() ) );
 		if( item )
 		{
-			int count = ( item->arr ).GetSize();
+			int count = static_cast<int>(( item->arr ).GetSize());
 			for( int t = 0 ; t < count ; t++ )
 			{
 
@@ -1077,7 +1077,7 @@ void CDiagramEntityContainer::AddCurrentToStack( CObArray& arr )
 			item->pt = CPoint(GetVirtualSize());
 
 			// Save all objects
-			int count = m_objs.GetSize();
+			int count = static_cast<int>(m_objs.GetSize());
 			for( int t = 0 ; t < count ; t++ )
 				( item->arr ).Add( GetAt( t )->Clone() );
 
@@ -1222,7 +1222,7 @@ void CDiagramEntityContainer::PopUndo()
    ============================================================*/
 {
 
-	int size = m_undo.GetSize();
+	size_t size = m_undo.GetSize();
 	if( size )
 	{
 		delete m_undo.GetAt( size - 1 );
@@ -1556,7 +1556,7 @@ void CDiagramEntityContainer::PasteToPosition( const CPoint& pos )
 
 	if( arr ) 
 	{
-		int max = arr->GetSize();
+		int max = static_cast<int>(arr->GetSize());
 		if( max )
 		{
 			double left = 0;

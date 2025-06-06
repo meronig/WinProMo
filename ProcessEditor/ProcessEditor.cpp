@@ -397,54 +397,54 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 			CProcessLineEdgeView* edge = dynamic_cast<CProcessLineEdgeView*>(element);
 			if (edge) {
 				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-					if ((abs(edge->GetBottom() - edge->GetTop())) / 2 > abs(edge->GetLeft() - edge->GetRight())) {
+					if ((fabs(edge->GetBottom() - edge->GetTop())) / 2 > fabs(edge->GetLeft() - edge->GetRight())) {
 						edge->SetRight(edge->GetLeft());
 					}
-					else if (abs(edge->GetBottom() - edge->GetTop()) < (abs(edge->GetLeft() - edge->GetRight())) / 2) {
+					else if (fabs(edge->GetBottom() - edge->GetTop()) < (fabs(edge->GetLeft() - edge->GetRight())) / 2) {
 						edge->SetBottom(edge->GetTop());
 					}
 					else {
-						if (abs(edge->GetBottom() - edge->GetTop()) > abs(edge->GetLeft() - edge->GetRight())) {
+						if (fabs(edge->GetBottom() - edge->GetTop()) > fabs(edge->GetLeft() - edge->GetRight())) {
 							if (edge->GetBottom() > edge->GetTop()) {
-								edge->SetBottom(edge->GetTop() + abs(edge->GetLeft() - edge->GetRight()));
+								edge->SetBottom(edge->GetTop() + fabs(edge->GetLeft() - edge->GetRight()));
 							}
 							else {
-								edge->SetBottom(edge->GetTop() - abs(edge->GetLeft() - edge->GetRight()));
+								edge->SetBottom(edge->GetTop() - fabs(edge->GetLeft() - edge->GetRight()));
 							}
 						}
 						else {
 							if (edge->GetRight() > edge->GetLeft()) {
-								edge->SetRight(edge->GetLeft() + abs(edge->GetTop() - edge->GetBottom()));
+								edge->SetRight(edge->GetLeft() + fabs(edge->GetTop() - edge->GetBottom()));
 							}
 							else {
-								edge->SetRight(edge->GetLeft() - abs(edge->GetTop() - edge->GetBottom()));
+								edge->SetRight(edge->GetLeft() - fabs(edge->GetTop() - edge->GetBottom()));
 							}
 						}
 					}
 				}
 
 				else {
-					if ((abs(edge->GetBottom() - edge->GetTop())) / 2 > abs(edge->GetLeft() - edge->GetRight())) {
+					if ((fabs(edge->GetBottom() - edge->GetTop())) / 2 > fabs(edge->GetLeft() - edge->GetRight())) {
 						edge->SetLeft(edge->GetRight());
 					}
-					else if (abs(edge->GetBottom() - edge->GetTop()) < (abs(edge->GetLeft() - edge->GetRight())) / 2) {
+					else if (fabs(edge->GetBottom() - edge->GetTop()) < (fabs(edge->GetLeft() - edge->GetRight())) / 2) {
 						edge->SetTop(edge->GetBottom());
 					}
 					else {
-						if (abs(edge->GetBottom() - edge->GetTop()) > abs(edge->GetLeft() - edge->GetRight())) {
+						if (fabs(edge->GetBottom() - edge->GetTop()) > fabs(edge->GetLeft() - edge->GetRight())) {
 							if (edge->GetBottom() > edge->GetTop()) {
-								edge->SetTop(edge->GetBottom() - abs(edge->GetLeft() - edge->GetRight()));
+								edge->SetTop(edge->GetBottom() - fabs(edge->GetLeft() - edge->GetRight()));
 							}
 							else {
-								edge->SetTop(edge->GetBottom() + abs(edge->GetLeft() - edge->GetRight()));
+								edge->SetTop(edge->GetBottom() + fabs(edge->GetLeft() - edge->GetRight()));
 							}
 						}
 						else {
 							if (edge->GetRight() > edge->GetLeft()) {
-								edge->SetLeft(edge->GetRight() - abs(edge->GetTop() - edge->GetBottom()));
+								edge->SetLeft(edge->GetRight() - fabs(edge->GetTop() - edge->GetBottom()));
 							}
 							else {
-								edge->SetLeft(edge->GetRight() + abs(edge->GetTop() - edge->GetBottom()));
+								edge->SetLeft(edge->GetRight() + fabs(edge->GetTop() - edge->GetBottom()));
 							}
 						}
 					}
@@ -480,7 +480,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 				else if (GetSubMode() == DEHT_TOPLEFT) {
 					deltaY = (oldTop - block->GetTop()) / oldRatio;
 					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
-					if (abs(oldTop - point.y) < abs(oldLeft - point.x)) {
+					if (fabs(oldTop - point.y) < fabs(oldLeft - point.x)) {
 						block->SetLeft(oldLeft - deltaY);
 					}
 					else {
@@ -490,7 +490,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 				else if (GetSubMode() == DEHT_TOPRIGHT) {
 					deltaY = (oldTop - block->GetTop()) / oldRatio;
 					deltaX = (block->GetRight() - oldRight) * oldRatio;
-					if (abs(oldTop - point.y) < abs(oldRight - point.x)) {
+					if (fabs(oldTop - point.y) < fabs(oldRight - point.x)) {
 						block->SetRight(oldRight + deltaY);
 					}
 					else {
@@ -500,7 +500,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 				else if (GetSubMode() == DEHT_BOTTOMLEFT) {
 					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
 					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
-					if (abs(oldBottom - point.y) < abs(oldLeft - point.x)) {
+					if (fabs(oldBottom - point.y) < fabs(oldLeft - point.x)) {
 						block->SetLeft(oldLeft - deltaY);
 					}
 					else {
@@ -510,7 +510,7 @@ void CProcessEditor::OnMouseMove(UINT nFlags, CPoint point)
 				else if (GetSubMode() == DEHT_BOTTOMRIGHT) {
 					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
 					deltaX = (block->GetRight() - oldRight) * oldRatio;
-					if (abs(oldBottom - point.y) < abs(oldRight - point.x)) {
+					if (fabs(oldBottom - point.y) < fabs(oldRight - point.x)) {
 						block->SetRight(oldRight + deltaY);
 					}
 					else {
@@ -916,7 +916,7 @@ CProcessModel* CProcessEditor::GetNamedModel(const CObArray& array, const CStrin
 {
 	CProcessModel* result = NULL;
 
-	int count = array.GetSize();
+	int count = static_cast<int>(array.GetSize());
 	CProcessModel* obj;
 	for (int t = 0; t < count; t++)
 	{
@@ -930,7 +930,7 @@ CProcessModel* CProcessEditor::GetNamedModel(const CObArray& array, const CStrin
 
 void CProcessEditor::DeleteModel(CObArray& array, const CString& name)
 {
-	int count = array.GetSize();
+	int count = static_cast<int>(array.GetSize());
 	CProcessModel* obj;
 	for (int t = 0; t < count; t++)
 	{
@@ -971,7 +971,7 @@ void CProcessEditor::BottomAlignSelected()
 
 void CProcessEditor::Load(const CStringArray& stra, CProcessControlFactory& fact)
 {
-	int max = stra.GetSize();
+	int max = static_cast<int>(stra.GetSize());
 	int t = 0;
 
 	CObArray models;

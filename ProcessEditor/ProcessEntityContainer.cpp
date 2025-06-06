@@ -202,11 +202,14 @@ void CProcessEntityContainer::reorderR(CProcessEntityBlockView* block, CObArray*
 				CObArray* views = edgeModel->getViews();
 				CProcessEntityBlockModel* destModel = dynamic_cast<CProcessEntityBlockModel*>(edgeModel->GetDestination());
 				if (destModel) {
-					for (int j = 0; j < newOrder->GetSize(); j++) {
-						//destination node has already been explored
-						if (newOrder->GetAt(j) == destModel->getMainView()) {
-							//add all edge views
-							newOrder->Append(*views);
+					//do not include self-loops
+					if (destModel != block->getModel()) {
+						for (int j = 0; j < newOrder->GetSize(); j++) {
+							//destination node has already been explored
+							if (newOrder->GetAt(j) == destModel->getMainView()) {
+								//add all edge views
+								newOrder->Append(*views);
+							}
 						}
 					}
 				}
@@ -444,7 +447,7 @@ void CProcessEntityContainer::GetCurrentFromStack(CObArray& arr)
 		CUndoItem* item = static_cast<CUndoItem*>(arr.GetAt(arr.GetUpperBound()));
 		if (item)
 		{
-			int count = (item->arr).GetSize();
+			int count = static_cast<int>((item->arr).GetSize());
 			for (int t = 0; t < count; t++)
 			{
 
@@ -506,7 +509,7 @@ void CProcessEntityContainer::AddCurrentToStack(CObArray& arr)
 			item->pt = CPoint(GetVirtualSize());
 
 			// Save all objects
-			int count = GetData()->GetSize();
+			int count = static_cast<int>(GetData()->GetSize());
 			for (int t = 0; t < count; t++)
 				(item->arr).Add(GetAt(t)->Clone());
 

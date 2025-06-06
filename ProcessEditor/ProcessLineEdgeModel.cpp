@@ -299,7 +299,7 @@ CString CProcessLineEdgeModel::GetDefaultGetString() const
 		CDiagramEntity::CStringReplace(destString, _T("\r\n"), _T("\\newline"));
 	}
 
-	str.Format(_T("%s:%s,%s,%s"), GetType(), name, sourceString, destString);
+	str.Format(_T("%s:%s,%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, (LPCTSTR)sourceString, (LPCTSTR)destString);
 
 	return str;
 

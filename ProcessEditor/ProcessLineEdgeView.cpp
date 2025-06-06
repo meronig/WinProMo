@@ -97,20 +97,20 @@ CDiagramEntity* CProcessLineEdgeView::Clone()
 void CProcessLineEdgeView::DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
 	
 	
-	const float dx = static_cast<float>(p1.x - p0.x);
-	const float dy = static_cast<float>(p1.y - p0.y);
-	const float length = sqrt(dx * dx + dy * dy);
+	const double dx = static_cast<double>(p1.x) - static_cast<double>(p0.x);
+	const double dy = static_cast<double>(p1.y) - static_cast<double>(p0.y);
+	const double length = sqrt(dx * dx + dy * dy);
 	if (head_length < 1 || length < head_length) return;
 
 	// ux,uy is a unit vector parallel to the line.
-	const float ux = dx / length;
-	const float uy = dy / length;
+	const double ux = dx / length;
+	const double uy = dy / length;
 
 	// vx,vy is a unit vector perpendicular to ux,uy
-	const float vx = -uy;
-	const float vy = ux;
+	const double vx = -uy;
+	const double vy = ux;
 
-	const float half_width = 0.5f * head_width;
+	const double half_width = 0.5 * head_width;
 
 	
 	CPoint arrow[3];
@@ -137,13 +137,13 @@ void CProcessLineEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circle
 	// 3. Find the center of the circle: it's the midpoint of (x1, y1) and the second intersection point (x3, y3)
 	int dx = x2 - x1;
 	int dy = y2 - y1;
-	float lineLength = sqrt((double)dx * dx + dy * dy);
+	double lineLength = sqrt((double)dx * dx + (double)dy * dy);
 
 	// 4. Parametric form of the line
 	// Find t such that the distance from (x1, y1) to (x3, y3) equals the diameter of the circle
 	// We need t such that |t| = diameter / lineLength (scaled so that we can reach the exact distance)
 
-	float t = static_cast<float>(circleDiameter) / lineLength;
+	double t = static_cast<double>(circleDiameter) / lineLength;
 
 	// 5. Find the second intersection point (x3, y3) by moving from (x1, y1) along the line in both directions
 	int x3 = static_cast<int>(x1 + t * dx);
@@ -501,7 +501,7 @@ CString CProcessLineEdgeView::GetDefaultGetString() const
 		CStringReplace(destString, _T("\r\n"), _T("\\newline"));
 	}
 
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s"), GetType(), name, GetLeft(), GetTop(), GetRight(), GetBottom(), title, GetGroup(), model, sourceString, destString);
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)sourceString, (LPCTSTR)destString);
 
 	return str;
 
