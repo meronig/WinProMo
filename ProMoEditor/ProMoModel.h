@@ -7,10 +7,15 @@
 class CProMoModel : public CObject
 {
 public:
-	virtual void linkView(CDiagramEntity* view);
-	virtual void unlinkView(CDiagramEntity* view);
-	virtual void unlinkViews();
-	virtual CObArray* getViews();
+	
+	CProMoModel();
+	virtual ~CProMoModel();
+	virtual CProMoModel* Clone();
+
+	virtual void LinkView(CDiagramEntity* view);
+	virtual void UnlinkView(CDiagramEntity* view);
+	virtual void UnlinkAllViews();
+	virtual CObArray* GetViews();
 
 	virtual BOOL	FromString(const CString& str);
 	virtual CString	Export(UINT format = 0) const;

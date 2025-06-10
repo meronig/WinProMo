@@ -194,7 +194,7 @@ BOOL CProMoEdgeModel::canConnectDestination(CProMoModel* destination)
 
 CProMoEdgeView* CProMoEdgeModel::getLastSegment()
 {
-	CObArray* views = getViews();
+	CObArray* views = GetViews();
 	for (int i = 0; i < views->GetSize(); i++) {
 		CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(views->GetAt(i));
 		if (view) {
@@ -208,7 +208,7 @@ CProMoEdgeView* CProMoEdgeModel::getLastSegment()
 
 CProMoEdgeView* CProMoEdgeModel::getFirstSegment()
 {
-	CObArray* views = getViews();
+	CObArray* views = GetViews();
 	for (int i = 0; i < views->GetSize(); i++) {
 		CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(views->GetAt(i));
 		if (view) {

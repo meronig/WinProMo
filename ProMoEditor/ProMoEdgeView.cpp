@@ -423,13 +423,13 @@ void CProMoEdgeView::setModel(CProMoEdgeModel* model)
 		
 		//link this class to the new model
 		if (model) {
-			model->linkView(this);
+			model->LinkView(this);
 		}
 		//unlink this class from the old model
 		if (oldModel) {
-			oldModel->unlinkView(this);
+			oldModel->UnlinkView(this);
 			//if the old model has no views, delete it
-			if (oldModel->getViews()->GetSize() == 0) {
+			if (oldModel->GetViews()->GetSize() == 0) {
 				delete oldModel;
 			}
 		}

@@ -1,15 +1,100 @@
+/* ==========================================================================
+	CProMoModel
+
+	Author :		Giovanni Meroni
+
+	Purpose :		"CProMoModel" is the base class for the model of all 
+					objects (views) that can be drawn and managed by 
+					"CProMoEditor".
+
+	Description :	"CProMoModel" is derived from "CObject", to allow 
+					instances to be stored in "CObArrays".
+
+	Usage :			Classes should be derived from "CProMoModel". "Clone" 
+					must be overridden, returning a copy of the this 
+					pointer.
+
+   ========================================================================*/
 #include "stdafx.h"
 #include "ProMoModel.h"
 #include "../DiagramEditor/Tokenizer.h"
+#include "ProMoNameFactory.h"
 
 
+CProMoModel::CProMoModel()
+/* ============================================================
+	Function :		CProMoModel::CProMoModel
+	Description :	Constructor
+	Access :		Public
 
-void CProMoModel::linkView(CDiagramEntity* view)
+	Return :		void
+	Parameters :	none
+
+	Usage :
+
+	============================================================*/
+{
+	SetType(_T("promo_model"));
+	SetName(CProMoNameFactory::GetID());
+}
+
+CProMoModel::~CProMoModel()
+/* ============================================================
+	Function :		CProMoModel::~CProMoModel
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :
+
+   ============================================================*/
+{
+}
+
+CProMoModel* CProMoModel::Clone()
+/* ============================================================
+	Function :		CProMoModel::Clone
+	Description :	Clone this object to a new object.
+	Access :		Public
+
+	Return :		CProMoModel*	-	The new object.
+	Parameters :	none
+
+	Usage :			Call to create a clone of the object. The
+					caller will have to delete the object.
+
+   ============================================================*/
+{
+	CProMoModel* obj = new CProMoModel;
+	return obj;
+}
+
+void CProMoModel::LinkView(CDiagramEntity* view)
+/* ============================================================
+	Function :		CProMoModel::LinkView
+	Description :	Links a new view to this object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDiagramEntity* view - the view to link
+
+   ============================================================*/
 {
 	m_views.Add(view);
 }
 
-void CProMoModel::unlinkView(CDiagramEntity* view)
+void CProMoModel::UnlinkView(CDiagramEntity* view)
+/* ============================================================
+	Function :		CProMoModel::UnlinkView
+	Description :	Unlinks a view from this object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDiagramEntity* view - the view to unlink
+
+   ============================================================*/
 {
 	for (int i = static_cast<int>(m_views.GetSize()) - 1; i >= 0 ; i--) {
 		CDiagramEntity* tempView = dynamic_cast<CDiagramEntity*>(m_views.GetAt(i));
@@ -21,12 +106,31 @@ void CProMoModel::unlinkView(CDiagramEntity* view)
 	}
 }
 
-void CProMoModel::unlinkViews()
+void CProMoModel::UnlinkAllViews()
+/* ============================================================
+	Function :		CProMoModel::UnlinkAllViews
+	Description :	Unlinks all views from this object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
 	m_views.RemoveAll();
 }
 
-CObArray* CProMoModel::getViews()
+CObArray* CProMoModel::GetViews()
+/* ============================================================
+	Function :		CProMoModel::GetViews
+	Description :	Accessor for the internal views array
+	Access :		Public
+
+	Return :		CObArray*	-	A pointer to the views
+									array
+	Parameters :	none
+
+   ============================================================*/
 {
 	return &m_views;
 }

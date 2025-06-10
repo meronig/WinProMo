@@ -109,7 +109,7 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 	dc->SelectObject(&font);
 	int mode = dc->SetBkMode(TRANSPARENT);
 	
-	if (this->getModel()->getSubBlocks()->GetSize() == 0) {
+	if (this->getModel()->GetSubBlocks()->GetSize() == 0) {
 		dc->DrawText(str, rect, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER);
 	}
 	else {
@@ -208,8 +208,8 @@ void CProMoBlockView::recomputeIntersectionLinks() {
 	//recompute intersection for edges
 	int i = 0;
 	
-	for (i = 0; i < model->getIncomingEdges()->GetSize(); i++) {
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->getIncomingEdges()->GetAt(i));
+	for (i = 0; i < model->GetIncomingEdges()->GetSize(); i++) {
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetIncomingEdges()->GetAt(i));
 		if (edgeModel) {
 			CProMoEdgeView* edgeView = edgeModel->getLastSegment();
 			//destination: bottomright
@@ -222,8 +222,8 @@ void CProMoBlockView::recomputeIntersectionLinks() {
 
 	}
 
-	for (i = 0; i < model->getOutgoingEdges()->GetSize(); i++) {
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->getOutgoingEdges()->GetAt(i));
+	for (i = 0; i < model->GetOutgoingEdges()->GetSize(); i++) {
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetOutgoingEdges()->GetAt(i));
 		if (edgeModel) {
 			CProMoEdgeView* edgeView = edgeModel->getFirstSegment();
 			//destination: topleft
@@ -236,10 +236,10 @@ void CProMoBlockView::recomputeIntersectionLinks() {
 	}
 	
 	//recompute intersection for sub-blocks
-	for (i = 0; i < model->getSubBlocks()->GetSize(); i++) {
-		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->getSubBlocks()->GetAt(i));
+	for (i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
+		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 		if (childModel) {
-			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->getMainView());
+			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
 			if (childView) {
 				childView->recomputeIntersectionLinks();
 			}
@@ -261,13 +261,13 @@ void CProMoBlockView::setModel(CProMoBlockModel* model)
 
 		//link this class to the new model
 		if (model) {
-			model->linkView(this);
+			model->LinkView(this);
 		}
 		//unlink this class from the old model
 		if (oldModel) {
-			oldModel->unlinkView(this);
+			oldModel->UnlinkView(this);
 			//if the old model has no views, delete it
-			if (oldModel->getViews()->GetSize() == 0) {
+			if (oldModel->GetViews()->GetSize() == 0) {
 				delete oldModel;
 			}
 		}
@@ -278,10 +278,10 @@ void CProMoBlockView::autoResize()
 {
 	ASSERT_VALID(this->getModel());
 	CProMoBlockModel* model = this->getModel();
-	for (int i = 0; i < model->getSubBlocks()->GetSize(); i++) {
-		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->getSubBlocks()->GetAt(i));
+	for (int i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
+		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 		if (childModel) {
-			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->getMainView());
+			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
 			if (childView) {
 				if (childView->GetBottom() > this->GetBottom()) {
 					this->SetRect(GetLeft(), GetTop(), GetRight(), childView->GetBottom() + 5);
@@ -299,9 +299,9 @@ void CProMoBlockView::autoResize()
 		}
 	}
 	
-	if (model->getParentBlock() != NULL) {
-		if (model->getParentBlock()->getMainView() != NULL) {
-			model->getParentBlock()->getMainView()->autoResize();
+	if (model->GetParentBlock() != NULL) {
+		if (model->GetParentBlock()->GetMainView() != NULL) {
+			model->GetParentBlock()->GetMainView()->autoResize();
 		}
 	}
 	else {
@@ -460,10 +460,10 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 	//note: reposition links
 	int i = 0;
 
-	for (i = 0; i < model->getIncomingEdges()->GetSize(); i++) {
+	for (i = 0; i < model->GetIncomingEdges()->GetSize(); i++) {
 		double newRight = 0;
 		double newBottom = 0;
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->getIncomingEdges()->GetAt(i));
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetIncomingEdges()->GetAt(i));
 		if (edgeModel) {
 			CProMoEdgeView* edgeView = edgeModel->getLastSegment();
 			//destination: bottomright
@@ -499,10 +499,10 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 
 	}
 
-	for (i = 0; i < model->getOutgoingEdges()->GetSize(); i++) {
+	for (i = 0; i < model->GetOutgoingEdges()->GetSize(); i++) {
 		double newTop = 0;
 		double newLeft = 0;
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->getOutgoingEdges()->GetAt(i));
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetOutgoingEdges()->GetAt(i));
 		if (edgeModel) {
 			CProMoEdgeView* edgeView = edgeModel->getFirstSegment();
 			if (!edgeView->IsSelected()) {
@@ -543,10 +543,10 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 
 	if (deltaX != 0 || deltaY != 0) {
 
-		for (i = 0; i < model->getSubBlocks()->GetSize(); i++) {
-			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->getSubBlocks()->GetAt(i));
+		for (i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
+			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 			if (childModel) {
-				CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->getMainView());
+				CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
 				if (childView) {
 					//move child nodes that are not selected (otherwise they will be moved twice)
 					if (!childView->IsSelected()) {

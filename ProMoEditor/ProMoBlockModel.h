@@ -13,24 +13,24 @@ public:
 	virtual ~CProMoBlockModel();
 	virtual CProMoModel* Clone();
 	
-	virtual void linkSubBlock(CProMoBlockModel* subblock);
-	virtual void unlinkSubBlock(CProMoBlockModel* subblock);
-	virtual void unlinkSubBlocks();
-	virtual CObArray* getSubBlocks();
-	virtual void setParentBlock(CProMoBlockModel* parent);
-	virtual CProMoBlockModel* getParentBlock() const;
-	virtual BOOL contains(CProMoBlockModel* block, BOOL recursive);
-	virtual BOOL canBeNested(CProMoBlockModel* block);
+	virtual void LinkSubBlock(CProMoBlockModel* subblock);
+	virtual void UnlinkSubBlock(CProMoBlockModel* subblock);
+	virtual void UnlinkAllSubBlocks();
+	virtual CObArray* GetSubBlocks();
+	virtual void SetParentBlock(CProMoBlockModel* parent);
+	virtual CProMoBlockModel* GetParentBlock() const;
+	virtual BOOL Contains(CProMoBlockModel* block, BOOL recursive);
+	virtual BOOL CanBeNested(CProMoBlockModel* block);
 
-	virtual void linkOutgoingEdge(CProMoEdgeModel* edge);
-	virtual void unlinkOutgoingEdge(CProMoEdgeModel* edge);
-	virtual void unlinkOutgoingEdges();
-	virtual CObArray* getOutgoingEdges();
-	virtual void linkIncomingEdge(CProMoEdgeModel* edge);
-	virtual void unlinkIncomingEdge(CProMoEdgeModel* edge);
-	virtual void unlinkIncomingEdges();
-	virtual CObArray* getIncomingEdges();
-	virtual CProMoBlockView* getMainView() const;
+	virtual void LinkOutgoingEdge(CProMoEdgeModel* edge);
+	virtual void UnlinkOutgoingEdge(CProMoEdgeModel* edge);
+	virtual void UnlinkAllOutgoingEdges();
+	virtual CObArray* GetOutgoingEdges();
+	virtual void LinkIncomingEdge(CProMoEdgeModel* edge);
+	virtual void UnlinkIncomingEdge(CProMoEdgeModel* edge);
+	virtual void UnlinkAllIncomingEdges();
+	virtual CObArray* GetIncomingEdges();
+	virtual CProMoBlockView* GetMainView() const;
 
 	static	CProMoModel* CreateFromString(const CString& str);
 
