@@ -40,7 +40,7 @@ CProMoEntityContainer::~CProMoEntityContainer()
 
 // may not be needed
 void CProMoEntityContainer::removeR(CProMoBlockView *block) {
-	CObArray* subBlockModels = block->getModel()->GetSubBlocks();
+	CObArray* subBlockModels = block->GetModel()->GetSubBlocks();
 	for (int i = 0; i < subBlockModels->GetSize(); i++) {
 		CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels->GetAt(i));
 		if (subBlockModel) {
@@ -72,7 +72,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 		CProMoBlockView *block = dynamic_cast<CProMoBlockView*>(obj);
 		if (block){
 			CObArray subBlockModels;
-			subBlockModels.Append(*(block->getModel()->GetSubBlocks()));
+			subBlockModels.Append(*(block->GetModel()->GetSubBlocks()));
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {
 				CProMoBlockModel* subBlockModel = NULL;
 				subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
@@ -80,9 +80,9 @@ void CProMoEntityContainer::RemoveAt(int index)
 					this->Remove(subBlockModel->GetMainView());
 				}
 			}
-			if (block->getModel()->GetParentBlock()) {
+			if (block->GetModel()->GetParentBlock()) {
 				//remove from parent
-				block->getModel()->GetParentBlock()->UnlinkSubBlock(block->getModel());
+				block->GetModel()->GetParentBlock()->UnlinkSubBlock(block->GetModel());
 			}
 		}
 		CDiagramEntityContainer::RemoveAt(index);
@@ -105,7 +105,7 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 					CProMoEdgeView* newSourceEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(j));
 					if (edgeView->GetSource() == sourceEdgeView) {
 						newEdgeView->SetSource(newSourceEdgeView);
-						newEdgeView->setModel(newSourceEdgeView->getModel());
+						newEdgeView->SetModel(newSourceEdgeView->GetModel());
 					}
 				}
 			}
@@ -116,16 +116,16 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
 		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(i));
 		if (edgeView && newEdgeView) {
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edgeView->getModel());
-			CProMoEdgeModel* newEdgeModel = dynamic_cast<CProMoEdgeModel*>(newEdgeView->getModel());
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edgeView->GetModel());
+			CProMoEdgeModel* newEdgeModel = dynamic_cast<CProMoEdgeModel*>(newEdgeView->GetModel());
 			if (edgeModel && newEdgeModel) {
 				if (edgeModel->GetSource() != NULL || edgeModel->GetDestination() != NULL) {
 					for (int j = 0; j < source->GetSize(); j++) {
 						CProMoBlockView* connectedBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
 						CProMoBlockView* newConnectedBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
 						if (connectedBlockView && newConnectedBlockView) {
-							CProMoBlockModel* connectedBlockModel = connectedBlockView->getModel();
-							CProMoBlockModel* newConnectedBlockModel = newConnectedBlockView->getModel();
+							CProMoBlockModel* connectedBlockModel = connectedBlockView->GetModel();
+							CProMoBlockModel* newConnectedBlockModel = newConnectedBlockView->GetModel();
 
 							if (edgeModel->GetSource() == connectedBlockModel) {
 								newEdgeModel->SetSource(newConnectedBlockModel);
@@ -142,15 +142,15 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 		CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(source->GetAt(i));
 		CProMoBlockView* newBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(i));
 		if (blockView && newBlockView) {
-			CProMoBlockModel* blockModel = blockView->getModel();
-			CProMoBlockModel* newBlockModel = newBlockView->getModel();
+			CProMoBlockModel* blockModel = blockView->GetModel();
+			CProMoBlockModel* newBlockModel = newBlockView->GetModel();
 			if (blockModel->GetParentBlock() != NULL) {
 				for (int j = 0; j < source->GetSize(); j++) {
 					CProMoBlockView* parentBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
 					CProMoBlockView* newParentBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
 					if (parentBlockView && newParentBlockView) {
-						CProMoBlockModel* parentBlockModel = parentBlockView->getModel();
-						CProMoBlockModel* newParentBlockModel = newParentBlockView->getModel();
+						CProMoBlockModel* parentBlockModel = parentBlockView->GetModel();
+						CProMoBlockModel* newParentBlockModel = newParentBlockView->GetModel();
 						if (blockModel->GetParentBlock() == parentBlockModel) {
 							newBlockModel->SetParentBlock(newParentBlockModel);
 							break;
@@ -164,10 +164,10 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 }
 
 void CProMoEntityContainer::reorderR(CProMoBlockView* block, CObArray* newOrder) {
-	ASSERT(block->getModel());
+	ASSERT(block->GetModel());
 	newOrder->Add(block);
 	//check for connected incoming edges
-	CObArray* edges = block->getModel()->GetIncomingEdges();
+	CObArray* edges = block->GetModel()->GetIncomingEdges();
 	if (edges) {
 		for (int i = 0; i < edges->GetSize(); i++) {
 			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
@@ -193,7 +193,7 @@ void CProMoEntityContainer::reorderR(CProMoBlockView* block, CObArray* newOrder)
 	}
 
 	//check for connected outgoing edges
-	edges = block->getModel()->GetOutgoingEdges();
+	edges = block->GetModel()->GetOutgoingEdges();
 	if (edges) {
 		for (int i = 0; i < edges->GetSize(); i++) {
 			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
@@ -202,7 +202,7 @@ void CProMoEntityContainer::reorderR(CProMoBlockView* block, CObArray* newOrder)
 				CProMoBlockModel* destModel = dynamic_cast<CProMoBlockModel*>(edgeModel->GetDestination());
 				if (destModel) {
 					//do not include self-loops
-					if (destModel != block->getModel()) {
+					if (destModel != block->GetModel()) {
 						for (int j = 0; j < newOrder->GetSize(); j++) {
 							//destination node has already been explored
 							if (newOrder->GetAt(j) == destModel->GetMainView()) {
@@ -222,7 +222,7 @@ void CProMoEntityContainer::reorderR(CProMoBlockView* block, CObArray* newOrder)
 	}
 
 
-	CObArray *subBlockViews = block->getModel()->GetSubBlocks();
+	CObArray *subBlockViews = block->GetModel()->GetSubBlocks();
 
 	int max = GetSize();
 
@@ -252,14 +252,14 @@ void CProMoEntityContainer::reorder()
 		if (obj) {
 			CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(obj);
 			if (blockView) {
-				if (blockView->getModel()->GetParentBlock() == NULL) {
+				if (blockView->GetModel()->GetParentBlock() == NULL) {
 					reorderR(blockView, &newOrder);
 				}
 			}
 			CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(obj);
 			if (edgeView) {
 				//edge is disconnected, so add it immediately
-				if (!(edgeView->getModel()->GetSource() || edgeView->getModel()->GetDestination())) {
+				if (!(edgeView->GetModel()->GetSource() || edgeView->GetModel()->GetDestination())) {
 					newOrder.Add(edgeView);
 				}
 			}

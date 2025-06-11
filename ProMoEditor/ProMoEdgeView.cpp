@@ -1,3 +1,23 @@
+/* ==========================================================================
+	CProMoEdgeView
+
+	Author :		Giovanni Meroni
+
+	Purpose :		"CProMoEdgeView" extends "CDiagramLine" to represent
+					all line/edge objects that can be drawn and managed by
+					"CProMoEditor". This class contains visual properties
+					that lines/edges have. Structural properties are
+					defined by the associated model class.
+
+	Description :	With respect to "CDiagramLine", "CProMoEdgeView"
+					contains a reference to the "CProMoEdgeModel" object
+					representing the model for that edge.
+					It is also assumed that an edge view has exactly 1 model.
+
+	Usage :			Views that represent an edge in a graph should be
+					derived from this class.
+
+   ========================================================================*/
 #include "stdafx.h"
 #include "ProMoEdgeView.h"
 #include "ProMoEdgeModel.h"
@@ -31,7 +51,7 @@ CProMoEdgeView::CProMoEdgeView()
 	m_source = NULL;
 	m_dest = NULL;
 	m_edgemodel = NULL;
-	setModel(new CProMoEdgeModel());
+	SetModel(new CProMoEdgeModel());
 }
 
 CProMoEdgeView::~CProMoEdgeView()
@@ -65,7 +85,7 @@ CProMoEdgeView::~CProMoEdgeView()
 	if (m_dlg.m_hWnd)
 		m_dlg.DestroyWindow();
 
-	setModel(NULL);
+	SetModel(NULL);
 
 }
 
@@ -89,17 +109,36 @@ CDiagramEntity* CProMoEdgeView::Clone()
 	obj->m_source = NULL;
 	obj->m_dest = NULL;
 	obj->SetName(CProMoNameFactory::GetID());
-	obj->setModel(new CProMoEdgeModel());
+	obj->SetModel(new CProMoEdgeModel());
 	return obj;
 }
 
-void CProMoEdgeView::DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_length, int head_width) {
-	
-	
-	const double dx = static_cast<double>(p1.x) - static_cast<double>(p0.x);
-	const double dy = static_cast<double>(p1.y) - static_cast<double>(p0.y);
+void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, int size) 
+/* ============================================================
+	Function :		CProMoEdgeView::DrawHead
+	Description :	Draws the head of the edge.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CDC* dc		-	The CDC to draw to.
+					CRect rect	-	The real rectangle of the 
+									object.
+					int size	-	The size of the head
+
+	Usage :			The function should clean up all selected
+					objects. Note that the CDC is a memory CDC,
+					so creating a memory CDC in this function
+					will probably not speed up the function.
+					Override this function to change the shape
+					being drawn.
+
+   ============================================================*/
+{
+
+	const double dx = static_cast<double>(rect.BottomRight().x) - static_cast<double>(rect.TopLeft().x);
+	const double dy = static_cast<double>(rect.BottomRight().y) - static_cast<double>(rect.TopLeft().y);
 	const double length = sqrt(dx * dx + dy * dy);
-	if (head_length < 1 || length < head_length) return;
+	if (size < 1 || length < size) return;
 
 	// ux,uy is a unit vector parallel to the line.
 	const double ux = dx / length;
@@ -109,29 +148,48 @@ void CProMoEdgeView::DrawArrowHead(CDC* dc, POINT p0, POINT p1, int head_length,
 	const double vx = -uy;
 	const double vy = ux;
 
-	const double half_width = 0.5 * head_width;
+	const double half_width = 0.5 * size;
 
 	
 	CPoint arrow[3];
-	arrow[0] = p1;
-	arrow[1] = CPoint (round(p1.x - head_length * ux + half_width * vx),
-			 round(p1.y - head_length * uy + half_width * vy) );
-	arrow[2] = CPoint ( round(p1.x - head_length * ux - half_width * vx),
-			 round(p1.y - head_length * uy - half_width * vy) );
+	arrow[0] = rect.BottomRight();
+	arrow[1] = CPoint (round(rect.BottomRight().x - size * ux + half_width * vx),
+			 round(rect.BottomRight().y - size * uy + half_width * vy) );
+	arrow[2] = CPoint ( round(rect.BottomRight().x - size * ux - half_width * vx),
+			 round(rect.BottomRight().y - size * uy - half_width * vy) );
 	dc->Polygon(arrow, 3);
 	
 }
 
-void CProMoEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circleDiameter)
+void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, int size)
+/* ============================================================
+	Function :		CProMoEdgeView::DrawTail
+	Description :	Draws the tail of the edge.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CDC* dc		-	The CDC to draw to.
+					CRect rect	-	The real rectangle of the
+									object.
+					int size	-	The size of the tail
+
+	Usage :			The function should clean up all selected
+					objects. Note that the CDC is a memory CDC,
+					so creating a memory CDC in this function
+					will probably not speed up the function.
+					Override this function to change the shape
+					being drawn.
+
+   ============================================================*/
 {
 	// 1. Define the start and end points
-	int x1 = p0.x;
-	int y1 = p0.y;
-	int x2 = p1.x;
-	int y2 = p1.y;
+	int x1 = rect.TopLeft().x;
+	int y1 = rect.TopLeft().y;
+	int x2 = rect.BottomRight().x;
+	int y2 = rect.BottomRight().y;
 
 	// 2. Calculate the circle radius
-	int radius = circleDiameter / 2;
+	int radius = size / 2;
 
 	// 3. Find the center of the circle: it's the midpoint of (x1, y1) and the second intersection point (x3, y3)
 	int dx = x2 - x1;
@@ -142,7 +200,7 @@ void CProMoEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circleDiamet
 	// Find t such that the distance from (x1, y1) to (x3, y3) equals the diameter of the circle
 	// We need t such that |t| = diameter / lineLength (scaled so that we can reach the exact distance)
 
-	double t = static_cast<double>(circleDiameter) / lineLength;
+	double t = static_cast<double>(size) / lineLength;
 
 	// 5. Find the second intersection point (x3, y3) by moving from (x1, y1) along the line in both directions
 	int x3 = static_cast<int>(x1 + t * dx);
@@ -164,11 +222,23 @@ void CProMoEdgeView::DrawArrowTail(CDC* dc, POINT p0, POINT p1, int circleDiamet
 }
 
 void CProMoEdgeView::Reposition()
+/* ============================================================
+	Function :		CProMoEdgeView::Reposition
+	Description :	Recomputes the intersection with connected
+					blocks and keeps linked edges visually 
+					connected.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+
 {
 	if (m_source != NULL) {
 		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_source);
 		if (obj) {
-			CPoint pt = obj->getIntersection(GetRect().TopLeft(), GetRect().BottomRight());
+			CPoint pt = obj->GetIntersection(GetRect().TopLeft(), GetRect().BottomRight());
 			if (pt.x >= 0) {
 				SetTop(pt.y);
 				SetLeft(pt.x);
@@ -183,7 +253,7 @@ void CProMoEdgeView::Reposition()
 	if (m_dest != NULL) {
 		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_dest);
 		if (obj) {
-			CPoint pt = obj->getIntersection(GetRect().BottomRight(), GetRect().TopLeft());
+			CPoint pt = obj->GetIntersection(GetRect().BottomRight(), GetRect().TopLeft());
 			if (pt.x >= 0) {
 				SetBottom(pt.y);
 				SetRight(pt.x);
@@ -220,13 +290,14 @@ void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 	dc->MoveTo(rect.TopLeft());
 	dc->LineTo(rect.BottomRight());
 
-	//draw the arrow tip only if it is the last segment
+	//draw the tip only if it is the last segment
 	if (m_dest == NULL) {
-		DrawArrowHead(dc, rect.TopLeft(), rect.BottomRight(), 10, 10);
+		DrawHead(dc, rect, 10);
 	}
 
+	//draw the tail only if it is the last segment
 	if (m_source == NULL) {
-		DrawArrowTail(dc, rect.TopLeft(), rect.BottomRight(), 10);
+		DrawTail(dc, rect, 10);
 	}
 		
 	
@@ -264,6 +335,27 @@ void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 }
 
 int CProMoEdgeView::GetHitCode(const CPoint& point, const CRect& rect) const
+/* ============================================================
+	Function :		CProMoEdgeView::GetHitCode
+	Description :	Returns the hit point constant for "point"
+					assuming the object rectangle "rect".
+	Access :		Public
+
+	Return :		int				-	The hit point,
+										"DEHT_NONE" if none.
+	Parameters :	CPoint point	-	The point to check
+					CRect rect		-	The rect to check
+
+	Usage :			Call to see in what part of the object point
+					lies. The hit point can be one of the following:
+						"DEHT_NONE" No hit-point
+						"DEHT_BODY" Inside object body
+						"DEHT_TOPLEFT" Top-left corner
+						"DEHT_BOTTOMRIGHT" Bottom-right corner
+						"DEHT_CENTER" Center of the object body 
+							(i.e., in the middle of the line)
+
+   ============================================================*/
 {
 	CRect rectTest = GetSelectionMarkerRect(DEHT_CENTER, rect);
 	if (rectTest.PtInRect(point)) {
@@ -273,6 +365,36 @@ int CProMoEdgeView::GetHitCode(const CPoint& point, const CRect& rect) const
 }
 
 HCURSOR CProMoEdgeView::GetCursor(int hit) const
+/* ============================================================
+	Function :		CProMoEdgeView::GetCursor
+	Description :	Returns the cursor for a specific hit
+					point.
+	Access :		Public
+
+	Return :		HCURSOR	-	The cursor to display, or "NULL"
+								if default.
+	Parameters :	int hit	-	The hit point constant ("DEHT_",
+								defined in DiagramEntity.h) to
+								show a cursor for.
+
+	Usage :			Shows the cursor for a subset of the hit
+					points. Will also show cursors different
+					from the standard ones.
+					"hit" can be one of the following:
+						"DEHT_NONE" No hit-point
+						"DEHT_BODY" Inside object body
+						"DEHT_TOPLEFT" Top-left corner
+						"DEHT_TOPMIDDLE" Middle top-side
+						"DEHT_TOPRIGHT" Top-right corner
+						"DEHT_BOTTOMLEFT" Bottom-left corner
+						"DEHT_BOTTOMMIDDLE" Middle bottom-side
+						"DEHT_BOTTOMRIGHT" Bottom-right corner
+						"DEHT_LEFTMIDDLE" Middle left-side
+						"DEHT_RIGHTMIDDLE" Middle right-side
+						"DEHT_CENTER" Center of the object body 
+							(i.e., in the middle of the line)
+
+   ============================================================*/
 {
 	if (hit == DEHT_CENTER) {
 		return LoadCursor(NULL, IDC_SIZEALL);
@@ -315,6 +437,18 @@ CDiagramEntity* CProMoEdgeView::CreateFromString(const CString& str)
 }
 
 void CProMoEdgeView::SetSource(CDiagramEntity *source)
+/* ============================================================
+	Function :		CProMoEdgeView::SetSource
+	Description :	Makes the object being passed as input
+					parameter the source of this edge.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDiagramEntity* source	-	the object that
+												should be the
+												source
+
+   ============================================================*/
 {
 	//save the old source edge view
 	CProMoEdgeView* oldSourceView = m_source;
@@ -323,7 +457,7 @@ void CProMoEdgeView::SetSource(CDiagramEntity *source)
 	//new source is a block view
 	if (blockView) {
 		//connect the elements at the model level
-		getModel()->SetSource(blockView->getModel());
+		GetModel()->SetSource(blockView->GetModel());
 		//disconnect the edges at the view level
 		m_source = NULL;
 	}
@@ -359,6 +493,19 @@ void CProMoEdgeView::SetSource(CDiagramEntity *source)
 }
 
 void CProMoEdgeView::SetDestination(CDiagramEntity *destination)
+/* ============================================================
+	Function :		CProMoEdgeView::SetDestination
+	Description :	Makes the object being passed as input
+					parameter the destination of this edge
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDiagramEntity* destination	-	the object
+													that should
+													be the
+													destination
+
+   ============================================================*/
 {
 	//save the old source edge view
 	CProMoEdgeView* oldDestView = m_dest;
@@ -367,7 +514,7 @@ void CProMoEdgeView::SetDestination(CDiagramEntity *destination)
 	//new source is a block view
 	if (blockView) {
 		//connect the elements at the model level
-		getModel()->SetDestination(blockView->getModel());
+		GetModel()->SetDestination(blockView->GetModel());
 		//disconnect the edges at the view level
 		m_dest = NULL;
 	}
@@ -401,21 +548,64 @@ void CProMoEdgeView::SetDestination(CDiagramEntity *destination)
 }
 
 CDiagramEntity* CProMoEdgeView::GetSource() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetSource
+	Description :	Returns a pointer to the source object
+	Access :		Public
+
+	Return :		CDiagramEntity*	-	A pointer to the source
+										object
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_source;
 }
 
 CDiagramEntity* CProMoEdgeView::GetDestination() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetDestination
+	Description :	Returns a pointer to the destination object
+	Access :		Public
+
+	Return :		CDiagramEntity*	-	A pointer to the
+										destination object
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_dest;
 }
 
-CProMoEdgeModel* CProMoEdgeView::getModel() const
+CProMoEdgeModel* CProMoEdgeView::GetModel() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetModel
+	Description :	Returns a pointer to the model of this
+					edge
+	Access :		Public
+
+	Return :		CProMoEdgeModel*	-	A pointer to the
+											model
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_edgemodel;
 }
 
-void CProMoEdgeView::setModel(CProMoEdgeModel* model)
+void CProMoEdgeView::SetModel(CProMoEdgeModel* model)
+/* ============================================================
+	Function :		CProMoEdgeView::SetModel
+	Description :	Makes the object being passed as input
+					parameter the model for this edge
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoEdgeModel* block	-	the object that
+												should be the
+												model
+
+   ============================================================*/
 {
 	if (m_edgemodel != model) {
 		CProMoEdgeModel* oldModel = m_edgemodel;
@@ -452,11 +642,11 @@ CString CProMoEdgeView::GetDefaultGetString() const
 
    ============================================================*/
 
-	ASSERT_VALID(this->getModel());
+	ASSERT_VALID(this->GetModel());
 
 	CString str;
 
-	CString model = getModel()->GetName();
+	CString model = GetModel()->GetName();
 	CStringReplace(model, _T(":"), _T("\\colon"));
 	CStringReplace(model, _T(";"), _T("\\semicolon"));
 	CStringReplace(model, _T(","), _T("\\comma"));
@@ -584,6 +774,21 @@ BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
 
 
 void CProMoEdgeView::DrawSelectionMarkers(CDC* dc, CRect rect) const
+/* ============================================================
+	Function :		CProMoEdgeView::DrawSelectionMarkers
+	Description :	Draws selection markers for this object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDC* dc		-	"CDC" to draw to.
+					CRect rect	-	True object rectangle.
+
+	Usage :			Draws a subset of the standard selection
+					markers. Overridden to also draw the center
+					marker, that can be used to split the edge
+					into two connected segments.
+
+   ============================================================*/
 {
 	CRect rectSelect;
 
@@ -595,6 +800,35 @@ void CProMoEdgeView::DrawSelectionMarkers(CDC* dc, CRect rect) const
 }
 
 CRect CProMoEdgeView::GetSelectionMarkerRect(UINT marker, CRect rect) const
+/* ============================================================
+	Function :		CProMoEdgeView::GetSelectionMarkerRect
+	Description :	Gets the selection marker rectangle for
+					marker, given the true object rectangle
+					"rect".
+	Access :		Protected
+
+
+	Return :		CRect		-	The marker rectangle
+	Parameters :	UINT marker	-	The marker type ("DEHT_"-
+									constants defined in
+									DiargramEntity.h)
+					CRect rect	-	The object rectangle
+
+	Usage :			"marker" can be one of the following:
+						"DEHT_NONE" No hit-point
+						"DEHT_BODY" Inside object body
+						"DEHT_TOPLEFT" Top-left corner
+						"DEHT_TOPMIDDLE" Middle top-side
+						"DEHT_TOPRIGHT" Top-right corner
+						"DEHT_BOTTOMLEFT" Bottom-left corner
+						"DEHT_BOTTOMMIDDLE" Middle bottom-side
+						"DEHT_BOTTOMRIGHT" Bottom-right corner
+						"DEHT_LEFTMIDDLE" Middle left-side
+						"DEHT_RIGHTMIDDLE" Middle right-side
+						"DEHT_CENTER" Center of the object body 
+							(i.e., in the middle of the line)
+
+   ============================================================*/
 {
 	CRect rectMarker;
 	int horz = GetMarkerSize().cx / 2;

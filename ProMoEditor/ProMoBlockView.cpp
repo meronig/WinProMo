@@ -60,7 +60,7 @@ CProMoBlockView::CProMoBlockView()
 	SetName(CProMoNameFactory::GetID());
 
 	m_blockmodel = NULL;
-	setModel(new CProMoBlockModel());
+	SetModel(new CProMoBlockModel());
 }
 
 CProMoBlockView::~CProMoBlockView()
@@ -79,7 +79,7 @@ CProMoBlockView::~CProMoBlockView()
 	if (m_dlg.m_hWnd)
 		m_dlg.DestroyWindow();
 
-	setModel(NULL);
+	SetModel(NULL);
 
 }
 
@@ -100,7 +100,7 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 
    ============================================================*/
 {
-	ASSERT_VALID(this->getModel());
+	ASSERT_VALID(this->GetModel());
 
 	dc->SelectStockObject(BLACK_PEN);
 	dc->SelectStockObject(WHITE_BRUSH);
@@ -129,7 +129,7 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 	dc->SelectObject(&font);
 	int mode = dc->SetBkMode(TRANSPARENT);
 	
-	if (this->getModel()->GetSubBlocks()->GetSize() == 0) {
+	if (this->GetModel()->GetSubBlocks()->GetSize() == 0) {
 		dc->DrawText(str, rect, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER);
 	}
 	else {
@@ -139,7 +139,25 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 	dc->SetBkMode(mode);
 }
 
+
+
 void CProMoBlockView::Highlight(CDC* dc, CRect rect) {
+	/* ============================================================
+		Function :		CProMoBlockView::Highlight
+		Description :	Highlights the object by making its border
+						thicker and red.
+
+		Return :		void
+		Parameters :	CDC* dc		-	The CDC to draw to.
+						CRect rect	-	The real rectangle of the
+										object.
+
+		Usage :			The function should clean up all selected
+						objects. Note that the CDC is a memory CDC,
+						so creating a memory CDC in this function
+						will probably not speed up the function.
+
+	   ============================================================*/
 	CPen p;
 	p.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
 	CPen *pOldPen = dc->SelectObject(&p);
@@ -151,17 +169,64 @@ void CProMoBlockView::Highlight(CDC* dc, CRect rect) {
 	dc->SelectObject(pOldPen);
 }
 
+
 BOOL CProMoBlockView::IsTarget()
+/* ============================================================
+	Function :		CProMoBlockView::IsTarget
+	Description :	Returns if the block is the target of the
+					current drawing operation (e.g., when 
+					dragging another object over it)
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the block is the 
+								target
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_target;
 }
 
 void CProMoBlockView::SetTarget(BOOL isTarget)
+/* ============================================================
+	Function :		CProMoBlockView::SetTarget
+	Description :	Makes the current block a target for the
+					current drawing operation (e.g., when 
+					dragging another object over it)
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL isTarget	-	"TRUE" if the block 
+										should be the target
+
+   ============================================================*/
 {
 	m_target = isTarget;
 }
 
-CPoint CProMoBlockView::getIntersection(CPoint innerPoint, CPoint outerPoint)
+CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
+/* ============================================================
+	Function :		CProMoBlockView::GetIntersection
+	Description :	Determines the point on the border of the 
+					block that intersects with a (virtual) 
+					line. Can be used to know where to trim a 
+					connected edge.
+					Override this method if the shape being
+					drawn is changed, in order to compute the 
+					point accordingly.
+	Access :		Protected
+
+	Return :		CPoint				-	"CPoint" that lies
+											on the border of
+											the block
+	Parameters :	CPoint innerPoint	-	"CPoint" that lies 
+											inside the (shape
+											of) the block
+					CPoint outerPoint	-	"CPoint" that lies 
+											outside the (shape 
+											of) the block
+
+   ============================================================*/
 {
 	CRect r = GetRect();
 	
@@ -222,9 +287,21 @@ CPoint CProMoBlockView::getIntersection(CPoint innerPoint, CPoint outerPoint)
 }
 
 
-void CProMoBlockView::recomputeIntersectionLinks() {
-	ASSERT_VALID(this->getModel());
-	CProMoBlockModel* model = this->getModel();
+void CProMoBlockView::RecomputeIntersectionLinks()
+	/* ============================================================
+		Function :		CProMoBlockView::RecomputeIntersectionLinks
+		Description :	Recomputes the position of the edges
+						connected to this block, such that they are
+						attached to the border of the block.
+		Access :		Protected
+
+		Return :		void
+		Parameters :	none
+
+	   ============================================================*/
+{
+	ASSERT_VALID(this->GetModel());
+	CProMoBlockModel* model = this->GetModel();
 	//recompute intersection for edges
 	int i = 0;
 	
@@ -233,7 +310,7 @@ void CProMoBlockView::recomputeIntersectionLinks() {
 		if (edgeModel) {
 			CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
 			//destination: bottomright
-			CPoint pt = getIntersection(edgeView->GetRect().BottomRight(), edgeView->GetRect().TopLeft());
+			CPoint pt = GetIntersection(edgeView->GetRect().BottomRight(), edgeView->GetRect().TopLeft());
 			if (pt.x >= 0) {
 				edgeView->SetBottom(pt.y);
 				edgeView->SetRight(pt.x);
@@ -247,7 +324,7 @@ void CProMoBlockView::recomputeIntersectionLinks() {
 		if (edgeModel) {
 			CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
 			//destination: topleft
-			CPoint pt = getIntersection(edgeView->GetRect().TopLeft(), edgeView->GetRect().BottomRight());
+			CPoint pt = GetIntersection(edgeView->GetRect().TopLeft(), edgeView->GetRect().BottomRight());
 			if (pt.x >= 0) {
 				edgeView->SetTop(pt.y);
 				edgeView->SetLeft(pt.x);
@@ -261,19 +338,42 @@ void CProMoBlockView::recomputeIntersectionLinks() {
 		if (childModel) {
 			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
 			if (childView) {
-				childView->recomputeIntersectionLinks();
+				childView->RecomputeIntersectionLinks();
 			}
 		}
 	}
 
 }
 
-CProMoBlockModel* CProMoBlockView::getModel() const
+CProMoBlockModel* CProMoBlockView::GetModel() const
+/* ============================================================
+	Function :		CProMoBlockView::GetModel
+	Description :	Returns a pointer to the model of this 
+					block
+	Access :		Public
+
+	Return :		CProMoBlockModel*	-	A pointer to the 
+											model
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_blockmodel;
 }
 
-void CProMoBlockView::setModel(CProMoBlockModel* model)
+void CProMoBlockView::SetModel(CProMoBlockModel* model)
+/* ============================================================
+	Function :		CProMoBlockView::SetModel
+	Description :	Makes the object being passed as input
+					parameter the model for this block
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoBlockModel* block	-	the object that
+												should be the
+												model
+
+   ============================================================*/
 {
 	if (m_blockmodel != model) {
 		CProMoBlockModel* oldModel = m_blockmodel;
@@ -294,10 +394,20 @@ void CProMoBlockView::setModel(CProMoBlockModel* model)
 	}
 }
 
-void CProMoBlockView::autoResize()
+void CProMoBlockView::AutoResize()
+/* ============================================================
+	Function :		CProMoBlockView::AutoResize
+	Description :	Automatically resizes block to prevent
+					child blocks from protruding.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
-	ASSERT_VALID(this->getModel());
-	CProMoBlockModel* model = this->getModel();
+	ASSERT_VALID(this->GetModel());
+	CProMoBlockModel* model = this->GetModel();
 	for (int i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
 		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 		if (childModel) {
@@ -321,11 +431,11 @@ void CProMoBlockView::autoResize()
 	
 	if (model->GetParentBlock() != NULL) {
 		if (model->GetParentBlock()->GetMainView() != NULL) {
-			model->GetParentBlock()->GetMainView()->autoResize();
+			model->GetParentBlock()->GetMainView()->AutoResize();
 		}
 	}
 	else {
-		this->recomputeIntersectionLinks();
+		this->RecomputeIntersectionLinks();
 	}
 }
 
@@ -344,11 +454,11 @@ CString CProMoBlockView::GetDefaultGetString() const
 					to disk.
 
    ============================================================*/
-	ASSERT_VALID(this->getModel());
+	ASSERT_VALID(this->GetModel());
 	
 	CString str;
 	
-	CString model = getModel()->GetName();
+	CString model = GetModel()->GetName();
 	CStringReplace(model, _T(":"), _T("\\colon"));
 	CStringReplace(model, _T(";"), _T("\\semicolon"));
 	CStringReplace(model, _T(","), _T("\\comma"));
@@ -374,7 +484,7 @@ CString CProMoBlockView::GetDefaultGetString() const
 
 BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 /* ============================================================
-	Function :		CDiagramEntity::GetDefaultFromString
+	Function :		CProMoBlockView::GetDefaultFromString
 	Description :	Gets the default properties from "str"
 	Access :		Protected
 
@@ -467,16 +577,31 @@ CDiagramEntity* CProMoBlockView::Clone()
 	//Hierarchy is not copied: if multiple blocks are selected, they become root nodes
 	CProMoBlockView* obj = new CProMoBlockView;
 	obj->Copy(this);
-	obj->setModel(new CProMoBlockModel());
+	obj->SetModel(new CProMoBlockModel());
 	obj->SetName(CProMoNameFactory::GetID());
 	return obj;
 
 }
 
 void CProMoBlockView::SetRect(double left, double top, double right, double bottom)
+/* ============================================================
+	Function :		CProMoBlockView::SetRect
+	Description :	Sets the object rectangle.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double left		-	Left edge
+					double top		-	Top edge
+					double right	-	Right edge
+					double bottom	-	Bottom edge
+
+	Usage :			Call to place the object. Overridden to 
+					reposition child blocks and connected edges
+
+   ============================================================*/
 {
-	ASSERT_VALID(this->getModel());
-	CProMoBlockModel* model = this->getModel();
+	ASSERT_VALID(this->GetModel());
+	CProMoBlockModel* model = this->GetModel();
 	//note: reposition links
 	int i = 0;
 
@@ -614,50 +739,3 @@ CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str)
 	return obj;
 
 }
-
-int CProMoBlockView::GetHitCode(CPoint point) const
-/* ============================================================
-	Function :		CProMoBlockView::GetHitCode
-	Description :	Returns the hit point constant for point.
-
-	Return :		int				-	The hit point,
-										DEHT_NONE if none.
-	Parameters :	CPoint point	-	The point to check
-
-	Usage :			Call to see in what part of the object point
-					lies.
-
-   ============================================================*/
-{
-
-	int result = DEHT_NONE;
-	CRect rect = GetRect();
-
-	if (rect.PtInRect(point))
-		result = DEHT_BODY;
-
-	return result;
-
-}
-
-HCURSOR CProMoBlockView::GetCursor(int /*hit*/) const
-/* ============================================================
-	Function :		CProMoBlockView::GetCursor
-	Description :	Returns the cursor for the given hit point.
-
-	Return :		HCURSOR	-	The cursor to show
-	Parameters :	int hit	-	The hit point constant (DEHT_)
-								to get the cursor for.
-
-	Usage :			Call to get the cursor for a specific hit
-					point constant.
-
-   ============================================================*/
-{
-
-	HCURSOR cursor = LoadCursor(NULL, IDC_SIZEALL);
-	return cursor;
-
-}
-
-
