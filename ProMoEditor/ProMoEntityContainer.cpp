@@ -1,3 +1,21 @@
+/* ==========================================================================
+	CProMoEntityContainer
+
+	Author :		Giovanni Meroni
+
+	Purpose :		CProMoEntityContainer is a CDiagramEntityContainer-
+					derived class, holding the data for a CProMoEditor.
+					
+					--In addition to CDiagramEntityContainer, this class keeps
+					and manages a list of links. This includes copy/paste
+					and undo-handling.
+
+	Description :	--The class uses a derived CDiagramClipboardHandler.
+
+	Usage :			Use as a normal CDiagramEntityContainer class. The
+					editor class exposes functions for command enabling.
+
+   ========================================================================*/
 #include "stdafx.h"
 #include "ProMoEntityContainer.h"
 #include <math.h>
@@ -38,17 +56,6 @@ CProMoEntityContainer::~CProMoEntityContainer()
 
 }
 
-// may not be needed
-void CProMoEntityContainer::removeR(CProMoBlockView *block) {
-	CObArray* subBlockModels = block->GetModel()->GetSubBlocks();
-	for (int i = 0; i < subBlockModels->GetSize(); i++) {
-		CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels->GetAt(i));
-		if (subBlockModel) {
-			removeR(subBlockModel->GetMainView());
-		}
-	}
-	this->Remove(block);
-}
 
 void CProMoEntityContainer::RemoveAt(int index)
 /* ============================================================
@@ -90,7 +97,27 @@ void CProMoEntityContainer::RemoveAt(int index)
 
 }
 
-void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* destination) {
+void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* destination) 
+/* ============================================================
+	Function :		CProMoEntityContainer::ReplicateRelations
+	Description :	Replicate node-edge and nesting relations 
+					between objects inside source array to the 
+					objects	inside target array.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CObArray* source	-	Array of source 
+											objects
+	Parameters :	CObArray* source	-	Array of target
+											objects
+
+	Usage :			source and destination must have the same
+					size and, for each position, the object in
+					destination must be a clone of the one in
+					source.
+
+   ============================================================*/
+{
 	ASSERT(destination->GetSize() == source->GetSize());
 
 	int i = 0;
@@ -163,7 +190,25 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 
 }
 
-void CProMoEntityContainer::reorderR(CProMoBlockView* block, CObArray* newOrder) {
+void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder) 
+/* ============================================================
+	Function :		CProMoEntityContainer::ReorderR
+	Description :	Helper method to recursively reorder 
+					objects that are child of the current 
+					block, such that they are drawn after 
+					parent blocks, and connected edges are 
+					drawn after both source and destination 
+					blocks are drawn.
+	Access :		Private
+
+	Return :		void
+	Parameters :	CProMoBlockView* block	-	Current block
+					CObArray* newOrder		-	Array of 
+												elements to be
+												reordered.
+
+   ============================================================*/
+{
 	ASSERT(block->GetModel());
 	newOrder->Add(block);
 	//check for connected incoming edges
@@ -232,14 +277,26 @@ void CProMoEntityContainer::reorderR(CProMoBlockView* block, CObArray* newOrder)
 			for (int i = 0; i < subBlockViews->GetSize(); i++) {
 				CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockViews->GetAt(i));
 				if (blockView == subBlockModel->GetMainView()) {
-					reorderR(blockView, newOrder);
+					ReorderR(blockView, newOrder);
 				}
 			}
 		}
 	}
 }
 
-void CProMoEntityContainer::reorder()
+void CProMoEntityContainer::Reorder()
+/* ============================================================
+	Function :		CProMoEntityContainer::Reorder
+	Description :	Reorders objects such that child blocks
+					are drawn after parent blocks, and
+					connected edges are drawn after both source
+					and destination blocks are drawn.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
 	int count = 0;
 	int max = GetSize();
@@ -253,7 +310,7 @@ void CProMoEntityContainer::reorder()
 			CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(obj);
 			if (blockView) {
 				if (blockView->GetModel()->GetParentBlock() == NULL) {
-					reorderR(blockView, &newOrder);
+					ReorderR(blockView, &newOrder);
 				}
 			}
 			CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(obj);
@@ -274,12 +331,41 @@ void CProMoEntityContainer::reorder()
 }
 
 void CProMoEntityContainer::SetTarget(CProMoBlockView* obj, BOOL select)
+/* ============================================================
+	Function :		CProMoEntityContainer::SetTarget
+	Description :	Makes the block being passed as input a 
+					target for the current drawing operation 
+					(e.g., when dragging another object over 
+					it)
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoBlockView* obj	-	Pointer to the
+												block
+					BOOL select				-	"TRUE" if the 
+												block should be 
+												the target
+
+   ============================================================*/
 {
 	if (obj)
 		obj->SetTarget(select);
 }
 
-CProMoBlockView* CProMoEntityContainer::getTarget()
+CProMoBlockView* CProMoEntityContainer::GetTarget()
+/* ============================================================
+	Function :		CProMoEntityContainer::GetTarget
+	Description :	Returns a pointer to the block that is the
+					target for the current drawing operation
+					(e.g., when dragging another object over
+					it)
+	Access :		Public
+
+	Return :		CProMoBlockView* obj	-	Pointer to the
+												block
+	Parameters :	none
+
+   ============================================================*/
 {
 	CProMoBlockView* currObj = NULL;
 
@@ -297,7 +383,7 @@ CProMoBlockView* CProMoEntityContainer::getTarget()
 
 int	CProMoEntityContainer::GetSelectCount()
 /* ============================================================
-	Function :		int	CProMoEntityContainer::GetSelectCount
+	Function :		CProMoEntityContainer::GetSelectCount
 	Description :	Returns the number of currently selected
 					objects.
 
@@ -305,10 +391,11 @@ int	CProMoEntityContainer::GetSelectCount()
 	Parameters :	none
 
 	Usage :			Call to see how many objects are selected.
+					Overridden to consider only blocks.
 
    ============================================================*/
 {
-
+	//Note: check if overriding is actually needed for alignment
 	int count = 0;
 	int max = GetSize();
 
@@ -329,14 +416,15 @@ void CProMoEntityContainer::GetCurrentFromStack(CObArray& arr)
 /* ============================================================
 	Function :		CProMoEntityContainer::GetCurrentFromStack
 	Description :	Sets the current objects from "arr".
-	Access :		Private
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CObArray& arr	-	Array to add current
 										object state from
 
 	Usage :			Called to get the current object state from
-					"arr"
+					"arr". Overridden to replicate node-edge 
+					relations
 
    ============================================================*/
 {
@@ -376,14 +464,15 @@ void CProMoEntityContainer::AddCurrentToStack(CObArray& arr)
 /* ============================================================
 	Function :		CProMoEntityContainer::AddCurrentToStack
 	Description :	Adds the current objects to "arr".
-	Access :		Private
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CObArray& arr	-	Array to add current
 										object state to
 
 	Usage :			Called to add the current object state to
-					"arr"
+					"arr". Overridden to replicate node-edge 
+					relations
 
    ============================================================*/
 {

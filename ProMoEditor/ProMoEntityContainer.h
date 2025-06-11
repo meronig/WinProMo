@@ -11,29 +11,24 @@ public:
 	CProMoEntityContainer();
 	virtual ~CProMoEntityContainer();
 
-	// Implementation
-
-	// Selection
-	int					GetSelectCount();
-
-	// Overrides
-	virtual void	RemoveAt(int index);
-
-	virtual void reorder();
+	virtual void Reorder();
 	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
-	virtual CProMoBlockView* getTarget();
+	virtual CProMoBlockView* GetTarget();
 
 	void ReplicateRelations(CObArray* source, CObArray* destination);
 
+private:
+	// Private helpers
+	void ReorderR(CProMoBlockView* block, CObArray* m_newOrder);
+
+// Overrides
+public:
+	int				GetSelectCount();
+	virtual void	RemoveAt(int index);
+
 protected:
-	// Overrides
 	void			AddCurrentToStack(CObArray& arr);
 	void			GetCurrentFromStack(CObArray& arr);
 
-
-private:
-	// Private helpers
-	void reorderR(CProMoBlockView* block, CObArray* m_newOrder);
-	void removeR(CProMoBlockView* block);
 };
 #endif //_PROMOENTITYCONTAINER_H_

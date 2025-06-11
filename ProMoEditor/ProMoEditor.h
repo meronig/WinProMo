@@ -14,8 +14,36 @@ public:
 	CProMoEditor();
 	virtual ~CProMoEditor();
 
+
+public:
+	CDiagramEntity* GetNamedObject(const CString& name) const;
+	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
+
 protected:
-	// Overrides:
+	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
+	// Private helpers
+	virtual void ResetTarget();
+	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
+	CProMoBlockView* GetTargetBlock(CPoint point);
+	CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards);
+	virtual void DeselectChildBlocks(CProMoBlockView* block);
+	virtual void SelectChildBlocks(CProMoBlockView* block);
+	virtual void PrepareForAlignment();
+	virtual void AutoResizeAll();
+
+	CProMoModel* GetNamedModel(const CObArray& array, const CString& name) const;
+	void DeleteModel(CObArray& array, const CString& name);
+
+// Overrides:
+public:
+	// Command handlers
+	virtual void	Cut();
+	virtual void	LeftAlignSelected();
+	virtual void	RightAlignSelected();
+	virtual void	TopAlignSelected();
+	virtual void	BottomAlignSelected();
+
+protected:
 	virtual void DrawGrid(CDC* dc, CRect rect, double zoom) const;
 	virtual void DrawObjects(CDC* dc, double zoom) const;
 	virtual void SaveObjects(CStringArray& stra);
@@ -25,31 +53,7 @@ protected:
 	virtual afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	virtual afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 
-public:
-	// Command handlers
-	CDiagramEntity* GetNamedObject(const CString& name) const;
 
-	virtual void	Cut();
-	virtual void	LeftAlignSelected();
-	virtual void	RightAlignSelected();
-	virtual void	TopAlignSelected();
-	virtual void	BottomAlignSelected();
-	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
-
-private:
-	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
-	// Private helpers
-	virtual void ResetTarget();
-	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
-	CProMoBlockView* GetTargetBlock(CPoint point);
-	CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards, BOOL ifSelected);
-	virtual void DeselectChildBlocks(CProMoBlockView* block);
-	virtual void SelectChildBlocks(CProMoBlockView* block);
-	virtual void PrepareForAlignment();
-	virtual void AutoResizeAll();
-
-	CProMoModel* GetNamedModel(const CObArray& array, const CString& name) const;
-	void DeleteModel(CObArray& array, const CString& name);
 };
 
 #endif //_PROMOEDITOR_H_

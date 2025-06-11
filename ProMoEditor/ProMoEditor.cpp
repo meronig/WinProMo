@@ -1,3 +1,58 @@
+/* ==========================================================================
+	CProMoEditor
+
+	Author :		Giovanni Meroni
+
+	Purpose :		CProMoEditor is a diagram editor that can handle nested
+					blocks connected through edges. This class can be derived
+					to implement a visual editor for a domain-specific
+					language, or any language that can be generalized as a
+					graph of nested nodes (e.g., UML State Chart diagrams, 
+					Petri Nets, etc.). To achieve so, CProMoEditor extends
+					CDiagramEditor.
+	
+	Description :	REVISE CProMoEditor handles several messages and overrides
+					drawing to manage links. Links are implemented as a
+					special class, stored in a separate array in
+					CFlowchartEntityContainer. Object drawing in
+					CFlowchartEditor also draws the links.
+
+					The objects derived from CFlowchartEntity has link
+					points. Two selected and unlinked objects with free
+					link points at appropriate position can be linked. If
+					they are linked, a line is automatically drawn between
+					the objects, with an arrow head representing the
+					direction (which can be flipped).
+
+					The link can have a label, that is, a text describing
+					the link.
+
+					When objects are moved, other objects linked to the
+					moved ones might also be moved - depending on the links.
+					For example, if two objects are linked horizontally and
+					one is moved up or down, the linked object will also be
+					moved.
+
+					A special type of object is the linkable line. Linkable
+					lines are lines that can be linked to other objects,
+					even lines. They can be used to represent more complex
+					flows, such as several links converging on a single spot.
+					Lines will also be moved as other objects, but worth to
+					notice is that they will not be resized, they will keep
+					their original length and might therefore trigger
+					movements far from the current one. Linked lines can
+					only be drawn either vertically or horizontally, that is,
+					no slant is allowed - this is enforced by the editor
+					rather than the line class.
+
+	Usage :			CProMoEditor should be instantiated in the same way
+					as a CDiagramEditor.
+
+					The package uses RTTI (run time type information) to
+					identify object types, using dynamic_cast, so the
+					project must enable this feature.
+
+   ========================================================================*/
 #include "stdafx.h"
 #include "ProMoEditor.h"
 #include "ProMoEntityContainer.h"
@@ -10,9 +65,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-/////////////////////////////////////////////////////////////////////////////
-// CProMoEditor
 
 CProMoEditor::CProMoEditor()
 /* ============================================================
@@ -173,11 +225,21 @@ void CProMoEditor::SaveObjects(CStringArray& stra)
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CProMoEditor message handlers
 
+CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point) 
+/* ============================================================
+	Function :		CProMoEditor::GetTargetBlock
+	Description :	Gets the topmost block that contains the
+					input point
+	Access :		Protected
 
-CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point) {
+	Return :		CProMoBlockView*	-	Pointer to the target
+											block
+	Parameters :	CPoint point		-	Point to identify the 
+											target block
+
+   ============================================================*/
+{
 	ResetTarget();
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
@@ -251,7 +313,27 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point) {
 	return NULL;
 }
 
-CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL backwards, BOOL ifSelected)
+CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL backwards)
+/* ============================================================
+	Function :		CProMoEditor::GetConnectedBlock
+	Description :	Gets the block that is connected to the
+					input edge.
+	Access :		Protected
+
+
+	Return :		CProMoBlockView*		-	Pointer to the
+												connected block
+	Parameters :	CProMoEdgeView* line	-	Pointer to the
+												edge
+					BOOL backwards			-	TRUE if the edge
+												should be
+												explored
+												backwards (i.e.,
+												the source edge
+												needs to be
+												found)
+
+   ============================================================*/
 {
 	CProMoBlockModel* model = NULL;
 	if (backwards) {
@@ -271,6 +353,18 @@ CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL back
 }
 
 void CProMoEditor::DeselectChildBlocks(CProMoBlockView* block)
+/* ============================================================
+	Function :		CProMoEditor::DeselectChildBlocks
+	Description :	Deselects all selected blocks that are
+					(grand)children of the input block.
+	Access :		Protected
+
+
+	Return :		void
+	Parameters :	CProMoBlockView* block	-	Pointer to the
+												block
+
+   ============================================================*/
 {
 	ASSERT(block->GetModel()!=NULL);
 	CProMoBlockModel* model = block->GetModel();
@@ -282,6 +376,18 @@ void CProMoEditor::DeselectChildBlocks(CProMoBlockView* block)
 }
 
 void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
+/* ============================================================
+	Function :		CProMoEditor::DeselectChildBlocks
+	Description :	Selects all blocks that are (grand)children
+					of the input block.
+	Access :		Protected
+
+
+	Return :		void
+	Parameters :	CProMoBlockView* block	-	Pointer to the
+												block
+
+   ============================================================*/
 {
 	ASSERT(block->GetModel() != NULL);
 	CProMoBlockModel* model = block->GetModel();
@@ -296,14 +402,11 @@ void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
 void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 /* ============================================================
 	Function :		CProMoEditor::OnMouseMove
-	Description :	Handler for WM_MOUSEMOVE. We add handling
-					to close screen redraws as we are moving
-					lots of stuff (all the attached objects in
-					addition to the primarily moved). We also
-					do secondary movements here - that is,
-					objects linked to the one(s) being moved
-					must be moved as well, even if they are
-					not selected.
+	Description :	Handler for WM_MOUSEMOVE. 
+					Overridden to identify target block for 
+					elements being drawn/moved/resized, to keep
+					linked elements connected, and to handle
+					SHIFT/CTRL keys to keep proportions.
 
 	Return :		void
 	Parameters :	UINT nFlags		-	Not used
@@ -348,7 +451,7 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 			if (currObj) {
 				if (currObj->IsSelected()) {
 					//find if a selected block exists on both ends. Otherwise, deselect
-					CProMoBlockView* block = GetConnectedBlock(currObj, TRUE, TRUE);
+					CProMoBlockView* block = GetConnectedBlock(currObj, TRUE);
 					if (block) {
 						if (!block->IsSelected()) {
 							currObj->Select(FALSE);
@@ -357,7 +460,7 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 					else {
 						currObj->Select(FALSE);
 					}
-					block = GetConnectedBlock(currObj, FALSE, TRUE);
+					block = GetConnectedBlock(currObj, FALSE);
 					if (block) {
 						if (!block->IsSelected()) {
 							currObj->Select(FALSE);
@@ -580,6 +683,23 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 }
 
 void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
+/* ============================================================
+	Function :		CProMoEditor::OnLButtonDown
+	Description :	Handles the "WM_LBUTTONDOWN" message. We
+					select/deselect objects and set internal
+					modes as appropriate.
+					Overridden to support splitting an edge
+					into two connected segments by clicking on
+					the center marker.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	UINT nFlags		-	Key-down flag
+					CPoint point	-	Mouse position
+
+	Usage :			Called from MFC. Do not call from code.
+
+   ============================================================*/
 {
 	BOOL goon = TRUE;
 	int count = 0;
@@ -654,7 +774,24 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 
 }
 
-void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point) {
+
+void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point) 
+/* ============================================================
+	Function :		CProMoEditor::OnLButtonUp
+	Description :	Handles the "WM_LBUTTONUP" message.
+					Overridden to set parent block for current
+					block being draw/moved, and source/target 
+					block for current edge being drawn/resized.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	UINT nFlags		-	not interested.
+					CPoint point	-	The position of the mouse.
+
+	Usage :			Called from MFC. Do not call from code.
+
+   ============================================================*/
+{
 
 	CProMoBlockView* currObj = NULL;
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
@@ -671,7 +808,7 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 					//trigger mouse movement, so to maintain hierarchy in case no movement is made
 					OnMouseMove(nFlags, point);
 					//check which is the object being dropped, if any
-					currObj = objs->getTarget();
+					currObj = objs->GetTarget();
 					if (currObj) {
 						if (selObj->GetModel()->GetParentBlock() != currObj->GetModel()) {
 							// Set the parent to be that object
@@ -687,7 +824,7 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 			}
 		}
 		//Need to reorder shapes according to nesting
-		static_cast<CProMoEntityContainer*>(objs)->reorder();
+		static_cast<CProMoEntityContainer*>(objs)->Reorder();
 	}
 
 
@@ -696,7 +833,7 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 		//resizing an edge
 		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
 		if (edge) {
-			currObj = objs->getTarget();
+			currObj = objs->GetTarget();
 			if (currObj) {
 				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
 					CProMoEdgeView* destEdge = dynamic_cast<CProMoEdgeView*>(edge->GetDestination());
@@ -727,7 +864,7 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 				}
 			}
 			//Need to reorder shapes according to nesting
-			static_cast<CProMoEntityContainer*>(objs)->reorder();
+			static_cast<CProMoEntityContainer*>(objs)->Reorder();
 		}
 	}
 
@@ -741,15 +878,12 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point) {
 }
 
 
-/////////////////////////////////////////////////////////////////////////////
-// CProMoEditor private helpers
-
-
 CDiagramEntity* CProMoEditor::GetNamedObject(const CString& name) const
 /* ============================================================
 	Function :		CProMoEditor::GetNamedObject
 	Description :	Returns the object with the name attribute
 					name.
+	Access :		Protected
 
 	Return :		CDiagramEntity*	-	The object, or NULL
 											if not found.
@@ -777,7 +911,23 @@ CDiagramEntity* CProMoEditor::GetNamedObject(const CString& name) const
 
 }
 
+
 void CProMoEditor::Cut()
+/* ============================================================
+	Function :		CProMoEditor::Cut
+	Description :	Cut the currently selected items to the
+					internal "CProMoEntityContainer" clipboard.
+					Overridden to unlink subblocks if 
+					individually selected.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to delete and place the currently
+					selected objects to the 'clipboard'.
+
+   ============================================================*/
 {
 	CDiagramEntityContainer* objs = GetDiagramEntityContainer();
 	if (objs)
@@ -797,9 +947,27 @@ void CProMoEditor::Cut()
 	}
 }
 
-//draws blocks hierarchically: subblocks are always drawn in the foreground, regardless
-//of current ordering, siblings follow the ordering in CProcessEntityContainer
+//draws blocks 
 void CProMoEditor::DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const
+/* ============================================================
+	Function :		CProMoEditor::DrawObjectsR
+	Description :	Draws the input block and connected elements
+					hierarchically: subblocks are always drawn 
+					in the foreground, regardless of current 
+					ordering, siblings follow the ordering 
+					in CProcessEntityContainer
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoBlockView* block	-	Pointer to the
+												block
+					CDC* dc					-	CDC to draw to
+					double zoom				-	Zoom level 
+												(use this value
+												instead of 
+												GetZoom())
+
+   ============================================================*/
 {
 	int i = 0;
 	block->DrawObject(dc, zoom);
@@ -829,6 +997,16 @@ void CProMoEditor::DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) co
 }
 
 void CProMoEditor::ResetTarget()
+/* ============================================================
+	Function :		CProMoEditor::SetTarget
+	Description :	Unsets the target for the current drawing 
+					operation
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	if (objs)
@@ -843,6 +1021,22 @@ void CProMoEditor::ResetTarget()
 }
 
 void CProMoEditor::SetTarget(CProMoBlockView* obj, BOOL select)
+/* ============================================================
+	Function :		CProMoEditor::SetTarget
+	Description :	Makes the block being passed as input a
+					target for the current drawing operation
+					(e.g., when dragging another object over
+					it)
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoBlockView* obj	-	Pointer to the
+												block
+					BOOL select				-	"TRUE" if the
+												block should be
+												the target
+
+   ============================================================*/
 {
 	if (obj) {
 		CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
@@ -889,6 +1083,23 @@ void CProMoEditor::AutoResizeAll()
 }
 
 CProMoModel* CProMoEditor::GetNamedModel(const CObArray& array, const CString& name) const
+/* ============================================================
+	Function :		CProMoEditor::GetNamedModel
+	Description :	Returns the model with the name attribute
+					name.
+	Access :		Protected
+
+	Return :		CProMoModel*			-	The object, or 
+												NULL if not 
+												found.
+	Parameters :	const CObArray& array	-	Array of models
+					const CString& name		-	The name of the
+												object to find.
+
+	Usage :			Call to get the object with the name name,
+					if it exists.
+
+   ============================================================*/
 {
 	CProMoModel* result = NULL;
 
@@ -905,6 +1116,18 @@ CProMoModel* CProMoEditor::GetNamedModel(const CObArray& array, const CString& n
 }
 
 void CProMoEditor::DeleteModel(CObArray& array, const CString& name)
+/* ============================================================
+	Function :		CProMoEditor::DeleteModel
+	Description :	Deletes the model with the name name from
+					the input array
+	Access :		Protected
+
+	Return :		void
+	Parameters :	const CObArray& array	-	Array of models
+					const CString& name		-	The name of the
+												object to find.
+
+   ============================================================*/
 {
 	int count = static_cast<int>(array.GetSize());
 	CProMoModel* obj;
@@ -918,6 +1141,23 @@ void CProMoEditor::DeleteModel(CObArray& array, const CString& name)
 
 
 void CProMoEditor::LeftAlignSelected()
+/* ============================================================
+	Function :		CProMoEditor::LeftAlignSelected
+	Description :	Aligns all selected objects to the left of
+					the top selected object in the data container.
+					Overridden to handle child blocks and
+					connected edges.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to align the left edge of all selected
+					objects.
+					Should only be callable if "GetSelectCount() >
+					1", that is, more than one object is selected.
+
+   ============================================================*/
 {
 	PrepareForAlignment();
 	CDiagramEditor::LeftAlignSelected();
@@ -925,6 +1165,23 @@ void CProMoEditor::LeftAlignSelected()
 }
 
 void CProMoEditor::RightAlignSelected()
+/* ============================================================
+	Function :		CProMoEditor::RightAlignSelected
+	Description :	Aligns all selected objects to the right of
+					the top selected object in the data container.
+					Overridden to handle child blocks and
+					connected edges.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to align the right edge of all selected
+					objects.
+					Should only be callable if "GetSelectCount() >
+					1", that is, more than one object is selected.
+
+   ============================================================*/
 {
 	PrepareForAlignment();
 	CDiagramEditor::RightAlignSelected();
@@ -932,6 +1189,23 @@ void CProMoEditor::RightAlignSelected()
 }
 
 void CProMoEditor::TopAlignSelected()
+/* ============================================================
+	Function :		CProMoEditor::TopAlignSelected
+	Description :	Aligns all selected objects to the top of
+					the top selected object in the data container.
+					Overridden to handle child blocks and
+					connected edges.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to align the top edge of all selected
+					objects.
+					Should only be callable if "GetSelectCount() >
+					1", that is, more than one object is selected.
+
+   ============================================================*/
 {
 	PrepareForAlignment();
 	CDiagramEditor::TopAlignSelected();
@@ -939,6 +1213,23 @@ void CProMoEditor::TopAlignSelected()
 }
 
 void CProMoEditor::BottomAlignSelected()
+/* ============================================================
+	Function :		CProMoEditor::BottomAlignSelected
+	Description :	Aligns all selected objects to the bottom of
+					the top selected object in the data container.
+					Overridden to handle child blocks and
+					connected edges.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to align the bottom edge of all selected
+					objects.
+					Should only be callable if "GetSelectCount() >
+					1", that is, more than one object is selected.
+
+   ============================================================*/
 {
 	PrepareForAlignment();
 	CDiagramEditor::BottomAlignSelected();
