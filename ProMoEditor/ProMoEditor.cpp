@@ -203,7 +203,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point) {
 						// new edge
 						CProMoEdgeView* newEdge = dynamic_cast<CProMoEdgeView*>(GetDrawingObject());
 						if (newEdge) {
-							if (newEdge->getModel()->canConnectSource(currObj->getModel())) {
+							if (newEdge->getModel()->CanConnectSource(currObj->getModel())) {
 								return currObj;
 							}
 						}
@@ -233,12 +233,12 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point) {
 						//use actual point rather than cursor position
 						if (edge) {
 							if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-								if (edge->getModel()->canConnectDestination(currObj->getModel())) {
+								if (edge->getModel()->CanConnectDestination(currObj->getModel())) {
 									return currObj;
 								}
 							}
 							else if (GetSubMode() == DEHT_TOPLEFT) {
-								if (edge->getModel()->canConnectSource(currObj->getModel())) {
+								if (edge->getModel()->CanConnectSource(currObj->getModel())) {
 									return currObj;
 								}
 							}

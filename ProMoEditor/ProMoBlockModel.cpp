@@ -10,6 +10,8 @@
 	Description :	With respect to "CProMoModel", "CProMoBlockModel" can 
 					nest other "CProMoBlockModel" objects. It also keeps
 					track of incoming and outgoing "CProMoEdgeModel" objects.
+					It is also assumed that a block model has 1 primary
+					view, representing the block itself.
 
 	Usage :			Models that represent a node in a graph should be 
 					derived from this class.
@@ -20,7 +22,7 @@
 #include "ProMoEdgeModel.h"
 #include "ProMoNameFactory.h"
 
-CProMoBlockModel::CProMoBlockModel() {
+CProMoBlockModel::CProMoBlockModel()
 	/* ============================================================
 	Function :		CProMoBlockModel::CProMoBlockModel
 	Description :	Constructor
@@ -32,13 +34,14 @@ CProMoBlockModel::CProMoBlockModel() {
 	Usage :
 
 	============================================================*/
+{
 	SetType(_T("promo_block_model"));
 	SetName(CProMoNameFactory::GetID());
 	this->m_parentBlock = NULL;
 
 }
 
-CProMoBlockModel::~CProMoBlockModel() {
+CProMoBlockModel::~CProMoBlockModel()
 	/* ============================================================
 	Function :		CProMoBlockModel::~CProMoBlockModel
 	Description :	Destructor
@@ -50,6 +53,7 @@ CProMoBlockModel::~CProMoBlockModel() {
 	Usage :
 
    ============================================================*/
+{
 	int i = 0;
 	for (i = static_cast<int>(m_incomingEdges.GetSize()) - 1; i >= 0; i--) {
 		CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(this->m_incomingEdges.GetAt(i));
@@ -221,8 +225,8 @@ CProMoBlockModel* CProMoBlockModel::GetParentBlock() const
 	Description :	Returns a pointer to the parent block
 	Access :		Public
 
-	Return :		CObArray*	-	A pointer to the parent
-									blocks
+	Return :		CProMoBlockModel*	-	A pointer to the parent
+											block
 	Parameters :	none
 
    ============================================================*/
@@ -230,7 +234,7 @@ CProMoBlockModel* CProMoBlockModel::GetParentBlock() const
 	return this->m_parentBlock;
 }
 
-BOOL CProMoBlockModel::Contains(CProMoBlockModel* block, BOOL recursive) {
+BOOL CProMoBlockModel::Contains(CProMoBlockModel* block, BOOL recursive)
 	/* ============================================================
 	Function :		CProMoBlockModel::Contains
 	Description :	Returns if the block being passed as input
@@ -250,6 +254,7 @@ BOOL CProMoBlockModel::Contains(CProMoBlockModel* block, BOOL recursive) {
 												child blocks
 
    ============================================================*/
+{
 	BOOL contains = FALSE;
 	for (int i = 0; i < m_subblocks.GetSize(); i++) {
 

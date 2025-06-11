@@ -1,3 +1,22 @@
+/* ==========================================================================
+	CProMoEdgeModel
+
+	Author :		Giovanni Meroni
+
+	Purpose :		"CProMoEdgeModel" represents the model of all
+					line/edge objects (views) that can be drawn and managed
+					by "CProMoEditor".
+
+	Description :	With respect to "CProMoModel", "CProMoEdgeModel" keeps
+					track of source and destination "CProMoModel" objects.
+					It is also assumed that an edge model has 1 or more
+					views, each representing a (connected) segment of that 
+					edge.
+
+	Usage :			Models that represent a node in a graph should be
+					derived from this class.
+
+   ========================================================================*/
 #include "stdafx.h"
 #include "ProMoEdgeModel.h"
 #include "ProMoBlockModel.h"
@@ -78,6 +97,18 @@ CProMoModel* CProMoEdgeModel::Clone()
 
 
 void CProMoEdgeModel::SetSource(CProMoModel* source)
+/* ============================================================
+	Function :		CProMoEdgeModel::SetSource
+	Description :	Makes the object being passed as input
+					parameter the source of this edge
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoModel* source	-	the object that
+											should be the
+											source
+
+   ============================================================*/
 {
 
 	if (m_source != source) {
@@ -121,6 +152,19 @@ void CProMoEdgeModel::SetSource(CProMoModel* source)
 }
 
 void CProMoEdgeModel::SetDestination(CProMoModel* destination)
+/* ============================================================
+	Function :		CProMoEdgeModel::SetDestination
+	Description :	Makes the object being passed as input
+					parameter the destination of this edge
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoModel* destination	-	the object
+													that should
+													be the
+													destination
+
+   ============================================================*/
 {
 	if (m_dest != destination) {
 
@@ -164,17 +208,51 @@ void CProMoEdgeModel::SetDestination(CProMoModel* destination)
 }
 
 CProMoModel* CProMoEdgeModel::GetSource() const
+/* ============================================================
+	Function :		CProMoEdgeModel::GetSource
+	Description :	Returns a pointer to the source object
+	Access :		Public
+
+	Return :		CProMoModel*	-	A pointer to the source
+										object
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_source;
 }
 
 CProMoModel* CProMoEdgeModel::GetDestination() const
+/* ============================================================
+	Function :		CProMoEdgeModel::GetDestination
+	Description :	Returns a pointer to the destination object
+	Access :		Public
+
+	Return :		CProMoModel*	-	A pointer to the 
+										destination object
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_dest;
 }
 
 
-BOOL CProMoEdgeModel::canConnectSource(CProMoModel* source)
+BOOL CProMoEdgeModel::CanConnectSource(CProMoModel* source)
+/* ============================================================
+	Function :		CProMoEdgeModel::CanConnectSource
+	Description :	Returns if the object being passed as input
+					parameter can be a source object
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												object can be
+												a source
+	Parameters :	CProMoModel* source	-	the object that
+												should be
+												the source
+
+   ============================================================*/
 {
 	CProMoBlockModel* obj = dynamic_cast<CProMoBlockModel*>(source);
 	if (obj) {
@@ -183,7 +261,23 @@ BOOL CProMoEdgeModel::canConnectSource(CProMoModel* source)
 	return FALSE;
 }
 
-BOOL CProMoEdgeModel::canConnectDestination(CProMoModel* destination)
+BOOL CProMoEdgeModel::CanConnectDestination(CProMoModel* destination)
+/* ============================================================
+	Function :		CProMoEdgeModel::CanConnectDestination
+	Description :	Returns if the object being passed as input
+					parameter can be a destination object
+	Access :		Public
+
+	Return :		BOOL						-	"TRUE" if 
+													the object 
+													can be a 
+													destination
+	Parameters :	CProMoModel* destination	-	the object 
+													that should 
+													be the
+													destination
+
+   ============================================================*/
 {
 	CProMoBlockModel* obj = dynamic_cast<CProMoBlockModel*>(destination);
 	if (obj) {
@@ -192,7 +286,20 @@ BOOL CProMoEdgeModel::canConnectDestination(CProMoModel* destination)
 	return FALSE;
 }
 
-CProMoEdgeView* CProMoEdgeModel::getLastSegment()
+CProMoEdgeView* CProMoEdgeModel::GetLastSegment()
+/* ============================================================
+	Function :		CProMoEdgeModel::GetLastSegment
+	Description :	Returns a pointer to the view for this edge
+					representing the last segment.
+	Access :		Public
+
+	Return :		CProMoEdgeView*	-	The view representing
+										the last segment, 
+										or "NULL" if no view
+										is defined.
+	Parameters :	none
+
+   ============================================================*/
 {
 	CObArray* views = GetViews();
 	for (int i = 0; i < views->GetSize(); i++) {
@@ -206,7 +313,20 @@ CProMoEdgeView* CProMoEdgeModel::getLastSegment()
 	return NULL;
 }
 
-CProMoEdgeView* CProMoEdgeModel::getFirstSegment()
+CProMoEdgeView* CProMoEdgeModel::GetFirstSegment()
+/* ============================================================
+	Function :		CProMoEdgeModel::GetFirstSegment
+	Description :	Returns a pointer to the view for this edge
+					representing the first segment.
+	Access :		Public
+
+	Return :		CProMoEdgeView*	-	The view representing
+										the first segment,
+										or "NULL" if no view
+										is defined.
+	Parameters :	none
+
+   ============================================================*/
 {
 	CObArray* views = GetViews();
 	for (int i = 0; i < views->GetSize(); i++) {

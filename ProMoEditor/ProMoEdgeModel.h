@@ -9,24 +9,36 @@ class CProMoEdgeModel : public CProMoModel
 {
 
 public:
+    // Creation/initialization
     CProMoEdgeModel();
     virtual ~CProMoEdgeModel();
+    
     virtual	CProMoModel* Clone();
+
+    // Source links
     virtual void SetSource(CProMoModel* source);
-    virtual void SetDestination(CProMoModel* destination);
     virtual CProMoModel* GetSource() const;
+    virtual BOOL CanConnectSource(CProMoModel* source);
+
+    // Destination links
+    virtual void SetDestination(CProMoModel* destination);
     virtual CProMoModel* GetDestination() const;
-    virtual BOOL canConnectSource(CProMoModel* source);
-    virtual BOOL canConnectDestination(CProMoModel* destination);
-    virtual CProMoEdgeView* getLastSegment();
-    virtual CProMoEdgeView* getFirstSegment();
+    virtual BOOL CanConnectDestination(CProMoModel* destination);
 
-    static	CProMoModel* CreateFromString(const CString& str);
+    // Model-view links
+    virtual CProMoEdgeView* GetLastSegment();
+    virtual CProMoEdgeView* GetFirstSegment();
 
+    
 protected:
     CProMoModel* m_source;
     CProMoModel* m_dest;
 
+// Overrides
+public:
+    static	CProMoModel* CreateFromString(const CString& str);
+
+protected:
     virtual CString				GetDefaultGetString() const;
 
 

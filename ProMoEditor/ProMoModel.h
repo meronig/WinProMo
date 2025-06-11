@@ -8,10 +8,13 @@ class CProMoModel : public CObject
 {
 public:
 	
+	// Creation/initialization
 	CProMoModel();
 	virtual ~CProMoModel();
+	
 	virtual CProMoModel* Clone();
 
+	// Model-view links
 	virtual void LinkView(CDiagramEntity* view);
 	virtual void UnlinkView(CDiagramEntity* view);
 	virtual void UnlinkAllViews();
@@ -24,6 +27,7 @@ public:
 
 	BOOL			LoadFromString(CString& data);
 
+	// Properties
 	CString			GetType() const;
 	void			SetType(CString type);
 

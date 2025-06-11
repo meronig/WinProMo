@@ -9,6 +9,7 @@
 
 	Description :	"CProMoModel" is derived from "CObject", to allow 
 					instances to be stored in "CObArrays".
+					A model can have 1 or more associated views.
 
 	Usage :			Classes should be derived from "CProMoModel". "Clone" 
 					must be overridden, returning a copy of the this 

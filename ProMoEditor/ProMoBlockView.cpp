@@ -1,3 +1,23 @@
+/* ==========================================================================
+	CProMoBlockView
+
+	Author :		Giovanni Meroni
+
+	Purpose :		"CProMoBlockView" extends "CDiagramEntity" to represent 
+					all block/node objects that can be drawn and managed by 
+					"CProMoEditor". This class contains visual properties 
+					that blocks/nodes have. Structural properties are 
+					defined by the associated model class.
+
+	Description :	With respect to "CDiagramEntity", "CProMoBlockView" 
+					contains a reference to the "CProMoBlockModel" object 
+					representing the model for that block.
+					It is also assumed that a block view has exactly 1 model.
+
+	Usage :			Views that represent a node in a graph should be
+					derived from this class.
+
+   ========================================================================*/
 #include "stdafx.h"
 #include "ProMoBlockView.h"
 #include "ProMoNameFactory.h"
@@ -211,7 +231,7 @@ void CProMoBlockView::recomputeIntersectionLinks() {
 	for (i = 0; i < model->GetIncomingEdges()->GetSize(); i++) {
 		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetIncomingEdges()->GetAt(i));
 		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->getLastSegment();
+			CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
 			//destination: bottomright
 			CPoint pt = getIntersection(edgeView->GetRect().BottomRight(), edgeView->GetRect().TopLeft());
 			if (pt.x >= 0) {
@@ -225,7 +245,7 @@ void CProMoBlockView::recomputeIntersectionLinks() {
 	for (i = 0; i < model->GetOutgoingEdges()->GetSize(); i++) {
 		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetOutgoingEdges()->GetAt(i));
 		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->getFirstSegment();
+			CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
 			//destination: topleft
 			CPoint pt = getIntersection(edgeView->GetRect().TopLeft(), edgeView->GetRect().BottomRight());
 			if (pt.x >= 0) {
@@ -465,7 +485,7 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 		double newBottom = 0;
 		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetIncomingEdges()->GetAt(i));
 		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->getLastSegment();
+			CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
 			//destination: bottomright
 			if (!edgeView->IsSelected()) {
 				if (GetBottom() - 1 < edgeView->GetBottom() && edgeView->GetBottom() < GetBottom() + 1) {
@@ -504,7 +524,7 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 		double newLeft = 0;
 		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetOutgoingEdges()->GetAt(i));
 		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->getFirstSegment();
+			CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
 			if (!edgeView->IsSelected()) {
 				//destination: topleft
 				if (GetBottom() - 1 < edgeView->GetTop() && edgeView->GetTop() < GetBottom() + 1) {
