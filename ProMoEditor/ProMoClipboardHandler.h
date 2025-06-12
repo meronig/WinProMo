@@ -3,7 +3,7 @@
 
 #include "../DiagramEditor/DiagramClipboardHandler.h"
 
-class CProMoClipboardHandler : public CDiagramClipboardHandler
+class AFX_EXT_CLASS CProMoClipboardHandler : public CDiagramClipboardHandler
 {
 public:
 // Construction/initialization/desturction

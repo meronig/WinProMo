@@ -6,7 +6,7 @@
 // Created :	06/04/04
 //
 
-class CUndoItem : public CObject 
+class AFX_EXT_CLASS CUndoItem : public CObject
 {
 
 public:

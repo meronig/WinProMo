@@ -3,7 +3,7 @@
 
 #include "DiagramEntity.h"
 
-class CDiagramClipboardHandler {
+class AFX_EXT_CLASS CDiagramClipboardHandler {
 
 public:
 // Construction/initialization/destruction

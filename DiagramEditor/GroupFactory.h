@@ -7,7 +7,7 @@
 //
 
 
-class CGroupFactory
+class AFX_EXT_CLASS CGroupFactory
 {
 public:
 // Construction/destruction

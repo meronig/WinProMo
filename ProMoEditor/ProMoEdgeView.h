@@ -7,7 +7,7 @@
 
 #define DEHT_CENTER		10
 
-class CProMoEdgeView :
+class AFX_EXT_CLASS CProMoEdgeView :
     public CDiagramLine
 {
 public:

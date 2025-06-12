@@ -4,7 +4,7 @@
 #include "../StdAfx.h"
 #include "../DiagramEditor/DiagramEntity.h"
 
-class CProMoModel : public CObject
+class AFX_EXT_CLASS CProMoModel : public CObject
 {
 public:
 	

@@ -1,7 +1,7 @@
 #if !defined(_PROMONAMEFACTORY_H_)
 #define _PROMONAMEFACTORY_H_
 
-class CProMoNameFactory
+class AFX_EXT_CLASS CProMoNameFactory
 {
 
 public:

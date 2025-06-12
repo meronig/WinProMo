@@ -29,10 +29,10 @@
 
 #define round(a) ( int ) ( a + .5 )
 
-class CDiagramEntityContainer;
-class CDiagramPropertyDlg;
+class AFX_EXT_CLASS CDiagramEntityContainer;
+class AFX_EXT_CLASS CDiagramPropertyDlg;
 
-class CDiagramEntity : public CObject
+class AFX_EXT_CLASS CDiagramEntity : public CObject
 {
 
 friend class CDiagramEntityContainer;

@@ -5,7 +5,7 @@
 #include "ProMoEdgeView.h"
 #include "ProMoBlockModel.h"
 
-class CProMoEdgeModel : public CProMoModel
+class AFX_EXT_CLASS CProMoEdgeModel : public CProMoModel
 {
 
 public:

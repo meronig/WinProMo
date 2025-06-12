@@ -4,7 +4,7 @@
 #include "../DiagramEditor/DiagramEntity.h"
 #include "ProMoModel.h"
 
-class CProMoControlFactory {
+class AFX_EXT_CLASS CProMoControlFactory {
 
 public:
 // Implementation

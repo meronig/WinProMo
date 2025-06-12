@@ -46,7 +46,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CDiagramEditor window
 
-class CDiagramEditor : public CWnd
+class AFX_EXT_CLASS CDiagramEditor : public CWnd
 {
 	friend class CDiagramMenu;
 

@@ -7,7 +7,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // CPropertyDialog dialog
 
-class CPropertyDialog : public CDiagramPropertyDlg
+class AFX_EXT_CLASS CPropertyDialog : public CDiagramPropertyDlg
 {
 
 // Construction

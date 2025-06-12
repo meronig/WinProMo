@@ -3,9 +3,9 @@
 
 #include "ProMoModel.h"
 
-class CProMoBlockView;
+class AFX_EXT_CLASS CProMoBlockView;
 
-class CProMoBlockModel : public CProMoModel
+class AFX_EXT_CLASS CProMoBlockModel : public CProMoModel
 {
 public:
 	friend class CProMoEdgeModel;

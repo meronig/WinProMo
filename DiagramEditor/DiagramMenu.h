@@ -1,9 +1,9 @@
 #ifndef _DIAGRAMMENU_H_
 #define _DIAGRAMMENU_H_
 
-class CDiagramEditor;
+class AFX_EXT_CLASS CDiagramEditor;
 
-class CDiagramMenu
+class AFX_EXT_CLASS CDiagramMenu
 {
 
 public:

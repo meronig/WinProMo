@@ -7,7 +7,7 @@
 //
 
 
-class CTokenizer
+class AFX_EXT_CLASS CTokenizer
 {
 public:
 // Construction/destruction

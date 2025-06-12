@@ -4,7 +4,7 @@ class CDiagramEntity;
 #include "DiagramClipboardHandler.h"
 #include "UndoItem.h"
 
-class CDiagramEntityContainer {
+class AFX_EXT_CLASS CDiagramEntityContainer {
 
 public:
 

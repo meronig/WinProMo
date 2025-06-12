@@ -4,7 +4,7 @@
 #include "../DiagramEditor/DiagramEntity.h"
 #include "PropertyDialog.h"
 #include "ProMoBlockModel.h"
-class CProMoBlockView : public CDiagramEntity
+class AFX_EXT_CLASS CProMoBlockView : public CDiagramEntity
 {
 
 public:

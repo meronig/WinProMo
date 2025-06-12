@@ -3,8 +3,8 @@
 
 #include "DiagramEntity.h"
 
-class CDiagramEntity;
-class CDiagramPropertyDlg : public CDialog
+class AFX_EXT_CLASS CDiagramEntity;
+class AFX_EXT_CLASS CDiagramPropertyDlg : public CDialog
 {
 
 public:

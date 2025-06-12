@@ -5,7 +5,7 @@
 #include "../DiagramEditor/Tokenizer.h"
 #include "ProMoBlockView.h"
 
-class CProMoEntityContainer : public CDiagramEntityContainer {
+class AFX_EXT_CLASS CProMoEntityContainer : public CDiagramEntityContainer {
 public:
 	// Construction/initialization/destruction
 	CProMoEntityContainer();

@@ -5,7 +5,7 @@
 #include "HitParams.h"
 #include "HitParamsRect.h"
 
-class CDiagramLine : public CDiagramEntity
+class AFX_EXT_CLASS CDiagramLine : public CDiagramEntity
 {
 public:
 	CDiagramLine();

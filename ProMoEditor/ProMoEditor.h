@@ -7,7 +7,7 @@
 #include "ProMoControlFactory.h"
 
 
-class CProMoEditor : public CDiagramEditor
+class AFX_EXT_CLASS CProMoEditor : public CDiagramEditor
 {
 public:
 	// Construction/initialization/destruction
