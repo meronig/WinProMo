@@ -242,7 +242,8 @@ BOOL CProMoEdgeModel::CanConnectSource(CProMoModel* source)
 /* ============================================================
 	Function :		CProMoEdgeModel::CanConnectSource
 	Description :	Returns if the object being passed as input
-					parameter can be a source object
+					parameter can be a source object.
+					Override to implement diagram-specific logic.
 	Access :		Public
 
 	Return :		BOOL					-	"TRUE" if the
@@ -265,7 +266,8 @@ BOOL CProMoEdgeModel::CanConnectDestination(CProMoModel* destination)
 /* ============================================================
 	Function :		CProMoEdgeModel::CanConnectDestination
 	Description :	Returns if the object being passed as input
-					parameter can be a destination object
+					parameter can be a destination object.
+					Override to implement diagram-specific logic.
 	Access :		Public
 
 	Return :		BOOL						-	"TRUE" if 

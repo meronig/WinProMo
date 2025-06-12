@@ -91,7 +91,8 @@ BOOL CProMoBlockModel::CanBeNested(CProMoBlockModel* block)
 /* ============================================================
 	Function :		CProMoBlockModel::CanBeNested
 	Description :	Returns if the block being passed as input
-					parameter can be nested
+					parameter can be nested.
+					Override to implement diagram-specific logic.
 	Access :		Public
 
 	Return :		BOOL					-	"TRUE" if the 
