@@ -16,7 +16,7 @@ public:
 
 
 public:
-	CDiagramEntity* GetNamedObject(const CString& name) const;
+	CDiagramEntity* GetNamedView(const CString& name) const;
 	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
 
 protected:

@@ -11,39 +11,22 @@
 					Petri Nets, etc.). To achieve so, CProMoEditor extends
 					CDiagramEditor.
 	
-	Description :	REVISE CProMoEditor handles several messages and overrides
-					drawing to manage links. Links are implemented as a
-					special class, stored in a separate array in
-					CFlowchartEntityContainer. Object drawing in
-					CFlowchartEditor also draws the links.
-
-					The objects derived from CFlowchartEntity has link
-					points. Two selected and unlinked objects with free
-					link points at appropriate position can be linked. If
-					they are linked, a line is automatically drawn between
-					the objects, with an arrow head representing the
-					direction (which can be flipped).
-
-					The link can have a label, that is, a text describing
-					the link.
-
-					When objects are moved, other objects linked to the
-					moved ones might also be moved - depending on the links.
-					For example, if two objects are linked horizontally and
-					one is moved up or down, the linked object will also be
-					moved.
-
-					A special type of object is the linkable line. Linkable
-					lines are lines that can be linked to other objects,
-					even lines. They can be used to represent more complex
-					flows, such as several links converging on a single spot.
-					Lines will also be moved as other objects, but worth to
-					notice is that they will not be resized, they will keep
-					their original length and might therefore trigger
-					movements far from the current one. Linked lines can
-					only be drawn either vertically or horizontally, that is,
-					no slant is allowed - this is enforced by the editor
-					rather than the line class.
+	Description :	CProMoEditor handles several messages and overrides
+					drawing to manage nested blocks and connected edges.
+					Additionally, it decouples the visual representation
+					of the elements from their structural properties, 
+					according to the model-view principle. Therefore,
+					edge-node and parent-child links are handled by the
+					model classes, whereas their position and visual
+					appearance on the canvas is handled by view classes.
+					Model classes are not directly exposed. Instead, they
+					can be accessed through their corresponding view 
+					classes. The model-view decoupling also allows to
+					associate multiple views for each model. This makes it
+					possible to draw edges consisting in multiple linked 
+					segments (each segment being a view), each segment 
+					behaving like an independent line, yet all referring to 
+					the same model.
 
 	Usage :			CProMoEditor should be instantiated in the same way
 					as a CDiagramEditor.
@@ -98,9 +81,6 @@ CProMoEditor::~CProMoEditor()
    ============================================================*/
 {
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CProcessEditor overrides
 
 void CProMoEditor::DrawGrid(CDC* dc, CRect /*rect*/, double zoom) const
 /* ============================================================
@@ -355,8 +335,8 @@ CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL back
 void CProMoEditor::DeselectChildBlocks(CProMoBlockView* block)
 /* ============================================================
 	Function :		CProMoEditor::DeselectChildBlocks
-	Description :	Deselects all selected blocks that are
-					(grand)children of the input block.
+	Description :	Recursively deselects all blocks that are 
+					children of the input block.
 	Access :		Protected
 
 
@@ -378,8 +358,8 @@ void CProMoEditor::DeselectChildBlocks(CProMoBlockView* block)
 void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
 /* ============================================================
 	Function :		CProMoEditor::DeselectChildBlocks
-	Description :	Selects all blocks that are (grand)children
-					of the input block.
+	Description :	Recursively selects all blocks that are 
+					children of the input block.
 	Access :		Protected
 
 
@@ -878,19 +858,20 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 }
 
 
-CDiagramEntity* CProMoEditor::GetNamedObject(const CString& name) const
+CDiagramEntity* CProMoEditor::GetNamedView(const CString& name) const
 /* ============================================================
-	Function :		CProMoEditor::GetNamedObject
-	Description :	Returns the object with the name attribute
+	Function :		CProMoEditor::GetNamedView
+	Description :	Returns the element with the name attribute
 					name.
 	Access :		Protected
 
-	Return :		CDiagramEntity*	-	The object, or NULL
+	Return :		CDiagramEntity*		-	The view for the
+											element, or NULL
 											if not found.
 	Parameters :	const CString& name	-	The name of the
-											object to find.
+											element to find.
 
-	Usage :			Call to get the object with the name name,
+	Usage :			Call to get the element with the name name,
 					if it exists.
 
    ============================================================*/
@@ -947,7 +928,6 @@ void CProMoEditor::Cut()
 	}
 }
 
-//draws blocks 
 void CProMoEditor::DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const
 /* ============================================================
 	Function :		CProMoEditor::DrawObjectsR
@@ -998,7 +978,7 @@ void CProMoEditor::DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) co
 
 void CProMoEditor::ResetTarget()
 /* ============================================================
-	Function :		CProMoEditor::SetTarget
+	Function :		CProMoEditor::ResetTarget
 	Description :	Unsets the target for the current drawing 
 					operation
 	Access :		Protected
@@ -1047,7 +1027,19 @@ void CProMoEditor::SetTarget(CProMoBlockView* obj, BOOL select)
 
 }
 
-void CProMoEditor::PrepareForAlignment() {
+void CProMoEditor::PrepareForAlignment() 
+/* ============================================================
+	Function :		CProMoEditor::PrepareForAlignment
+	Description :	Deselects child blocks and selects 
+					connected edges, so that they are correctly
+					moved when the alignment takes place.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
 
 	CProMoBlockView* currObj = NULL;
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
@@ -1069,6 +1061,16 @@ void CProMoEditor::PrepareForAlignment() {
 }
 
 void CProMoEditor::AutoResizeAll()
+/* ============================================================
+	Function :		CProMoEditor::AutoResizeAll
+	Description :	Automatically resizes all blocks to prevent
+					child blocks from protruding.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	CProMoBlockView* selObj = NULL;
@@ -1237,6 +1239,27 @@ void CProMoEditor::BottomAlignSelected()
 }
 
 void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
+/* ============================================================
+	Function :		CProMoEditor::Load
+	Description :	Sets the container properties (normally 
+					the virtual size) and creates objects from 
+					their string representation in "stra".
+	Access :		Public
+
+	Return :		void
+	Parameters :	CStringArray& stra			-	The array 
+													to read
+					CProMoControlFactory& fact	-	The factory
+													object to
+													create
+													objects
+
+	Usage :			Call to load the data of the editor from a
+					"CStringArray". Virtual. Can be overridden in
+					a derived class to add non-container data
+					before and after the objects
+
+   ============================================================*/
 {
 	int max = static_cast<int>(stra.GetSize());
 	int t = 0;
@@ -1252,7 +1275,7 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
 			//check for unicity
 			CDiagramEntity* obj = fact.CreateViewFromString(str);
 			if (obj)
-				if(!GetNamedObject(obj->GetName()))
+				if(!GetNamedView(obj->GetName()))
 					AddObject(obj);
 
 			CProMoModel* model = fact.CreateModelFromString(str);
@@ -1291,7 +1314,7 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
 					tok.GetAt(0, nodeName);
 					
 					//current element is a block view
-					CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(GetNamedObject(nodeName));
+					CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(GetNamedView(nodeName));
 					if (blockView) {
 						if (size >= 8) {
 							tok.GetAt(7, modelName);
@@ -1311,7 +1334,7 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
 					}
 					
 					//current element is an edge view
-					CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedObject(nodeName));
+					CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedView(nodeName));
 					if (edgeView) {
 
 						if (size >= 10) {
@@ -1334,11 +1357,11 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
 								edgeView->SetModel(new CProMoEdgeModel);
 							}
 
-							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedObject(sourceName));
+							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedView(sourceName));
 							if (source) {
 								edgeView->SetSource(source);
 							}
-							CDiagramEntity* dest = dynamic_cast<CDiagramEntity*>(GetNamedObject(destName));
+							CDiagramEntity* dest = dynamic_cast<CDiagramEntity*>(GetNamedView(destName));
 							if (dest) {
 								edgeView->SetDestination(dest);
 							}
