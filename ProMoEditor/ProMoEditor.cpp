@@ -172,36 +172,9 @@ void CProMoEditor::SaveObjects(CStringArray& stra)
    ============================================================*/
 {
 
-	CDiagramEditor::SaveObjects(stra);
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
-
-	CObArray models;
-
-	int i;
-	for (i = 0; i < objs->GetSize(); i++) {
-		CProMoBlockView* currObjBlock = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
-		if (currObjBlock) {
-			models.Add(currObjBlock->GetModel());
-		}
-		CProMoEdgeView* currObjEdge = dynamic_cast<CProMoEdgeView*>(objs->GetAt(i));
-		if (currObjEdge) {
-			models.Add(currObjEdge->GetModel());
-		}
-	}
-
-	for (i = 0; i < models.GetSize(); i++) {
-		CProMoModel* currModel = dynamic_cast<CProMoModel*>(models.GetAt(i));
-		BOOL found = FALSE;
-		for (int j = 0; j < i; j++) {
-			CProMoModel* prevModel = dynamic_cast<CProMoModel*>(models.GetAt(j));
-			if (prevModel == currModel) {
-				found = TRUE;
-				break;
-			}
-		}
-		if (!found) {
-			stra.Add(currModel->GetString());
-		}
+	if (objs) {
+		objs->SaveObjects(stra);
 	}
 }
 
@@ -858,39 +831,6 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 }
 
 
-CDiagramEntity* CProMoEditor::GetNamedView(const CString& name) const
-/* ============================================================
-	Function :		CProMoEditor::GetNamedView
-	Description :	Returns the element with the name attribute
-					name.
-	Access :		Protected
-
-	Return :		CDiagramEntity*		-	The view for the
-											element, or NULL
-											if not found.
-	Parameters :	const CString& name	-	The name of the
-											element to find.
-
-	Usage :			Call to get the element with the name name,
-					if it exists.
-
-   ============================================================*/
-{
-
-	CDiagramEntity* result = NULL;
-
-	int count = GetObjectCount();
-	CDiagramEntity* obj;
-	for (int t = 0; t < count; t++)
-	{
-		obj = GetObject(t);
-		if (obj && obj->GetName() == name)
-			result = obj;
-	}
-
-	return result;
-
-}
 
 
 void CProMoEditor::Cut()
@@ -1084,62 +1024,6 @@ void CProMoEditor::AutoResizeAll()
 	RedrawWindow();
 }
 
-CProMoModel* CProMoEditor::GetNamedModel(const CObArray& array, const CString& name) const
-/* ============================================================
-	Function :		CProMoEditor::GetNamedModel
-	Description :	Returns the model with the name attribute
-					name.
-	Access :		Protected
-
-	Return :		CProMoModel*			-	The object, or 
-												NULL if not 
-												found.
-	Parameters :	const CObArray& array	-	Array of models
-					const CString& name		-	The name of the
-												object to find.
-
-	Usage :			Call to get the object with the name name,
-					if it exists.
-
-   ============================================================*/
-{
-	CProMoModel* result = NULL;
-
-	int count = static_cast<int>(array.GetSize());
-	CProMoModel* obj;
-	for (int t = 0; t < count; t++)
-	{
-		obj = dynamic_cast<CProMoModel*>(array.GetAt(t));
-		if (obj && obj->GetName() == name)
-			result = obj;
-	}
-
-	return result;
-}
-
-void CProMoEditor::DeleteModel(CObArray& array, const CString& name)
-/* ============================================================
-	Function :		CProMoEditor::DeleteModel
-	Description :	Deletes the model with the name name from
-					the input array
-	Access :		Protected
-
-	Return :		void
-	Parameters :	const CObArray& array	-	Array of models
-					const CString& name		-	The name of the
-												object to find.
-
-   ============================================================*/
-{
-	int count = static_cast<int>(array.GetSize());
-	CProMoModel* obj;
-	for (int t = 0; t < count; t++)
-	{
-		obj = dynamic_cast<CProMoModel*>(array.GetAt(t));
-		if (obj && obj->GetName() == name)
-			array.RemoveAt(t);
-	}
-}
 
 
 void CProMoEditor::LeftAlignSelected()
@@ -1261,150 +1145,8 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
 
    ============================================================*/
 {
-	int max = static_cast<int>(stra.GetSize());
-	int t = 0;
-
-	CObArray models;
-
-	//First read: create model and view elements
-	for (t = 0; t < max; t++)
-	{
-		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			//check for unicity
-			CDiagramEntity* obj = fact.CreateViewFromString(str);
-			if (obj)
-				if(!GetNamedView(obj->GetName()))
-					AddObject(obj);
-
-			CProMoModel* model = fact.CreateModelFromString(str);
-			if (model)
-				if(!GetNamedModel(models, model->GetName()))
-					models.Add(model);
-		}
-	}
-
-	//Second read: create logical links between elements
-	for (t = 0; t < max; t++)
-	{
-		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			BOOL result = FALSE;
-			CTokenizer main(str, _T(":"));
-			CString header;
-			CString data;
-			if (main.GetSize() == 2)
-			{
-				main.GetAt(0, header);
-				main.GetAt(1, data);
-				header.TrimLeft();
-				header.TrimRight();
-				data.TrimLeft();
-				data.TrimRight();
-
-				CString nodeName;
-				CString modelName;
-
-				CTokenizer tok(data.Left(data.GetLength() - 1));
-				int size = tok.GetSize();
-
-				if (size >= 1) {
-					tok.GetAt(0, nodeName);
-					
-					//current element is a block view
-					CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(GetNamedView(nodeName));
-					if (blockView) {
-						if (size >= 8) {
-							tok.GetAt(7, modelName);
-							CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, modelName));
-							if (blockModel) {
-								//required to avoid dangling pointers in case of malformed input files
-								CProMoModel* oldMod = blockView->GetModel();
-								if(oldMod)
-									DeleteModel(models, oldMod->GetName());
-								blockView->SetModel(blockModel);
-							}
-							else {
-								//input file is malformed: create a new model to avoid inconsistencies
-								blockView->SetModel(new CProMoBlockModel);
-							}
-						}
-					}
-					
-					//current element is an edge view
-					CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedView(nodeName));
-					if (edgeView) {
-
-						if (size >= 10) {
-							CString modelName;
-							CString sourceName;
-							CString destName;
-							tok.GetAt(7, modelName);
-							tok.GetAt(8, sourceName);
-							tok.GetAt(9, destName);
-
-							CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, modelName));
-							if (edgeModel) {
-								CProMoModel* oldMod = edgeView->GetModel();
-								if (oldMod)
-									DeleteModel(models, oldMod->GetName());
-								edgeView->SetModel(edgeModel);
-							}
-							else {
-								//input file is malformed: create a new model to avoid inconsistencies
-								edgeView->SetModel(new CProMoEdgeModel);
-							}
-
-							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedView(sourceName));
-							if (source) {
-								edgeView->SetSource(source);
-							}
-							CDiagramEntity* dest = dynamic_cast<CDiagramEntity*>(GetNamedView(destName));
-							if (dest) {
-								edgeView->SetDestination(dest);
-							}
-						}
-					}
-
-					//current element is a block model
-					CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, nodeName));
-					if (blockModel) {
-						if (size >= 2) {
-							CString parentName;
-							tok.GetAt(1, parentName);
-
-							CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
-							if (parent) {
-								blockModel->SetParentBlock(parent);
-							}
-						}
-					}
-
-					//current element is an edge model
-					CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, nodeName));
-					if (edgeModel) {
-						if (size >= 3) {
-							CString sourceName;
-							CString destName;
-							tok.GetAt(1, sourceName);
-							tok.GetAt(2, destName);
-
-							CProMoBlockModel* source = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, sourceName));
-							if (source) {
-								edgeModel->SetSource(source);
-							}
-							CProMoBlockModel* dest = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, destName));
-							if (dest) {
-								edgeModel->SetDestination(dest);
-							}
-						}
-					}
-				}
-
-			}
-		}
-	}
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	if (objs)
+		objs->Load(stra, fact);
 
 }

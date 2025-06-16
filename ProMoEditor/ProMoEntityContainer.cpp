@@ -37,6 +37,24 @@ CProMoEntityContainer::CProMoEntityContainer()
    ============================================================*/
 {
 	SetUndoStackSize(10);
+	m_modelType = _T("promo");
+}
+
+CProMoEntityContainer::CProMoEntityContainer(CString modelType)
+/* ============================================================
+	Function :		CProMoEntityContainer::CProMoEntityContainer
+	Description :	constructor
+
+	Return :		void
+	Parameters :	CString modelType	-	string representing
+											the type of model
+
+	Usage :
+
+   ============================================================*/
+{
+	SetUndoStackSize(10);
+	m_modelType = modelType;
 }
 
 CProMoEntityContainer::~CProMoEntityContainer()
@@ -188,6 +206,256 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 		}
 	}
 
+}
+
+void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory& fact)
+/* ============================================================
+	Function :		CProMoEntityContainer::Load
+	Description :	Sets the container properties (normally
+					the virtual size) and creates objects from
+					their string representation in "stra".
+	Access :		Public
+
+	Return :		void
+	Parameters :	CStringArray& stra			-	The array
+													to read
+					CProMoControlFactory& fact	-	The factory
+													object to
+													create
+													objects
+
+	Usage :			Call to load the data of the container from a
+					"CStringArray". Virtual. Can be overridden in
+					a derived class to add non-container data
+					before and after the objects
+
+   ============================================================*/
+{
+	int max = static_cast<int>(stra.GetSize());
+	int t = 0;
+
+	CObArray models;
+
+	//First read: create model and view elements
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			//check for unicity
+			CDiagramEntity* obj = fact.CreateViewFromString(str);
+			if (obj)
+				if (!GetNamedView(obj->GetName()))
+					Add(obj);
+
+			CProMoModel* model = fact.CreateModelFromString(str);
+			if (model)
+				if (!GetNamedModel(models, model->GetName()))
+					models.Add(model);
+		}
+	}
+
+	//Second read: create logical links between elements
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			BOOL result = FALSE;
+			CTokenizer main(str, _T(":"));
+			CString header;
+			CString data;
+			if (main.GetSize() == 2)
+			{
+				main.GetAt(0, header);
+				main.GetAt(1, data);
+				header.TrimLeft();
+				header.TrimRight();
+				data.TrimLeft();
+				data.TrimRight();
+
+				CString nodeName;
+				CString modelName;
+
+				CTokenizer tok(data.Left(data.GetLength() - 1));
+				int size = tok.GetSize();
+
+				if (size >= 1) {
+					tok.GetAt(0, nodeName);
+
+					//current element is a block view
+					CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(GetNamedView(nodeName));
+					if (blockView) {
+						if (size >= 8) {
+							tok.GetAt(7, modelName);
+							CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, modelName));
+							if (blockModel) {
+								//required to avoid dangling pointers in case of malformed input files
+								CProMoModel* oldMod = blockView->GetModel();
+								if (oldMod)
+									DeleteModel(models, oldMod->GetName());
+								blockView->SetModel(blockModel);
+							}
+							else {
+								//input file is malformed: create a new model to avoid inconsistencies
+								blockView->SetModel(new CProMoBlockModel);
+							}
+						}
+					}
+
+					//current element is an edge view
+					CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedView(nodeName));
+					if (edgeView) {
+
+						if (size >= 10) {
+							CString modelName;
+							CString sourceName;
+							CString destName;
+							tok.GetAt(7, modelName);
+							tok.GetAt(8, sourceName);
+							tok.GetAt(9, destName);
+
+							CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, modelName));
+							if (edgeModel) {
+								CProMoModel* oldMod = edgeView->GetModel();
+								if (oldMod)
+									DeleteModel(models, oldMod->GetName());
+								edgeView->SetModel(edgeModel);
+							}
+							else {
+								//input file is malformed: create a new model to avoid inconsistencies
+								edgeView->SetModel(new CProMoEdgeModel);
+							}
+
+							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedView(sourceName));
+							if (source) {
+								edgeView->SetSource(source);
+							}
+							CDiagramEntity* dest = dynamic_cast<CDiagramEntity*>(GetNamedView(destName));
+							if (dest) {
+								edgeView->SetDestination(dest);
+							}
+						}
+					}
+
+					//current element is a block model
+					CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, nodeName));
+					if (blockModel) {
+						if (size >= 2) {
+							CString parentName;
+							tok.GetAt(1, parentName);
+
+							CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
+							if (parent) {
+								blockModel->SetParentBlock(parent);
+							}
+						}
+					}
+
+					//current element is an edge model
+					CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, nodeName));
+					if (edgeModel) {
+						if (size >= 3) {
+							CString sourceName;
+							CString destName;
+							tok.GetAt(1, sourceName);
+							tok.GetAt(2, destName);
+
+							CProMoBlockModel* source = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, sourceName));
+							if (source) {
+								edgeModel->SetSource(source);
+							}
+							CProMoBlockModel* dest = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, destName));
+							if (dest) {
+								edgeModel->SetDestination(dest);
+							}
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	SetModified(FALSE);
+}
+
+void CProMoEntityContainer::Save(CStringArray& stra)
+/* ============================================================
+	Function :		CProMoEntityContainer::Save
+	Description :	Saves a string representation of the
+					container (normally the virtual size) and
+					all objects to "stra".
+	Access :		Public
+
+	Return :		void
+	Parameters :	CStringArray& stra	-	The array to fill
+
+	Usage :			Call to save the data of the container to a
+					"CStringArray". Virtual. Can be overridden in
+					a derived class to add non-container data
+					before and after the objects
+
+   ============================================================*/
+{
+	stra.Add(GetString());
+	
+	SaveObjects(stra);
+
+	SetModified(FALSE);
+}
+
+void CProMoEntityContainer::SaveObjects(CStringArray& stra)
+/* ============================================================
+	Function :		CProMoEntityContainer::SaveObjects
+	Description :	Saves a string representation of the
+					current objects to "stra", one object in
+					each string.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CStringArray& stra	-	The array to fill
+
+	Usage :			Virtual. Can be overridden in a derived
+					class to add more per-object information to
+					the save array.
+
+   ============================================================*/
+{
+	int count = 0;
+	CDiagramEntity* obj;
+	while ((obj = GetAt(count++)))
+		stra.Add(obj->GetString());
+
+
+	CObArray models;
+
+	int i;
+	for (i = 0; i < GetSize(); i++) {
+		CProMoBlockView* currObjBlock = dynamic_cast<CProMoBlockView*>(GetAt(i));
+		if (currObjBlock) {
+			models.Add(currObjBlock->GetModel());
+		}
+		CProMoEdgeView* currObjEdge = dynamic_cast<CProMoEdgeView*>(GetAt(i));
+		if (currObjEdge) {
+			models.Add(currObjEdge->GetModel());
+		}
+	}
+
+	for (i = 0; i < models.GetSize(); i++) {
+		CProMoModel* currModel = dynamic_cast<CProMoModel*>(models.GetAt(i));
+		BOOL found = FALSE;
+		for (int j = 0; j < i; j++) {
+			CProMoModel* prevModel = dynamic_cast<CProMoModel*>(models.GetAt(j));
+			if (prevModel == currModel) {
+				found = TRUE;
+				break;
+			}
+		}
+		if (!found) {
+			stra.Add(currModel->GetString());
+		}
+	}
 }
 
 void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder) 
@@ -513,4 +781,170 @@ void CProMoEntityContainer::AddCurrentToStack(CObArray& arr)
 
 		}
 	}
+}
+
+CDiagramEntity* CProMoEntityContainer::GetNamedView(const CString& name) const
+/* ============================================================
+	Function :		CProMoEntityContainer::GetNamedView
+	Description :	Returns the element with the name attribute
+					name.
+	Access :		Protected
+
+	Return :		CDiagramEntity*		-	The view for the
+											element, or NULL
+											if not found.
+	Parameters :	const CString& name	-	The name of the
+											element to find.
+
+	Usage :			Call to get the element with the name name,
+					if it exists.
+
+   ============================================================*/
+{
+
+	CDiagramEntity* result = NULL;
+
+	int count = GetSize();
+	CDiagramEntity* obj;
+	for (int t = 0; t < count; t++)
+	{
+		obj = GetAt(t);
+		if (obj && obj->GetName() == name)
+			result = obj;
+	}
+
+	return result;
+
+}
+
+CProMoModel* CProMoEntityContainer::GetNamedModel(const CObArray& array, const CString& name) const
+/* ============================================================
+	Function :		CProMoEntityContainer::GetNamedModel
+	Description :	Returns the model with the name attribute
+					name.
+	Access :		Protected
+
+	Return :		CProMoModel*			-	The object, or
+												NULL if not
+												found.
+	Parameters :	const CObArray& array	-	Array of models
+					const CString& name		-	The name of the
+												object to find.
+
+	Usage :			Call to get the object with the name name,
+					if it exists.
+
+   ============================================================*/
+{
+	CProMoModel* result = NULL;
+
+	int count = static_cast<int>(array.GetSize());
+	CProMoModel* obj;
+	for (int t = 0; t < count; t++)
+	{
+		obj = dynamic_cast<CProMoModel*>(array.GetAt(t));
+		if (obj && obj->GetName() == name)
+			result = obj;
+	}
+
+	return result;
+}
+
+void CProMoEntityContainer::DeleteModel(CObArray& array, const CString& name)
+/* ============================================================
+	Function :		CProMoEntityContainer::DeleteModel
+	Description :	Deletes the model with the name name from
+					the input array
+	Access :		Protected
+
+	Return :		void
+	Parameters :	const CObArray& array	-	Array of models
+					const CString& name		-	The name of the
+												object to find.
+
+   ============================================================*/
+{
+	int count = static_cast<int>(array.GetSize());
+	CProMoModel* obj;
+	for (int t = 0; t < count; t++)
+	{
+		obj = dynamic_cast<CProMoModel*>(array.GetAt(t));
+		if (obj && obj->GetName() == name)
+			array.RemoveAt(t);
+	}
+}
+
+CString CProMoEntityContainer::GetString() const
+/* ============================================================
+	Function :		CProMoEntityContainer::GetString
+	Description :	Returns a string representation of the
+					virtual paper size
+	Access :		Public
+
+	Return :		CString	-	Resulting string
+	Parameters :	none
+
+	Usage :			Overridden to save model type information.
+
+   ============================================================*/
+{
+
+	CString str;
+	str.Format(_T("%s:%i,%i;"), (LPCTSTR)m_modelType, GetVirtualSize().cx, GetVirtualSize().cy);
+	return str;
+
+}
+
+
+BOOL CProMoEntityContainer::FromString(const CString& str)
+/* ============================================================
+	Function :		CProMoEntityContainer::FromString
+	Description :	Sets the virtual paper size from a string.
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the string
+											represented a
+											paper.
+	Parameters :	const CString& str	-	The string
+											representation.
+
+	Usage :			Overridden to check for model type 
+					information.
+
+   ============================================================*/
+{
+
+	BOOL result = FALSE;
+
+	CTokenizer main(str, _T(":"));
+	CString header;
+	CString data;
+	if (main.GetSize() == 2)
+	{
+		main.GetAt(0, header);
+		main.GetAt(1, data);
+		header.TrimLeft();
+		header.TrimRight();
+		data.TrimLeft();
+		data.TrimRight();
+		if (header == m_modelType)
+		{
+			CTokenizer tok(data.Left(data.GetLength() - 1));
+			int size = tok.GetSize();
+			if (size == 2)
+			{
+				int right;
+				int bottom;
+
+				tok.GetAt(0, right);
+				tok.GetAt(1, bottom);
+
+				SetVirtualSize(CSize(right, bottom));
+				result = TRUE;
+			}
+		}
+	}
+
+	return result;
+
 }

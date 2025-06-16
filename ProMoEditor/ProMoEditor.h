@@ -16,7 +16,6 @@ public:
 
 
 public:
-	CDiagramEntity* GetNamedView(const CString& name) const;
 	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
 
 protected:
@@ -30,9 +29,6 @@ protected:
 	virtual void SelectChildBlocks(CProMoBlockView* block);
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
-
-	CProMoModel* GetNamedModel(const CObArray& array, const CString& name) const;
-	void DeleteModel(CObArray& array, const CString& name);
 
 // Overrides:
 public:
