@@ -23,8 +23,9 @@
 #include "ProMoBlockView.h"
 #include "ProMoEdgeModel.h"
 #include "ProMoEdgeView.h"
+#include "ProMoClipboardHandler.h"
 
-CProMoEntityContainer::CProMoEntityContainer()
+CProMoEntityContainer::CProMoEntityContainer(CDiagramClipboardHandler* clip)
 /* ============================================================
 	Function :		CProMoEntityContainer::CProMoEntityContainer
 	Description :	constructor
@@ -36,11 +37,12 @@ CProMoEntityContainer::CProMoEntityContainer()
 
    ============================================================*/
 {
+	SetClipboardHandler(clip);
 	SetUndoStackSize(10);
 	m_modelType = _T("promo");
 }
 
-CProMoEntityContainer::CProMoEntityContainer(CString modelType)
+CProMoEntityContainer::CProMoEntityContainer(CString modelType, CDiagramClipboardHandler* clip)
 /* ============================================================
 	Function :		CProMoEntityContainer::CProMoEntityContainer
 	Description :	constructor
@@ -53,6 +55,7 @@ CProMoEntityContainer::CProMoEntityContainer(CString modelType)
 
    ============================================================*/
 {
+	SetClipboardHandler(clip);
 	SetUndoStackSize(10);
 	m_modelType = modelType;
 }
@@ -144,18 +147,21 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
 		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(i));
 		if (edgeView && newEdgeView) {
-			if (edgeView->GetSource() != NULL) {
-				for (int j = 0; j < source->GetSize(); j++) {
-					CProMoEdgeView* sourceEdgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(j));
-					CProMoEdgeView* newSourceEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(j));
+			for (int j = 0; j < source->GetSize(); j++) {
+				CProMoEdgeView* sourceEdgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(j));
+				CProMoEdgeView* newSourceEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(j));
+				if (sourceEdgeView && newSourceEdgeView) {
 					if (edgeView->GetSource() == sourceEdgeView) {
 						newEdgeView->SetSource(newSourceEdgeView);
-						newEdgeView->SetModel(newSourceEdgeView->GetModel());
+					}
+					if (edgeView->GetModel() == sourceEdgeView->GetModel()) {
+						newSourceEdgeView->SetModel(newEdgeView->GetModel());
 					}
 				}
 			}
 		}
 	}
+
 	for (i = 0; i < source->GetSize(); i++) {
 		//preserve links for edgeModels
 		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
@@ -946,5 +952,46 @@ BOOL CProMoEntityContainer::FromString(const CString& str)
 	}
 
 	return result;
+
+}
+
+CString CProMoEntityContainer::GetModelType() const
+/* ============================================================
+	Function :		CProMoEntityContainer::GetModelType
+	Description :	Returns a string representation of the
+					type of model
+	Access :		Public
+
+	Return :		CString	-	Resulting string
+	Parameters :	none
+   ============================================================*/
+{
+
+	return m_modelType;
+
+}
+
+int CProMoEntityContainer::ObjectsInPaste()
+/* ============================================================
+	Function :		CProMoEntityContainer::ObjectsInPaste
+	Description :	Returns the number of objects in the paste
+					array.
+	Access :		Public
+
+	Return :		int		-	The number of objects.
+	Parameters :	none
+
+	Usage :			Overridden to return 0 in case of elements
+					incompatible with current model type.
+
+   ============================================================*/
+{
+	CProMoClipboardHandler* clip = dynamic_cast<CProMoClipboardHandler*>(GetClipboardHandler());
+	if (clip) {
+		if (clip->GetModelType() != m_modelType) {
+			return 0;
+		}
+	}
+	return CDiagramEntityContainer::ObjectsInPaste();
 
 }

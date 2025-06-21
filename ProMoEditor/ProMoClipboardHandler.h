@@ -10,6 +10,8 @@ public:
 	CProMoClipboardHandler();
 	virtual ~CProMoClipboardHandler();
 
+	virtual CString GetModelType();
+
 // Overrides
 	virtual void	Copy( CDiagramEntity* obj );
 	virtual void	Paste( CDiagramEntityContainer* container );
@@ -17,6 +19,7 @@ public:
 
 private:
 // Private data
+	CString m_modelType;
 	
 };
 

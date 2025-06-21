@@ -49,6 +49,22 @@ CProMoClipboardHandler::~CProMoClipboardHandler()
 
 }
 
+CString CProMoClipboardHandler::GetModelType()
+/* ============================================================
+	Function :		CProMoClipboardHandler::GetModelType
+	Description :	Returns a string representation of the
+					type of model from which the elements were
+					copied into the clipboard.
+
+	Access :		Public
+
+	Return :		CString	-	Resulting string
+	Parameters :	none
+   ============================================================*/
+{
+	return m_modelType;
+}
+
 void CProMoClipboardHandler::Copy( CDiagramEntity* obj )
 /* ============================================================
 	Function :		CProMoClipboardHandler::Copy
@@ -88,56 +104,63 @@ void CProMoClipboardHandler::Paste( CDiagramEntityContainer* container )
    ============================================================*/
 {
 	CProMoEntityContainer* processContainer = static_cast<CProMoEntityContainer*>(container);
-	
-	CDWordArray	oldgroup;
-	CDWordArray	newgroup;
 
-	CObArray* paste = GetData();
-	CObArray clones;
-	int t = 0;
+	if (processContainer) {
 
-	int max = static_cast<int>(paste->GetSize());
-	for (t = 0; t < max; t++)
-	{
-		CDiagramEntity* obj = static_cast<CDiagramEntity*>(paste->GetAt(t));
-		if (obj->GetGroup())
-		{
-			int size = static_cast<int>(oldgroup.GetSize());
-			BOOL found = FALSE;
-			for (int i = 0; i < size; i++)
-				if (obj->GetGroup() == static_cast<int> (oldgroup[i]))
-					found = TRUE;
+		if (m_modelType == processContainer->GetModelType()) {
 
-			if (!found)
+			CDWordArray	oldgroup;
+			CDWordArray	newgroup;
+
+			CObArray* paste = GetData();
+			CObArray clones;
+			int t = 0;
+
+			int max = static_cast<int>(paste->GetSize());
+			for (t = 0; t < max; t++)
 			{
-				oldgroup.Add(obj->GetGroup());
-				newgroup.Add(CGroupFactory::GetNewGroup());
+				CDiagramEntity* obj = static_cast<CDiagramEntity*>(paste->GetAt(t));
+				if (obj->GetGroup())
+				{
+					int size = static_cast<int>(oldgroup.GetSize());
+					BOOL found = FALSE;
+					for (int i = 0; i < size; i++)
+						if (obj->GetGroup() == static_cast<int> (oldgroup[i]))
+							found = TRUE;
+
+					if (!found)
+					{
+						oldgroup.Add(obj->GetGroup());
+						newgroup.Add(CGroupFactory::GetNewGroup());
+					}
+				}
 			}
+
+			for (t = 0; t < max; t++)
+			{
+				CDiagramEntity* obj = static_cast<CDiagramEntity*>(paste->GetAt(t));
+				CDiagramEntity* clone = obj->Clone();
+				clones.Add(clone);
+
+				int group = 0;
+				if (obj->GetGroup())
+				{
+					int size = static_cast<int>(oldgroup.GetSize());
+					for (int i = 0; i < size; i++)
+						if (obj->GetGroup() == static_cast<int>(oldgroup[i]))
+							group = newgroup[i];
+				}
+
+				clone->SetGroup(group);
+				clone->SetParent(processContainer);
+				processContainer->Add(clone);
+			}
+
+			processContainer->ReplicateRelations(paste, &clones);
+
 		}
+
 	}
-
-	for (t = 0; t < max; t++)
-	{
-		CDiagramEntity* obj = static_cast<CDiagramEntity*>(paste->GetAt(t));
-		CDiagramEntity* clone = obj->Clone();
-		clones.Add(clone);
-
-		int group = 0;
-		if (obj->GetGroup())
-		{
-			int size = static_cast<int>(oldgroup.GetSize());
-			for (int i = 0; i < size; i++)
-				if (obj->GetGroup() == static_cast<int>(oldgroup[i]))
-					group = newgroup[i];
-		}
-
-		clone->SetGroup(group);
-		clone->SetParent(processContainer);
-		processContainer->Add(clone);
-	}
-	
-	processContainer->ReplicateRelations(paste, &clones);
-
 	
 }
 
@@ -161,23 +184,27 @@ void CProMoClipboardHandler::CopyAllSelected( CDiagramEntityContainer* container
 	
 	CDiagramClipboardHandler::CopyAllSelected( container );
 	CProMoEntityContainer* processContainer = static_cast< CProMoEntityContainer* >( container );
-	
-	CObArray originals;
-	CObArray* paste = GetData();
-	CObArray* arr = processContainer->GetData();
 
-	int max = static_cast<int>(arr->GetSize());
-	
-	for (int t = 0; t < max; t++)
-	{
-		CDiagramEntity* obj = static_cast<CDiagramEntity*>(arr->GetAt(t));
-		if (obj->IsSelected())
+	if (processContainer) {
+		m_modelType = processContainer->GetModelType();
+
+		CObArray originals;
+		CObArray* paste = GetData();
+		CObArray* arr = processContainer->GetData();
+
+		int max = static_cast<int>(arr->GetSize());
+
+		for (int t = 0; t < max; t++)
 		{
-			originals.Add(obj);
+			CDiagramEntity* obj = static_cast<CDiagramEntity*>(arr->GetAt(t));
+			if (obj->IsSelected())
+			{
+				originals.Add(obj);
+			}
 		}
+
+		processContainer->ReplicateRelations(&originals, paste);
 	}
-	
-	processContainer->ReplicateRelations(&originals, paste);
 
 }
 

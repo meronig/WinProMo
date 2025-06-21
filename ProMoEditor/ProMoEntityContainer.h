@@ -9,8 +9,8 @@
 class AFX_EXT_CLASS CProMoEntityContainer : public CDiagramEntityContainer {
 public:
 	// Construction/initialization/destruction
-	CProMoEntityContainer();
-	CProMoEntityContainer(CString modelType);
+	CProMoEntityContainer(CDiagramClipboardHandler* clip = NULL);
+	CProMoEntityContainer(CString modelType, CDiagramClipboardHandler* clip = NULL);
 	virtual ~CProMoEntityContainer();
 
 	virtual void Reorder();
@@ -22,7 +22,8 @@ public:
 	virtual void Save(CStringArray& stra);
 	virtual void SaveObjects(CStringArray& stra);
 
-	CDiagramEntity* GetNamedView(const CString& name) const;
+	virtual CDiagramEntity* GetNamedView(const CString& name) const;
+	virtual CString GetModelType() const;
 
 protected:
 	CProMoModel* GetNamedModel(const CObArray& array, const CString& name) const;
@@ -41,6 +42,8 @@ public:
 
 	virtual CString GetString() const;
 	virtual BOOL FromString(const CString& str);
+
+	virtual int ObjectsInPaste();
 
 protected:
 	void			AddCurrentToStack(CObArray& arr);
