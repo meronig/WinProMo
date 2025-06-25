@@ -207,7 +207,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 				// We found the object that was clicked
 				if (!currObj->IsSelected()) {
 					//drawing a new element
-					if (IsDrawing()) {
+					if ((GetInteractMode() == MODE_DRAWING)) {
 						// new block
 						CProMoBlockView* newObj = dynamic_cast<CProMoBlockView*>(GetDrawingObject());
 						if (newObj) {

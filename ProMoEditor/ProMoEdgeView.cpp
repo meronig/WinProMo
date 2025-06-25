@@ -106,10 +106,7 @@ CDiagramEntity* CProMoEdgeView::Clone()
 
 	CProMoEdgeView* obj = new CProMoEdgeView;
 	obj->Copy(this);
-	obj->m_source = NULL;
-	obj->m_dest = NULL;
 	obj->SetName(CProMoNameFactory::GetID());
-	obj->SetModel(new CProMoEdgeModel());
 	return obj;
 }
 

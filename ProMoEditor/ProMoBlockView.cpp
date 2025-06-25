@@ -577,7 +577,6 @@ CDiagramEntity* CProMoBlockView::Clone()
 	//Hierarchy is not copied: if multiple blocks are selected, they become root nodes
 	CProMoBlockView* obj = new CProMoBlockView;
 	obj->Copy(this);
-	obj->SetModel(new CProMoBlockModel());
 	obj->SetName(CProMoNameFactory::GetID());
 	return obj;
 

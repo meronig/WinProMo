@@ -90,8 +90,6 @@ CProMoModel* CProMoEdgeModel::Clone()
 {
 
 	CProMoEdgeModel* obj = new CProMoEdgeModel;
-	obj->m_source = NULL;
-	obj->m_dest = NULL;
 	return obj;
 }
 

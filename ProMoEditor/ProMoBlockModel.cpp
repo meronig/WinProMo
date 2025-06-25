@@ -82,8 +82,6 @@ CProMoModel* CProMoBlockModel::Clone() {
 
    ============================================================*/
 	CProMoBlockModel* obj = new CProMoBlockModel;
-	obj->m_parentBlock = NULL;
-	obj->m_subblocks.RemoveAll();
 	return obj;
 }
 
