@@ -197,6 +197,7 @@
     <ClCompile Include="DiagramEditor\GroupFactory.cpp" />
     <ClCompile Include="DiagramEditor\Tokenizer.cpp" />
     <ClCompile Include="DiagramEditor\UndoItem.cpp" />
+    <ClCompile Include="WinProMoDocTemplate.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockModel.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockView.cpp" />
     <ClCompile Include="ProMoEditor\ProMoClipboardHandler.cpp" />
@@ -210,6 +211,8 @@
     <ClCompile Include="ProMoEditor\PropertyDialog.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="WinProMo.cpp" />
+    <ClCompile Include="WinProMoDoc.cpp" />
+    <ClCompile Include="WinProMoView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\WinProMo.rc2" />
@@ -228,6 +231,7 @@
     <ClInclude Include="DiagramEditor\HitParamsRect.h" />
     <ClInclude Include="DiagramEditor\Tokenizer.h" />
     <ClInclude Include="DiagramEditor\UndoItem.h" />
+    <ClInclude Include="WinProMoDocTemplate.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockModel.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockView.h" />
     <ClInclude Include="ProMoEditor\ProMoClipboardHandler.h" />
@@ -241,9 +245,15 @@
     <ClInclude Include="ProMoEditor\PropertyDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="WinProMoDoc.h" />
+    <ClInclude Include="WinProMoPluginInterface.h" />
+    <ClInclude Include="WinProMoView.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinProMo.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\DiagramEditorDemo.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

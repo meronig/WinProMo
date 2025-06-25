@@ -224,14 +224,16 @@ public:
 	virtual void Save( CStringArray& stra );
 	virtual BOOL FromString( const CString& str );
 
+	virtual			CDiagramEntity* GetDrawingObject();
+
+
 protected:
 	virtual void	SaveObjects( CStringArray& stra );
 
 	virtual void	SetInteractMode( int interactMode, int subMode = 0 );
 	virtual int		GetInteractMode() const;
 	virtual int		GetSubMode() const;
-	virtual			CDiagramEntity* GetDrawingObject();
-
+	
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CDiagramEditor)
