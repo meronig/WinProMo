@@ -444,13 +444,84 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 		}
 
 		CDiagramEditor::OnMouseMove(nFlags, point);
+
+		CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(element);
+		if (block) {
+			//handle shift key for nodes: keep proportions
+			//note: always enabled if the block says so
+			if ((nFlags & MK_SHIFT) == MK_SHIFT || block->HasLockedProportions()) {
+				double oldRatio = (oldBottom - oldTop) / (oldRight - oldLeft);
+				double deltaX = 0;
+				double deltaY = 0;
+				if (GetSubMode() == DEHT_TOPMIDDLE) {
+					deltaY = (oldTop - block->GetTop()) / oldRatio;
+					block->SetLeft(oldLeft - deltaY / 2);
+					block->SetRight(oldRight + deltaY / 2);
+				}
+				else if (GetSubMode() == DEHT_BOTTOMMIDDLE) {
+					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
+					block->SetLeft(oldLeft - deltaY / 2);
+					block->SetRight(oldRight + deltaY / 2);
+				}
+				else if (GetSubMode() == DEHT_LEFTMIDDLE) {
+					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
+					block->SetTop(oldTop - deltaX / 2);
+					block->SetBottom(oldBottom + deltaX / 2);
+				}
+				else if (GetSubMode() == DEHT_RIGHTMIDDLE) {
+					deltaX = (block->GetRight() - oldRight) * oldRatio;
+					block->SetTop(oldTop - deltaX / 2);
+					block->SetBottom(oldBottom + deltaX / 2);
+				}
+				else if (GetSubMode() == DEHT_TOPLEFT) {
+					deltaY = (oldTop - block->GetTop()) / oldRatio;
+					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
+					if (fabs(oldTop - point.y) < fabs(oldLeft - point.x)) {
+						block->SetLeft(oldLeft - deltaY);
+					}
+					else {
+						block->SetTop(oldTop - deltaX);
+					}
+				}
+				else if (GetSubMode() == DEHT_TOPRIGHT) {
+					deltaY = (oldTop - block->GetTop()) / oldRatio;
+					deltaX = (block->GetRight() - oldRight) * oldRatio;
+					if (fabs(oldTop - point.y) < fabs(oldRight - point.x)) {
+						block->SetRight(oldRight + deltaY);
+					}
+					else {
+						block->SetTop(oldTop - deltaX);
+					}
+				}
+				else if (GetSubMode() == DEHT_BOTTOMLEFT) {
+					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
+					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
+					if (fabs(oldBottom - point.y) < fabs(oldLeft - point.x)) {
+						block->SetLeft(oldLeft - deltaY);
+					}
+					else {
+						block->SetBottom(oldBottom + deltaX);
+					}
+				}
+				else if (GetSubMode() == DEHT_BOTTOMRIGHT) {
+					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
+					deltaX = (block->GetRight() - oldRight) * oldRatio;
+					if (fabs(oldBottom - point.y) < fabs(oldRight - point.x)) {
+						block->SetRight(oldRight + deltaY);
+					}
+					else {
+						block->SetBottom(oldBottom + deltaX);
+					}
+				}
+			}
+		}
+		
 	
-		// when resizing an element, modify the behavior if SHIFT key is pressed
-		if ((nFlags & MK_SHIFT) == MK_SHIFT) {
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(element);
+		if (edge) {
 
 			// handle shift key for edges: mainly snap them to horizontal, vertical or 45 degrees diagonal lines
-			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(element);
-			if (edge) {
+			if ((nFlags & MK_SHIFT) == MK_SHIFT) {
 				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
 					if ((fabs(edge->GetBottom() - edge->GetTop())) / 2 > fabs(edge->GetLeft() - edge->GetRight())) {
 						edge->SetRight(edge->GetLeft());
@@ -505,78 +576,7 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 					}
 				}
 			}
-			//handle shift key for nodes: keep proportions
-			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(element);
-			if (block) {
-				double oldRatio = (oldBottom - oldTop) / (oldRight - oldLeft);
-				double deltaX = 0;
-				double deltaY = 0;
-				if (GetSubMode() == DEHT_TOPMIDDLE) {
-					deltaY = (oldTop - block->GetTop()) / oldRatio;
-					block->SetLeft(oldLeft - deltaY / 2);
-					block->SetRight(oldRight + deltaY / 2);
-				}
-				else if (GetSubMode() == DEHT_BOTTOMMIDDLE) {
-					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
-					block->SetLeft(oldLeft - deltaY / 2);
-					block->SetRight(oldRight + deltaY / 2);
-				}
-				else if (GetSubMode() == DEHT_LEFTMIDDLE) {
-					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
-					block->SetTop(oldTop - deltaX / 2);
-					block->SetBottom(oldBottom + deltaX / 2);
-				}
-				else if (GetSubMode() == DEHT_RIGHTMIDDLE) {
-					deltaX = (block->GetRight() - oldRight) * oldRatio;
-					block->SetTop(oldTop - deltaX / 2);
-					block->SetBottom(oldBottom + deltaX / 2);
 
-				}
-				else if (GetSubMode() == DEHT_TOPLEFT) {
-					deltaY = (oldTop - block->GetTop()) / oldRatio;
-					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
-					if (fabs(oldTop - point.y) < fabs(oldLeft - point.x)) {
-						block->SetLeft(oldLeft - deltaY);
-					}
-					else {
-						block->SetTop(oldTop - deltaX);
-					}
-				}
-				else if (GetSubMode() == DEHT_TOPRIGHT) {
-					deltaY = (oldTop - block->GetTop()) / oldRatio;
-					deltaX = (block->GetRight() - oldRight) * oldRatio;
-					if (fabs(oldTop - point.y) < fabs(oldRight - point.x)) {
-						block->SetRight(oldRight + deltaY);
-					}
-					else {
-						block->SetTop(oldTop - deltaX);
-					}
-				}
-				else if (GetSubMode() == DEHT_BOTTOMLEFT) {
-					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
-					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
-					if (fabs(oldBottom - point.y) < fabs(oldLeft - point.x)) {
-						block->SetLeft(oldLeft - deltaY);
-					}
-					else {
-						block->SetBottom(oldBottom + deltaX);
-					}
-				}
-				else if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
-					deltaX = (block->GetRight() - oldRight) * oldRatio;
-					if (fabs(oldBottom - point.y) < fabs(oldRight - point.x)) {
-						block->SetRight(oldRight + deltaY);
-					}
-					else {
-						block->SetBottom(oldBottom + deltaX);
-					}
-				}
-			}
-		}
-	
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(element);
-		if (edge) {
 			//check if edge is part of a multi-edge and, if so, keep it connected
 			if (edge->GetSource() != NULL) {
 				CProMoEdgeView* src = dynamic_cast<CProMoEdgeView*>(edge->GetSource());

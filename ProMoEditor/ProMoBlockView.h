@@ -25,7 +25,9 @@ public:
 	virtual void Highlight(CDC* dc, CRect rect);
 	virtual BOOL IsTarget();
 	virtual void SetTarget(BOOL isTarget);
-		
+	
+	virtual void SetLockedProportions(BOOL hasLockedProportions);
+	virtual BOOL HasLockedProportions();
 	
 protected:
 	BOOL m_target;
@@ -33,13 +35,23 @@ protected:
 
 	virtual void RecomputeIntersectionLinks();
 	virtual CPoint GetIntersection(CPoint innerPoint, CPoint outerPoint);
+	virtual void KeepElementsConnected(double left, double top, double right, double bottom);
+	virtual CPoint MapPointToNewRect(CPoint oldPoint, double left, double top, double right, double bottom);
 
 private:
 	CPropertyDialog	m_dlg;
 	BOOL			m_moved;
+	BOOL			m_lockProportions;
 		
 // Overrides
 public:
+	virtual void	SetLeft(double left);
+	virtual void	SetRight(double right);
+	virtual void	SetTop(double top);
+	virtual void	SetBottom(double bottom);
+
+	
+	virtual void	SetRect(CRect rect);
 	virtual void SetRect(double left, double top, double right, double bottom);
 	static	CDiagramEntity* CreateFromString(const CString& str);
 	

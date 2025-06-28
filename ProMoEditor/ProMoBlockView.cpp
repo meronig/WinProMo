@@ -60,6 +60,7 @@ CProMoBlockView::CProMoBlockView()
 	SetName(CProMoNameFactory::GetID());
 
 	m_blockmodel = NULL;
+	m_lockProportions = FALSE;
 	SetModel(new CProMoBlockModel());
 }
 
@@ -204,6 +205,39 @@ void CProMoBlockView::SetTarget(BOOL isTarget)
 	m_target = isTarget;
 }
 
+/* ============================================================
+	Function :		CProMoBlockView::SetLockedProportions
+	Description :	Sets the proportions of the block as locked
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL hasLockedProportions	-	"TRUE" if the 
+													proportions 
+													should be 
+													locked
+
+   ============================================================*/
+void CProMoBlockView::SetLockedProportions(BOOL hasLockedProportions)
+{
+	m_lockProportions = hasLockedProportions;
+}
+
+/* ============================================================
+	Function :		CProMoBlockView::HasLockedProportions
+	Description :	Returns if the proportions of the block are 
+					locked
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the proportions are
+								locked
+	Parameters :	none
+
+   ============================================================*/
+BOOL CProMoBlockView::HasLockedProportions()
+{
+	return m_lockProportions;
+}
+
 CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 /* ============================================================
 	Function :		CProMoBlockView::GetIntersection
@@ -272,8 +306,8 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 			}
 			
 			CPoint result;
-			result.x = static_cast<LONG>(t * xY + (1 - t) * xX);
-			result.y = static_cast<LONG>(t * yY + (1 - t) * yX);
+			result.x = (t * xY + (1 - t) * xX);
+			result.y = (t * yY + (1 - t) * yX);
 
 			/* uncomment for debugging */
 			/*msg.Format(_T("intersection: (%d, %d)"), result.x, result.y);
@@ -284,6 +318,225 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 	}
 
 	return CPoint(-1,-1);
+}
+
+void CProMoBlockView::SetLeft(double left)
+/* ============================================================
+	Function :		CProMoBlockView::SetLeft
+	Description :	Sets the left edge of the object rectangle
+	Access :		Public
+
+	Return :		void
+	Parameters :	double left	-	New left position
+
+	Usage :			Call to set the left edge of the object.
+					The object coordinates are expressed as
+					double values to allow unlimited zoom.
+					Overridden to reposition child blocks and 
+					connected edges.
+
+   ============================================================*/
+{
+
+	KeepElementsConnected(left, GetTop(), GetRight(), GetBottom()); 
+	CDiagramEntity::SetLeft(left);
+	
+
+}
+
+void CProMoBlockView::SetRight(double right)
+/* ============================================================
+	Function :		CProMoBlockView::SetRight
+	Description :	Sets the right edge of the object
+					rectangle
+	Access :		Public
+
+	Return :		void
+	Parameters :	double right	-	New right position
+
+	Usage :			Call to set the right edge of the object.
+					The object coordinates are expressed as
+					double values to allow unlimited zoom.
+					Overridden to reposition child blocks and 
+					connected edges.
+
+   ============================================================*/
+{
+
+	KeepElementsConnected(GetLeft(), GetTop(), right, GetBottom());
+	CDiagramEntity::SetRight(right);
+
+}
+
+void CProMoBlockView::SetTop(double top)
+/* ============================================================
+	Function :		CProMoBlockView::SetTop
+	Description :	Sets the top edge of the object rectangle
+	Access :		Public
+
+	Return :		void
+	Parameters :	double top	-	New top position
+
+	Usage :			Call to set the top edge of the object.
+					The object coordinates are expressed as
+					double values to allow unlimited zoom.
+					Overridden to reposition child blocks and 
+					connected edges.
+
+   ============================================================*/
+{
+	KeepElementsConnected(GetLeft(), top, GetRight(), GetBottom());
+	CDiagramEntity::SetTop(top);
+
+
+}
+
+void CProMoBlockView::SetBottom(double bottom)
+/* ============================================================
+	Function :		CProMoBlockView::SetBottom
+	Description :	Sets the bottom edge of the object
+					rectangle
+	Access :		Public
+
+	Return :		void
+	Parameters :	double bottom	-	New bottom position
+
+	Usage :			Call to set the bottom edge of the object.
+					The object coordinates are expressed as
+					double values to allow unlimited zoom.
+					Overridden to reposition child blocks and 
+					connected edges.
+
+   ============================================================*/
+{
+
+	KeepElementsConnected(GetLeft(), GetTop(), GetRight(), bottom);
+	CDiagramEntity::SetBottom(bottom);
+}
+
+
+
+void CProMoBlockView::KeepElementsConnected(double left, double top, double right, double bottom)
+/* ============================================================
+	Function :		CProMoBlockView::KeepElementsConnected
+	Description :	Repositions child blocks and 
+					connected edges.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double left		-	Left edge
+					double top		-	Top edge
+					double right	-	Right edge
+					double bottom	-	Bottom edge
+
+	Usage :			Call *before* the object is moved or
+					resized to to reposition child blocks and 
+					connected edges.
+
+   ============================================================*/
+{
+	ASSERT_VALID(this->GetModel());
+	CProMoBlockModel* model = this->GetModel();
+	//note: reposition links
+	int i = 0;
+
+	for (i = 0; i < model->GetIncomingEdges()->GetSize(); i++) {
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetIncomingEdges()->GetAt(i));
+		if (edgeModel) {
+			CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
+
+			//destination: bottomright
+			if (!edgeView->IsSelected()) {
+				CPoint newPoint = MapPointToNewRect(edgeView->GetRect().BottomRight(), left, top, right, bottom);
+
+				edgeView->SetBottom(newPoint.y);
+				edgeView->SetRight(newPoint.x);
+
+			}
+		}
+
+	}
+
+	for (i = 0; i < model->GetOutgoingEdges()->GetSize(); i++) {
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetOutgoingEdges()->GetAt(i));
+		if (edgeModel) {
+			CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
+			//destination: topleft
+			if (!edgeView->IsSelected()) {
+				CPoint newPoint = MapPointToNewRect(edgeView->GetRect().TopLeft(), left, top, right, bottom);
+
+				edgeView->SetTop(newPoint.y);
+				edgeView->SetLeft(newPoint.x);
+			}
+		}
+
+	}
+
+	double deltaY = GetTop() - top;
+	double deltaX = GetLeft() - left;
+
+	if (deltaX != 0 || deltaY != 0) {
+
+		for (i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
+			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
+			if (childModel) {
+				CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
+				if (childView) {
+					//move child nodes that are not selected (otherwise they will be moved twice)
+					if (!childView->IsSelected()) {
+						childView->SetRect(childView->GetLeft() - deltaX, childView->GetTop() - deltaY, childView->GetRight() - deltaX, childView->GetBottom() - deltaY);
+					}
+				}
+			}
+		}
+	}
+
+}
+
+CPoint CProMoBlockView::MapPointToNewRect(CPoint oldPoint, double left, double top, double right, double bottom)
+/* ============================================================
+	Function :		CProMoBlockView::MapPointToNewRect
+	Description :	Determines where a point on the border of
+					the block should be moved when the block
+					is moved/resized.
+					Override this method if the shape being
+					drawn is changed, in order to compute the
+					point accordingly.
+	Access :		Protected
+
+	Return :		CPoint				-	"CPoint" that will
+											lie on the border 
+											when the block is
+											moved/resized
+	Parameters :	CPoint oldPoint		-	"CPoint" that lies
+											on the border of
+											the block
+					double left			-	New left edge
+					double top			-	New top edge
+					double right		-	New right edge
+					double bottom		-	New bottom edge
+
+	Usage :			Call when the block is resized or moved, to
+					adjust connected edges accordingly.
+
+   ============================================================*/
+{
+	double width = GetRight() - GetLeft();
+	double height = GetBottom() - GetTop();
+
+	if (width == 0 || height == 0) return CPoint(-1, -1); // avoid divide by zero
+
+	double xRel = (oldPoint.x - GetLeft()) / width;
+	double yRel = (oldPoint.y - GetTop()) / height;
+
+	// Clamp to [0, 1] to avoid floating point overshoots
+	xRel = max(0.0, min(1.0, xRel));
+	yRel = max(0.0, min(1.0, yRel));
+
+	int newX = static_cast<int>(round(left + xRel * (right - left)));
+	int newY = static_cast<int>(round(top + yRel * (bottom - top)));
+
+	return CPoint(newX, newY);
 }
 
 
@@ -582,6 +835,22 @@ CDiagramEntity* CProMoBlockView::Clone()
 
 }
 
+void CProMoBlockView::SetRect(CRect rect)
+/* ============================================================
+	Function :		CProMoBlockView::SetRect
+	Description :	Sets the object rectangle, normalized.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CRect rect	-	The rectangle to set.
+
+	Usage :			Call to place the object.
+
+   ============================================================*/
+{
+	CDiagramEntity::SetRect(rect);
+}
+
 void CProMoBlockView::SetRect(double left, double top, double right, double bottom)
 /* ============================================================
 	Function :		CProMoBlockView::SetRect
@@ -594,116 +863,11 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 					double right	-	Right edge
 					double bottom	-	Bottom edge
 
-	Usage :			Call to place the object. Overridden to 
-					reposition child blocks and connected edges
+	Usage :			Call to place the object.
 
    ============================================================*/
 {
-	ASSERT_VALID(this->GetModel());
-	CProMoBlockModel* model = this->GetModel();
-	//note: reposition links
-	int i = 0;
-
-	for (i = 0; i < model->GetIncomingEdges()->GetSize(); i++) {
-		double newRight = 0;
-		double newBottom = 0;
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetIncomingEdges()->GetAt(i));
-		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
-			//destination: bottomright
-			if (!edgeView->IsSelected()) {
-				if (GetBottom() - 1 < edgeView->GetBottom() && edgeView->GetBottom() < GetBottom() + 1) {
-					newBottom = bottom;
-					if (GetRight() - 1 >= edgeView->GetRight() && edgeView->GetRight() >= GetLeft() + 1) {
-						newRight = edgeView->GetRight() + right - GetRight();
-					}
-				}
-				if (GetTop() - 1 < edgeView->GetBottom() && edgeView->GetBottom() < GetTop() + 1) {
-					newBottom = top;
-					if (GetRight() - 1 >= edgeView->GetRight() && edgeView->GetRight() >= GetLeft() + 1) {
-						newRight = edgeView->GetRight() + right - GetRight();
-					}
-				}
-				if (GetRight() - 1 < edgeView->GetRight() && edgeView->GetRight() < GetRight() + 1) {
-					newRight = right;
-					if (GetBottom() - 1 >= edgeView->GetBottom() || edgeView->GetBottom() >= GetTop() + 1) {
-						newBottom = edgeView->GetBottom() + bottom - GetBottom();
-					}
-				}
-				if (GetLeft() - 1 < edgeView->GetRight() && edgeView->GetRight() < GetLeft() + 1) {
-					newRight = left;
-					if (GetBottom() - 1 >= edgeView->GetBottom() || edgeView->GetBottom() >= GetTop() + 1) {
-						newBottom = edgeView->GetBottom() + bottom - GetBottom();
-					}
-				}
-				edgeView->SetBottom(newBottom);
-				edgeView->SetRight(newRight);
-			}
-		}
-
-	}
-
-	for (i = 0; i < model->GetOutgoingEdges()->GetSize(); i++) {
-		double newTop = 0;
-		double newLeft = 0;
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetOutgoingEdges()->GetAt(i));
-		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
-			if (!edgeView->IsSelected()) {
-				//destination: topleft
-				if (GetBottom() - 1 < edgeView->GetTop() && edgeView->GetTop() < GetBottom() + 1) {
-					newTop = bottom;
-					if (GetRight() - 1 >= edgeView->GetLeft() && edgeView->GetLeft() >= GetLeft() + 1) {
-						newLeft = edgeView->GetLeft() + right - GetRight();
-					}
-				}
-				if (GetTop() - 1 < edgeView->GetTop() && edgeView->GetTop() < GetTop() + 1) {
-					newTop = top;
-					if (GetRight() - 1 >= edgeView->GetLeft() && edgeView->GetLeft() >= GetLeft() + 1) {
-						newLeft = edgeView->GetLeft() + right - GetRight();
-					}
-				}
-				if (GetRight() - 1 < edgeView->GetLeft() && edgeView->GetLeft() < GetRight() + 1) {
-					newLeft = right;
-					if (GetBottom() - 1 >= edgeView->GetTop() || edgeView->GetTop() >= GetTop() + 1) {
-						newTop = edgeView->GetTop() + bottom - GetBottom();
-					}
-				}
-				if (GetLeft() - 1 < edgeView->GetLeft() && edgeView->GetLeft() < GetLeft() + 1) {
-					newLeft = left;
-					if (GetBottom() - 1 >= edgeView->GetTop() || edgeView->GetTop() >= GetTop() + 1) {
-						newTop = edgeView->GetTop() + bottom - GetBottom();
-					}
-				}
-				edgeView->SetTop(newTop);
-				edgeView->SetLeft(newLeft);
-			}
-		}
-
-	}
-	
-	double deltaY = GetTop() - top;
-	double deltaX = GetLeft() - left;
-
-	if (deltaX != 0 || deltaY != 0) {
-
-		for (i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
-			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
-			if (childModel) {
-				CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
-				if (childView) {
-					//move child nodes that are not selected (otherwise they will be moved twice)
-					if (!childView->IsSelected()) {
-						childView->SetRect(childView->GetLeft() - deltaX, childView->GetTop() - deltaY, childView->GetRight() - deltaX, childView->GetBottom() - deltaY);
-					}
-				}
-			}
-		}
-	}
-
 	CDiagramEntity::SetRect(left, top, right, bottom);
-
-
 }
 
 CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str)
