@@ -36,4 +36,11 @@ typedef int INT_PTR;
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 
+#ifdef WINPROMO_EXPORTS
+#define WINPROMO_API __declspec(dllexport)
+#else
+#define WINPROMO_API __declspec(dllimport)
+#endif
+
 #endif // !defined(AFX_STDAFX_H__742BE222_95D9_420F_89F0_B89A183076EC__INCLUDED_)
+

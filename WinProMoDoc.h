@@ -11,7 +11,7 @@
 
 class AFX_EXT_CLASS CWinProMoDoc : public CDocument
 {
-protected: // create from serialization only
+public: // create from serialization only
 	DECLARE_DYNCREATE(CWinProMoDoc)
 
 // Attributes

@@ -10,7 +10,7 @@
 
 class AFX_EXT_CLASS CWinProMoView : public CView
 {
-protected: // create from serialization only
+public: // create from serialization only
 	DECLARE_DYNCREATE(CWinProMoView)
 
 // Attributes

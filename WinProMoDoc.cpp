@@ -136,18 +136,21 @@ void CWinProMoDoc::Serialize(CArchive& ar)
 			int pos = 0;
 			while (pos >= 0)
 			{
-				int next = content.Find(_T("\r\n"), pos);
+				CString rest = content.Mid(pos);
+				int rel = rest.Find(_T("\r\n"));
 				CString line;
-				if (next == -1)
+
+				if (rel == -1)
 				{
-					line = content.Mid(pos);
+					line = rest;
 					pos = -1;
 				}
 				else
 				{
-					line = content.Mid(pos, next - pos);
-					pos = next + 2;
+					line = rest.Left(rel);
+					pos += rel + 2;
 				}
+
 				arr.Add(line);
 			}
 
