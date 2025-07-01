@@ -9,7 +9,7 @@
 #include "./ProMoEditor/ProMoEntityContainer.h"
 #include "./ProMoEditor/ProMoClipboardHandler.h"
 
-class AFX_EXT_CLASS CWinProMoDoc : public CDocument
+class WINPROMO_API CWinProMoDoc : public CDocument
 {
 public: // create from serialization only
 	DECLARE_DYNCREATE(CWinProMoDoc)

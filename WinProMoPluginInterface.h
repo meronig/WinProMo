@@ -12,8 +12,6 @@ public:
 	virtual CObArray* GetCommands() = 0;
 	virtual const CString GetDocumentType() = 0;
 	virtual const UINT GetDocumentID() = 0;
-	virtual CRuntimeClass* GetPluginDoc() = 0;
-	virtual CRuntimeClass* GetPluginView() = 0;
 	virtual void Destroy() = 0;
 };
 

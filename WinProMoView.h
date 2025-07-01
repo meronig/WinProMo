@@ -8,7 +8,7 @@
 #include "./ProMoEditor/ProMoEditor.h"
 #include "WinProMoDoc.h"
 
-class AFX_EXT_CLASS CWinProMoView : public CView
+class WINPROMO_API CWinProMoView : public CView
 {
 public: // create from serialization only
 	DECLARE_DYNCREATE(CWinProMoView)

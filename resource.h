@@ -5,16 +5,16 @@
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
 #define IDS_ABOUTBOX                    101
-#define IDD_DIAGRAMEDITORDEMO_DIALOG    102
 #define IDS_CHANGED_SAVE                102
 #define IDS_SAVED                       103
 #define IDS_PROMO_BLOCK                 104
 #define IDR_MAINFRAME                   128
-#define IDD_DIALOG_PAPER_SIZE           129
 #define IDR_WPDPLUGIN                   129
 #define IDD_DIALOG_GRID_SIZE            130
 #define IDD_DIALOG_PROPERTY             131
+#define IDD_DIALOG_PAPER_SIZE           132
 #define IDD_DIALOG_PROPERTY_LABEL       133
+#define IDD_DIAGRAMEDITORDEMO_DIALOG    134
 #define IDC_STATIC_PLACEHOLDER          1000
 #define IDC_BUTTON_BOX                  1001
 #define IDC_BUTTON_LINE                 1002
@@ -40,7 +40,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        131
+#define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         32773
 #define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           101
