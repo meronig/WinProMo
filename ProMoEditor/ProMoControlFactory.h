@@ -4,12 +4,13 @@
 #include "../DiagramEditor/DiagramEntity.h"
 #include "ProMoModel.h"
 
-class AFX_EXT_CLASS CProMoControlFactory {
+class AFX_EXT_CLASS CProMoControlFactory :
+public CObject {
 
 public:
 // Implementation
-	CDiagramEntity* CreateViewFromString( const CString& str );
-	CProMoModel* CreateModelFromString(const CString& str);
+	virtual CDiagramEntity* CreateViewFromString( const CString& str );
+	virtual CProMoModel* CreateModelFromString(const CString& str);
 
 };
 

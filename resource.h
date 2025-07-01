@@ -8,6 +8,7 @@
 #define IDS_CHANGED_SAVE                102
 #define IDS_SAVED                       103
 #define IDS_PROMO_BLOCK                 104
+#define IDS_PROMO_NODE                  104
 #define IDR_MAINFRAME                   128
 #define IDR_WPDPLUGIN                   129
 #define IDD_DIALOG_GRID_SIZE            130

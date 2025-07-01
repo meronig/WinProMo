@@ -23,6 +23,8 @@ public:
 
 	virtual CProMoEntityContainer* GetData();
 	virtual void SetClipboardHandler(CProMoClipboardHandler* clip);
+	
+	virtual void CreateControlFactory();
 	virtual void CreateContainer();
 
 // Overrides
@@ -54,6 +56,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	CProMoEntityContainer* m_objs;
+	CProMoControlFactory* m_fact;
 };
 
 #endif // _WINPROMODOC_H_

@@ -28,10 +28,11 @@ CDocument* CWinProMoDocTemplate::CreateNewDocument()
     if (pDoc && m_pClip)
     {
         // Cast only if doc implements the shared interface
-        CWinProMoDoc* pMyDoc = (CWinProMoDoc*)pDoc;
+        CWinProMoDoc* pMyDoc = dynamic_cast<CWinProMoDoc*>(pDoc);
         if (pMyDoc)
         {
             pMyDoc->CreateContainer();
+            pMyDoc->CreateControlFactory();
             pMyDoc->SetClipboardHandler(m_pClip);
         }
     }

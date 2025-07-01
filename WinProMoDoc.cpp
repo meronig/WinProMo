@@ -46,6 +46,7 @@ END_MESSAGE_MAP()
 CWinProMoDoc::CWinProMoDoc()
 {
 	m_objs = NULL;
+	m_fact = NULL;
 }
 
 CProMoEntityContainer* CWinProMoDoc::GetData()
@@ -66,9 +67,19 @@ void CWinProMoDoc::CreateContainer()
 	}
 }
 
+void CWinProMoDoc::CreateControlFactory()
+{
+	if (!m_fact) {
+		m_fact = new CProMoControlFactory;
+	}
+}
+
 CWinProMoDoc::~CWinProMoDoc()
 {
-	delete m_objs;
+	if (m_objs)
+		delete m_objs;
+	if (m_fact)
+		delete m_fact;
 }
 
 BOOL CWinProMoDoc::OnNewDocument()
@@ -123,8 +134,7 @@ void CWinProMoDoc::Serialize(CArchive& ar)
 			// Loading can handle ANSI or UTF8 encoding only
 
 			m_objs->Clear();
-			CProMoControlFactory fact;
-
+			
 			DWORD size = (DWORD)pFile->GetLength();
 			char* buffer = new char[size + 1];
 			pFile->Read(buffer, size);
@@ -153,8 +163,10 @@ void CWinProMoDoc::Serialize(CArchive& ar)
 
 				arr.Add(line);
 			}
-
-			m_objs->Load(arr, fact);
+			if (m_fact) {
+				m_objs->Load(arr, m_fact);
+			}
+			
 		}
 	}
 }

@@ -214,7 +214,7 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 
 }
 
-void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory& fact)
+void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory* fact)
 /* ============================================================
 	Function :		CProMoEntityContainer::Load
 	Description :	Sets the container properties (normally
@@ -249,12 +249,12 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory&
 		if (!FromString(str))
 		{
 			//check for unicity
-			CDiagramEntity* obj = fact.CreateViewFromString(str);
+			CDiagramEntity* obj = fact->CreateViewFromString(str);
 			if (obj)
 				if (!GetNamedView(obj->GetName()))
 					Add(obj);
 
-			CProMoModel* model = fact.CreateModelFromString(str);
+			CProMoModel* model = fact->CreateModelFromString(str);
 			if (model)
 				if (!GetNamedModel(models, model->GetName()))
 					models.Add(model);

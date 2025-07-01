@@ -16,7 +16,7 @@ public:
 
 
 public:
-	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
+	virtual void	Load(const CStringArray& stra, CProMoControlFactory* fact);
 
 protected:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;

@@ -18,7 +18,7 @@ public:
 	virtual CProMoBlockView* GetTarget();
 
 	virtual void ReplicateRelations(CObArray* source, CObArray* destination);
-	virtual void Load(const CStringArray& stra, CProMoControlFactory& fact);
+	virtual void Load(const CStringArray& stra, CProMoControlFactory* fact);
 	virtual void Save(CStringArray& stra);
 	virtual void SaveObjects(CStringArray& stra);
 
