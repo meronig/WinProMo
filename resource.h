@@ -34,15 +34,16 @@
 #define IDC_BUTTON_LOAD                 1012
 #define IDC_BUTTON_GRID_SIZE            1013
 #define IDC_BUTTON1                     1014
-#define ID_VIEW_SNAPTOGRID              32771
+#define ID_VIEW_PROPERTIES              32771
 #define ID_INSERT_                      32772
+#define ID_VIEW_SNAPTOGRID              32773
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        135
-#define _APS_NEXT_COMMAND_VALUE         32773
+#define _APS_NEXT_RESOURCE_VALUE        136
+#define _APS_NEXT_COMMAND_VALUE         32774
 #define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -65,7 +65,6 @@ CProMoEditor::CProMoEditor()
 	SetBackgroundColor(RGB(250, 250, 230));
 	SetSnapToGrid(FALSE);
 	SetRestraints(RESTRAINT_VIRTUAL);
-	
 }
 
 CProMoEditor::~CProMoEditor()
@@ -826,6 +825,7 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 
 	CDiagramEditor::OnLButtonUp(nFlags, point);
 	//do the auto-resize on all blocks
+	NotifySelectionChanged();
 	AutoResizeAll();
 	RedrawWindow();
 }
@@ -1149,4 +1149,95 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory* fact)
 	if (objs)
 		objs->Load(stra, fact);
 
+}
+
+
+void CProMoEditor::NotifySelectionChanged()
+/* ============================================================
+	Function :		CProMoEditor::NotifySelectionChanged
+	Description :	Notifies that the selected object has
+					changed.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call whenever the selected object(s) is 
+					changed.
+
+   ============================================================*/
+{
+	CDiagramEntity* pSelectedEntity = GetSelectedObject();
+
+	// Get main frame window
+	CWnd* pMainFrame = AfxGetMainWnd();
+	if (pMainFrame && ::IsWindow(pMainFrame->GetSafeHwnd()))
+	{
+		// Send message asynchronously to avoid blocking (optional)
+		pMainFrame->PostMessage(WM_SELECTION_CHANGED, 0, (LPARAM)pSelectedEntity);
+	}
+}
+
+void CProMoEditor::SelectAll()
+/* ============================================================
+	Function :		CProMoEditor::SelectAll
+	Description :	Selects all objects.
+					Overridden to notify selected object change
+					to client application.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to select all objects.
+					Should not be callable if "GetObjectCount()
+					== 0" (there are no objects in the container).
+
+   ============================================================*/
+{
+	CDiagramEditor::SelectAll();
+	NotifySelectionChanged();
+}
+
+void CProMoEditor::UnselectAll()
+/* ============================================================
+	Function :		CProMoEditor::UnselectAll
+	Description :	Unselects all objects in the container.
+					Overridden to notify selected object change
+					to client application.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to unselect all objects.
+					Should not be callable if "GetObjectCount()
+					== 0" (there are no objects in the container).
+
+   ============================================================*/
+{
+	CDiagramEditor::UnselectAll();
+	NotifySelectionChanged();
+}
+
+void CProMoEditor::Select(CDiagramEntity* obj, BOOL select)
+/* ============================================================
+	Function :		CProMoEditor::Select
+	Description :	Either selects or un-selects "obj".
+					Overridden to notify selected object change
+					to client application.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDiagramEntity* obj	-	Object to select/
+											unselect
+					BOOL select			-	"TRUE" to select,
+											"FALSE" un-selects.
+
+	Usage :			Call to select/un-select and object. 
+
+   ============================================================*/
+{
+	CDiagramEditor::Select(obj, select);
+	NotifySelectionChanged();
 }
