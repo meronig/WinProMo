@@ -42,6 +42,7 @@
 #include "ProMoEdgeModel.h"
 
 #include <math.h>
+#include "PropertyItem.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -825,8 +826,9 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 
 	CDiagramEditor::OnLButtonUp(nFlags, point);
 	//do the auto-resize on all blocks
-	NotifySelectionChanged();
 	AutoResizeAll();
+	//notify that the selected object has changed
+	NotifySelectionChanged();
 	RedrawWindow();
 }
 
@@ -1152,6 +1154,17 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory* fact)
 }
 
 
+void SetShapeTitle(CDiagramEntity* entity, const CString& val)
+{
+	entity->SetTitle(val);
+}
+
+void SetShapeName(CDiagramEntity* entity, const CString& val)
+{
+	entity->SetName(val);
+}
+
+// TODO: complete
 void CProMoEditor::NotifySelectionChanged()
 /* ============================================================
 	Function :		CProMoEditor::NotifySelectionChanged
@@ -1169,75 +1182,90 @@ void CProMoEditor::NotifySelectionChanged()
 {
 	CDiagramEntity* pSelectedEntity = GetSelectedObject();
 
+	CObArray* pProps = new CObArray();
+
+	if (pSelectedEntity)
+	{
+		// Example: create property items with wrappers defined in this class
+		CString title = pSelectedEntity->GetTitle(); // example getter
+		CString name = pSelectedEntity->GetName();
+
+		// Wrapper function declared as static or non-member, just adjust accordingly
+		// TODO
+		
+		// Create a property item for "Title"
+		CPropertyItem* pTitle = new CPropertyItem(_T("Title"), pSelectedEntity, &SetShapeTitle);
+		pTitle->m_value = title;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+		// Create a property item for "Name"
+		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, &SetShapeName);
+		pTitle->m_value = name;
+		pProps->Add(pTitle);
+
+		// Add more properties similarly...
+	}
+
 	// Get main frame window
 	CWnd* pMainFrame = AfxGetMainWnd();
 	if (pMainFrame && ::IsWindow(pMainFrame->GetSafeHwnd()))
 	{
 		// Send message asynchronously to avoid blocking (optional)
-		pMainFrame->PostMessage(WM_SELECTION_CHANGED, 0, (LPARAM)pSelectedEntity);
+		pMainFrame->PostMessage(WM_SELECTION_CHANGED, 0, (LPARAM)pProps);
 	}
-}
-
-void CProMoEditor::SelectAll()
-/* ============================================================
-	Function :		CProMoEditor::SelectAll
-	Description :	Selects all objects.
-					Overridden to notify selected object change
-					to client application.
-	Access :		Public
-
-	Return :		void
-	Parameters :	none
-
-	Usage :			Call to select all objects.
-					Should not be callable if "GetObjectCount()
-					== 0" (there are no objects in the container).
-
-   ============================================================*/
-{
-	CDiagramEditor::SelectAll();
-	NotifySelectionChanged();
-}
-
-void CProMoEditor::UnselectAll()
-/* ============================================================
-	Function :		CProMoEditor::UnselectAll
-	Description :	Unselects all objects in the container.
-					Overridden to notify selected object change
-					to client application.
-	Access :		Public
-
-	Return :		void
-	Parameters :	none
-
-	Usage :			Call to unselect all objects.
-					Should not be callable if "GetObjectCount()
-					== 0" (there are no objects in the container).
-
-   ============================================================*/
-{
-	CDiagramEditor::UnselectAll();
-	NotifySelectionChanged();
-}
-
-void CProMoEditor::Select(CDiagramEntity* obj, BOOL select)
-/* ============================================================
-	Function :		CProMoEditor::Select
-	Description :	Either selects or un-selects "obj".
-					Overridden to notify selected object change
-					to client application.
-	Access :		Public
-
-	Return :		void
-	Parameters :	CDiagramEntity* obj	-	Object to select/
-											unselect
-					BOOL select			-	"TRUE" to select,
-											"FALSE" un-selects.
-
-	Usage :			Call to select/un-select and object. 
-
-   ============================================================*/
-{
-	CDiagramEditor::Select(obj, select);
-	NotifySelectionChanged();
 }

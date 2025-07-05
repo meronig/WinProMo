@@ -40,10 +40,7 @@ public:
 	virtual void	RightAlignSelected();
 	virtual void	TopAlignSelected();
 	virtual void	BottomAlignSelected();
-	virtual void	SelectAll();
-	virtual void	UnselectAll();
-	virtual void	Select(CDiagramEntity* obj, BOOL select);
-
+	
 protected:
 	virtual void DrawGrid(CDC* dc, CRect rect, double zoom) const;
 	virtual void DrawObjects(CDC* dc, double zoom) const;

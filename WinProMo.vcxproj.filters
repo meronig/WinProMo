@@ -93,6 +93,9 @@
     <ClCompile Include="WinProMoDocTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ProMoEditor\PropertyItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="WinProMo.def">
@@ -188,6 +191,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WinProMoPluginInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProMoEditor\PropertyItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
