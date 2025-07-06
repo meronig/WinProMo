@@ -2,6 +2,7 @@
 #define _PROPERTYITEM_H_
 
 #include "../DiagramEditor/DiagramEntity.h"
+#include "../DiagramEditor/DiagramEditor.h"
 
 class AFX_EXT_CLASS CPropertyItem : public CObject
 {
@@ -9,9 +10,10 @@ public:
     CString m_name;            // Property label
     CString m_value;           // Current value (as string)
     CDiagramEntity* m_target; // The object owning this property
+    CDiagramEditor* m_editor; // The editor managing the object
 
     // Wrapper: set the property value on the target, from a string
-    typedef void (*SetPropertyWrapper)(CDiagramEntity*, const CString&);
+    typedef BOOL (*SetPropertyWrapper)(CDiagramEntity*, CDiagramEditor*, const CString&);
     SetPropertyWrapper m_setter;
 
     //// Control type enum
@@ -23,8 +25,9 @@ public:
 public:
     CPropertyItem(const CString& name,
         CDiagramEntity* target,
+        CDiagramEditor* editor,
         SetPropertyWrapper setter);
-    void SetValue(const CString& val);
+    BOOL SetValue(const CString& val);
 };
 
 #endif //_PROPERTYITEM_H_

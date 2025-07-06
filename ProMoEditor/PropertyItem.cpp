@@ -2,17 +2,23 @@
 #include "PropertyItem.h"
 
 
-CPropertyItem::CPropertyItem(const CString& name, CDiagramEntity* target, SetPropertyWrapper setter)
+CPropertyItem::CPropertyItem(const CString& name, CDiagramEntity* target, CDiagramEditor* editor, SetPropertyWrapper setter)
 {
 	m_name = name;
+	m_editor = editor;
 	m_target = target;
 	m_setter = setter;
 	m_ctrlID = 0;
 }
 
-void CPropertyItem::SetValue(const CString& val)
+BOOL CPropertyItem::SetValue(const CString& val)
 {
-	m_value = val;
-	if (m_target && m_setter)
-		m_setter(m_target, val);
+	if (m_target && m_setter && m_editor) {
+		BOOL result = m_setter(m_target, m_editor, val);
+		if (result) {
+			m_value = val;
+			return TRUE;
+		}
+	}
+	return FALSE;
 }
