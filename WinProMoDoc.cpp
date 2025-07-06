@@ -122,12 +122,29 @@ void CWinProMoDoc::Serialize(CArchive& ar)
 		if (ar.IsStoring())
 		{
 			m_objs->Save(arr);
-			// Revise this part, as there is no control on the encoding (currently UTF-16 LE, incompatible with loading)
+			
+#ifndef _UNICODE 
+
 			for (int i = 0; i < arr.GetSize(); i++) {
 				CString line = arr.GetAt(i) + "\r\n";
 				ar.WriteString(line);
 			}
 
+#else
+
+			for (int i = 0; i < arr.GetSize(); i++) {
+				CStringW wideLine = arr.GetAt(i) + L"\r\n";
+
+				// Convert UTF-16 to UTF-8
+				int utf8Len = WideCharToMultiByte(CP_UTF8, 0, wideLine, -1, NULL, 0, NULL, NULL);
+				char* utf8Line = new char[utf8Len];
+				WideCharToMultiByte(CP_UTF8, 0, wideLine, -1, utf8Line, utf8Len, NULL, NULL);
+
+				// Write excluding null terminator
+				pFile->Write(utf8Line, utf8Len - 1);
+				delete[] utf8Line;
+			}
+#endif
 		}
 		else
 		{
