@@ -1,0 +1,7 @@
+; WinProMo.def : Declares the module parameters for the DLL.
+
+LIBRARY      "WINPROMO"
+DESCRIPTION  'WINPROMO Windows Dynamic Link Library'
+
+EXPORTS
+    ; Explicit exports can go here

@@ -1159,7 +1159,7 @@ void CProMoEditor::NotifySelectionChanged()
 	Function :		CProMoEditor::NotifySelectionChanged
 	Description :	Notifies that the selected object has
 					changed.
-	Access :		Protected
+	Access :		Public
 
 	Return :		void
 	Parameters :	none

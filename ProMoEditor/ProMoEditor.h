@@ -18,6 +18,7 @@ public:
 
 public:
 	virtual void	Load(const CStringArray& stra, CProMoControlFactory* fact);
+	virtual void NotifySelectionChanged();
 
 protected:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
@@ -30,7 +31,6 @@ protected:
 	virtual void SelectChildBlocks(CProMoBlockView* block);
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
-	virtual void NotifySelectionChanged();
 
 // Overrides:
 public:
