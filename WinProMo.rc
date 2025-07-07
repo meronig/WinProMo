@@ -272,6 +272,7 @@ BEGIN
         MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM "Properties",                  ID_VIEW_PROPERTIES
+        MENUITEM "Element List",                ID_VIEW_ELEMENTLIST
         MENUITEM SEPARATOR
         MENUITEM "Snap to Grid",                ID_VIEW_SNAPTOGRID
     END
@@ -419,8 +420,9 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_VIEW_SNAPTOGRID      "Snaps elements to grid\nSnap to grid"
     ID_VIEW_PROPERTIES      "Show or hide the properties panel\nToggle Properties"
+    ID_VIEW_SNAPTOGRID      "Snaps elements to grid\nSnap to grid"
+    ID_VIEW_ELEMENTLIST     "Show or hide the element list panel\nToggle Element List"
 END
 
 #endif    // English (United States) resources

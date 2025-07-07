@@ -40,10 +40,11 @@
 #include "ProMoEditor.h"
 #include "ProMoEntityContainer.h"
 #include "ProMoEdgeModel.h"
-#include "PropertyWrappers.h"
+#include "../PropertyItem/PropertyWrappers.h"
+#include "../PropertyItem/StringPropertyItem.h"
+#include "../PropertyItem/CustomPropertyItem.h"
 
 #include <math.h>
-#include "PropertyItem.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1180,13 +1181,11 @@ void CProMoEditor::NotifySelectionChanged()
 		CString name = pSelectedEntity->GetName();
 
 		// Create a property item for "Title"
-		CPropertyItem* pTitle = new CPropertyItem(_T("Title"), pSelectedEntity, this, &SetShapeTitle);
-		pTitle->m_value = title;
+		CPropertyItem* pTitle = new CStringPropertyItem(_T("Title"), pSelectedEntity, this, &SetShapeTitle, title);
 		pProps->Add(pTitle);
 
 		// Create a property item for "Name"
-		pTitle = new CPropertyItem(_T("Name"), pSelectedEntity, this, &SetShapeName);
-		pTitle->m_value = name;
+		pTitle = new CStringPropertyItem(_T("Name"), pSelectedEntity, this, &SetShapeName, name);
 		pProps->Add(pTitle);
 
 	}

@@ -93,10 +93,19 @@
     <ClCompile Include="WinProMoDocTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProMoEditor\PropertyItem.cpp">
+    <ClCompile Include="PropertyItem\PropertyItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProMoEditor\PropertyWrappers.cpp">
+    <ClCompile Include="PropertyItem\PropertyWrappers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertyItem\StringPropertyItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertyItem\PropertyItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertyItem\CustomPropertyItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -196,10 +205,19 @@
     <ClInclude Include="WinProMoPluginInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProMoEditor\PropertyItem.h">
+    <ClInclude Include="PropertyItem\PropertyItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProMoEditor\PropertyWrappers.h">
+    <ClInclude Include="PropertyItem\PropertyWrappers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyItem\StringPropertyItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyItem\PropertyItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyItem\CustomPropertyItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

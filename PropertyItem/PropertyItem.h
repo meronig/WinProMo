@@ -6,28 +6,21 @@
 
 class AFX_EXT_CLASS CPropertyItem : public CObject
 {
-public:
+protected:
     CString m_name;            // Property label
-    CString m_value;           // Current value (as string)
     CDiagramEntity* m_target; // The object owning this property
     CDiagramEditor* m_editor; // The editor managing the object
-
-    // Wrapper: set the property value on the target, from a string
-    typedef BOOL (*SetPropertyWrapper)(CDiagramEntity*, CDiagramEditor*, const CString&);
-    SetPropertyWrapper m_setter;
-
-    //// Control type enum
-    //enum ControlType { EDIT, COMBO, CHECKBOX };
-    //ControlType m_controlType;
 
     // Control ID (assigned dynamically when created)
     UINT m_ctrlID;
 public:
     CPropertyItem(const CString& name,
         CDiagramEntity* target,
-        CDiagramEditor* editor,
-        SetPropertyWrapper setter);
-    BOOL SetValue(const CString& val);
+        CDiagramEditor* editor);
+    
+    virtual const CString GetName();
+    virtual const UINT GetCtrlID();
+    virtual void SetCtrlID(UINT ctrlID);
 };
 
 #endif //_PROPERTYITEM_H_

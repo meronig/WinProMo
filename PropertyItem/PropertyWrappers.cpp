@@ -1,9 +1,9 @@
 #include "StdAfx.h"
 #include "PropertyWrappers.h"
-#include "ProMoBlockView.h"
-#include "ProMoEdgeView.h"
-#include "ProMoBlockModel.h"
-#include "ProMoEdgeModel.h"
+#include "../ProMoEditor/ProMoBlockView.h"
+#include "../ProMoEditor/ProMoEdgeView.h"
+#include "../ProMoEditor/ProMoBlockModel.h"
+#include "../ProMoEditor/ProMoEdgeModel.h"
 
 BOOL SetShapeTitle(CDiagramEntity* entity, CDiagramEditor* editor, const CString& val)
 /* ============================================================

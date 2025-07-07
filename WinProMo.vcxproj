@@ -187,6 +187,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="PropertyItem\CustomPropertyItem.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
     <ClCompile Include="DiagramEditor\DiagramEditor.cpp" />
     <ClCompile Include="DiagramEditor\DiagramEntity.cpp" />
@@ -197,8 +198,10 @@
     <ClCompile Include="DiagramEditor\GroupFactory.cpp" />
     <ClCompile Include="DiagramEditor\Tokenizer.cpp" />
     <ClCompile Include="DiagramEditor\UndoItem.cpp" />
-    <ClCompile Include="ProMoEditor\PropertyItem.cpp" />
-    <ClCompile Include="ProMoEditor\PropertyWrappers.cpp" />
+    <ClCompile Include="PropertyItem\PropertyItem.cpp" />
+    <ClCompile Include="PropertyItem\PropertyItem.cpp" />
+    <ClCompile Include="PropertyItem\PropertyWrappers.cpp" />
+    <ClCompile Include="PropertyItem\StringPropertyItem.cpp" />
     <ClCompile Include="WinProMoDocTemplate.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockModel.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockView.cpp" />
@@ -221,6 +224,7 @@
     <None Include="WinProMo.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PropertyItem\CustomPropertyItem.h" />
     <ClInclude Include="DiagramEditor\DiagramClipboardHandler.h" />
     <ClInclude Include="DiagramEditor\DiagramEditor.h" />
     <ClInclude Include="DiagramEditor\DiagramEntity.h" />
@@ -233,8 +237,10 @@
     <ClInclude Include="DiagramEditor\HitParamsRect.h" />
     <ClInclude Include="DiagramEditor\Tokenizer.h" />
     <ClInclude Include="DiagramEditor\UndoItem.h" />
-    <ClInclude Include="ProMoEditor\PropertyItem.h" />
-    <ClInclude Include="ProMoEditor\PropertyWrappers.h" />
+    <ClInclude Include="PropertyItem\PropertyItem.h" />
+    <ClInclude Include="PropertyItem\PropertyItem.h" />
+    <ClInclude Include="PropertyItem\PropertyWrappers.h" />
+    <ClInclude Include="PropertyItem\StringPropertyItem.h" />
     <ClInclude Include="WinProMoDocTemplate.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockModel.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockView.h" />
