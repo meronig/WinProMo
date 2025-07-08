@@ -96,22 +96,10 @@
     <ClCompile Include="PropertyItem\PropertyWrappers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PropertyItem\StringPropertyItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PropertyItem\PropertyItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PropertyItem\CustomPropertyItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PropertyItem\IntPropertyItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PropertyItem\BoolPropertyItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PropertyItem\DoublePropertyItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -214,22 +202,16 @@
     <ClInclude Include="PropertyItem\PropertyWrappers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertyItem\StringPropertyItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PropertyItem\PropertyItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PropertyItem\CustomPropertyItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertyItem\BoolPropertyItem.h">
+    <ClInclude Include="PropertyItem\TypedPropertyItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertyItem\DoublePropertyItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PropertyItem\IntPropertyItem.h">
+    <ClInclude Include="PropertyItem\TypedPropertyItem.hxx">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

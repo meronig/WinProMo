@@ -187,9 +187,6 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="PropertyItem\DoublePropertyItem.cpp" />
-    <ClCompile Include="PropertyItem\BoolPropertyItem.cpp" />
-    <ClCompile Include="PropertyItem\IntPropertyItem.cpp" />
     <ClCompile Include="PropertyItem\CustomPropertyItem.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
     <ClCompile Include="DiagramEditor\DiagramEditor.cpp" />
@@ -203,7 +200,6 @@
     <ClCompile Include="DiagramEditor\UndoItem.cpp" />
     <ClCompile Include="PropertyItem\PropertyItem.cpp" />
     <ClCompile Include="PropertyItem\PropertyWrappers.cpp" />
-    <ClCompile Include="PropertyItem\StringPropertyItem.cpp" />
     <ClCompile Include="WinProMoDocTemplate.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockModel.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockView.cpp" />
@@ -226,9 +222,6 @@
     <None Include="WinProMo.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PropertyItem\IntPropertyItem.h" />
-    <ClInclude Include="PropertyItem\DoublePropertyItem.h" />
-    <ClInclude Include="PropertyItem\BoolPropertyItem.h" />
     <ClInclude Include="PropertyItem\CustomPropertyItem.h" />
     <ClInclude Include="DiagramEditor\DiagramClipboardHandler.h" />
     <ClInclude Include="DiagramEditor\DiagramEditor.h" />
@@ -244,7 +237,8 @@
     <ClInclude Include="DiagramEditor\UndoItem.h" />
     <ClInclude Include="PropertyItem\PropertyItem.h" />
     <ClInclude Include="PropertyItem\PropertyWrappers.h" />
-    <ClInclude Include="PropertyItem\StringPropertyItem.h" />
+    <ClInclude Include="PropertyItem\TypedPropertyItem.h" />
+    <ClInclude Include="PropertyItem\TypedPropertyItem.hxx" />
     <ClInclude Include="WinProMoDocTemplate.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockModel.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockView.h" />
