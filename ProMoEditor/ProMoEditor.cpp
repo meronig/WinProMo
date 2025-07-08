@@ -1181,7 +1181,9 @@ void CProMoEditor::NotifySelectionChanged()
 		CString name = pSelectedEntity->GetName();
 
 		// Create a property item for "Title"
-		CPropertyItem* pTitle = new CStringPropertyItem(_T("Title"), pSelectedEntity, this, &SetShapeTitle, title);
+		CStringPropertyItem* pTitle = new CStringPropertyItem(_T("Title"), pSelectedEntity, this, &SetShapeTitle, title);
+		pTitle->AddOption("Foo");
+		pTitle->AddOption("Bar");
 		pProps->Add(pTitle);
 
 		// Create a property item for "Name"

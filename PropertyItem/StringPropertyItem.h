@@ -4,11 +4,13 @@
 #include "PropertyItem.h"
 #include "../DiagramEditor/DiagramEntity.h"
 #include "../DiagramEditor/DiagramEditor.h"
+#include <afxtempl.h>
 
 class AFX_EXT_CLASS CStringPropertyItem : public CPropertyItem
 {
 protected:
     CString m_value;           // Current value (as string)
+    CArray <CString, CString> m_options;
     
     // Wrapper: set the property value on the target, from a string
     typedef BOOL (*SetPropertyWrapper)(CDiagramEntity*, CDiagramEditor*, const CString&);
@@ -19,9 +21,12 @@ public:
         CDiagramEntity* target,
         CDiagramEditor* editor,
         SetPropertyWrapper setter,
-        CString initialValue);
+        const CString& initialValue);
     virtual BOOL SetValue(const CString& val);
-    virtual CString GetValue();
+    virtual const CString GetValue();
+    virtual void AddOption(const CString& option);
+    virtual int GetOptionsCount();
+    virtual const CString& GetOption(const int& index);
 };
 
-#endif //_PROPERTYITEM_H_
+#endif //_STRINGPROPERTYITEM_H_

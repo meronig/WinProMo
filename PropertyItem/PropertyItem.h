@@ -4,8 +4,8 @@
 #include "../DiagramEditor/DiagramEntity.h"
 #include "../DiagramEditor/DiagramEditor.h"
 
-class AFX_EXT_CLASS CPropertyItem : public CObject
-{
+class AFX_EXT_CLASS CPropertyItem : public CObject {
+
 protected:
     CString m_name;            // Property label
     CDiagramEntity* m_target; // The object owning this property

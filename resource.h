@@ -36,8 +36,8 @@
 #define IDC_BUTTON1                     1014
 #define ID_VIEW_PROPERTIES              32771
 #define ID_VIEW_ELEMENTLIST             32772
-#define ID_INSERT_                      32780
 #define ID_VIEW_SNAPTOGRID              32774
+#define ID_INSERT_                      32780
 
 // Next default values for new objects
 // 

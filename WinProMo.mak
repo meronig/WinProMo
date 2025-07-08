@@ -33,9 +33,9 @@ NULL=nul
 ################################################################################
 # Begin Project
 # PROP Target_Last_Scanned "WinProMo - Win32 Debug"
+MTL=mktyplib.exe
 CPP=cl.exe
 RSC=rc.exe
-MTL=mktyplib.exe
 
 !IF  "$(CFG)" == "WinProMo - Win32 Release"
 
@@ -55,39 +55,44 @@ INTDIR=.\Release
 ALL : "..\Release\WinProMo.dll"
 
 CLEAN : 
-	-@erase "$(INTDIR)\DiagramClipboardHandler.obj"
-	-@erase "$(INTDIR)\DiagramEditor.obj"
-	-@erase "$(INTDIR)\DiagramEntity.obj"
-	-@erase "$(INTDIR)\DiagramEntityContainer.obj"
-	-@erase "$(INTDIR)\DiagramLine.obj"
-	-@erase "$(INTDIR)\DiagramMenu.obj"
-	-@erase "$(INTDIR)\DiagramPropertyDlg.obj"
-	-@erase "$(INTDIR)\GroupFactory.obj"
-	-@erase "$(INTDIR)\ProMoBlockModel.obj"
-	-@erase "$(INTDIR)\ProMoBlockView.obj"
-	-@erase "$(INTDIR)\ProMoClipboardHandler.obj"
-	-@erase "$(INTDIR)\ProMoControlFactory.obj"
-	-@erase "$(INTDIR)\ProMoEdgeModel.obj"
-	-@erase "$(INTDIR)\ProMoEdgeView.obj"
-	-@erase "$(INTDIR)\ProMoEditor.obj"
-	-@erase "$(INTDIR)\ProMoEntityContainer.obj"
-	-@erase "$(INTDIR)\ProMoModel.obj"
-	-@erase "$(INTDIR)\ProMoNameFactory.obj"
-	-@erase "$(INTDIR)\PropertyDialog.obj"
-	-@erase "$(INTDIR)\PropertyItem.obj"
-	-@erase "$(INTDIR)\PropertyWrappers.obj"
-	-@erase "$(INTDIR)\StdAfx.obj"
-	-@erase "$(INTDIR)\Tokenizer.obj"
-	-@erase "$(INTDIR)\UndoItem.obj"
-	-@erase "$(INTDIR)\WinProMo.obj"
-	-@erase "$(INTDIR)\WinProMo.pch"
-	-@erase "$(INTDIR)\WinProMo.res"
-	-@erase "$(INTDIR)\WinProMoDoc.obj"
-	-@erase "$(INTDIR)\WinProMoDocTemplate.obj"
-	-@erase "$(INTDIR)\WinProMoView.obj"
-	-@erase "$(OUTDIR)\WinProMo.exp"
-	-@erase "$(OUTDIR)\WinProMo.lib"
 	-@erase "..\Release\WinProMo.dll"
+	-@erase ".\Release\BoolPropertyItem.obj"
+	-@erase ".\Release\CustomPropertyItem.obj"
+	-@erase ".\Release\DiagramClipboardHandler.obj"
+	-@erase ".\Release\DiagramEditor.obj"
+	-@erase ".\Release\DiagramEntity.obj"
+	-@erase ".\Release\DiagramEntityContainer.obj"
+	-@erase ".\Release\DiagramLine.obj"
+	-@erase ".\Release\DiagramMenu.obj"
+	-@erase ".\Release\DiagramPropertyDlg.obj"
+	-@erase ".\Release\DoublePropertyItem.obj"
+	-@erase ".\Release\GroupFactory.obj"
+	-@erase ".\Release\IntPropertyItem.obj"
+	-@erase ".\Release\ProMoBlockModel.obj"
+	-@erase ".\Release\ProMoBlockView.obj"
+	-@erase ".\Release\ProMoClipboardHandler.obj"
+	-@erase ".\Release\ProMoControlFactory.obj"
+	-@erase ".\Release\ProMoEdgeModel.obj"
+	-@erase ".\Release\ProMoEdgeView.obj"
+	-@erase ".\Release\ProMoEditor.obj"
+	-@erase ".\Release\ProMoEntityContainer.obj"
+	-@erase ".\Release\ProMoModel.obj"
+	-@erase ".\Release\ProMoNameFactory.obj"
+	-@erase ".\Release\PropertyDialog.obj"
+	-@erase ".\Release\PropertyItem.obj"
+	-@erase ".\Release\PropertyWrappers.obj"
+	-@erase ".\Release\StdAfx.obj"
+	-@erase ".\Release\StringPropertyItem.obj"
+	-@erase ".\Release\Tokenizer.obj"
+	-@erase ".\Release\UndoItem.obj"
+	-@erase ".\Release\WinProMo.exp"
+	-@erase ".\Release\WinProMo.lib"
+	-@erase ".\Release\WinProMo.obj"
+	-@erase ".\Release\WinProMo.pch"
+	-@erase ".\Release\WinProMo.res"
+	-@erase ".\Release\WinProMoDoc.obj"
+	-@erase ".\Release\WinProMoDocTemplate.obj"
+	-@erase ".\Release\WinProMoView.obj"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -120,35 +125,40 @@ LINK32_FLAGS=/nologo /base:0x10000000 /subsystem:windows /dll /incremental:no\
 DEF_FILE= \
 	".\WinProMo.def"
 LINK32_OBJS= \
-	"$(INTDIR)\DiagramClipboardHandler.obj" \
-	"$(INTDIR)\DiagramEditor.obj" \
-	"$(INTDIR)\DiagramEntity.obj" \
-	"$(INTDIR)\DiagramEntityContainer.obj" \
-	"$(INTDIR)\DiagramLine.obj" \
-	"$(INTDIR)\DiagramMenu.obj" \
-	"$(INTDIR)\DiagramPropertyDlg.obj" \
-	"$(INTDIR)\GroupFactory.obj" \
-	"$(INTDIR)\ProMoBlockModel.obj" \
-	"$(INTDIR)\ProMoBlockView.obj" \
-	"$(INTDIR)\ProMoClipboardHandler.obj" \
-	"$(INTDIR)\ProMoControlFactory.obj" \
-	"$(INTDIR)\ProMoEdgeModel.obj" \
-	"$(INTDIR)\ProMoEdgeView.obj" \
-	"$(INTDIR)\ProMoEditor.obj" \
-	"$(INTDIR)\ProMoEntityContainer.obj" \
-	"$(INTDIR)\ProMoModel.obj" \
-	"$(INTDIR)\ProMoNameFactory.obj" \
-	"$(INTDIR)\PropertyDialog.obj" \
-	"$(INTDIR)\PropertyItem.obj" \
-	"$(INTDIR)\PropertyWrappers.obj" \
-	"$(INTDIR)\StdAfx.obj" \
-	"$(INTDIR)\Tokenizer.obj" \
-	"$(INTDIR)\UndoItem.obj" \
-	"$(INTDIR)\WinProMo.obj" \
-	"$(INTDIR)\WinProMo.res" \
-	"$(INTDIR)\WinProMoDoc.obj" \
-	"$(INTDIR)\WinProMoDocTemplate.obj" \
-	"$(INTDIR)\WinProMoView.obj"
+	".\Release\BoolPropertyItem.obj" \
+	".\Release\CustomPropertyItem.obj" \
+	".\Release\DiagramClipboardHandler.obj" \
+	".\Release\DiagramEditor.obj" \
+	".\Release\DiagramEntity.obj" \
+	".\Release\DiagramEntityContainer.obj" \
+	".\Release\DiagramLine.obj" \
+	".\Release\DiagramMenu.obj" \
+	".\Release\DiagramPropertyDlg.obj" \
+	".\Release\DoublePropertyItem.obj" \
+	".\Release\GroupFactory.obj" \
+	".\Release\IntPropertyItem.obj" \
+	".\Release\ProMoBlockModel.obj" \
+	".\Release\ProMoBlockView.obj" \
+	".\Release\ProMoClipboardHandler.obj" \
+	".\Release\ProMoControlFactory.obj" \
+	".\Release\ProMoEdgeModel.obj" \
+	".\Release\ProMoEdgeView.obj" \
+	".\Release\ProMoEditor.obj" \
+	".\Release\ProMoEntityContainer.obj" \
+	".\Release\ProMoModel.obj" \
+	".\Release\ProMoNameFactory.obj" \
+	".\Release\PropertyDialog.obj" \
+	".\Release\PropertyItem.obj" \
+	".\Release\PropertyWrappers.obj" \
+	".\Release\StdAfx.obj" \
+	".\Release\StringPropertyItem.obj" \
+	".\Release\Tokenizer.obj" \
+	".\Release\UndoItem.obj" \
+	".\Release\WinProMo.obj" \
+	".\Release\WinProMo.res" \
+	".\Release\WinProMoDoc.obj" \
+	".\Release\WinProMoDocTemplate.obj" \
+	".\Release\WinProMoView.obj"
 
 "..\Release\WinProMo.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -173,43 +183,48 @@ INTDIR=.\Debug
 ALL : "..\Debug\WinProMo.dll"
 
 CLEAN : 
-	-@erase "$(INTDIR)\DiagramClipboardHandler.obj"
-	-@erase "$(INTDIR)\DiagramEditor.obj"
-	-@erase "$(INTDIR)\DiagramEntity.obj"
-	-@erase "$(INTDIR)\DiagramEntityContainer.obj"
-	-@erase "$(INTDIR)\DiagramLine.obj"
-	-@erase "$(INTDIR)\DiagramMenu.obj"
-	-@erase "$(INTDIR)\DiagramPropertyDlg.obj"
-	-@erase "$(INTDIR)\GroupFactory.obj"
-	-@erase "$(INTDIR)\ProMoBlockModel.obj"
-	-@erase "$(INTDIR)\ProMoBlockView.obj"
-	-@erase "$(INTDIR)\ProMoClipboardHandler.obj"
-	-@erase "$(INTDIR)\ProMoControlFactory.obj"
-	-@erase "$(INTDIR)\ProMoEdgeModel.obj"
-	-@erase "$(INTDIR)\ProMoEdgeView.obj"
-	-@erase "$(INTDIR)\ProMoEditor.obj"
-	-@erase "$(INTDIR)\ProMoEntityContainer.obj"
-	-@erase "$(INTDIR)\ProMoModel.obj"
-	-@erase "$(INTDIR)\ProMoNameFactory.obj"
-	-@erase "$(INTDIR)\PropertyDialog.obj"
-	-@erase "$(INTDIR)\PropertyItem.obj"
-	-@erase "$(INTDIR)\PropertyWrappers.obj"
-	-@erase "$(INTDIR)\StdAfx.obj"
-	-@erase "$(INTDIR)\Tokenizer.obj"
-	-@erase "$(INTDIR)\UndoItem.obj"
-	-@erase "$(INTDIR)\vc40.idb"
-	-@erase "$(INTDIR)\vc40.pdb"
-	-@erase "$(INTDIR)\WinProMo.obj"
-	-@erase "$(INTDIR)\WinProMo.pch"
-	-@erase "$(INTDIR)\WinProMo.res"
-	-@erase "$(INTDIR)\WinProMoDoc.obj"
-	-@erase "$(INTDIR)\WinProMoDocTemplate.obj"
-	-@erase "$(INTDIR)\WinProMoView.obj"
-	-@erase "$(OUTDIR)\WinProMo.exp"
-	-@erase "$(OUTDIR)\WinProMo.lib"
-	-@erase "$(OUTDIR)\WinProMo.pdb"
 	-@erase "..\Debug\WinProMo.dll"
 	-@erase "..\Debug\WinProMo.ilk"
+	-@erase ".\Debug\BoolPropertyItem.obj"
+	-@erase ".\Debug\CustomPropertyItem.obj"
+	-@erase ".\Debug\DiagramClipboardHandler.obj"
+	-@erase ".\Debug\DiagramEditor.obj"
+	-@erase ".\Debug\DiagramEntity.obj"
+	-@erase ".\Debug\DiagramEntityContainer.obj"
+	-@erase ".\Debug\DiagramLine.obj"
+	-@erase ".\Debug\DiagramMenu.obj"
+	-@erase ".\Debug\DiagramPropertyDlg.obj"
+	-@erase ".\Debug\DoublePropertyItem.obj"
+	-@erase ".\Debug\GroupFactory.obj"
+	-@erase ".\Debug\IntPropertyItem.obj"
+	-@erase ".\Debug\ProMoBlockModel.obj"
+	-@erase ".\Debug\ProMoBlockView.obj"
+	-@erase ".\Debug\ProMoClipboardHandler.obj"
+	-@erase ".\Debug\ProMoControlFactory.obj"
+	-@erase ".\Debug\ProMoEdgeModel.obj"
+	-@erase ".\Debug\ProMoEdgeView.obj"
+	-@erase ".\Debug\ProMoEditor.obj"
+	-@erase ".\Debug\ProMoEntityContainer.obj"
+	-@erase ".\Debug\ProMoModel.obj"
+	-@erase ".\Debug\ProMoNameFactory.obj"
+	-@erase ".\Debug\PropertyDialog.obj"
+	-@erase ".\Debug\PropertyItem.obj"
+	-@erase ".\Debug\PropertyWrappers.obj"
+	-@erase ".\Debug\StdAfx.obj"
+	-@erase ".\Debug\StringPropertyItem.obj"
+	-@erase ".\Debug\Tokenizer.obj"
+	-@erase ".\Debug\UndoItem.obj"
+	-@erase ".\Debug\vc40.idb"
+	-@erase ".\Debug\vc40.pdb"
+	-@erase ".\Debug\WinProMo.exp"
+	-@erase ".\Debug\WinProMo.lib"
+	-@erase ".\Debug\WinProMo.obj"
+	-@erase ".\Debug\WinProMo.pch"
+	-@erase ".\Debug\WinProMo.pdb"
+	-@erase ".\Debug\WinProMo.res"
+	-@erase ".\Debug\WinProMoDoc.obj"
+	-@erase ".\Debug\WinProMoDocTemplate.obj"
+	-@erase ".\Debug\WinProMoView.obj"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -243,35 +258,40 @@ LINK32_FLAGS=/nologo /base:0x10000000 /subsystem:windows /dll /incremental:yes\
 DEF_FILE= \
 	".\WinProMo.def"
 LINK32_OBJS= \
-	"$(INTDIR)\DiagramClipboardHandler.obj" \
-	"$(INTDIR)\DiagramEditor.obj" \
-	"$(INTDIR)\DiagramEntity.obj" \
-	"$(INTDIR)\DiagramEntityContainer.obj" \
-	"$(INTDIR)\DiagramLine.obj" \
-	"$(INTDIR)\DiagramMenu.obj" \
-	"$(INTDIR)\DiagramPropertyDlg.obj" \
-	"$(INTDIR)\GroupFactory.obj" \
-	"$(INTDIR)\ProMoBlockModel.obj" \
-	"$(INTDIR)\ProMoBlockView.obj" \
-	"$(INTDIR)\ProMoClipboardHandler.obj" \
-	"$(INTDIR)\ProMoControlFactory.obj" \
-	"$(INTDIR)\ProMoEdgeModel.obj" \
-	"$(INTDIR)\ProMoEdgeView.obj" \
-	"$(INTDIR)\ProMoEditor.obj" \
-	"$(INTDIR)\ProMoEntityContainer.obj" \
-	"$(INTDIR)\ProMoModel.obj" \
-	"$(INTDIR)\ProMoNameFactory.obj" \
-	"$(INTDIR)\PropertyDialog.obj" \
-	"$(INTDIR)\PropertyItem.obj" \
-	"$(INTDIR)\PropertyWrappers.obj" \
-	"$(INTDIR)\StdAfx.obj" \
-	"$(INTDIR)\Tokenizer.obj" \
-	"$(INTDIR)\UndoItem.obj" \
-	"$(INTDIR)\WinProMo.obj" \
-	"$(INTDIR)\WinProMo.res" \
-	"$(INTDIR)\WinProMoDoc.obj" \
-	"$(INTDIR)\WinProMoDocTemplate.obj" \
-	"$(INTDIR)\WinProMoView.obj"
+	".\Debug\BoolPropertyItem.obj" \
+	".\Debug\CustomPropertyItem.obj" \
+	".\Debug\DiagramClipboardHandler.obj" \
+	".\Debug\DiagramEditor.obj" \
+	".\Debug\DiagramEntity.obj" \
+	".\Debug\DiagramEntityContainer.obj" \
+	".\Debug\DiagramLine.obj" \
+	".\Debug\DiagramMenu.obj" \
+	".\Debug\DiagramPropertyDlg.obj" \
+	".\Debug\DoublePropertyItem.obj" \
+	".\Debug\GroupFactory.obj" \
+	".\Debug\IntPropertyItem.obj" \
+	".\Debug\ProMoBlockModel.obj" \
+	".\Debug\ProMoBlockView.obj" \
+	".\Debug\ProMoClipboardHandler.obj" \
+	".\Debug\ProMoControlFactory.obj" \
+	".\Debug\ProMoEdgeModel.obj" \
+	".\Debug\ProMoEdgeView.obj" \
+	".\Debug\ProMoEditor.obj" \
+	".\Debug\ProMoEntityContainer.obj" \
+	".\Debug\ProMoModel.obj" \
+	".\Debug\ProMoNameFactory.obj" \
+	".\Debug\PropertyDialog.obj" \
+	".\Debug\PropertyItem.obj" \
+	".\Debug\PropertyWrappers.obj" \
+	".\Debug\StdAfx.obj" \
+	".\Debug\StringPropertyItem.obj" \
+	".\Debug\Tokenizer.obj" \
+	".\Debug\UndoItem.obj" \
+	".\Debug\WinProMo.obj" \
+	".\Debug\WinProMo.res" \
+	".\Debug\WinProMoDoc.obj" \
+	".\Debug\WinProMoDocTemplate.obj" \
+	".\Debug\WinProMoView.obj"
 
 "..\Debug\WinProMo.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -330,9 +350,21 @@ DEP_CPP_WINPR=\
 	".\StdAfx.h"\
 	
 
-"$(INTDIR)\WinProMo.obj" : $(SOURCE) $(DEP_CPP_WINPR) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
 
+
+".\Release\WinProMo.obj" : $(SOURCE) $(DEP_CPP_WINPR) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\WinProMo.obj" : $(SOURCE) $(DEP_CPP_WINPR) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -365,10 +397,10 @@ BuildCmds= \
  /Fp"$(INTDIR)/WinProMo.pch" /Yc"stdafx.h" /Fo"$(INTDIR)/" /c $(SOURCE) \
 	
 
-"$(INTDIR)\StdAfx.obj" : $(SOURCE) $(DEP_CPP_STDAF) "$(INTDIR)"
+".\Release\StdAfx.obj" : $(SOURCE) $(DEP_CPP_STDAF) "$(INTDIR)"
    $(BuildCmds)
 
-"$(INTDIR)\WinProMo.pch" : $(SOURCE) $(DEP_CPP_STDAF) "$(INTDIR)"
+".\Release\WinProMo.pch" : $(SOURCE) $(DEP_CPP_STDAF) "$(INTDIR)"
    $(BuildCmds)
 
 !ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
@@ -382,10 +414,10 @@ BuildCmds= \
  /Fd"$(INTDIR)/" /c $(SOURCE) \
 	
 
-"$(INTDIR)\StdAfx.obj" : $(SOURCE) $(DEP_CPP_STDAF) "$(INTDIR)"
+".\Debug\StdAfx.obj" : $(SOURCE) $(DEP_CPP_STDAF) "$(INTDIR)"
    $(BuildCmds)
 
-"$(INTDIR)\WinProMo.pch" : $(SOURCE) $(DEP_CPP_STDAF) "$(INTDIR)"
+".\Debug\WinProMo.pch" : $(SOURCE) $(DEP_CPP_STDAF) "$(INTDIR)"
    $(BuildCmds)
 
 !ENDIF 
@@ -400,9 +432,21 @@ DEP_RSC_WINPRO=\
 	".\res\DiagramEditorDemo.rc2"\
 	
 
-"$(INTDIR)\WinProMo.res" : $(SOURCE) $(DEP_RSC_WINPRO) "$(INTDIR)"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\WinProMo.res" : $(SOURCE) $(DEP_RSC_WINPRO) "$(INTDIR)"
    $(RSC) $(RSC_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\WinProMo.res" : $(SOURCE) $(DEP_RSC_WINPRO) "$(INTDIR)"
+   $(RSC) $(RSC_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -416,10 +460,23 @@ NODEP_CPP_UNDOI=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\UndoItem.obj" : $(SOURCE) $(DEP_CPP_UNDOI) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\UndoItem.obj" : $(SOURCE) $(DEP_CPP_UNDOI) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\UndoItem.obj" : $(SOURCE) $(DEP_CPP_UNDOI) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -440,10 +497,23 @@ NODEP_CPP_DIAGR=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\DiagramEditor.obj" : $(SOURCE) $(DEP_CPP_DIAGR) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\DiagramEditor.obj" : $(SOURCE) $(DEP_CPP_DIAGR) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\DiagramEditor.obj" : $(SOURCE) $(DEP_CPP_DIAGR) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -463,10 +533,23 @@ NODEP_CPP_DIAGRA=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\DiagramEntity.obj" : $(SOURCE) $(DEP_CPP_DIAGRA) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\DiagramEntity.obj" : $(SOURCE) $(DEP_CPP_DIAGRA) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\DiagramEntity.obj" : $(SOURCE) $(DEP_CPP_DIAGRA) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -487,10 +570,23 @@ NODEP_CPP_DIAGRAM=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\DiagramEntityContainer.obj" : $(SOURCE) $(DEP_CPP_DIAGRAM)\
- "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\DiagramEntityContainer.obj" : $(SOURCE) $(DEP_CPP_DIAGRAM)\
+ "$(INTDIR)" ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\DiagramEntityContainer.obj" : $(SOURCE) $(DEP_CPP_DIAGRAM) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -510,10 +606,23 @@ NODEP_CPP_DIAGRAML=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\DiagramLine.obj" : $(SOURCE) $(DEP_CPP_DIAGRAML) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\DiagramLine.obj" : $(SOURCE) $(DEP_CPP_DIAGRAML) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\DiagramLine.obj" : $(SOURCE) $(DEP_CPP_DIAGRAML) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -534,10 +643,23 @@ NODEP_CPP_DIAGRAMM=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\DiagramMenu.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMM) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\DiagramMenu.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMM) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\DiagramMenu.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMM) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -553,10 +675,23 @@ NODEP_CPP_DIAGRAMP=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\DiagramPropertyDlg.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMP) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\DiagramPropertyDlg.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMP) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\DiagramPropertyDlg.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMP) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -570,10 +705,23 @@ NODEP_CPP_GROUP=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\GroupFactory.obj" : $(SOURCE) $(DEP_CPP_GROUP) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\GroupFactory.obj" : $(SOURCE) $(DEP_CPP_GROUP) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\GroupFactory.obj" : $(SOURCE) $(DEP_CPP_GROUP) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -587,10 +735,23 @@ NODEP_CPP_TOKEN=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\Tokenizer.obj" : $(SOURCE) $(DEP_CPP_TOKEN) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\Tokenizer.obj" : $(SOURCE) $(DEP_CPP_TOKEN) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\Tokenizer.obj" : $(SOURCE) $(DEP_CPP_TOKEN) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -610,10 +771,23 @@ NODEP_CPP_DIAGRAMC=\
 	".\DiagramEditor\stdafx.h"\
 	
 
-"$(INTDIR)\DiagramClipboardHandler.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMC)\
- "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\DiagramClipboardHandler.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMC)\
+ "$(INTDIR)" ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\DiagramClipboardHandler.obj" : $(SOURCE) $(DEP_CPP_DIAGRAMC)\
+ "$(INTDIR)" ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -644,10 +818,23 @@ NODEP_CPP_PROPE=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\PropertyDialog.obj" : $(SOURCE) $(DEP_CPP_PROPE) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\PropertyDialog.obj" : $(SOURCE) $(DEP_CPP_PROPE) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\PropertyDialog.obj" : $(SOURCE) $(DEP_CPP_PROPE) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -674,10 +861,23 @@ NODEP_CPP_PROMO=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoBlockView.obj" : $(SOURCE) $(DEP_CPP_PROMO) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoBlockView.obj" : $(SOURCE) $(DEP_CPP_PROMO) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoBlockView.obj" : $(SOURCE) $(DEP_CPP_PROMO) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -711,10 +911,23 @@ NODEP_CPP_PROMOC=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoClipboardHandler.obj" : $(SOURCE) $(DEP_CPP_PROMOC) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoClipboardHandler.obj" : $(SOURCE) $(DEP_CPP_PROMOC) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoClipboardHandler.obj" : $(SOURCE) $(DEP_CPP_PROMOC) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -740,10 +953,23 @@ NODEP_CPP_PROMOCO=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoControlFactory.obj" : $(SOURCE) $(DEP_CPP_PROMOCO) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoControlFactory.obj" : $(SOURCE) $(DEP_CPP_PROMOCO) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoControlFactory.obj" : $(SOURCE) $(DEP_CPP_PROMOCO) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -769,10 +995,23 @@ NODEP_CPP_PROMOE=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoEdgeModel.obj" : $(SOURCE) $(DEP_CPP_PROMOE) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoEdgeModel.obj" : $(SOURCE) $(DEP_CPP_PROMOE) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoEdgeModel.obj" : $(SOURCE) $(DEP_CPP_PROMOE) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -799,10 +1038,23 @@ NODEP_CPP_PROMOED=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoEdgeView.obj" : $(SOURCE) $(DEP_CPP_PROMOED) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoEdgeView.obj" : $(SOURCE) $(DEP_CPP_PROMOED) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoEdgeView.obj" : $(SOURCE) $(DEP_CPP_PROMOED) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -830,18 +1082,33 @@ DEP_CPP_PROMOEDI=\
 	".\ProMoEditor\ProMoEntityContainer.h"\
 	".\ProMoEditor\ProMoModel.h"\
 	".\ProMoEditor\PropertyDialog.h"\
-	".\ProMoEditor\PropertyItem.h"\
-	".\ProMoEditor\PropertyWrappers.h"\
+	".\PropertyItem\CustomPropertyItem.h"\
+	".\PropertyItem\PropertyItem.h"\
+	".\PropertyItem\PropertyWrappers.h"\
+	".\PropertyItem\StringPropertyItem.h"\
 	".\StdAfx.h"\
 	
 NODEP_CPP_PROMOEDI=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoEditor.obj" : $(SOURCE) $(DEP_CPP_PROMOEDI) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoEditor.obj" : $(SOURCE) $(DEP_CPP_PROMOEDI) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoEditor.obj" : $(SOURCE) $(DEP_CPP_PROMOEDI) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -873,10 +1140,23 @@ NODEP_CPP_PROMOEN=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoEntityContainer.obj" : $(SOURCE) $(DEP_CPP_PROMOEN) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoEntityContainer.obj" : $(SOURCE) $(DEP_CPP_PROMOEN) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoEntityContainer.obj" : $(SOURCE) $(DEP_CPP_PROMOEN) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -895,10 +1175,23 @@ NODEP_CPP_PROMOM=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoModel.obj" : $(SOURCE) $(DEP_CPP_PROMOM) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoModel.obj" : $(SOURCE) $(DEP_CPP_PROMOM) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoModel.obj" : $(SOURCE) $(DEP_CPP_PROMOM) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -912,10 +1205,23 @@ NODEP_CPP_PROMON=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoNameFactory.obj" : $(SOURCE) $(DEP_CPP_PROMON) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoNameFactory.obj" : $(SOURCE) $(DEP_CPP_PROMON) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoNameFactory.obj" : $(SOURCE) $(DEP_CPP_PROMON) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -941,10 +1247,23 @@ NODEP_CPP_PROMOB=\
 	".\ProMoEditor\stdafx.h"\
 	
 
-"$(INTDIR)\ProMoBlockModel.obj" : $(SOURCE) $(DEP_CPP_PROMOB) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\ProMoBlockModel.obj" : $(SOURCE) $(DEP_CPP_PROMOB) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\ProMoBlockModel.obj" : $(SOURCE) $(DEP_CPP_PROMOB) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -977,9 +1296,21 @@ DEP_CPP_WINPROM=\
 	".\WinProMoView.h"\
 	
 
-"$(INTDIR)\WinProMoView.obj" : $(SOURCE) $(DEP_CPP_WINPROM) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
 
+
+".\Release\WinProMoView.obj" : $(SOURCE) $(DEP_CPP_WINPROM) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\WinProMoView.obj" : $(SOURCE) $(DEP_CPP_WINPROM) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -1005,9 +1336,21 @@ DEP_CPP_WINPROMO=\
 	".\WinProMoDocTemplate.h"\
 	
 
-"$(INTDIR)\WinProMoDocTemplate.obj" : $(SOURCE) $(DEP_CPP_WINPROMO) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
 
+
+".\Release\WinProMoDocTemplate.obj" : $(SOURCE) $(DEP_CPP_WINPROMO) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\WinProMoDocTemplate.obj" : $(SOURCE) $(DEP_CPP_WINPROMO) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
@@ -1040,15 +1383,183 @@ DEP_CPP_WINPROMOD=\
 	".\WinProMoView.h"\
 	
 
-"$(INTDIR)\WinProMoDoc.obj" : $(SOURCE) $(DEP_CPP_WINPROMOD) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
 
+
+".\Release\WinProMoDoc.obj" : $(SOURCE) $(DEP_CPP_WINPROMOD) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\WinProMoDoc.obj" : $(SOURCE) $(DEP_CPP_WINPROMOD) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\ProMoEditor\PropertyItem.cpp
+SOURCE=.\PropertyItem\StringPropertyItem.cpp
+DEP_CPP_STRIN=\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEditor.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramMenu.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\PropertyItem\PropertyItem.h"\
+	".\PropertyItem\StringPropertyItem.h"\
+	".\StdAfx.h"\
+	
+NODEP_CPP_STRIN=\
+	".\PropertyItem\stdafx.h"\
+	
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\StringPropertyItem.obj" : $(SOURCE) $(DEP_CPP_STRIN) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\StringPropertyItem.obj" : $(SOURCE) $(DEP_CPP_STRIN) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\PropertyItem\CustomPropertyItem.cpp
+DEP_CPP_CUSTO=\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEditor.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramMenu.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\PropertyItem\CustomPropertyItem.h"\
+	".\PropertyItem\PropertyItem.h"\
+	".\StdAfx.h"\
+	
+NODEP_CPP_CUSTO=\
+	".\PropertyItem\stdafx.h"\
+	
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\CustomPropertyItem.obj" : $(SOURCE) $(DEP_CPP_CUSTO) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\CustomPropertyItem.obj" : $(SOURCE) $(DEP_CPP_CUSTO) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\PropertyItem\DoublePropertyItem.cpp
+DEP_CPP_DOUBL=\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEditor.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramMenu.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\PropertyItem\DoublePropertyItem.h"\
+	".\PropertyItem\PropertyItem.h"\
+	".\StdAfx.h"\
+	
+NODEP_CPP_DOUBL=\
+	".\PropertyItem\stdafx.h"\
+	
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\DoublePropertyItem.obj" : $(SOURCE) $(DEP_CPP_DOUBL) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\DoublePropertyItem.obj" : $(SOURCE) $(DEP_CPP_DOUBL) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\PropertyItem\IntPropertyItem.cpp
+DEP_CPP_INTPR=\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEditor.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramMenu.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\PropertyItem\IntPropertyItem.h"\
+	".\PropertyItem\PropertyItem.h"\
+	".\StdAfx.h"\
+	
+NODEP_CPP_INTPR=\
+	".\PropertyItem\stdafx.h"\
+	
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\IntPropertyItem.obj" : $(SOURCE) $(DEP_CPP_INTPR) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\IntPropertyItem.obj" : $(SOURCE) $(DEP_CPP_INTPR) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\PropertyItem\PropertyItem.cpp
 DEP_CPP_PROPER=\
 	".\DiagramEditor\DiagramClipboardHandler.h"\
 	".\DiagramEditor\DiagramEditor.h"\
@@ -1057,23 +1568,36 @@ DEP_CPP_PROPER=\
 	".\DiagramEditor\DiagramMenu.h"\
 	".\DiagramEditor\DiagramPropertyDlg.h"\
 	".\DiagramEditor\UndoItem.h"\
-	".\ProMoEditor\PropertyItem.h"\
+	".\PropertyItem\PropertyItem.h"\
 	".\StdAfx.h"\
 	
 NODEP_CPP_PROPER=\
-	".\ProMoEditor\stdafx.h"\
+	".\PropertyItem\stdafx.h"\
 	
 
-"$(INTDIR)\PropertyItem.obj" : $(SOURCE) $(DEP_CPP_PROPER) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\PropertyItem.obj" : $(SOURCE) $(DEP_CPP_PROPER) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\PropertyItem.obj" : $(SOURCE) $(DEP_CPP_PROPER) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 ################################################################################
 # Begin Source File
 
-SOURCE=.\ProMoEditor\PropertyWrappers.cpp
+SOURCE=.\PropertyItem\PropertyWrappers.cpp
 DEP_CPP_PROPERT=\
 	".\DiagramEditor\DiagramClipboardHandler.h"\
 	".\DiagramEditor\DiagramEditor.h"\
@@ -1091,17 +1615,69 @@ DEP_CPP_PROPERT=\
 	".\ProMoEditor\ProMoEdgeView.h"\
 	".\ProMoEditor\ProMoModel.h"\
 	".\ProMoEditor\PropertyDialog.h"\
-	".\ProMoEditor\PropertyWrappers.h"\
+	".\PropertyItem\PropertyWrappers.h"\
 	".\StdAfx.h"\
 	
 NODEP_CPP_PROPERT=\
-	".\ProMoEditor\stdafx.h"\
+	".\PropertyItem\stdafx.h"\
 	
 
-"$(INTDIR)\PropertyWrappers.obj" : $(SOURCE) $(DEP_CPP_PROPERT) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\PropertyWrappers.obj" : $(SOURCE) $(DEP_CPP_PROPERT) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
 
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\PropertyWrappers.obj" : $(SOURCE) $(DEP_CPP_PROPERT) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\PropertyItem\BoolPropertyItem.cpp
+DEP_CPP_BOOLP=\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEditor.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramMenu.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\PropertyItem\BoolPropertyItem.h"\
+	".\PropertyItem\PropertyItem.h"\
+	".\StdAfx.h"\
+	
+NODEP_CPP_BOOLP=\
+	".\PropertyItem\stdafx.h"\
+	
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+
+".\Release\BoolPropertyItem.obj" : $(SOURCE) $(DEP_CPP_BOOLP) "$(INTDIR)"\
+ ".\Release\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
+
+".\Debug\BoolPropertyItem.obj" : $(SOURCE) $(DEP_CPP_BOOLP) "$(INTDIR)"\
+ ".\Debug\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ENDIF 
 
 # End Source File
 # End Target
