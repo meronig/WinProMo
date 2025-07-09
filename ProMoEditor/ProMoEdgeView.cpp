@@ -596,6 +596,42 @@ CDiagramEntity* CProMoEdgeView::GetDestination() const
 	return m_dest;
 }
 
+BOOL CProMoEdgeView::IsFirstSegment() const
+/* ============================================================
+	Function :		CProMoEdgeView::IsFirstSegment
+	Description :	Returns TRUE if this is the first segment
+					composing the edge.
+
+	Return :		BOOL	-	TRUE if this is the first 
+								segment composing the edge
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (GetSource()){
+		return FALSE;
+	}
+	return TRUE;
+}
+
+BOOL CProMoEdgeView::IsLastSegment() const
+/* ============================================================
+	Function :		CProMoEdgeView::IsLastSegment
+	Description :	Returns TRUE if this is the last segment
+					composing the edge.
+
+	Return :		BOOL	-	TRUE if this is the last
+								segment composing the edge
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (GetSource()) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
 CProMoEdgeModel* CProMoEdgeView::GetModel() const
 /* ============================================================
 	Function :		CProMoEdgeView::GetModel

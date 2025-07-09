@@ -28,6 +28,8 @@ public:
     virtual void SetDestination(CDiagramEntity *destination);
     virtual CDiagramEntity* GetSource() const;
     virtual CDiagramEntity* GetDestination() const;
+    virtual BOOL IsFirstSegment() const;
+    virtual BOOL IsLastSegment() const;
 
  
 protected:
