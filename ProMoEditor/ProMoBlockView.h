@@ -14,6 +14,8 @@ public:
 	virtual ~CProMoBlockView();
 
 	virtual CDiagramEntity* Clone();
+	virtual void	Copy(CDiagramEntity* obj);
+
 		
 	// Model-view links
 	virtual CProMoBlockModel* GetModel() const;
@@ -37,6 +39,7 @@ protected:
 	virtual CPoint GetIntersection(CPoint innerPoint, CPoint outerPoint);
 	virtual void KeepElementsConnected(double left, double top, double right, double bottom);
 	virtual CPoint MapPointToNewRect(CPoint oldPoint, double left, double top, double right, double bottom);
+	virtual CRect ComputeTextRect(const CString &text, const CFont &font);
 
 private:
 	CPropertyDialog	m_dlg;

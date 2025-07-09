@@ -539,6 +539,40 @@ CPoint CProMoBlockView::MapPointToNewRect(CPoint oldPoint, double left, double t
 	return CPoint(newX, newY);
 }
 
+CRect CProMoBlockView::ComputeTextRect(const CString &text, const CFont& font)
+/* ============================================================
+	Function :		CProMoBlockView::ComputeTextRect
+	Description :	Computes a CRect that fully contains the
+					input string, using the default font.
+	Access :		Protected
+
+	Return :		CRect				-	"CRect" that will
+											fully contain the
+											text
+	Parameters :	CString text		-	"CString" that 
+											contains the text
+					CFont font			-	"CFont" specifying
+											the font, size and
+											style to be used
+	Usage :			Call to determine (without drawing on 
+					display) the size of the input text. Can be
+					used to resize the block and/or to set the
+					minimum size such that the text can fit in
+					it.
+
+   ============================================================*/
+{
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+	dc.SelectObject(font);
+	int mode = dc.SetBkMode(TRANSPARENT);
+
+	CRect textBounds(0, 0, 0, 0);
+	dc.DrawText(text, &textBounds, DT_NOPREFIX | DT_SINGLELINE | DT_TOP | DT_CALCRECT);
+	
+	return textBounds;
+}
+
 
 void CProMoBlockView::RecomputeIntersectionLinks()
 	/* ============================================================
@@ -833,6 +867,28 @@ CDiagramEntity* CProMoBlockView::Clone()
 	obj->SetName(CProMoNameFactory::GetID());
 	return obj;
 
+}
+
+void CProMoBlockView::Copy(CDiagramEntity* obj)
+/* ============================================================
+	Function :		CProMoBlockView::Copy
+	Description :	Copy the information in "obj" to this object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDiagramEntity* obj	-	The object to copy
+												from.
+
+	Usage :			Copies basic information. from "obj" to this.
+					"GetType" can be used to check for the correct
+					object type in overridden versions.
+   ============================================================*/
+{
+	CDiagramEntity::Copy(obj);
+	CProMoBlockView* objView = dynamic_cast<CProMoBlockView*>(obj);
+	if (GetModel()) {
+		GetModel()->Copy(objView->GetModel());
+	}
 }
 
 void CProMoBlockView::SetRect(CRect rect)

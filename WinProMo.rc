@@ -266,6 +266,7 @@ BEGIN
         MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
         MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
         MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM "Delete\tDel",                 ID_EDIT_DELETE
     END
     POPUP "&View"
     BEGIN
@@ -291,6 +292,31 @@ BEGIN
     BEGIN
         MENUITEM "&About WinProMo...",          ID_APP_ABOUT
     END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_WPDPLUGIN ACCELERATORS
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_DELETE,      ID_EDIT_DELETE,         VIRTKEY, NOINVERT
 END
 
 
@@ -421,8 +447,9 @@ END
 STRINGTABLE
 BEGIN
     ID_VIEW_PROPERTIES      "Show or hide the properties panel\nToggle Properties"
-    ID_VIEW_SNAPTOGRID      "Snaps elements to grid\nSnap to grid"
     ID_VIEW_ELEMENTLIST     "Show or hide the element list panel\nToggle Element List"
+    ID_VIEW_SNAPTOGRID      "Snaps elements to grid\nSnap to grid"
+    ID_EDIT_DELETE          "Delete selected elements\nDelete"
 END
 
 #endif    // English (United States) resources

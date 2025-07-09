@@ -53,6 +53,8 @@ BEGIN_MESSAGE_MAP(CWinProMoView, CView)
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
+	ON_COMMAND(ID_EDIT_DELETE, &CWinProMoView::OnEditDelete)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, &CWinProMoView::OnUpdateEditDelete)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -290,3 +292,17 @@ CWinProMoDoc* CWinProMoView::GetDocument() // non-debug version is inline
 
 /////////////////////////////////////////////////////////////////////////////
 // CWinProMoView message handlers
+
+void CWinProMoView::OnEditDelete()
+{
+	if (m_editor) {
+		m_editor->DeleteAllSelected();
+	}
+}
+
+void CWinProMoView::OnUpdateEditDelete(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		m_editor->UpdateDelete(pCmdUI);
+	}
+}

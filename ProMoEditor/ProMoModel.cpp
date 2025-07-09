@@ -72,6 +72,24 @@ CProMoModel* CProMoModel::Clone()
 	return obj;
 }
 
+void CProMoModel::Copy(CProMoModel* obj)
+/* ============================================================
+	Function :		CProMoModel::Copy
+	Description :	Copy the information in "obj" to this object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoModel* obj	-	The object to copy
+												from.
+
+	Usage :			Copies basic information. from "obj" to this.
+					"GetType" can be used to check for the correct
+					object type in overridden versions.
+   ============================================================*/
+{
+
+}
+
 void CProMoModel::LinkView(CDiagramEntity* view)
 /* ============================================================
 	Function :		CProMoModel::LinkView

@@ -33,5 +33,6 @@ public:
 #include "TypedPropertyItem.hxx"
 
 template AFX_EXT_CLASS class CTypedPropertyItem<CString>;
+template AFX_EXT_CLASS class CTypedPropertyItem<UINT>;
 
 #endif //_TYPEDPROPERTYITEM_H_

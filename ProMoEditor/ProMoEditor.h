@@ -15,27 +15,34 @@ public:
 	CProMoEditor();
 	virtual ~CProMoEditor();
 
-
 public:
 	virtual void	Load(const CStringArray& stra, CProMoControlFactory* fact);
 	virtual void NotifySelectionChanged();
+	void UpdateDelete(CCmdUI* pCmdUI) const;
 
 protected:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
 	// Private helpers
 	virtual void ResetTarget();
 	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
-	CProMoBlockView* GetTargetBlock(CPoint point);
-	CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards);
+	virtual CProMoBlockView* GetTargetBlock(CPoint point);
+	virtual CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards);
 	virtual void DeselectChildBlocks(CProMoBlockView* block);
 	virtual void SelectChildBlocks(CProMoBlockView* block);
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
+	virtual CObArray* GetProperties(CDiagramEntity* element);
 
 // Overrides:
 public:
 	// Command handlers
 	virtual void	Cut();
+	virtual void	Paste();
+	virtual void	Undo();
+	virtual void	Redo();
+	virtual void	SelectAll();
+	virtual void	UnselectAll();
+	virtual void	DeleteAllSelected();
 	virtual void	LeftAlignSelected();
 	virtual void	RightAlignSelected();
 	virtual void	TopAlignSelected();

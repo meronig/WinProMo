@@ -872,6 +872,135 @@ void CProMoEditor::Cut()
 	}
 }
 
+void CProMoEditor::Paste()
+/* ============================================================
+	Function :		CProMoEditor::Paste
+	Description :	Paste copied or cut objects to the screen.
+					Overridden to update property panel.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to paste the contents of the clipboard
+					to the screen.
+
+   ============================================================*/
+{
+
+	CDiagramEditor::Paste();
+	NotifySelectionChanged();
+
+}
+
+void CProMoEditor::Undo()
+/* ============================================================
+	Function :		CProMoEditor::Undo
+	Description :	Undo the last operation.
+					Overridden to update property panel.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to restore the objects to the last
+					snapshot.
+
+   ============================================================*/
+{
+	
+	CDiagramEditor::Undo();
+	NotifySelectionChanged();
+
+}
+
+void CProMoEditor::Redo()
+/* ============================================================
+	Function :		CProMoEditor::Redo
+	Description :	Redo the last operation.
+					Overridden to update property panel.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to redo an undo.
+
+   ============================================================*/
+{
+
+	CDiagramEditor::Redo();
+	NotifySelectionChanged();
+
+}
+
+void CProMoEditor::UnselectAll()
+/* ============================================================
+	Function :		CProMoEditor::UnselectAll
+	Description :	Unselects all objects in the container.
+					Overridden to update property panel.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to unselect all objects.
+					Should not be callable if "GetObjectCount()
+					== 0" (there are no objects in the container).
+
+   ============================================================*/
+{
+
+	CDiagramEditor::UnselectAll();
+	NotifySelectionChanged();
+
+}
+
+void CProMoEditor::SelectAll()
+/* ============================================================
+	Function :		CProMoEditor::SelectAll
+	Description :	Selects all objects.
+					Overridden to update property panel.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to select all objects.
+					Should not be callable if "GetObjectCount()
+					== 0" (there are no objects in the container).
+
+   ============================================================*/
+{
+
+	CDiagramEditor::SelectAll();
+	NotifySelectionChanged();
+
+}
+
+void CProMoEditor::DeleteAllSelected()
+/* ============================================================
+	Function :		CProMoEditor::DeleteAllSelected
+	Description :	Deletes all selected objects from the
+					container.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to delete all selected objects from the
+					editor. Should not be callable if
+					"GetSelectCount() == 0" ( or "IsAnyObjectSelected()
+					== FALSE" )
+
+   ============================================================*/
+{
+
+	CDiagramEditor::DeleteAllSelected();
+	NotifySelectionChanged();
+
+}
+
 void CProMoEditor::DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const
 /* ============================================================
 	Function :		CProMoEditor::DrawObjectsR
@@ -1028,6 +1157,40 @@ void CProMoEditor::AutoResizeAll()
 	RedrawWindow();
 }
 
+CObArray* CProMoEditor::GetProperties(CDiagramEntity* element)
+/* ============================================================
+	Function :		CProMoEditor::GetProperties
+	Description :	Returns changeable propertis for the 
+					object specified.
+	Access :		Protected
+
+	Return :		CObArray*				-	Properties for
+												the element
+	Parameters :	CDiagramEntity* element	-	Element whose
+												properties need
+												to be collected
+
+	Usage :			Override to change the properties.
+
+   ============================================================*/
+{
+	CObArray* pProps = new CObArray();
+
+	// Example: create property items with wrappers defined in this class
+	CString title = element->GetTitle(); // example getter
+	CString name = element->GetName();
+
+	// Create a property item for "Title"
+	CTypedPropertyItem<CString>* pTitle = new CTypedPropertyItem<CString>(_T("Title"), element, this, &SetShapeTitle, title);
+	pProps->Add(pTitle);
+
+	// Create a property item for "Name"
+	pTitle = new CTypedPropertyItem<CString>(_T("Name"), element, this, &SetShapeName, name);
+	pProps->Add(pTitle);
+
+	return pProps;
+}
+
 
 
 void CProMoEditor::LeftAlignSelected()
@@ -1172,24 +1335,11 @@ void CProMoEditor::NotifySelectionChanged()
 {
 	CDiagramEntity* pSelectedEntity = GetSelectedObject();
 
-	CObArray* pProps = new CObArray();
+	CObArray* pProps = NULL;
 
 	if (pSelectedEntity)
 	{
-		// Example: create property items with wrappers defined in this class
-		CString title = pSelectedEntity->GetTitle(); // example getter
-		CString name = pSelectedEntity->GetName();
-
-		// Create a property item for "Title"
-		CTypedPropertyItem<CString>* pTitle = new CTypedPropertyItem<CString>(_T("Title"), pSelectedEntity, this, &SetShapeTitle, title);
-		pTitle->AddOption("Foo");
-		pTitle->AddOption("Bar");
-		pProps->Add(pTitle);
-
-		// Create a property item for "Name"
-		pTitle = new CTypedPropertyItem<CString>(_T("Name"), pSelectedEntity, this, &SetShapeName, name);
-		pProps->Add(pTitle);
-
+		pProps = GetProperties(pSelectedEntity);
 	}
 
 	// Get main frame window
@@ -1199,4 +1349,23 @@ void CProMoEditor::NotifySelectionChanged()
 		// Send message asynchronously to avoid blocking (optional)
 		pMainFrame->PostMessage(WM_SELECTION_CHANGED, 0, (LPARAM)pProps);
 	}
+}
+
+void CProMoEditor::UpdateDelete(CCmdUI* pCmdUI) const
+/* ============================================================
+	Function :		CProMoEditor::UpdateDelete
+	Description :	Command enabling for a Delete command UI-
+					element.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CCmdUI* pCmdUI	-	Command element to
+										update
+
+	Usage :			Can be called from a doc/view command update
+					function
+
+   ============================================================*/
+{
+	pCmdUI->Enable(IsAnyObjectSelected());
 }

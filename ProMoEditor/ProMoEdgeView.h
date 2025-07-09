@@ -16,6 +16,8 @@ public:
     virtual ~CProMoEdgeView();
     
     virtual	CDiagramEntity* Clone();
+    virtual void	Copy(CDiagramEntity* obj);
+
     
     // Model-view links
     virtual CProMoEdgeModel* GetModel() const;

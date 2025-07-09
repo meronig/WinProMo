@@ -37,7 +37,6 @@ CProMoEntityContainer::CProMoEntityContainer(CDiagramClipboardHandler* clip)
 
    ============================================================*/
 {
-	SetClipboardHandler(clip);
 	SetUndoStackSize(10);
 	m_modelType = _T("promo");
 }

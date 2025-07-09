@@ -13,6 +13,8 @@ public:
 	virtual ~CProMoModel();
 	
 	virtual CProMoModel* Clone();
+	virtual void	Copy(CProMoModel* obj);
+
 
 	// Model-view links
 	virtual void LinkView(CDiagramEntity* view);

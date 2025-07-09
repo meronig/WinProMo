@@ -110,6 +110,28 @@ CDiagramEntity* CProMoEdgeView::Clone()
 	return obj;
 }
 
+void CProMoEdgeView::Copy(CDiagramEntity* obj)
+/* ============================================================
+	Function :		CProMoEdgeView::Copy
+	Description :	Copy the information in "obj" to this object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDiagramEntity* obj	-	The object to copy
+												from.
+
+	Usage :			Copies basic information. from "obj" to this.
+					"GetType" can be used to check for the correct
+					object type in overridden versions.
+   ============================================================*/
+{
+	CDiagramEntity::Copy(obj);
+	CProMoEdgeView* objView = dynamic_cast<CProMoEdgeView*>(obj);
+	if (GetModel()) {
+		GetModel()->Copy(objView->GetModel());
+	}
+}
+
 void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, int size) 
 /* ============================================================
 	Function :		CProMoEdgeView::DrawHead

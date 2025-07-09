@@ -45,7 +45,6 @@ CProMoClipboardHandler::~CProMoClipboardHandler()
    ============================================================*/
 {
 
-	ClearPaste();
 
 }
 

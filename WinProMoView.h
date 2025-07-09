@@ -73,6 +73,9 @@ protected:
 	CProMoEditor*	m_editor;
 	int				m_screenResolutionX;
 
+public:
+	afx_msg void OnEditDelete();
+	afx_msg void OnUpdateEditDelete(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in WinProMoView.cpp
