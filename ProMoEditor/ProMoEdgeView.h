@@ -17,7 +17,6 @@ public:
     
     virtual	CDiagramEntity* Clone();
     virtual void	Copy(CDiagramEntity* obj);
-
     
     // Model-view links
     virtual CProMoEdgeModel* GetModel() const;
@@ -30,7 +29,7 @@ public:
     virtual CDiagramEntity* GetDestination() const;
     virtual BOOL IsFirstSegment() const;
     virtual BOOL IsLastSegment() const;
-
+    virtual CProMoEdgeView* Split();
  
 protected:
     virtual void DrawHead(CDC* dc, CRect rect, int size);

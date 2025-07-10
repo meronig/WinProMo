@@ -390,17 +390,12 @@ CString CProMoEdgeModel::GetDefaultGetString() const
 
    ============================================================*/
 
-	CString str;
+	CString result = CProMoModel::GetDefaultGetString();
 
-	CString name = GetName();
-	CDiagramEntity::CStringReplace(name, _T(":"), _T("\\colon"));
-	CDiagramEntity::CStringReplace(name, _T(";"), _T("\\semicolon"));
-	CDiagramEntity::CStringReplace(name, _T(","), _T("\\comma"));
-	CDiagramEntity::CStringReplace(name, _T("\r\n"), _T("\\newline"));
+	CString str;
 
 	CString sourceString = _T("");
 	CString destString = _T("");
-
 
 	if (m_source) {
 		sourceString = m_source->GetName();
@@ -418,8 +413,8 @@ CString CProMoEdgeModel::GetDefaultGetString() const
 		CDiagramEntity::CStringReplace(destString, _T("\r\n"), _T("\\newline"));
 	}
 
-	str.Format(_T("%s:%s,%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, (LPCTSTR)sourceString, (LPCTSTR)destString);
+	str.Format(_T(",%s,%s"), (LPCTSTR)sourceString, (LPCTSTR)destString );
 
-	return str;
+	return result + str;
 
 }

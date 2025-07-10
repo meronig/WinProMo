@@ -492,13 +492,9 @@ CString CProMoBlockModel::GetDefaultGetString() const
 
    ============================================================*/
 {
-	CString str;
+	CString result = CProMoModel::GetDefaultGetString();
 
-	CString name = GetName();
-	CDiagramEntity::CStringReplace(name, _T(":"), _T("\\colon"));
-	CDiagramEntity::CStringReplace(name, _T(";"), _T("\\semicolon"));
-	CDiagramEntity::CStringReplace(name, _T(","), _T("\\comma"));
-	CDiagramEntity::CStringReplace(name, _T("\r\n"), _T("\\newline"));
+	CString str;
 
 	CString parentString = _T("");
 
@@ -512,8 +508,8 @@ CString CProMoBlockModel::GetDefaultGetString() const
 		
 	}
 
-	str.Format(_T("%s:%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, (LPCTSTR)parentString);
+	str.Format(_T(",%s"), (LPCTSTR)parentString);
 
-	return str;
+	return result + str;
 
 }

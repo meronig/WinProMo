@@ -632,6 +632,51 @@ BOOL CProMoEdgeView::IsLastSegment() const
 	return TRUE;
 }
 
+CProMoEdgeView* CProMoEdgeView::Split()
+/* ============================================================
+	Function :		CProMoEdgeView::Split
+	Description :	Splits this edge view into two connected 
+					edge views, both sharing the same model.
+					This edge view will be the first view. The
+					second view will be returned.
+
+	Return :		CProMoEdgeView*	-	The second edge view.
+	Parameters :	none
+
+	Usage :			Call to split this edge view. The caller 
+					needs to manage the edge view being 
+					returned.
+
+   ============================================================*/
+
+{
+	CDiagramEntity* newEntity = Clone();
+	
+	CProMoEdgeView* newEdge = dynamic_cast<CProMoEdgeView*>(newEntity);
+
+	if (newEdge) {
+		//compute the length and position of both edges
+		CRect edgeRect = GetRect();
+		CRect newEdgeRect(edgeRect);
+		edgeRect.bottom = edgeRect.top + (edgeRect.Height() / 2);
+		edgeRect.right = edgeRect.left + (edgeRect.Width() / 2);
+		SetRect(edgeRect);
+		newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
+		newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
+		newEdge->SetRect(newEdgeRect);
+		newEdge->Select(FALSE);
+		//update edge links
+		newEdge->SetDestination(GetDestination());
+		newEdge->SetSource(this);
+		newEdge->SetModel(GetModel());
+		//clear duplicated properties
+		newEdge->SetTitle(_T(""));
+		return newEdge;
+	}
+	return NULL;
+	
+}
+
 CProMoEdgeModel* CProMoEdgeView::GetModel() const
 /* ============================================================
 	Function :		CProMoEdgeView::GetModel

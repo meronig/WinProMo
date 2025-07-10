@@ -695,25 +695,12 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 		CProMoEdgeView* edge;
 		edge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
 		if (edge) {
+			// We need to split the edge into two.
 			if (GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER) {
 				//take a snapshot to undo changes
 				GetDiagramEntityContainer()->Snapshot();
 				//split the edge into two
-				CProMoEdgeView* newEdge = new CProMoEdgeView;
-				//compute the length and position of both edges
-				CRect edgeRect = edge->GetRect();
-				CRect newEdgeRect(edgeRect);
-				edgeRect.bottom = edgeRect.top + (edgeRect.Height() / 2);
-				edgeRect.right = edgeRect.left + (edgeRect.Width() / 2);
-				edge->SetRect(edgeRect);
-				newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
-				newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
-				newEdge->SetRect(newEdgeRect);
-				newEdge->Select(FALSE);
-				//update edge links
-				newEdge->SetDestination(edge->GetDestination());
-				newEdge->SetSource(edge);
-				newEdge->SetModel(edge->GetModel());
+				CProMoEdgeView* newEdge = edge->Split();
 				//add new edge
 				AddObject(newEdge);
 				//switch to resizing the old edge
