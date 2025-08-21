@@ -63,12 +63,30 @@ END_MESSAGE_MAP()
 CWinProMoView::CWinProMoView()
 {
 	m_screenResolutionX = 0;
+	m_screenResolutionY = 0;
 	m_editor = NULL;
 }
 
 CProMoEditor* CWinProMoView::GetEditor()
 {
 	return m_editor;
+}
+
+void CWinProMoView::SetPageSize()
+{
+	CPrintDialog dlg(FALSE);
+	if (dlg.GetDefaults())
+	{
+		CDC dc;
+		dc.Attach(dlg.GetPrinterDC());
+
+		if (m_editor) {
+			m_editor->SetPageLayout(&dc);
+		}
+
+		dc.Detach();
+		
+	}
 }
 
 CWinProMoView::~CWinProMoView()
@@ -100,6 +118,9 @@ void CWinProMoView::OnInitialUpdate()
 		// for scaling to printer. See also OnDraw.
 		CClientDC dc(this);
 		m_screenResolutionX = dc.GetDeviceCaps(LOGPIXELSX);
+		m_screenResolutionY = dc.GetDeviceCaps(LOGPIXELSY);
+
+		SetPageSize();
 
 		m_editor->SetModified(FALSE);
 
@@ -123,7 +144,8 @@ void CWinProMoView::OnDraw(CDC* pDC)
 			COLORREF col = m_editor->GetBackgroundColor();
 			// Print zoom is the difference between screen- 
 			// and printer resolution.
-			double zoom = pDC->GetDeviceCaps(LOGPIXELSX) / m_screenResolutionX;
+			double zoom = pDC->GetDeviceCaps(LOGPIXELSX);
+			zoom = zoom / m_screenResolutionX;
 
 			CRect rect(0, 0,
 				(int)((double)m_editor->GetVirtualSize().cx * zoom),
@@ -135,6 +157,7 @@ void CWinProMoView::OnDraw(CDC* pDC)
 			m_editor->SetRedraw(TRUE);
 
 		}
+
 	}
 }
 

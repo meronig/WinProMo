@@ -68,6 +68,9 @@ CProMoEditor::CProMoEditor()
 	SetBackgroundColor(RGB(250, 250, 230));
 	SetSnapToGrid(FALSE);
 	SetRestraints(RESTRAINT_VIRTUAL);
+	m_pageBreaksVisible = TRUE;
+	m_paperSize = CSize(0,0);
+	m_margins = CRect(0,0,0,0);
 }
 
 CProMoEditor::~CProMoEditor()
@@ -821,6 +824,34 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 	RedrawWindow();
 }
 
+void CProMoEditor::Draw(CDC* dc, CRect rect) const
+/* ============================================================
+	Function :		CProMoEditor::Draw
+	Description :	Calls a series of (virtual) functions to
+					draw to "dc". "rect" is the total rectangle
+					to draw to.
+					Overridden to draw page breaks when active.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDC* dc		-	The "CDC" to draw to.
+					CRect rect	-	The complete rectangle
+									(including non-visible areas)
+
+	Usage :			Should not normally be called from user code.
+					Can be called to draw the complete window.
+					Can be overriden to change drawing order.
+
+   ============================================================*/
+{
+	CDiagramEditor::Draw(dc, rect);
+
+	double zoom = GetZoom();
+
+	if (m_pageBreaksVisible) {
+		DrawPageBreaks(dc, rect, zoom);
+	}
+}
 
 
 
@@ -1178,7 +1209,65 @@ CObArray* CProMoEditor::GetProperties(CDiagramEntity* element)
 	return pProps;
 }
 
+void CProMoEditor::DrawPageBreaks(CDC* dc, CRect rect, double zoom) const
+/* ============================================================
+	Function :		CProMoEditor::DrawPageBreaks
+	Description :	Draws visual indicators for page breaks
+	Access :		Protected
 
+	Return :		void
+	Parameters :	CDC* dc		-	"CDC" to draw to.
+					CRect rect	-	Total rect to draw to.
+					double zoom	-	Current zoom level.
+									Coordinates can be
+									multiplied with this value
+									to get scaled.
+
+	Usage :			Virtual. Can be overridden in a derived
+					class to draw the page breaks. Will not be 
+					called if page breaks is not visible.
+
+   ============================================================*/
+{
+
+	// Convert to screen units
+
+	double xzoom = zoom * (dc->GetDeviceCaps(LOGPIXELSX)) / m_printResolutionX;
+	double yzoom = zoom * (dc->GetDeviceCaps(LOGPIXELSY)) / m_printResolutionY;
+
+	if (m_printableArea.cx == 0 || m_printableArea.cy == 0)
+		return;
+
+	CPen pen(PS_DOT, 1, RGB(200, 200, 200));
+	CPen* pOldPen = dc->SelectObject(&pen);
+
+	CSize scaledPaperSize;
+	
+	scaledPaperSize.cx = m_printableArea.cx * xzoom;
+	scaledPaperSize.cy = m_printableArea.cy * yzoom;
+
+	int nHorzPages = (rect.Width() + scaledPaperSize.cx - 1) / scaledPaperSize.cx;
+	int nVertPages = (rect.Height() + scaledPaperSize.cy - 1) / scaledPaperSize.cy;
+
+	// Draw vertical lines
+	for (int i = 1; i < nHorzPages; ++i)
+	{
+		int x = i * scaledPaperSize.cx;
+		dc->MoveTo(x, 0);
+		dc->LineTo(x, rect.Height());
+	}
+
+	// Draw horizontal lines
+	for (int i = 1; i < nVertPages; ++i)
+	{
+		int y = i * scaledPaperSize.cy;
+		dc->MoveTo(0, y);
+		dc->LineTo(rect.Width(), y);
+	}
+
+	dc->SelectObject(pOldPen);
+
+}
 
 void CProMoEditor::LeftAlignSelected()
 /* ============================================================
@@ -1274,6 +1363,78 @@ void CProMoEditor::BottomAlignSelected()
 	PrepareForAlignment();
 	CDiagramEditor::BottomAlignSelected();
 	AutoResizeAll();
+}
+
+void CProMoEditor::SetPageBreaksVisible(BOOL isVisible)
+/* ============================================================
+	Function :		CDiagramEditor::SetPageBreaksVisible
+	Description :	Enable/disable page break indicators.
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL isVisible	-	"TRUE" if page break
+										indicators should be 
+										shown.
+
+   ============================================================*/
+{
+	m_pageBreaksVisible = isVisible;
+}
+
+BOOL CProMoEditor::GetPageBreaksVisible()
+/* ============================================================
+	Function :		CDiagramEditor::GetPageBreaksVisible
+	Description :	Gets the state of the page break indicators
+					state.
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if page break indicators
+								are on.
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_pageBreaksVisible;
+}
+
+void CProMoEditor::SetPageLayout(CDC* dc)
+/* ============================================================
+	Function :		CProMoEditor::SetPageLayout
+	Description :	Sets the page layout from input printer dc
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDC* dc		-	"CDC" to read page layout
+									information.
+
+	Usage :			Virtual. Can be overridden to apply a 
+					different page layout logic.
+
+   ============================================================*/
+{
+	if (dc) {
+		m_printResolutionX = dc->GetDeviceCaps(LOGPIXELSX);
+		m_printResolutionY = dc->GetDeviceCaps(LOGPIXELSY);
+
+		// Paper
+		m_paperSize.cx = dc->GetDeviceCaps(PHYSICALWIDTH);
+		m_paperSize.cy = dc->GetDeviceCaps(PHYSICALHEIGHT);
+
+		// Printable area
+		m_printableArea.cx = dc->GetDeviceCaps(HORZRES);
+		m_printableArea.cy = dc->GetDeviceCaps(VERTRES);
+
+		// Margins
+		int offsetX = dc->GetDeviceCaps(PHYSICALOFFSETX);
+		int offsetY = dc->GetDeviceCaps(PHYSICALOFFSETY);
+
+		m_margins.left = offsetX;
+		m_margins.top = offsetY;
+		m_margins.right = m_paperSize.cx - m_margins.left - m_printableArea.cx;
+		m_margins.bottom = m_paperSize.cy - m_margins.top - m_printableArea.cy;
+
+		Invalidate();
+	}
 }
 
 void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory* fact)

@@ -21,6 +21,7 @@ public:
 public:
 	CWinProMoView();
 	CProMoEditor* GetEditor();
+	void SetPageSize();
 
 protected:
 	virtual void CreateEditor();
@@ -64,6 +65,8 @@ protected:
 	afx_msg void OnUpdateEditUndo(CCmdUI* pCmdUI);
 	afx_msg void OnButtonSnap();
 	afx_msg void OnUpdateButtonSnap(CCmdUI* pCmdUI);
+	afx_msg void OnEditDelete();
+	afx_msg void OnUpdateEditDelete(CCmdUI* pCmdUI);
 	//}}AFX_MSG
 	//Commands
 	DECLARE_MESSAGE_MAP()
@@ -72,10 +75,7 @@ protected:
 	// Private data
 	CProMoEditor*	m_editor;
 	int				m_screenResolutionX;
-
-public:
-	afx_msg void OnEditDelete();
-	afx_msg void OnUpdateEditDelete(CCmdUI* pCmdUI);
+	int				m_screenResolutionY;
 };
 
 #ifndef _DEBUG  // debug version in WinProMoView.cpp

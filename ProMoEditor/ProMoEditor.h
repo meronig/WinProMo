@@ -32,9 +32,13 @@ protected:
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
 	virtual CObArray* GetProperties(CDiagramEntity* element);
+	virtual void DrawPageBreaks(CDC* dc, CRect rect, double zoom) const;
 
 // Overrides:
 public:
+	// Visuals
+	virtual void	Draw(CDC* dc, CRect rect) const;
+
 	// Command handlers
 	virtual void	Cut();
 	virtual void	Paste();
@@ -48,6 +52,11 @@ public:
 	virtual void	TopAlignSelected();
 	virtual void	BottomAlignSelected();
 	
+	// Property Accessors
+	virtual void	SetPageBreaksVisible(BOOL isVisible);
+	virtual BOOL	GetPageBreaksVisible();
+	virtual void	SetPageLayout(CDC* dc);
+		
 protected:
 	virtual void DrawGrid(CDC* dc, CRect rect, double zoom) const;
 	virtual void DrawObjects(CDC* dc, double zoom) const;
@@ -58,7 +67,13 @@ protected:
 	virtual afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	virtual afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
 
-
+protected:
+	BOOL m_pageBreaksVisible;
+	int m_printResolutionX;
+	int m_printResolutionY;
+	CSize m_paperSize;
+	CSize m_printableArea;
+	CRect m_margins;
 };
 
 #endif //_PROMOEDITOR_H_
