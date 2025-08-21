@@ -30,11 +30,12 @@ protected:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CWinProMoView)
 public:
-	virtual void OnDraw(CDC* pDC);  // overridden to draw this view
+	virtual void OnDraw(CDC* pDC);
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual void OnInitialUpdate();
 protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
+	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
 	//}}AFX_VIRTUAL
@@ -76,6 +77,8 @@ protected:
 	CProMoEditor*	m_editor;
 	int				m_screenResolutionX;
 	int				m_screenResolutionY;
+	int m_nHorzPages = 0;
+	int m_nVertPages = 0;
 };
 
 #ifndef _DEBUG  // debug version in WinProMoView.cpp

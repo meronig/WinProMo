@@ -134,45 +134,89 @@ void CWinProMoView::OnInitialUpdate()
 
 void CWinProMoView::OnDraw(CDC* pDC)
 {
-	CWinProMoDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
 
-	if (m_editor) {
-		if (pDC->IsPrinting())
-		{
-
-			COLORREF col = m_editor->GetBackgroundColor();
-			// Print zoom is the difference between screen- 
-			// and printer resolution.
-			double zoom = pDC->GetDeviceCaps(LOGPIXELSX);
-			zoom = zoom / m_screenResolutionX;
-
-			CRect rect(0, 0,
-				(int)((double)m_editor->GetVirtualSize().cx * zoom),
-				(int)((double)m_editor->GetVirtualSize().cy * zoom));
-			m_editor->SetRedraw(FALSE);
-			m_editor->SetBackgroundColor(RGB(255, 255, 255));
-			m_editor->Print(pDC, rect, zoom);
-			m_editor->SetBackgroundColor(col);
-			m_editor->SetRedraw(TRUE);
-
-		}
-
-	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // CWinProMoView printing
 
 BOOL CWinProMoView::OnPreparePrinting(CPrintInfo* pInfo)
-{
+{	
 	// default preparation
 	return DoPreparePrinting(pInfo);
 }
 
-void CWinProMoView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
+void CWinProMoView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 {
-	// TODO: add extra initialization before printing
+	if (!m_editor)
+		return;
+
+	double zoom = (double)pDC->GetDeviceCaps(LOGPIXELSX) / m_screenResolutionX;
+
+	// total rect = entire diagram in printer coords
+	CRect totalRect(0, 0,
+		(int)(m_editor->GetVirtualSize().cx * zoom),
+		(int)(m_editor->GetVirtualSize().cy * zoom));
+
+	// Determine current page index
+	int pageIndex = pInfo->m_nCurPage - 1; // 0-based
+	int pageX = pageIndex % m_nHorzPages;
+	int pageY = pageIndex / m_nHorzPages;
+
+	int pageWidth = pDC->GetDeviceCaps(HORZRES);
+	int pageHeight = pDC->GetDeviceCaps(VERTRES);
+
+	int offsetX = pageX * pageWidth;
+	int offsetY = pageY * pageHeight;
+
+	// Clip to page area
+	CRect clipRect(0, 0, pageWidth, pageHeight);
+	pDC->SaveDC();  // save state so we can restore later
+	pDC->IntersectClipRect(&clipRect);
+
+	// Shift origin so that Print() draws the right slice
+	pDC->SetWindowOrg(offsetX, offsetY);
+
+	COLORREF col = m_editor->GetBackgroundColor();
+	m_editor->SetRedraw(FALSE);
+	m_editor->SetBackgroundColor(RGB(255, 255, 255));
+	m_editor->Print(pDC, totalRect, zoom);
+	m_editor->SetBackgroundColor(col);
+	m_editor->SetRedraw(TRUE);
+
+	pDC->RestoreDC(-1); // restore to original
+
+}
+
+
+void CWinProMoView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
+{
+	if (m_editor)
+	{
+		// Virtual size in logical units
+		CSize virtSize = m_editor->GetVirtualSize();
+
+		if (pDC && pInfo) {
+			
+			// Scale with printer resolution / screen resolution
+			double zoom = (double)pDC->GetDeviceCaps(LOGPIXELSX) / m_screenResolutionX;
+			int virtWidth = (int)round(virtSize.cx * zoom);
+			int virtHeight = (int)round(virtSize.cy * zoom);
+
+			CSize paperSize;
+			paperSize.cx = pDC->GetDeviceCaps(HORZRES);
+			paperSize.cy = pDC->GetDeviceCaps(VERTRES);
+
+			m_nHorzPages = (virtWidth + paperSize.cx - 1) / paperSize.cx;
+			m_nVertPages = (virtHeight + paperSize.cy - 1) / paperSize.cy;
+
+			int totalPages = m_nHorzPages * m_nVertPages;
+
+			pInfo->SetMaxPage(totalPages);
+			pInfo->m_nCurPage = 1; // start at first page
+		}
+	}
+
 }
 
 void CWinProMoView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
