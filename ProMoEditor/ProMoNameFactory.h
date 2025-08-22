@@ -1,3 +1,10 @@
+/* ==========================================================================
+
+	Copyright © 2025 Technical University of Denmark
+
+	Author :		Giovanni Meroni
+
+   ========================================================================*/
 #if !defined(_PROMONAMEFACTORY_H_)
 #define _PROMONAMEFACTORY_H_
 

@@ -1,3 +1,10 @@
+/* ==========================================================================
+
+	Copyright © 2025 Technical University of Denmark
+
+	Author :		Giovanni Meroni
+
+   ========================================================================*/
 #ifndef _PROMOBLOCKMODEL_H_
 #define _PROMOBLOCKMODEL_H_
 

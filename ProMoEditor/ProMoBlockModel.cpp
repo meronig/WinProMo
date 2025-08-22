@@ -1,4 +1,7 @@
 /* ==========================================================================
+	
+	Copyright © 2025 Technical University of Denmark
+
 	CProMoBlockModel
 
 	Author :		Giovanni Meroni

@@ -1,3 +1,10 @@
+/* ==========================================================================
+
+	Copyright © 2025 Technical University of Denmark
+
+	Author :		Giovanni Meroni
+
+   ========================================================================*/
 #ifndef _PROMOENTITYCONTAINER_H_
 #define _PROMOENTITYCONTAINER_H_
 

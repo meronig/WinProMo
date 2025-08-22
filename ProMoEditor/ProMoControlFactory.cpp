@@ -1,4 +1,7 @@
 /* ==========================================================================
+
+	Copyright © 2025 Technical University of Denmark
+
 	CProMoControlFactory
 
 	Author :		Giovanni Meroni

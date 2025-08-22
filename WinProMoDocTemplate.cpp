@@ -1,5 +1,8 @@
 /* ==========================================================================
-	CProMoDocTemplate
+
+    Copyright © 2025 Technical University of Denmark
+
+    CProMoDocTemplate
 
 	Author :		Giovanni Meroni
 

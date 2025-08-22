@@ -1,3 +1,10 @@
+/* ==========================================================================
+
+	Copyright © 2025 Technical University of Denmark
+
+	Author :		Giovanni Meroni
+
+   ========================================================================*/
 #if !defined(_AFX_PROPERTYDIALOG_H_)
 #define _AFX_PROPERTYDIALOG_H_
 
