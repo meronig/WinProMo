@@ -79,8 +79,8 @@ protected:
 	CProMoEditor*	m_editor;
 	int				m_screenResolutionX;
 	int				m_screenResolutionY;
-	int m_nHorzPages = 0;
-	int m_nVertPages = 0;
+	int				m_nHorzPages;
+	int				m_nVertPages;
 };
 
 #ifndef _DEBUG  // debug version in WinProMoView.cpp

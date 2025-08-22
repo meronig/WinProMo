@@ -1249,8 +1249,9 @@ void CProMoEditor::DrawPageBreaks(CDC* dc, CRect rect, double zoom) const
 	int nHorzPages = (rect.Width() + scaledPaperSize.cx - 1) / scaledPaperSize.cx;
 	int nVertPages = (rect.Height() + scaledPaperSize.cy - 1) / scaledPaperSize.cy;
 
+	int i;
 	// Draw vertical lines
-	for (int i = 1; i < nHorzPages; ++i)
+	for (i = 1; i < nHorzPages; ++i)
 	{
 		int x = i * scaledPaperSize.cx;
 		dc->MoveTo(x, 0);
@@ -1258,7 +1259,7 @@ void CProMoEditor::DrawPageBreaks(CDC* dc, CRect rect, double zoom) const
 	}
 
 	// Draw horizontal lines
-	for (int i = 1; i < nVertPages; ++i)
+	for (i = 1; i < nVertPages; ++i)
 	{
 		int y = i * scaledPaperSize.cy;
 		dc->MoveTo(0, y);

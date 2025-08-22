@@ -64,6 +64,8 @@ CWinProMoView::CWinProMoView()
 {
 	m_screenResolutionX = 0;
 	m_screenResolutionY = 0;
+	m_nHorzPages = 0;
+	m_nVertPages = 0;
 	m_editor = NULL;
 }
 
@@ -154,9 +156,10 @@ BOOL CWinProMoView::OnPreparePrinting(CPrintInfo* pInfo)
 		if (pInfo) {
 
 			// Scale with printer resolution / screen resolution
-			double zoom = (double)dc.GetDeviceCaps(LOGPIXELSX) / m_screenResolutionX;
-			int virtWidth = (int)round(virtSize.cx * zoom);
-			int virtHeight = (int)round(virtSize.cy * zoom);
+			double wzoom = (double)dc.GetDeviceCaps(LOGPIXELSX) / m_screenResolutionX;
+			double hzoom = (double)dc.GetDeviceCaps(LOGPIXELSY) / m_screenResolutionY;
+			int virtWidth = (int)round(virtSize.cx * wzoom);
+			int virtHeight = (int)round(virtSize.cy * hzoom);
 
 			CSize paperSize;
 			paperSize.cx = dc.GetDeviceCaps(HORZRES);
@@ -269,7 +272,7 @@ BOOL CWinProMoView::GetPrinterDC(CDC& dc)
 	// First try via application (respects user’s print setup)
 	AfxGetApp()->CreatePrinterDC(dc);
 	if (dc.GetSafeHdc())
-		return true;
+		return TRUE;
 
 	// Fallback: try defaults via CPrintDialog
 	CPrintDialog dlg(FALSE);
@@ -279,12 +282,12 @@ BOOL CWinProMoView::GetPrinterDC(CDC& dc)
 		if (hPrinterDC)
 		{
 			dc.Attach(hPrinterDC);
-			return true;
+			return TRUE;
 		}
 	}
 
 	// Nothing available
-	return false;
+	return FALSE;
 }
 
 void CWinProMoView::OnSize(UINT nType, int cx, int cy)
