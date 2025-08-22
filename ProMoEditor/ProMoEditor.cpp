@@ -1366,9 +1366,9 @@ void CProMoEditor::BottomAlignSelected()
 	AutoResizeAll();
 }
 
-void CProMoEditor::SetPageBreaksVisible(BOOL isVisible)
+void CProMoEditor::ShowPageBreaks(BOOL isVisible)
 /* ============================================================
-	Function :		CDiagramEditor::SetPageBreaksVisible
+	Function :		CDiagramEditor::ShowPageBreaks
 	Description :	Enable/disable page break indicators.
 	Access :		Public
 
@@ -1380,11 +1380,13 @@ void CProMoEditor::SetPageBreaksVisible(BOOL isVisible)
    ============================================================*/
 {
 	m_pageBreaksVisible = isVisible;
+	if (m_hWnd)
+		RedrawWindow();
 }
 
-BOOL CProMoEditor::GetPageBreaksVisible()
+BOOL CProMoEditor::IsPageBreaksVisible()
 /* ============================================================
-	Function :		CDiagramEditor::GetPageBreaksVisible
+	Function :		CDiagramEditor::IsPageBreaksVisible
 	Description :	Gets the state of the page break indicators
 					state.
 	Access :		Public

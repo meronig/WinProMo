@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "DiagramEditorDemo.h"
 #include "GridSizeDialog.h"
 
 #ifdef _DEBUG

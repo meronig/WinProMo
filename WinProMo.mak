@@ -33,9 +33,9 @@ NULL=nul
 ################################################################################
 # Begin Project
 # PROP Target_Last_Scanned "WinProMo - Win32 Debug"
-MTL=mktyplib.exe
-RSC=rc.exe
 CPP=cl.exe
+RSC=rc.exe
+MTL=mktyplib.exe
 
 !IF  "$(CFG)" == "WinProMo - Win32 Release"
 
@@ -55,6 +55,7 @@ INTDIR=.\Release
 ALL : "..\Release\WinProMo.dll"
 
 CLEAN : 
+	-@erase "$(INTDIR)\CanvasSizeDialog.obj"
 	-@erase "$(INTDIR)\CustomPropertyItem.obj"
 	-@erase "$(INTDIR)\DiagramClipboardHandler.obj"
 	-@erase "$(INTDIR)\DiagramEditor.obj"
@@ -63,6 +64,7 @@ CLEAN :
 	-@erase "$(INTDIR)\DiagramLine.obj"
 	-@erase "$(INTDIR)\DiagramMenu.obj"
 	-@erase "$(INTDIR)\DiagramPropertyDlg.obj"
+	-@erase "$(INTDIR)\GridSizeDialog.obj"
 	-@erase "$(INTDIR)\GroupFactory.obj"
 	-@erase "$(INTDIR)\ProMoBlockModel.obj"
 	-@erase "$(INTDIR)\ProMoBlockView.obj"
@@ -121,6 +123,7 @@ LINK32_FLAGS=/nologo /base:0x10000000 /subsystem:windows /dll /incremental:no\
 DEF_FILE= \
 	".\WinProMo.def"
 LINK32_OBJS= \
+	"$(INTDIR)\CanvasSizeDialog.obj" \
 	"$(INTDIR)\CustomPropertyItem.obj" \
 	"$(INTDIR)\DiagramClipboardHandler.obj" \
 	"$(INTDIR)\DiagramEditor.obj" \
@@ -129,6 +132,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\DiagramLine.obj" \
 	"$(INTDIR)\DiagramMenu.obj" \
 	"$(INTDIR)\DiagramPropertyDlg.obj" \
+	"$(INTDIR)\GridSizeDialog.obj" \
 	"$(INTDIR)\GroupFactory.obj" \
 	"$(INTDIR)\ProMoBlockModel.obj" \
 	"$(INTDIR)\ProMoBlockView.obj" \
@@ -175,6 +179,7 @@ INTDIR=.\Debug
 ALL : "..\Debug\WinProMo.dll"
 
 CLEAN : 
+	-@erase "$(INTDIR)\CanvasSizeDialog.obj"
 	-@erase "$(INTDIR)\CustomPropertyItem.obj"
 	-@erase "$(INTDIR)\DiagramClipboardHandler.obj"
 	-@erase "$(INTDIR)\DiagramEditor.obj"
@@ -183,6 +188,7 @@ CLEAN :
 	-@erase "$(INTDIR)\DiagramLine.obj"
 	-@erase "$(INTDIR)\DiagramMenu.obj"
 	-@erase "$(INTDIR)\DiagramPropertyDlg.obj"
+	-@erase "$(INTDIR)\GridSizeDialog.obj"
 	-@erase "$(INTDIR)\GroupFactory.obj"
 	-@erase "$(INTDIR)\ProMoBlockModel.obj"
 	-@erase "$(INTDIR)\ProMoBlockView.obj"
@@ -246,6 +252,7 @@ LINK32_FLAGS=/nologo /base:0x10000000 /subsystem:windows /dll /incremental:yes\
 DEF_FILE= \
 	".\WinProMo.def"
 LINK32_OBJS= \
+	"$(INTDIR)\CanvasSizeDialog.obj" \
 	"$(INTDIR)\CustomPropertyItem.obj" \
 	"$(INTDIR)\DiagramClipboardHandler.obj" \
 	"$(INTDIR)\DiagramEditor.obj" \
@@ -254,6 +261,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\DiagramLine.obj" \
 	"$(INTDIR)\DiagramMenu.obj" \
 	"$(INTDIR)\DiagramPropertyDlg.obj" \
+	"$(INTDIR)\GridSizeDialog.obj" \
 	"$(INTDIR)\GroupFactory.obj" \
 	"$(INTDIR)\ProMoBlockModel.obj" \
 	"$(INTDIR)\ProMoBlockView.obj" \
@@ -959,6 +967,7 @@ NODEP_CPP_PROMOB=\
 
 SOURCE=.\WinProMoView.cpp
 DEP_CPP_WINPROM=\
+	".\CanvasSizeDialog.h"\
 	".\DiagramEditor\DiagramClipboardHandler.h"\
 	".\DiagramEditor\DiagramEditor.h"\
 	".\DiagramEditor\DiagramEntity.h"\
@@ -970,6 +979,7 @@ DEP_CPP_WINPROM=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\GridSizeDialog.h"\
 	".\ProMoEditor\ProMoBlockModel.h"\
 	".\ProMoEditor\ProMoBlockView.h"\
 	".\ProMoEditor\ProMoClipboardHandler.h"\
@@ -1134,6 +1144,34 @@ NODEP_CPP_PROPERT=\
 "$(INTDIR)\PropertyWrappers.obj" : $(SOURCE) $(DEP_CPP_PROPERT) "$(INTDIR)"\
  "$(INTDIR)\WinProMo.pch"
    $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\CanvasSizeDialog.cpp
+DEP_CPP_CANVA=\
+	".\CanvasSizeDialog.h"\
+	".\StdAfx.h"\
+	
+
+"$(INTDIR)\CanvasSizeDialog.obj" : $(SOURCE) $(DEP_CPP_CANVA) "$(INTDIR)"\
+ "$(INTDIR)\WinProMo.pch"
+
+
+# End Source File
+################################################################################
+# Begin Source File
+
+SOURCE=.\GridSizeDialog.cpp
+DEP_CPP_GRIDS=\
+	".\GridSizeDialog.h"\
+	".\StdAfx.h"\
+	
+
+"$(INTDIR)\GridSizeDialog.obj" : $(SOURCE) $(DEP_CPP_GRIDS) "$(INTDIR)"\
+ "$(INTDIR)\WinProMo.pch"
 
 
 # End Source File

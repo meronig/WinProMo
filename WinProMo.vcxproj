@@ -187,6 +187,8 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CanvasSizeDialog.cpp" />
+    <ClCompile Include="GridSizeDialog.cpp" />
     <ClCompile Include="PropertyItem\CustomPropertyItem.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
     <ClCompile Include="DiagramEditor\DiagramEditor.cpp" />
@@ -222,6 +224,8 @@
     <None Include="WinProMo.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CanvasSizeDialog.h" />
+    <ClInclude Include="GridSizeDialog.h" />
     <ClInclude Include="PropertyItem\CustomPropertyItem.h" />
     <ClInclude Include="DiagramEditor\DiagramClipboardHandler.h" />
     <ClInclude Include="DiagramEditor\DiagramEditor.h" />

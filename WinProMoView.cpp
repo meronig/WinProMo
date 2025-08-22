@@ -20,6 +20,8 @@
 #include "stdafx.h"
 #include "WinProMoDoc.h"
 #include "WinProMoView.h"
+#include "GridSizeDialog.h"
+#include "CanvasSizeDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,14 +49,42 @@ BEGIN_MESSAGE_MAP(CWinProMoView, CView)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_PASTE, OnUpdateEditPaste)
 	ON_COMMAND(ID_EDIT_UNDO, OnEditUndo)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_UNDO, OnUpdateEditUndo)
-	ON_COMMAND(ID_VIEW_SNAPTOGRID, OnButtonSnap)
-	ON_UPDATE_COMMAND_UI(ID_VIEW_SNAPTOGRID, OnUpdateButtonSnap)
+	ON_COMMAND(ID_ARRANGE_SNAPTOGRID, OnButtonSnap)
+	ON_UPDATE_COMMAND_UI(ID_ARRANGE_SNAPTOGRID, OnUpdateButtonSnap)
 	// Standard printing commands
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CWinProMoView::OnFilePrintPreview)
 	ON_COMMAND(ID_EDIT_DELETE, CWinProMoView::OnEditDelete)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, CWinProMoView::OnUpdateEditDelete)
+	ON_COMMAND(ID_ARRANGE_GROUP, CWinProMoView::OnArrangeGroup)
+	ON_UPDATE_COMMAND_UI(ID_ARRANGE_GROUP, CWinProMoView::OnUpdateArrangeGroup)
+	ON_COMMAND(ID_ARRANGE_UNGROUP, CWinProMoView::OnArrangeUngroup)
+	ON_UPDATE_COMMAND_UI(ID_ARRANGE_UNGROUP, CWinProMoView::OnUpdateArrangeUngroup)
+	ON_COMMAND(ID_VIEW_GRID, CWinProMoView::OnViewGrid)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_GRID, CWinProMoView::OnUpdateViewGrid)
+	ON_COMMAND(ID_ALIGN_BOTTOM, CWinProMoView::OnAlignBottom)
+	ON_UPDATE_COMMAND_UI(ID_ALIGN_BOTTOM, CWinProMoView::OnUpdateAlignBottom)
+	ON_UPDATE_COMMAND_UI(ID_ALIGN_CENTER, CWinProMoView::OnUpdateAlignCenter)
+	ON_COMMAND(ID_ALIGN_CENTER, CWinProMoView::OnAlignCenter)
+	ON_COMMAND(ID_ALIGN_LEFT, CWinProMoView::OnAlignLeft)
+	ON_UPDATE_COMMAND_UI(ID_ALIGN_LEFT, CWinProMoView::OnUpdateAlignLeft)
+	ON_COMMAND(ID_ALIGN_MIDDLE, CWinProMoView::OnAlignMiddle)
+	ON_UPDATE_COMMAND_UI(ID_ALIGN_MIDDLE, CWinProMoView::OnUpdateAlignMiddle)
+	ON_COMMAND(ID_ALIGN_RIGHT, CWinProMoView::OnAlignRight)
+	ON_UPDATE_COMMAND_UI(ID_ALIGN_RIGHT, CWinProMoView::OnUpdateAlignRight)
+	ON_COMMAND(ID_ALIGN_TOP, CWinProMoView::OnAlignTop)
+	ON_UPDATE_COMMAND_UI(ID_ALIGN_TOP, CWinProMoView::OnUpdateAlignTop)
+	ON_COMMAND(ID_EDIT_GRIDSIZE, CWinProMoView::OnEditGridsize)
+	ON_COMMAND(ID_EDIT_CANVASSIZE, CWinProMoView::OnEditCanvassize)
+	ON_COMMAND(ID_VIEW_PAGEBREAKS, &CWinProMoView::OnViewPagebreaks)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PAGEBREAKS, &CWinProMoView::OnUpdateViewPagebreaks)
+	ON_COMMAND(ID_ZOOM_100, &CWinProMoView::OnZoom100)
+	ON_COMMAND(ID_ZOOM_200, &CWinProMoView::OnZoom200)
+	ON_COMMAND(ID_ZOOM_50, &CWinProMoView::OnZoom50)
+	ON_COMMAND(ID_ZOOM_150, &CWinProMoView::OnZoom150)
+	ON_COMMAND(ID_ZOOM_400, &CWinProMoView::OnZoom400)
+	ON_COMMAND(ID_ZOOM_75, &CWinProMoView::OnZoom75)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -310,7 +340,6 @@ void CWinProMoView::OnButtonSnap()
 	if (m_editor) {
 		BOOL snap = !m_editor->GetSnapToGrid();
 		m_editor->SetSnapToGrid(snap);
-		m_editor->ShowGrid(snap);
 	}
 }
 
@@ -391,6 +420,7 @@ void CWinProMoView::OnUpdateButtonSnap(CCmdUI* pCmdUI)
 
 	if (m_editor) {
 		pCmdUI->SetCheck(m_editor->GetSnapToGrid());
+		pCmdUI->Enable(m_editor->IsGridVisible());
 	}
 
 }
@@ -416,5 +446,228 @@ void CWinProMoView::OnUpdateEditDelete(CCmdUI* pCmdUI)
 {
 	if (m_editor) {
 		m_editor->UpdateDelete(pCmdUI);
+	}
+}
+
+
+void CWinProMoView::OnArrangeGroup()
+{
+	if (m_editor) {
+		m_editor->Group();
+	}
+}
+
+
+void CWinProMoView::OnUpdateArrangeGroup(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		m_editor->UpdateGroup(pCmdUI);
+	}
+}
+
+
+void CWinProMoView::OnArrangeUngroup()
+{
+	if (m_editor) {
+		m_editor->Ungroup();
+	}
+}
+
+
+void CWinProMoView::OnUpdateArrangeUngroup(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		m_editor->UpdateUngroup(pCmdUI);
+	}
+}
+
+
+void CWinProMoView::OnViewGrid()
+{
+	if (m_editor) {
+		BOOL grid = !m_editor->IsGridVisible();
+		m_editor->ShowGrid(grid);
+	}
+}
+
+
+void CWinProMoView::OnUpdateViewGrid(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->SetCheck(m_editor->IsGridVisible());
+		pCmdUI->Enable(!m_editor->GetSnapToGrid());
+	}
+}
+
+
+void CWinProMoView::OnAlignBottom()
+{
+	if (m_editor) {
+		m_editor->BottomAlignSelected();
+	}
+}
+
+
+void CWinProMoView::OnUpdateAlignBottom(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		m_editor->UpdateGroup(pCmdUI);
+	}
+}
+
+
+void CWinProMoView::OnUpdateAlignCenter(CCmdUI* pCmdUI)
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CWinProMoView::OnAlignCenter()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CWinProMoView::OnAlignLeft()
+{
+	m_editor->LeftAlignSelected();
+}
+
+
+void CWinProMoView::OnUpdateAlignLeft(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		m_editor->UpdateGroup(pCmdUI);
+	}
+}
+
+
+void CWinProMoView::OnAlignMiddle()
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CWinProMoView::OnUpdateAlignMiddle(CCmdUI* pCmdUI)
+{
+	// TODO: Add your command handler code here
+}
+
+
+void CWinProMoView::OnAlignRight()
+{
+	m_editor->RightAlignSelected();
+}
+
+
+void CWinProMoView::OnUpdateAlignRight(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		m_editor->UpdateGroup(pCmdUI);
+	}
+}
+
+
+void CWinProMoView::OnAlignTop()
+{
+	m_editor->TopAlignSelected();
+}
+
+
+void CWinProMoView::OnUpdateAlignTop(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		m_editor->UpdateGroup(pCmdUI);
+	}
+}
+
+
+void CWinProMoView::OnEditGridsize()
+{
+	if (m_editor) {
+		CGridSizeDialog	dlg;
+
+		dlg.m_width = m_editor->GetGridSize().cx;
+		dlg.m_height = m_editor->GetGridSize().cy;
+		if (dlg.DoModal() == IDOK)
+			m_editor->SetGridSize(CSize(dlg.m_width, dlg.m_height));
+	}
+}
+
+
+void CWinProMoView::OnEditCanvassize()
+{
+	if (m_editor) {
+		CCanvasSizeDialog	dlg;
+
+		dlg.m_width = m_editor->GetVirtualSize().cx;
+		dlg.m_height = m_editor->GetVirtualSize().cy;
+		if (dlg.DoModal() == IDOK)
+			m_editor->SetVirtualSize(CSize(dlg.m_width, dlg.m_height));
+	}
+}
+
+
+void CWinProMoView::OnViewPagebreaks()
+{
+	if (m_editor) {
+		BOOL breaks = !m_editor->IsPageBreaksVisible();
+		m_editor->ShowPageBreaks(breaks);
+	}
+}
+
+
+void CWinProMoView::OnUpdateViewPagebreaks(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->SetCheck(m_editor->IsPageBreaksVisible());
+	}
+}
+
+
+void CWinProMoView::OnZoom100()
+{
+	if (m_editor) {
+		m_editor->SetZoom(1.0);
+	}
+}
+
+
+void CWinProMoView::OnZoom200()
+{
+	if (m_editor) {
+		m_editor->SetZoom(2.0);
+	}
+}
+
+
+void CWinProMoView::OnZoom50()
+{
+	if (m_editor) {
+		m_editor->SetZoom(0.5);
+	}
+}
+
+
+void CWinProMoView::OnZoom150()
+{
+	if (m_editor) {
+		m_editor->SetZoom(1.5);
+	}
+}
+
+
+void CWinProMoView::OnZoom400()
+{
+	if (m_editor) {
+		m_editor->SetZoom(4.0);
+	}
+}
+
+
+void CWinProMoView::OnZoom75()
+{
+	if (m_editor) {
+		m_editor->SetZoom(0.75);
 	}
 }

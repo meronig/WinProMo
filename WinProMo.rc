@@ -80,10 +80,10 @@ BEGIN
     LTEXT           "Text:",IDC_STATIC,5,0,17,8
 END
 
-IDD_DIALOG_PAPER_SIZE DIALOG 0, 0, 152, 55
+IDD_DIALOG_CANVAS_SIZE DIALOGEX 0, 0, 152, 55
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Paper size"
-FONT 8, "MS Sans Serif"
+CAPTION "Canvas size"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,95,5,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,95,22,50,14
@@ -184,6 +184,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 45
     END
+
+    IDD_DIALOG_CANVAS_SIZE, DIALOG
+    BEGIN
+    END
+
+    IDD_DIALOG_GRID_SIZE, DIALOG
+    BEGIN
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -267,19 +275,51 @@ BEGIN
         MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
         MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
         MENUITEM "Delete\tDel",                 ID_EDIT_DELETE
+        MENUITEM SEPARATOR
+        MENUITEM "Grid size...",                ID_EDIT_GRIDSIZE
+        MENUITEM "Canvas size...",              ID_EDIT_CANVASSIZE
     END
     POPUP "&View"
     BEGIN
+        POPUP "Zoom"
+        BEGIN
+            MENUITEM "400%",                        ID_ZOOM_400
+            MENUITEM "200%",                        ID_ZOOM_200
+            MENUITEM "150%",                        ID_ZOOM_150
+            MENUITEM "100%",                        ID_ZOOM_100
+            MENUITEM "75%",                         ID_ZOOM_75
+            MENUITEM "50%",                         ID_ZOOM_50
+        END
+        MENUITEM SEPARATOR
         MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
         MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
         MENUITEM "Properties",                  ID_VIEW_PROPERTIES
         MENUITEM "Element List",                ID_VIEW_ELEMENTLIST
         MENUITEM SEPARATOR
-        MENUITEM "Snap to Grid",                ID_VIEW_SNAPTOGRID
+        MENUITEM "Grid",                        ID_VIEW_GRID
+        MENUITEM "Page breaks",                 ID_VIEW_PAGEBREAKS
     END
     POPUP "&Insert"
     BEGIN
         MENUITEM "(dummy)",                     ID_INSERT_
+    END
+    POPUP "&Arrange"
+    BEGIN
+        MENUITEM "Group",                       ID_ARRANGE_GROUP
+        MENUITEM "Ungroup",                     ID_ARRANGE_UNGROUP
+        MENUITEM SEPARATOR
+        POPUP "Align"
+        BEGIN
+            MENUITEM "Left",                        ID_ALIGN_LEFT
+            MENUITEM "Center",                      ID_ALIGN_CENTER
+            MENUITEM "Right",                       ID_ALIGN_RIGHT
+            MENUITEM SEPARATOR
+            MENUITEM "Top",                         ID_ALIGN_TOP
+            MENUITEM "Middle",                      ID_ALIGN_MIDDLE
+            MENUITEM "Bottom",                      ID_ALIGN_BOTTOM
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Snap to Grid",                ID_ARRANGE_SNAPTOGRID
     END
     POPUP "&Window"
     BEGIN
@@ -317,6 +357,17 @@ BEGIN
     VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
     VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
     VK_DELETE,      ID_EDIT_DELETE,         VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG_CANVAS_SIZE AFX_DIALOG_LAYOUT
+BEGIN
+    0
 END
 
 
@@ -448,8 +499,30 @@ STRINGTABLE
 BEGIN
     ID_VIEW_PROPERTIES      "Show or hide the properties panel\nToggle Properties"
     ID_VIEW_ELEMENTLIST     "Show or hide the element list panel\nToggle Element List"
-    ID_VIEW_SNAPTOGRID      "Snaps elements to grid\nSnap to grid"
+    ID_ARRANGE_SNAPTOGRID   "Snaps elements to grid\nSnap to grid"
     ID_EDIT_DELETE          "Delete selected elements\nDelete"
+    ID_VIEW_PAGEBREAKS      "Show page break indicators\nToggle page breaks"
+    ID_ZOOM_100             "Display the diagram at a 100% zoom\n100% zoom"
+    ID_ZOOM_75              "Display the diagram at a 75% zoom\n75% zoom"
+END
+
+STRINGTABLE
+BEGIN
+    ID_ZOOM_50              "Display the diagram at a 50% zoom\n50% zoom"
+    ID_ZOOM_200             "Display the diagram at a 200% zoom\n200% zoom"
+    ID_ZOOM_400             "Display the diagram at a 400% zoom\n400% zoom"
+    ID_ZOOM_150             "Display the diagram at a 150% zoom\n150% zoom"
+    ID_ARRANGE_GROUP        "Combines the selected elements into a group so they behave as a single object\nGroup elements"
+    ID_ARRANGE_UNGROUP      "Breaks the selected group into its component elements\nUngroup"
+    ID_ALIGN_LEFT           "Align the leftmost edges of the selected elements\nAlign selected elements left"
+    ID_ALIGN_CENTER         "Vertically aligh the centers of the selected elements\nAlign selected elements center vertically"
+    ID_ALIGN_RIGHT          "Align the rightmost edges of the selected elements\nAlign selected elements right"
+    ID_ALIGN_TOP            "Align the topmost edges of the selected elements\nAlign selected elements top"
+    ID_ALIGN_MIDDLE         "Horizontally aligh the centers of the selected elements\nAlign selected elements middle horizontally"
+    ID_ALIGN_BOTTOM         "Align the bottommost edges of the selected elements\nAlign selected elements bottom"
+    ID_VIEW_GRID            "Show grid to ease positioning elements\nToggle grid"
+    ID_EDIT_CANVASSIZE      "Set the size of the drawing area\nCanvas size"
+    ID_EDIT_GRIDSIZE        "Set the size of the grid\nGrid size"
 END
 
 #endif    // English (United States) resources

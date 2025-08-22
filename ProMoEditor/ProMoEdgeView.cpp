@@ -311,12 +311,12 @@ void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 
 	//draw the tip only if it is the last segment
 	if (m_dest == NULL) {
-		DrawHead(dc, rect, 10);
+		DrawHead(dc, rect, 10 * GetZoom());
 	}
 
 	//draw the tail only if it is the last segment
 	if (m_source == NULL) {
-		DrawTail(dc, rect, 10);
+		DrawTail(dc, rect, 10 * GetZoom());
 	}
 		
 	

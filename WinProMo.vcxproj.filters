@@ -102,6 +102,12 @@
     <ClCompile Include="PropertyItem\CustomPropertyItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GridSizeDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CanvasSizeDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="WinProMo.def">
@@ -212,6 +218,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PropertyItem\TypedPropertyItem.hxx">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GridSizeDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CanvasSizeDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

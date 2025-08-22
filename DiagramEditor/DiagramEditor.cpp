@@ -1672,8 +1672,10 @@ void CDiagramEditor::SetZoom( double zoom )
 	if( m_zoom != m_zoomMin )
 		m_zoom = min( m_zoomMax, zoom );
 
-	if( m_hWnd )
+	if (m_hWnd) {
 		RedrawWindow();
+		SetupScrollbars();
+	}
 
 }
 

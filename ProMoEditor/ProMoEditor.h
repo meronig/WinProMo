@@ -53,8 +53,8 @@ public:
 	virtual void	BottomAlignSelected();
 	
 	// Property Accessors
-	virtual void	SetPageBreaksVisible(BOOL isVisible);
-	virtual BOOL	GetPageBreaksVisible();
+	virtual void	ShowPageBreaks(BOOL isVisible);
+	virtual BOOL	IsPageBreaksVisible();
 	virtual void	SetPageLayout(CDC* dc);
 		
 protected:
