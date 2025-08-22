@@ -145,6 +145,33 @@ BOOL CWinProMoView::OnPreparePrinting(CPrintInfo* pInfo)
 		AfxMessageBox(_T("No printer available."));
 		return FALSE;
 	}
+
+	if (m_editor)
+	{
+		// Virtual size in logical units
+		CSize virtSize = m_editor->GetVirtualSize();
+
+		if (pInfo) {
+
+			// Scale with printer resolution / screen resolution
+			double zoom = (double)dc.GetDeviceCaps(LOGPIXELSX) / m_screenResolutionX;
+			int virtWidth = (int)round(virtSize.cx * zoom);
+			int virtHeight = (int)round(virtSize.cy * zoom);
+
+			CSize paperSize;
+			paperSize.cx = dc.GetDeviceCaps(HORZRES);
+			paperSize.cy = dc.GetDeviceCaps(VERTRES);
+
+			m_nHorzPages = (virtWidth + paperSize.cx - 1) / paperSize.cx;
+			m_nVertPages = (virtHeight + paperSize.cy - 1) / paperSize.cy;
+
+			int totalPages = m_nHorzPages * m_nVertPages;
+
+			pInfo->SetMaxPage(totalPages);
+			pInfo->m_nCurPage = 1; // start at first page
+		}
+	}
+
 	dc.DeleteDC();
 
 	// default preparation
@@ -196,31 +223,7 @@ void CWinProMoView::OnPrint(CDC* pDC, CPrintInfo* pInfo)
 
 void CWinProMoView::OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo)
 {
-	if (m_editor)
-	{
-		// Virtual size in logical units
-		CSize virtSize = m_editor->GetVirtualSize();
-
-		if (pDC && pInfo) {
-			
-			// Scale with printer resolution / screen resolution
-			double zoom = (double)pDC->GetDeviceCaps(LOGPIXELSX) / m_screenResolutionX;
-			int virtWidth = (int)round(virtSize.cx * zoom);
-			int virtHeight = (int)round(virtSize.cy * zoom);
-
-			CSize paperSize;
-			paperSize.cx = pDC->GetDeviceCaps(HORZRES);
-			paperSize.cy = pDC->GetDeviceCaps(VERTRES);
-
-			m_nHorzPages = (virtWidth + paperSize.cx - 1) / paperSize.cx;
-			m_nVertPages = (virtHeight + paperSize.cy - 1) / paperSize.cy;
-
-			int totalPages = m_nHorzPages * m_nVertPages;
-
-			pInfo->SetMaxPage(totalPages);
-			pInfo->m_nCurPage = 1; // start at first page
-		}
-	}
+	
 
 }
 
