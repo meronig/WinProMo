@@ -96,11 +96,28 @@ BOOL CWinProMoDoc::OnNewDocument()
 		pView = (CWinProMoView*)GetNextView(pos);
 		if (pView) {
 			CClientDC dc(pView);
+
 			int screenResolutionX = dc.GetDeviceCaps(LOGPIXELSX);
-			int horzSize = round((double)dc.GetDeviceCaps(HORZSIZE) / (double)screenResolutionX);
-			int vertSize = round((double)dc.GetDeviceCaps(VERTSIZE) / (double)screenResolutionX);
+			int screenResolutionY = dc.GetDeviceCaps(LOGPIXELSY);
+
+			CDC printDC;
 			
-			m_objs->SetVirtualSize(CSize(8 * screenResolutionX, 11 * screenResolutionX));
+			// Canvas size equals to current page size
+			if (pView->GetPrinterDC(printDC)) {
+				int printResolutionX = printDC.GetDeviceCaps(LOGPIXELSX);
+				int printResolutionY = printDC.GetDeviceCaps(LOGPIXELSY);
+				
+				int horzSize = round((double)printDC.GetDeviceCaps(HORZRES) * (double)screenResolutionX / printResolutionX);
+				int vertSize = round((double)printDC.GetDeviceCaps(VERTRES) * (double)screenResolutionY / printResolutionY);
+
+				m_objs->SetVirtualSize(CSize(horzSize - 1, vertSize - 1));
+
+				printDC.DeleteDC();
+			}
+			// No printer, so default to 8x11
+			else {
+				m_objs->SetVirtualSize(CSize(8 * screenResolutionX, 11 * screenResolutionX));
+			}
 
 		}
 	}

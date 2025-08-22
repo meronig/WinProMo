@@ -52,9 +52,9 @@ BEGIN_MESSAGE_MAP(CWinProMoView, CView)
 	// Standard printing commands
 	ON_COMMAND(ID_FILE_PRINT, CView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, CView::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CView::OnFilePrintPreview)
-	ON_COMMAND(ID_EDIT_DELETE, &CWinProMoView::OnEditDelete)
-	ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, &CWinProMoView::OnUpdateEditDelete)
+	ON_COMMAND(ID_FILE_PRINT_PREVIEW, CWinProMoView::OnFilePrintPreview)
+	ON_COMMAND(ID_EDIT_DELETE, CWinProMoView::OnEditDelete)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_DELETE, CWinProMoView::OnUpdateEditDelete)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -74,19 +74,16 @@ CProMoEditor* CWinProMoView::GetEditor()
 
 void CWinProMoView::SetPageSize()
 {
-	CPrintDialog dlg(FALSE);
-	if (dlg.GetDefaults())
+	CDC dc;
+	if (!GetPrinterDC(dc))
 	{
-		CDC dc;
-		dc.Attach(dlg.GetPrinterDC());
-
-		if (m_editor) {
-			m_editor->SetPageLayout(&dc);
-		}
-
-		dc.Detach();
-		
+		AfxMessageBox(_T("No printer available."));
+		return;
 	}
+
+	m_editor->SetPageLayout(&dc);
+	
+	dc.DeleteDC();
 }
 
 CWinProMoView::~CWinProMoView()
@@ -142,6 +139,14 @@ void CWinProMoView::OnDraw(CDC* pDC)
 
 BOOL CWinProMoView::OnPreparePrinting(CPrintInfo* pInfo)
 {	
+	CDC dc;
+	if (!GetPrinterDC(dc))
+	{
+		AfxMessageBox(_T("No printer available."));
+		return FALSE;
+	}
+	dc.DeleteDC();
+
 	// default preparation
 	return DoPreparePrinting(pInfo);
 }
@@ -224,6 +229,17 @@ void CWinProMoView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 	// TODO: add cleanup after printing
 }
 
+void CWinProMoView::OnFilePrintPreview()
+{
+	CDC dc;
+	if (!GetPrinterDC(dc))
+	{
+		AfxMessageBox(_T("No printer available."));
+		return; 
+	}
+	CView::OnFilePrintPreview();
+}
+
 /////////////////////////////////////////////////////////////////////////////
 // CWinProMoView diagnostics
 
@@ -243,6 +259,29 @@ void CWinProMoView::CreateEditor()
 	if (!m_editor) {
 		m_editor = new CProMoEditor;
 	}
+}
+
+BOOL CWinProMoView::GetPrinterDC(CDC& dc)
+{
+	// First try via application (respects user’s print setup)
+	AfxGetApp()->CreatePrinterDC(dc);
+	if (dc.GetSafeHdc())
+		return true;
+
+	// Fallback: try defaults via CPrintDialog
+	CPrintDialog dlg(FALSE);
+	if (dlg.GetDefaults())
+	{
+		HDC hPrinterDC = dlg.GetPrinterDC();
+		if (hPrinterDC)
+		{
+			dc.Attach(hPrinterDC);
+			return true;
+		}
+	}
+
+	// Nothing available
+	return false;
 }
 
 void CWinProMoView::OnSize(UINT nType, int cx, int cy)

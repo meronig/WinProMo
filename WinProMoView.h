@@ -22,6 +22,7 @@ public:
 	CWinProMoView();
 	CProMoEditor* GetEditor();
 	void SetPageSize();
+	virtual BOOL GetPrinterDC(CDC& dc);
 
 protected:
 	virtual void CreateEditor();
@@ -38,6 +39,7 @@ protected:
 	virtual void OnPrint(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+	virtual void OnFilePrintPreview();
 	//}}AFX_VIRTUAL
 
 // Implementation
