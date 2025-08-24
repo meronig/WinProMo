@@ -27,6 +27,9 @@ public:
 	virtual void NotifySelectionChanged();
 	void UpdateDelete(CCmdUI* pCmdUI) const;
 
+	virtual void	MiddleAlignSelected();
+	virtual void	CenterAlignSelected();
+
 protected:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
 	// Private helpers
@@ -73,6 +76,7 @@ protected:
 	virtual afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	virtual afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	virtual afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	virtual afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 
 protected:
 	BOOL m_pageBreaksVisible;

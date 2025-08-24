@@ -60,6 +60,7 @@ public:
     virtual HCURSOR GetCursor(int hit) const;
     virtual void	DrawSelectionMarkers(CDC* dc, CRect rect) const;
 
+    virtual void	ShowPopup(CPoint point, CWnd* parent);
 
 protected:
     virtual CString				GetDefaultGetString() const;

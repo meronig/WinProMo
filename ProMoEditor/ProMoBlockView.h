@@ -37,6 +37,7 @@ public:
 	
 	virtual void SetLockedProportions(BOOL hasLockedProportions);
 	virtual BOOL HasLockedProportions();
+
 	
 protected:
 	BOOL m_target;
@@ -66,6 +67,8 @@ public:
 	static	CDiagramEntity* CreateFromString(const CString& str);
 	
 	virtual void Draw(CDC* dc, CRect rect);
+
+	virtual void	ShowPopup(CPoint point, CWnd* parent);
 
 protected:
 	virtual CString				GetDefaultGetString() const;

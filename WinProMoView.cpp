@@ -88,6 +88,8 @@ BEGIN_MESSAGE_MAP(CWinProMoView, CView)
 	ON_COMMAND(ID_ZOOM_150, &CWinProMoView::OnZoom150)
 	ON_COMMAND(ID_ZOOM_400, &CWinProMoView::OnZoom400)
 	ON_COMMAND(ID_ZOOM_75, &CWinProMoView::OnZoom75)
+	ON_COMMAND(ID_EDIT_REDO, &CWinProMoView::OnEditRedo)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_REDO, &CWinProMoView::OnUpdateEditRedo)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -391,6 +393,22 @@ void CWinProMoView::OnUpdateEditUndo(CCmdUI* pCmdUI)
 
 }
 
+
+void CWinProMoView::OnEditRedo()
+{
+	if (m_editor) {
+		m_editor->Redo();
+	}
+}
+
+
+void CWinProMoView::OnUpdateEditRedo(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		m_editor->UpdateRedo(pCmdUI);
+	}
+}
+
 void CWinProMoView::OnUpdateEditCopy(CCmdUI* pCmdUI)
 {
 
@@ -521,13 +539,17 @@ void CWinProMoView::OnUpdateAlignBottom(CCmdUI* pCmdUI)
 
 void CWinProMoView::OnUpdateAlignCenter(CCmdUI* pCmdUI)
 {
-	// TODO: Add your command handler code here
+	if (m_editor) {
+		m_editor->UpdateGroup(pCmdUI);
+	}
 }
 
 
 void CWinProMoView::OnAlignCenter()
 {
-	// TODO: Add your command handler code here
+	if (m_editor) {
+		m_editor->CenterAlignSelected();
+	}
 }
 
 
@@ -547,13 +569,17 @@ void CWinProMoView::OnUpdateAlignLeft(CCmdUI* pCmdUI)
 
 void CWinProMoView::OnAlignMiddle()
 {
-	// TODO: Add your command handler code here
+	if (m_editor) {
+		m_editor->MiddleAlignSelected();
+	}
 }
 
 
 void CWinProMoView::OnUpdateAlignMiddle(CCmdUI* pCmdUI)
 {
-	// TODO: Add your command handler code here
+	if (m_editor) {
+		m_editor->UpdateGroup(pCmdUI);
+	}
 }
 
 
@@ -674,3 +700,5 @@ void CWinProMoView::OnZoom75()
 		m_editor->SetZoom(0.75);
 	}
 }
+
+

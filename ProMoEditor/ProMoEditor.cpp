@@ -827,6 +827,25 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 	RedrawWindow();
 }
 
+void CProMoEditor::OnLButtonDblClk(UINT nFlags, CPoint point)
+/* ============================================================
+	Function :		CProMoEditor::OnLButtonDblClk
+	Description :	Handles the "WM_LBUTTONDBLCLK" message.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	UINT nFlags		-	not interested
+					CPoint point	-	not interested
+
+	Usage :			Called from MFC. Do not call from code.
+
+	============================================================*/
+{
+
+	CWnd::OnLButtonDblClk(nFlags, point);
+
+}
+
 void CProMoEditor::Draw(CDC* dc, CRect rect) const
 /* ============================================================
 	Function :		CProMoEditor::Draw
@@ -1369,6 +1388,99 @@ void CProMoEditor::BottomAlignSelected()
 	AutoResizeAll();
 }
 
+void CProMoEditor::MiddleAlignSelected()
+/* ============================================================
+	Function :		CProMoEditor::MiddleAlignSelected
+	Description :	Aligns all selected objects to the middle of
+					the top selected object in the data container.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to align the middle of all selected
+					objects.
+					Should only be callable if "GetSelectCount() >
+					1", that is, more than one object is selected.
+
+   ============================================================*/
+{
+	PrepareForAlignment();
+
+	if (GetSelectCount() > 1)
+	{
+		GetDiagramEntityContainer()->Snapshot();
+		CDiagramEntity* obj = GetSelectedObject();
+		if (obj)
+		{
+			double middle = (obj->GetTop() + obj->GetBottom()) / (double)2;
+			int count = 0;
+			while ((obj = GetDiagramEntityContainer()->GetAt(count++)))
+			{
+				if (obj->IsSelected())
+				{
+					double height = obj->GetBottom() - obj->GetTop();
+					double bottom = middle + height / 2;
+					double top = middle - height / 2;
+					obj->SetRect(obj->GetLeft(), top, obj->GetRight(), bottom);
+				}
+			}
+
+		}
+		SetModified(TRUE);
+		RedrawWindow();
+	}
+
+	AutoResizeAll();
+}
+
+void CProMoEditor::CenterAlignSelected()
+/* ============================================================
+	Function :		CProMoEditor::CenterAlignSelected
+	Description :	Aligns all selected objects to the center of
+					the top selected object in the data container.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to align the center of all selected
+					objects.
+					Should only be callable if "GetSelectCount() >
+					1", that is, more than one object is selected.
+
+   ============================================================*/
+{
+	PrepareForAlignment();
+
+	if (GetSelectCount() > 1)
+	{
+		GetDiagramEntityContainer()->Snapshot();
+		CDiagramEntity* obj = GetSelectedObject();
+		if (obj)
+		{
+			double center = (obj->GetRight() + obj->GetLeft()) / (double)2;
+			int count = 0;
+			while ((obj = GetDiagramEntityContainer()->GetAt(count++)))
+			{
+				if (obj->IsSelected())
+				{
+					double width = obj->GetRight() - obj->GetLeft();
+					double right = center + width / 2;
+					double left = center - width / 2;
+					obj->SetRect(left, obj->GetTop(), right, obj->GetBottom());
+				}
+			}
+
+		}
+		SetModified(TRUE);
+		RedrawWindow();
+	}
+
+	AutoResizeAll();
+}
+
+
 void CProMoEditor::ShowPageBreaks(BOOL isVisible)
 /* ============================================================
 	Function :		CDiagramEditor::ShowPageBreaks
@@ -1523,3 +1635,5 @@ void CProMoEditor::UpdateDelete(CCmdUI* pCmdUI) const
 {
 	pCmdUI->Enable(IsAnyObjectSelected());
 }
+
+

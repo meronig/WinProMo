@@ -241,6 +241,33 @@ BOOL CProMoBlockView::HasLockedProportions()
 	return m_lockProportions;
 }
 
+void CProMoBlockView::ShowPopup(CPoint point, CWnd* parent)
+/* ============================================================
+	Function :		CProMoBlockView::ShowPopup
+	Description :	Shows the popup menu for the object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CPoint point	-	The point to track.
+					CWnd* parent	-	The parent "CWnd" of the
+										menu (should be the
+										"CDiagramEditor")
+
+   ============================================================*/
+{
+
+	CMenu menu;
+	if (menu.CreatePopupMenu())
+	{
+
+		menu.AppendMenu(MF_STRING, ID_EDIT_CUT, _T("Cut"));
+		menu.AppendMenu(MF_STRING, ID_EDIT_COPY, _T("Copy"));
+		menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, parent);
+
+	}
+
+}
+
 CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 /* ============================================================
 	Function :		CProMoBlockView::GetIntersection

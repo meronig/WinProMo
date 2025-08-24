@@ -902,6 +902,33 @@ void CProMoEdgeView::DrawSelectionMarkers(CDC* dc, CRect rect) const
 	CDiagramLine::DrawSelectionMarkers(dc, rect);
 }
 
+void CProMoEdgeView::ShowPopup(CPoint point, CWnd* parent)
+/* ============================================================
+	Function :		CProMoEdgeView::ShowPopup
+	Description :	Shows the popup menu for the object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CPoint point	-	The point to track.
+					CWnd* parent	-	The parent "CWnd" of the
+										menu (should be the
+										"CDiagramEditor")
+
+   ============================================================*/
+{
+
+	CMenu menu;
+	if (menu.CreatePopupMenu())
+	{
+
+		menu.AppendMenu(MF_STRING, ID_EDIT_CUT, _T("Cut"));
+		menu.AppendMenu(MF_STRING, ID_EDIT_COPY, _T("Copy"));
+		menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, parent);
+
+	}
+
+}
+
 CRect CProMoEdgeView::GetSelectionMarkerRect(UINT marker, CRect rect) const
 /* ============================================================
 	Function :		CProMoEdgeView::GetSelectionMarkerRect

@@ -117,6 +117,8 @@ public:
 	afx_msg void OnZoom150();
 	afx_msg void OnZoom400();
 	afx_msg void OnZoom75();
+	afx_msg void OnEditRedo();
+	afx_msg void OnUpdateEditRedo(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in WinProMoView.cpp
