@@ -295,6 +295,15 @@ void CWinProMoView::Dump(CDumpContext& dc) const
 	CView::Dump(dc);
 }
 
+
+CWinProMoDoc* CWinProMoView::GetDocument() // non-debug version is inline
+{
+	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CWinProMoDoc)));
+	return (CWinProMoDoc*)m_pDocument;
+}
+
+#endif //_DEBUG
+
 void CWinProMoView::CreateEditor()
 {
 	if (!m_editor) {
@@ -446,12 +455,6 @@ void CWinProMoView::OnUpdateButtonSnap(CCmdUI* pCmdUI)
 
 }
 
-CWinProMoDoc* CWinProMoView::GetDocument() // non-debug version is inline
-{
-	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CWinProMoDoc)));
-	return (CWinProMoDoc*)m_pDocument;
-}
-#endif //_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CWinProMoView message handlers
