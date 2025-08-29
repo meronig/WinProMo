@@ -57,19 +57,10 @@ CProMoBlockModel::~CProMoBlockModel()
 
    ============================================================*/
 {
-	int i = 0;
-	for (i = static_cast<int>(m_incomingEdges.GetSize()) - 1; i >= 0; i--) {
-		CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(this->m_incomingEdges.GetAt(i));
-		if (edge) {
-			edge->SetDestination(NULL);
-		}
-	}
-	for (i = static_cast<int>(m_outgoingEdges.GetSize()) - 1; i >= 0; i--) {
-		CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(this->m_outgoingEdges.GetAt(i));
-		if (edge) {
-			edge->SetSource(NULL);
-		}
-	}
+	UnlinkAllIncomingEdges();
+	UnlinkAllOutgoingEdges();
+	UnlinkAllSubBlocks();
+	SetParentBlock(NULL);
 }
 
 CProMoModel* CProMoBlockModel::Clone() {
@@ -88,11 +79,11 @@ CProMoModel* CProMoBlockModel::Clone() {
 	return obj;
 }
 
-BOOL CProMoBlockModel::CanBeNested(CProMoBlockModel* block)
+BOOL CProMoBlockModel::CanBeNestedBy(CProMoBlockModel* block)
 /* ============================================================
-	Function :		CProMoBlockModel::CanBeNested
-	Description :	Returns if the block being passed as input
-					parameter can be nested.
+	Function :		CProMoBlockModel::CanBeNestedBy
+	Description :	Returns if this block can be nested by the
+					block being passed as input	parameter.
 					Override to implement diagram-specific logic.
 	Access :		Public
 
@@ -100,11 +91,14 @@ BOOL CProMoBlockModel::CanBeNested(CProMoBlockModel* block)
 												block can be 
 												nested
 	Parameters :	CProMoBlockModel* block	-	the block that
-												should be 
-												nested
+												should nest
+												this block
 
    ============================================================*/
 {
+	if (this == block) {
+		return FALSE;
+	}
 	if (Contains(block, TRUE)) {
 		return FALSE;
 	}
@@ -325,12 +319,13 @@ void CProMoBlockModel::UnlinkAllOutgoingEdges()
 
    ============================================================*/
 {
-	for (int i = 0; i < m_outgoingEdges.GetSize(); i++) {
-		CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(m_outgoingEdges.GetAt(i));
+	for (int i = static_cast<int>(m_outgoingEdges.GetSize()) - 1; i >= 0; i--) {
+		CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(this->m_outgoingEdges.GetAt(i));
 		if (edge) {
 			edge->SetSource(NULL);
 		}
 	}
+
 }
 
 CObArray* CProMoBlockModel::GetOutgoingEdges()
@@ -399,8 +394,8 @@ void CProMoBlockModel::UnlinkAllIncomingEdges()
 
    ============================================================*/
 {
-	for (int i = 0; i < m_incomingEdges.GetSize(); i++) {
-		CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(m_incomingEdges.GetAt(i));
+	for (int i = static_cast<int>(m_incomingEdges.GetSize()) - 1; i >= 0; i--) {
+		CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(this->m_incomingEdges.GetAt(i));
 		if (edge) {
 			edge->SetDestination(NULL);
 		}
@@ -438,12 +433,16 @@ CProMoBlockView* CProMoBlockModel::GetMainView() const
 
    ============================================================*/
 {
-	if (m_views.GetSize() < 1)
-		return NULL;
+	// for generic blocks, only one view exists
+	// to make the code more robust, return the first view whose class is CProMoBlockView or a derived one
+	for (int i = 0; i < m_views.GetSize(); i++) {
+		CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(m_views.GetAt(i));
+		if (view) {
+			return view;
+		}
+	}
 
-	//for generic blocks, only one view exists
-	CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(m_views.GetAt(0));
-	return view;
+	return NULL;
 }
 
 CProMoModel* CProMoBlockModel::CreateFromString(const CString& str)

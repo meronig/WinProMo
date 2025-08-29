@@ -219,7 +219,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 						// new block
 						CProMoBlockView* newObj = dynamic_cast<CProMoBlockView*>(GetDrawingObject());
 						if (newObj) {
-							if (newObj->GetModel()->CanBeNested(currObj->GetModel())) {
+							if (newObj->GetModel()->CanBeNestedBy(currObj->GetModel())) {
 								return currObj;
 							}
 						}
@@ -239,7 +239,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 							CProMoBlockView* selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
 							if (selObj) {
 								if (selObj->IsSelected()) {
-									if (!(selObj->GetModel()->CanBeNested(currObj->GetModel()))) {
+									if (!(selObj->GetModel()->CanBeNestedBy(currObj->GetModel()))) {
 										isValid = FALSE;
 										break;
 									}

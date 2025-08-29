@@ -31,7 +31,7 @@ public:
 	virtual void SetParentBlock(CProMoBlockModel* parent);
 	virtual CProMoBlockModel* GetParentBlock() const;
 	virtual BOOL Contains(CProMoBlockModel* block, BOOL recursive);
-	virtual BOOL CanBeNested(CProMoBlockModel* block);
+	virtual BOOL CanBeNestedBy(CProMoBlockModel* block);
 
 	// Outgoing edge links
 	virtual void LinkOutgoingEdge(CProMoEdgeModel* edge);
