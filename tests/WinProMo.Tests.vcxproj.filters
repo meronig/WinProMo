@@ -27,6 +27,9 @@
     <ClCompile Include="ProMoEditor\ProMoModelTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ProMoEditor\ProMoEdgeModelTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

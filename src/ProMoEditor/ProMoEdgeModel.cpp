@@ -112,7 +112,7 @@ void CProMoEdgeModel::SetSource(CProMoModel* source)
    ============================================================*/
 {
 
-	if (m_source != source) {
+	if (m_source != source && (!source || CanConnectSource(source))) {
 
 		//set the new source	
 		CProMoModel* oldSource = m_source;
@@ -167,7 +167,7 @@ void CProMoEdgeModel::SetDestination(CProMoModel* destination)
 
    ============================================================*/
 {
-	if (m_dest != destination) {
+	if (m_dest != destination && (!destination || CanConnectDestination(destination))) {
 
 		//set the new destination	
 		CProMoModel* oldDest = m_dest;
@@ -256,8 +256,7 @@ BOOL CProMoEdgeModel::CanConnectSource(CProMoModel* source)
 
    ============================================================*/
 {
-	CProMoBlockModel* obj = dynamic_cast<CProMoBlockModel*>(source);
-	if (obj) {
+	if (source) {
 		return TRUE;
 	}
 	return FALSE;
@@ -282,8 +281,7 @@ BOOL CProMoEdgeModel::CanConnectDestination(CProMoModel* destination)
 
    ============================================================*/
 {
-	CProMoBlockModel* obj = dynamic_cast<CProMoBlockModel*>(destination);
-	if (obj) {
+	if (destination) {
 		return TRUE;
 	}
 	return FALSE;
