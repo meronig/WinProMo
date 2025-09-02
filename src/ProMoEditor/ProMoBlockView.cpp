@@ -46,6 +46,9 @@ CProMoBlockView::CProMoBlockView()
 
    ============================================================*/
 {
+	m_blockmodel = NULL;
+	m_lockProportions = FALSE;
+	m_fitTitle = FALSE;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
 	SetType(_T("promo_block_view"));
@@ -53,6 +56,7 @@ CProMoBlockView::CProMoBlockView()
 	CString title;
 	BOOL result;
 	result = title.LoadString(IDS_PROMO_BLOCK);
+	SetModel(new CProMoBlockModel());
 	if (result) {
 		SetTitle(title);
 	}
@@ -62,9 +66,7 @@ CProMoBlockView::CProMoBlockView()
 
 	SetName(CProMoNameFactory::GetID());
 
-	m_blockmodel = NULL;
-	m_lockProportions = FALSE;
-	SetModel(new CProMoBlockModel());
+	
 }
 
 CProMoBlockView::~CProMoBlockView()
@@ -208,26 +210,27 @@ void CProMoBlockView::SetTarget(BOOL isTarget)
 	m_target = isTarget;
 }
 
+void CProMoBlockView::SetLockedProportions(BOOL hasLockedProportions)
 /* ============================================================
 	Function :		CProMoBlockView::SetLockedProportions
 	Description :	Sets the proportions of the block as locked
 	Access :		Public
 
 	Return :		void
-	Parameters :	BOOL hasLockedProportions	-	"TRUE" if the 
-													proportions 
-													should be 
+	Parameters :	BOOL hasLockedProportions	-	"TRUE" if the
+													proportions
+													should be
 													locked
 
    ============================================================*/
-void CProMoBlockView::SetLockedProportions(BOOL hasLockedProportions)
 {
 	m_lockProportions = hasLockedProportions;
 }
 
+BOOL CProMoBlockView::HasLockedProportions()
 /* ============================================================
 	Function :		CProMoBlockView::HasLockedProportions
-	Description :	Returns if the proportions of the block are 
+	Description :	Returns if the proportions of the block are
 					locked
 	Access :		Public
 
@@ -236,9 +239,38 @@ void CProMoBlockView::SetLockedProportions(BOOL hasLockedProportions)
 	Parameters :	none
 
    ============================================================*/
-BOOL CProMoBlockView::HasLockedProportions()
 {
 	return m_lockProportions;
+}
+
+void CProMoBlockView::SetFitTitle(BOOL hasFitTitle)
+/* ============================================================
+	Function :		CProMoBlockView::SetFitTitle
+	Description :	Sets whether the block should fit the title
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL hasFitTitle	-	"TRUE" if the block
+											must fit the title
+
+   ============================================================*/
+{
+	m_fitTitle = hasFitTitle;
+}
+
+BOOL CProMoBlockView::HasFitTitle()
+/* ============================================================
+	Function :		CProMoBlockView::HasFitTitle
+	Description :	Returns if the block must fit the title
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the block must fit the
+								title
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_fitTitle;
 }
 
 void CProMoBlockView::ShowPopup(CPoint point, CWnd* parent)
@@ -444,6 +476,37 @@ void CProMoBlockView::SetBottom(double bottom)
 	CDiagramEntity::SetBottom(bottom);
 }
 
+void CProMoBlockView::SetTitle(CString title)
+/* ============================================================
+	Function :		CProMoBlockView::SetTitle
+	Description :	Sets the Title property
+	Access :		Public
+
+	Return :		void
+	Parameters :	CString title	-	The new title
+
+	Usage :			Call to set the title of the object.
+					Overridden to resize the block to fit the 
+					title if fitTitle is "TRUE"
+
+   ============================================================*/
+{
+	if (m_fitTitle) {
+		CFont font;
+		double zoom = GetZoom();
+		if (zoom == 0) {
+			zoom = 1.0;
+		}
+		font.CreateFont(-round(12.0 * zoom), 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, _T("Courier New"));
+		m_titleRect = ComputeTextRect(title, font);
+
+	}
+
+	CDiagramEntity::SetTitle(title);
+
+	SetRect(GetRect());
+
+}
 
 
 void CProMoBlockView::KeepElementsConnected(double left, double top, double right, double bottom)
@@ -919,6 +982,8 @@ void CProMoBlockView::Copy(CDiagramEntity* obj)
 	if (GetModel()) {
 		GetModel()->Copy(objView->GetModel());
 	}
+	SetLockedProportions(objView->HasLockedProportions());
+	SetFitTitle(objView->HasFitTitle());
 }
 
 void CProMoBlockView::SetRect(CRect rect)
@@ -934,6 +999,7 @@ void CProMoBlockView::SetRect(CRect rect)
 
    ============================================================*/
 {
+	
 	CDiagramEntity::SetRect(rect);
 }
 
@@ -950,9 +1016,22 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 					double bottom	-	Bottom edge
 
 	Usage :			Call to place the object.
+					Overridden to resize the block to fit the 
+					title if fitTitle is "TRUE"
 
    ============================================================*/
 {
+	if (m_fitTitle) {
+
+		if (m_titleRect.Width() + 4 > right - left) {
+			right = (left + m_titleRect.Width() + 4);
+		}
+
+		if (m_titleRect.Height() + 4 > bottom - top) {
+			bottom = (top + m_titleRect.Height() + 4);
+		}
+	}
+
 	CDiagramEntity::SetRect(left, top, right, bottom);
 }
 

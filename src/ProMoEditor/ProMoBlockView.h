@@ -38,6 +38,8 @@ public:
 	virtual void SetLockedProportions(BOOL hasLockedProportions);
 	virtual BOOL HasLockedProportions();
 
+	virtual void SetFitTitle(BOOL hasFitTitle);
+	virtual BOOL HasFitTitle();
 	
 protected:
 	BOOL m_target;
@@ -53,6 +55,8 @@ private:
 	CPropertyDialog	m_dlg;
 	BOOL			m_moved;
 	BOOL			m_lockProportions;
+	BOOL			m_fitTitle;
+	CRect			m_titleRect;
 		
 // Overrides
 public:
@@ -60,6 +64,7 @@ public:
 	virtual void	SetRight(double right);
 	virtual void	SetTop(double top);
 	virtual void	SetBottom(double bottom);
+	virtual void	SetTitle(CString title);
 
 	
 	virtual void	SetRect(CRect rect);

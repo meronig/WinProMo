@@ -163,6 +163,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ProMoEditor\ProMoBlockModelTests.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoBlockViewTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoEdgeModelTest.cpp" />
     <ClCompile Include="ProMoEditor\ProMoModelTests.cpp" />
     <ClCompile Include="WinProMo.Tests.cpp" />
