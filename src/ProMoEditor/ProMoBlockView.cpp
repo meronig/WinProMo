@@ -51,6 +51,7 @@ CProMoBlockView::CProMoBlockView()
 	m_fitTitle = FALSE;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
+	m_titleRect = CRect(CPoint(0,0),GetMinimumSize());
 	SetType(_T("promo_block_view"));
 
 	CString title;
@@ -504,7 +505,7 @@ void CProMoBlockView::SetTitle(CString title)
 
 	CDiagramEntity::SetTitle(title);
 
-	SetRect(GetRect());
+	CDiagramEntity::SetRect(GetRect());
 
 }
 
@@ -662,10 +663,39 @@ CRect CProMoBlockView::ComputeTextRect(const CString &text, const CFont& font)
 
 	CRect textBounds(0, 0, 0, 0);
 	dc.DrawText(text, &textBounds, DT_NOPREFIX | DT_SINGLELINE | DT_TOP | DT_CALCRECT);
+
+	textBounds.right = textBounds.right + 4;
+	textBounds.bottom = textBounds.bottom + 4;
+
+	if (m_lockProportions) {
+
+		double minWidth = GetMinimumSize().cx;
+		double minHeight = GetMinimumSize().cy;
+
+		double width = textBounds.Width();
+		double height = textBounds.Height();
+
+		// aspect ratio from minimum size
+		double aspect = (double)minHeight / (double)minWidth;
+
+		// scaling factors needed to satisfy requested bounds
+		double scaleX = width / minWidth;
+		double scaleY = height / minHeight;
+
+		// pick the larger scale so both constraints are satisfied
+		double scale = max(scaleX, scaleY);
+
+		double newWidth = minWidth * scale;
+		double newHeight = minHeight * scale;
+
+		// update textBounds while keeping its top-left fixed
+		textBounds.right = textBounds.left + newWidth;
+		textBounds.bottom = textBounds.top + newHeight;
+
+	}
 	
 	return textBounds;
 }
-
 
 void CProMoBlockView::RecomputeIntersectionLinks()
 	/* ============================================================
@@ -996,6 +1026,9 @@ void CProMoBlockView::SetRect(CRect rect)
 	Parameters :	CRect rect	-	The rectangle to set.
 
 	Usage :			Call to place the object.
+					Overridden to avoid name hiding for SetRect
+					overloaded methods in derived classes.
+					DO NOT DELETE.
 
    ============================================================*/
 {
@@ -1023,16 +1056,27 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 {
 	if (m_fitTitle) {
 
-		if (m_titleRect.Width() + 4 > right - left) {
-			right = (left + m_titleRect.Width() + 4);
+		if (m_titleRect.Width() > right - left) {
+			if (GetLeft() - left != 0) {
+				left = (right - m_titleRect.Width());
+			}
+			else {
+				right = (left + m_titleRect.Width());
+			}
 		}
 
-		if (m_titleRect.Height() + 4 > bottom - top) {
-			bottom = (top + m_titleRect.Height() + 4);
+		if (m_titleRect.Height() > bottom - top) {
+			if (GetTop() - top != 0) {
+				top = (bottom - m_titleRect.Height());
+			}
+			else {
+				bottom = (top + m_titleRect.Height());
+			}
 		}
 	}
 
 	CDiagramEntity::SetRect(left, top, right, bottom);
+
 }
 
 CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str)

@@ -390,9 +390,18 @@ namespace CProMoBlockViewTests
         TEST_METHOD(Draw_WhenCalledWithMemoryDC_DoesNotCrash)
         {
             // Arrange
-            CProMoBlockView block;
-            block.SetRect(0, 0, 200, 100);
-
+            CProMoBlockView parent;
+            parent.SetLockedProportions(TRUE);
+            parent.SetRect(0, 0, 200, 100);
+            parent.SetFitTitle(TRUE);
+            parent.SetTitle(CString("Parent with a very long long title"));
+            
+            CProMoBlockView child;
+            child.SetTarget(TRUE);
+            child.SetRect(0, 0, 150, 80);
+            child.SetTitle(CString("Child"));
+            child.GetModel()->SetParentBlock(parent.GetModel());
+            
             // Create memory DC
             CDC memDC;
             CBitmap bmp;
@@ -403,7 +412,8 @@ namespace CProMoBlockViewTests
             CRect rect(0, 0, 200, 100);
 
             // Act / Assert: should not crash
-            block.Draw(&memDC, rect);
+            parent.Draw(&memDC, rect);
+            child.Draw(&memDC, rect);
         }
 
         TEST_METHOD(Highlight_WhenCalledWithMemoryDC_DoesNotCrash)
