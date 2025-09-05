@@ -35,6 +35,7 @@ namespace CProMoBlockViewTests
 
             Assert::IsFalse(view.IsTarget());
             Assert::IsFalse(view.HasLockedProportions());
+            Assert::IsFalse(view.HasFitTitle());
             TestHelpers::PointerAssert::IsNotNull(view.GetModel());
         }
 

@@ -258,6 +258,7 @@ void CProMoEdgeView::Reposition()
 
 {
 	if (m_source != NULL) {
+		// Dead code?
 		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_source);
 		if (obj) {
 			CPoint pt = obj->GetIntersection(GetRect().TopLeft(), GetRect().BottomRight());
@@ -273,6 +274,7 @@ void CProMoEdgeView::Reposition()
 		}
 	}
 	if (m_dest != NULL) {
+		// Dead code?
 		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_dest);
 		if (obj) {
 			CPoint pt = obj->GetIntersection(GetRect().BottomRight(), GetRect().TopLeft());
@@ -629,7 +631,7 @@ BOOL CProMoEdgeView::IsLastSegment() const
 
    ============================================================*/
 {
-	if (GetSource()) {
+	if (GetDestination()) {
 		return FALSE;
 	}
 	return TRUE;
