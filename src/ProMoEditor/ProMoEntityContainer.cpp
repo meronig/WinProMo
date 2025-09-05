@@ -298,15 +298,7 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 							tok.GetAt(7, modelName);
 							CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, modelName));
 							if (blockModel) {
-								//required to avoid dangling pointers in case of malformed input files
-								CProMoModel* oldMod = blockView->GetModel();
-								if (oldMod)
-									DeleteModel(models, oldMod->GetName());
 								blockView->SetModel(blockModel);
-							}
-							else {
-								//input file is malformed: create a new model to avoid inconsistencies
-								blockView->SetModel(new CProMoBlockModel);
 							}
 						}
 					}
@@ -325,16 +317,8 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 
 							CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, modelName));
 							if (edgeModel) {
-								CProMoModel* oldMod = edgeView->GetModel();
-								if (oldMod)
-									DeleteModel(models, oldMod->GetName());
 								edgeView->SetModel(edgeModel);
 							}
-							else {
-								//input file is malformed: create a new model to avoid inconsistencies
-								edgeView->SetModel(new CProMoEdgeModel);
-							}
-
 							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedView(sourceName));
 							if (source) {
 								edgeView->SetSource(source);
@@ -874,7 +858,7 @@ void CProMoEntityContainer::DeleteModel(CObArray& array, const CString& name)
 {
 	int count = static_cast<int>(array.GetSize());
 	CProMoModel* obj;
-	for (int t = 0; t < count; t++)
+	for (int t = count - 1; t >= 0; t--)
 	{
 		obj = dynamic_cast<CProMoModel*>(array.GetAt(t));
 		if (obj && obj->GetName() == name)
@@ -939,7 +923,7 @@ BOOL CProMoEntityContainer::FromString(const CString& str)
 		{
 			CTokenizer tok(data.Left(data.GetLength() - 1));
 			int size = tok.GetSize();
-			if (size == 2)
+			if (size >= 2)
 			{
 				int right;
 				int bottom;
