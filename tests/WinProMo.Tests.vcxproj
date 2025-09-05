@@ -164,7 +164,8 @@
     </ClCompile>
     <ClCompile Include="ProMoEditor\ProMoBlockModelTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockViewTests.cpp" />
-    <ClCompile Include="ProMoEditor\ProMoEdgeModelTest.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoEdgeModelTests.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoEdgeViewTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoModelTests.cpp" />
     <ClCompile Include="WinProMo.Tests.cpp" />
   </ItemGroup>

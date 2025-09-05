@@ -27,10 +27,13 @@
     <ClCompile Include="ProMoEditor\ProMoModelTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProMoEditor\ProMoEdgeModelTest.cpp">
+    <ClCompile Include="ProMoEditor\ProMoEdgeModelTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ProMoEditor\ProMoBlockViewTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProMoEditor\ProMoEdgeViewTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
