@@ -35,6 +35,9 @@ protected:
 	// Private helpers
 	virtual void ResetTarget();
 	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
+	virtual void NestSelectedBlock(CProMoBlockView* parentBlock);
+	virtual void SplitEdge();
+	virtual void ConnectSelectedEdge(CProMoBlockView* sourceBlock);
 	virtual CProMoBlockView* GetTargetBlock(CPoint point);
 	virtual CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards);
 	virtual void DeselectChildBlocks(CProMoBlockView* block);
