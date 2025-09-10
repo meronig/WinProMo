@@ -73,7 +73,7 @@ CProMoEditor::CProMoEditor()
 	SetRestraints(RESTRAINT_VIRTUAL);
 	m_pageBreaksVisible = TRUE;
 	m_paperSize = CSize(0,0);
-	m_margins = CRect(0,0,0,0);
+	SetMargins(0,0,0,0);
 }
 
 CProMoEditor::~CProMoEditor()
@@ -1546,11 +1546,9 @@ void CProMoEditor::SetPageLayout(CDC* dc)
 		int offsetX = dc->GetDeviceCaps(PHYSICALOFFSETX);
 		int offsetY = dc->GetDeviceCaps(PHYSICALOFFSETY);
 
-		m_margins.left = offsetX;
-		m_margins.top = offsetY;
-		m_margins.right = m_paperSize.cx - m_margins.left - m_printableArea.cx;
-		m_margins.bottom = m_paperSize.cy - m_margins.top - m_printableArea.cy;
-
+		
+		SetMargins(offsetX, offsetY, m_paperSize.cx - offsetX - m_printableArea.cx, m_paperSize.cy - offsetY - m_printableArea.cy);
+		
 		Invalidate();
 	}
 }

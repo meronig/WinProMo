@@ -84,7 +84,6 @@ protected:
 	int m_printResolutionY;
 	CSize m_paperSize;
 	CSize m_printableArea;
-	CRect m_margins;
 };
 
 #endif //_PROMOEDITOR_H_

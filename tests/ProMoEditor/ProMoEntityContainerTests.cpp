@@ -176,66 +176,9 @@ namespace CProMoEntityContainerTests
         }
 
 #pragma endregion
-
-#pragma region ClipboardTest
-
-        TEST_METHOD(Copy_WhenInvoked_CopySelection)
-        {
-            CProMoClipboardHandler clip;
-            CProMoEntityContainer sourceC(CString("custom"), &clip);
-            CProMoEntityContainer destC(CString("custom"), &clip);
-
-            CProMoBlockView* a = new CProMoBlockView();
-            CProMoBlockView* a1 = new CProMoBlockView();
-            CProMoBlockView* a2 = new CProMoBlockView();
-            CProMoBlockView* b = new CProMoBlockView();
-            CProMoBlockView* b1 = new CProMoBlockView();
-            CProMoBlockView* b2 = new CProMoBlockView();
-
-            CProMoEdgeView* x = new CProMoEdgeView();
-            CProMoEdgeView* y = new CProMoEdgeView();
-            CProMoEdgeView* z = new CProMoEdgeView();
-
-            a1->GetModel()->SetParentBlock(a->GetModel());
-            a2->GetModel()->SetParentBlock(a->GetModel());
-            b1->GetModel()->SetParentBlock(b->GetModel());
-            b2->GetModel()->SetParentBlock(b->GetModel());
-            x->SetModel(y->GetModel());
-            x->SetSource(a);
-            x->SetDestination(y);
-            y->SetDestination(b1);
-            z->SetSource(b);
-            z->SetDestination(a2);
-
-            sourceC.Add(x);
-            sourceC.Add(y);
-            sourceC.Add(z);
-            sourceC.Add(a1);
-            sourceC.Add(a2);
-            sourceC.Add(a);
-            sourceC.Add(b1);
-            sourceC.Add(b2);
-            sourceC.Add(b);
-
-            a->Select(TRUE);
-            x->Select(TRUE);
-            b->Select(TRUE);
-            z->Select(TRUE);
-            a2->Select(TRUE);
-
-            sourceC.CopyAllSelected();
-            Assert::AreEqual(5, sourceC.ObjectsInPaste());
-            
-            destC.Paste();
-            Assert::AreEqual(3, destC.GetSelectCount());
-            
-        }
-
-#pragma endregion
-
 #pragma region UndoTest
 
-        TEST_METHOD(Undo_WhenInvoked_CopySelection)
+        TEST_METHOD(Undo_WhenInvoked_RevertChanges)
         {
             CProMoEntityContainer c;
             
@@ -291,7 +234,7 @@ namespace CProMoEntityContainerTests
             Assert::IsTrue(c.IsRedoPossible());
         }
 
-        TEST_METHOD(Redo_WhenInvoked_CopySelection)
+        TEST_METHOD(Redo_WhenInvoked_RestoreChanges)
         {
             CProMoEntityContainer c;
 

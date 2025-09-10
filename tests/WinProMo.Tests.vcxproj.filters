@@ -39,6 +39,12 @@
     <ClCompile Include="ProMoEditor\ProMoEntityContainerTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ProMoEditor\ProMoClipboardHandlerTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProMoEditor\ProMoEditorTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
