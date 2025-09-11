@@ -1155,19 +1155,22 @@ void CProMoEditor::ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock)
 		CProMoEdgeView* edge;
 		edge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
 		if (edge) {
-			if (!(GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER)) {
-				if (sourceBlock != NULL) {
-					edge->SetSource(sourceBlock);
+			//check if the current edge view is the first segment
+			CProMoEdgeView* srcEdge = dynamic_cast<CProMoEdgeView*>(edge->GetSource());
+			if (!srcEdge) {
+				if (!(GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER)) {
+					if (sourceBlock != NULL) {
+						edge->SetSource(sourceBlock);
+					}
+					else {
+						edge->GetModel()->SetSource(NULL);
+					}
+					//Need to reorder shapes according to nesting
+					objs->Reorder();
 				}
-				else {
-					edge->GetModel()->SetSource(NULL);
-				}
-				//Need to reorder shapes according to nesting
-				objs->Reorder();
 			}
 		}
 	}
-
 }
 
 void CProMoEditor::ConnectSelectedEdgeToDestination(CProMoBlockView* destBlock)
@@ -1191,19 +1194,22 @@ void CProMoEditor::ConnectSelectedEdgeToDestination(CProMoBlockView* destBlock)
 		CProMoEdgeView* edge;
 		edge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
 		if (edge) {
-			if (!(GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER)) {
-				if (destBlock != NULL) {
-					edge->SetDestination(destBlock);
+			//check if the current edge view is the last segment
+			CProMoEdgeView* destEdge = dynamic_cast<CProMoEdgeView*>(edge->GetDestination());
+			if (!destEdge) {
+				if (!(GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER)) {
+					if (destBlock != NULL) {
+						edge->SetDestination(destBlock);
+					}
+					else {
+						edge->GetModel()->SetDestination(NULL);
+					}
+					//Need to reorder shapes according to nesting
+					objs->Reorder();
 				}
-				else {
-					edge->GetModel()->SetDestination(NULL);
-				}
-				//Need to reorder shapes according to nesting
-				objs->Reorder();
 			}
 		}
 	}
-
 }
 
 void CProMoEditor::PrepareForAlignment() 
