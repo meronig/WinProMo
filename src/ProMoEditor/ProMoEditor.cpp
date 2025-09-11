@@ -688,9 +688,13 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 	// Create a new element as usual
 	CDiagramEditor::OnLButtonDown(nFlags, point);
 	
-	NestSelectedBlock(target);
-	SplitEdge();
-	ConnectSelectedEdge(target);
+	if (target) {
+		NestSelectedBlock(target);
+		ConnectSelectedEdgeToSource(target);
+	}
+	SplitSelectedEdge();
+
+	
 }
 
 
@@ -717,76 +721,17 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 
 	if (GetInteractMode() == MODE_MOVING) {
 
-		/*OnMouseMove(nFlags, point);
+		OnMouseMove(nFlags, point);
 		NestSelectedBlock(objs->GetTarget());
-		*/
 		
-		//CProMoBlockView* selObj = NULL;
-		////for each object being selected
-		//for (int i = 0; i < GetObjectCount(); i++) {
-		//	selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
-		//	if (selObj) {
-		//		if (selObj->IsSelected()) {
-		//			//trigger mouse movement, so to maintain hierarchy in case no movement is made
-		//			OnMouseMove(nFlags, point);
-		//			//check which is the object being dropped, if any
-		//			currObj = objs->GetTarget();
-		//			if (currObj) {
-		//				if (selObj->GetModel()->GetParentBlock() != currObj->GetModel()) {
-		//					// Set the parent to be that object
-		//					selObj->GetModel()->SetParentBlock(currObj->GetModel());
-		//				}
-		//			}
-		//			else	
-		//			{
-		//				//no object got hit, then the selected one has no parent
-		//				selObj->GetModel()->SetParentBlock(NULL);
-		//			}
-		//		}
-		//	}
-		//}
-		////Need to reorder shapes according to nesting
-		//static_cast<CProMoEntityContainer*>(objs)->Reorder();
 	}
 
-
-	//bug: never called when a new object is created, whereas it should
 	if (GetInteractMode() == MODE_RESIZING) {
-		//resizing an edge
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
-		if (edge) {
-			currObj = objs->GetTarget();
-			if (currObj) {
-				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-					CProMoEdgeView* destEdge = dynamic_cast<CProMoEdgeView*>(edge->GetDestination());
-					if (!destEdge) {
-						edge->GetModel()->SetDestination(currObj->GetModel());
-					}
-				}
-				else if (GetSubMode() == DEHT_TOPLEFT) {
-					CProMoEdgeView* srcEdge = dynamic_cast<CProMoEdgeView*>(edge->GetSource());
-					if (!srcEdge) {
-						edge->GetModel()->SetSource(currObj->GetModel());
-					}
-				}
-			}
-			//no target, unlink models
-			else {
-				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-					CProMoEdgeView* destEdge = dynamic_cast<CProMoEdgeView*>(edge->GetDestination());
-					if (!destEdge) {
-						edge->GetModel()->SetDestination(NULL);
-					}
-				}
-				else if (GetSubMode() == DEHT_TOPLEFT) {
-					CProMoEdgeView* srcEdge = dynamic_cast<CProMoEdgeView*>(edge->GetSource());
-					if (!srcEdge) {
-						edge->GetModel()->SetSource(NULL);
-					}
-				}
-			}
-			//Need to reorder shapes according to nesting
-			static_cast<CProMoEntityContainer*>(objs)->Reorder();
+		if (GetSubMode() == DEHT_BOTTOMRIGHT) {
+			ConnectSelectedEdgeToDestination(objs->GetTarget());
+		}
+		else if (GetSubMode() == DEHT_TOPLEFT) {
+			ConnectSelectedEdgeToSource(objs->GetTarget());
 		}
 	}
 
@@ -1129,21 +1074,8 @@ void CProMoEditor::NestSelectedBlock(CProMoBlockView* parentBlock)
 
    ============================================================*/
 {
-	// Get the currently selected element
-	/*if (GetSelectedObject() != NULL) {
-		CProMoBlockView* obj;
-		obj = dynamic_cast<CProMoBlockView*>(GetSelectedObject());
-		if (obj) {
-			if (parentBlock != NULL) {
-				obj->GetModel()->SetParentBlock(parentBlock->GetModel());
-				parentBlock->AutoResize();
-			}
-		}
-	}*/
-
-	CProMoBlockView* currObj = NULL;
+	
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
-
 
 	CProMoBlockView* selObj = NULL;
 	//for each object being selected
@@ -1151,14 +1083,11 @@ void CProMoEditor::NestSelectedBlock(CProMoBlockView* parentBlock)
 		selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
 		if (selObj) {
 			if (selObj->IsSelected()) {
-				//trigger mouse movement, so to maintain hierarchy in case no movement is made
-				//OnMouseMove(nFlags, point);
 				//check which is the object being dropped, if any
-				currObj = parentBlock;
-				if (currObj) {
-					if (selObj->GetModel()->GetParentBlock() != currObj->GetModel()) {
+				if (parentBlock) {
+					if (selObj->GetModel()->GetParentBlock() != parentBlock->GetModel()) {
 						// Set the parent to be that object
-						selObj->GetModel()->SetParentBlock(currObj->GetModel());
+						selObj->GetModel()->SetParentBlock(parentBlock->GetModel());
 					}
 				}
 				else
@@ -1174,9 +1103,9 @@ void CProMoEditor::NestSelectedBlock(CProMoBlockView* parentBlock)
 
 }
 
-void CProMoEditor::SplitEdge()
+void CProMoEditor::SplitSelectedEdge()
 /* ============================================================
-	Function :		CProMoEditor::SplitEdge
+	Function :		CProMoEditor::SplitSelectedEdge
 	Description :	If the center of an edge has been clicked, 
 					splits the edge into two and sets the 
 					editor for resizing the original edge
@@ -1205,9 +1134,9 @@ void CProMoEditor::SplitEdge()
 	}
 }
 
-void CProMoEditor::ConnectSelectedEdge(CProMoBlockView* sourceBlock)
+void CProMoEditor::ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock)
 /* ============================================================
-	Function :		CProMoEditor::ConnectSelectedEdge
+	Function :		CProMoEditor::ConnectSelectedEdgeToSource
 	Description :	Connects the currently selected edge 
 					(if any) to a source block 
 	Access :		Protected
@@ -1220,6 +1149,7 @@ void CProMoEditor::ConnectSelectedEdge(CProMoBlockView* sourceBlock)
 
    ============================================================*/
 {
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	// Get the element being created (which will be selected)
 	if (GetSelectedObject() != NULL) {
 		CProMoEdgeView* edge;
@@ -1229,9 +1159,51 @@ void CProMoEditor::ConnectSelectedEdge(CProMoBlockView* sourceBlock)
 				if (sourceBlock != NULL) {
 					edge->SetSource(sourceBlock);
 				}
+				else {
+					edge->GetModel()->SetSource(NULL);
+				}
+				//Need to reorder shapes according to nesting
+				objs->Reorder();
 			}
 		}
 	}
+
+}
+
+void CProMoEditor::ConnectSelectedEdgeToDestination(CProMoBlockView* destBlock)
+/* ============================================================
+	Function :		CProMoEditor::ConnectSelectedEdgeToDestination
+	Description :	Connects the currently selected edge
+					(if any) to a destination block
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoBlockView* destBlock	-	Pointer to
+													the
+													destination
+													block
+
+   ============================================================*/
+{
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	// Get the element being created (which will be selected)
+	if (GetSelectedObject() != NULL) {
+		CProMoEdgeView* edge;
+		edge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
+		if (edge) {
+			if (!(GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER)) {
+				if (destBlock != NULL) {
+					edge->SetDestination(destBlock);
+				}
+				else {
+					edge->GetModel()->SetDestination(NULL);
+				}
+				//Need to reorder shapes according to nesting
+				objs->Reorder();
+			}
+		}
+	}
+
 }
 
 void CProMoEditor::PrepareForAlignment() 
