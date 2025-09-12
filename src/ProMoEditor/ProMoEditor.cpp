@@ -48,6 +48,7 @@
 #include "../PropertyItem/TypedPropertyItem.h"
 
 #include <math.h>
+#include "../GeometryUtils/GeometryHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -208,9 +209,8 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 		CProMoBlockView* currObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(j));
 
 		if (currObj) {
-
-			CPoint virtpoint(point);
-			int hitCode = currObj->GetHitCode(virtpoint);
+			ScreenToVirtual(point);
+			int hitCode = currObj->GetHitCode(point);
 			if (hitCode == DEHT_BODY) {
 				// We found the object that was clicked
 				if (!currObj->IsSelected()) {
@@ -359,6 +359,58 @@ void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
 	}
 }
 
+void CProMoEditor::DeselectInvalidElements() 
+/* ============================================================
+	Function :		CProMoEditor::DeselectInvalidElements
+	Description :	Deselect elements that would break the 
+					model consistency when moved all at once.
+	Access :		Protected
+
+
+	Return :		void
+   ============================================================*/
+{
+	CProMoBlockView* selObj = NULL;
+	CProMoEdgeView* selEdge = NULL;
+
+	// deselect edges to prevent them from being moved only when no attached block is selected (on both ends)
+	// also, deselect nested blocks to avoid reassigning the parent
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int j = GetObjectCount() - 1; j >= 0; j--) {
+
+		selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(j));
+		if (selObj) {
+			if (selObj->IsSelected()) {
+				DeselectChildBlocks(selObj);
+			}
+		}
+
+		CProMoEdgeView* currObj = dynamic_cast<CProMoEdgeView*>(objs->GetAt(j));
+		if (currObj) {
+			if (currObj->IsSelected()) {
+				//find if a selected block exists on both ends. Otherwise, deselect
+				CProMoBlockView* block = GetConnectedBlock(currObj, TRUE);
+				if (block) {
+					if (!block->IsSelected()) {
+						currObj->Select(FALSE);
+					}
+				}
+				else {
+					currObj->Select(FALSE);
+				}
+				block = GetConnectedBlock(currObj, FALSE);
+				if (block) {
+					if (!block->IsSelected()) {
+						currObj->Select(FALSE);
+					}
+				}
+				else {
+					currObj->Select(FALSE);
+				}
+			}
+		}
+	}
+}
 
 void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 /* ============================================================
@@ -387,52 +439,9 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 	
 	// when moving a block, move all connected elements accordingly
 	if (GetInteractMode() == MODE_MOVING) {
-
-		CProMoBlockView* selObj = NULL;
-		CProMoEdgeView* selEdge = NULL;
-
 		//BUG: when moving two child blocks, cannot determine target
 
-		//We have issues with snaps
-
-		// deselect edges to prevent them from being moved
-		// should be more clever to deselect edges only when no attached block is selected (on both ends)
-		// also, we should deselect nested blocks to avoid reassigning the parent
-		CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
-		for (int j = GetObjectCount() - 1; j >= 0; j--) {
-			
-			selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(j));
-			if (selObj) {
-				if (selObj->IsSelected()) {
-					DeselectChildBlocks(selObj);
-				}
-			}
-			
-			CProMoEdgeView* currObj = dynamic_cast<CProMoEdgeView*>(objs->GetAt(j));
-			if (currObj) {
-				if (currObj->IsSelected()) {
-					//find if a selected block exists on both ends. Otherwise, deselect
-					CProMoBlockView* block = GetConnectedBlock(currObj, TRUE);
-					if (block) {
-						if (!block->IsSelected()) {
-							currObj->Select(FALSE);
-						}
-					}
-					else {
-						currObj->Select(FALSE);
-					}
-					block = GetConnectedBlock(currObj, FALSE);
-					if (block) {
-						if (!block->IsSelected()) {
-							currObj->Select(FALSE);
-						}
-					}
-					else {
-						currObj->Select(FALSE);
-					}
-				}
-			}
-		}
+		DeselectInvalidElements();
 		
 		CDiagramEditor::OnMouseMove(nFlags, point);
 
@@ -440,15 +449,10 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 	else if (GetInteractMode() == MODE_RESIZING){
 
 		CDiagramEntity* element = GetSelectedObject();
-		double oldTop = 0;
-		double oldLeft = 0;
-		double oldBottom = 0;
-		double oldRight = 0;
+		CDoubleRect oldRect;
+
 		if (element) {
-			oldTop = element->GetTop();
-			oldLeft = element->GetLeft();
-			oldBottom = element->GetBottom();
-			oldRight = element->GetRight();
+			oldRect.SetRect(element->GetLeft(), element->GetTop(), element->GetRight(), element->GetBottom());
 		}
 
 		CDiagramEditor::OnMouseMove(nFlags, point);
@@ -458,148 +462,22 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 			//handle shift key for nodes: keep proportions
 			//note: always enabled if the block says so
 			if ((nFlags & MK_SHIFT) == MK_SHIFT || block->HasLockedProportions()) {
-				double oldRatio = (oldBottom - oldTop) / (oldRight - oldLeft);
-				double deltaX = 0;
-				double deltaY = 0;
-				if (GetSubMode() == DEHT_TOPMIDDLE) {
-					deltaY = (oldTop - block->GetTop()) / oldRatio;
-					block->SetLeft(oldLeft - deltaY / 2);
-					block->SetRight(oldRight + deltaY / 2);
-				}
-				else if (GetSubMode() == DEHT_BOTTOMMIDDLE) {
-					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
-					block->SetLeft(oldLeft - deltaY / 2);
-					block->SetRight(oldRight + deltaY / 2);
-				}
-				else if (GetSubMode() == DEHT_LEFTMIDDLE) {
-					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
-					block->SetTop(oldTop - deltaX / 2);
-					block->SetBottom(oldBottom + deltaX / 2);
-				}
-				else if (GetSubMode() == DEHT_RIGHTMIDDLE) {
-					deltaX = (block->GetRight() - oldRight) * oldRatio;
-					block->SetTop(oldTop - deltaX / 2);
-					block->SetBottom(oldBottom + deltaX / 2);
-				}
-				else if (GetSubMode() == DEHT_TOPLEFT) {
-					deltaY = (oldTop - block->GetTop()) / oldRatio;
-					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
-					if (fabs(oldTop - point.y) < fabs(oldLeft - point.x)) {
-						block->SetLeft(oldLeft - deltaY);
-					}
-					else {
-						block->SetTop(oldTop - deltaX);
-					}
-				}
-				else if (GetSubMode() == DEHT_TOPRIGHT) {
-					deltaY = (oldTop - block->GetTop()) / oldRatio;
-					deltaX = (block->GetRight() - oldRight) * oldRatio;
-					if (fabs(oldTop - point.y) < fabs(oldRight - point.x)) {
-						block->SetRight(oldRight + deltaY);
-					}
-					else {
-						block->SetTop(oldTop - deltaX);
-					}
-				}
-				else if (GetSubMode() == DEHT_BOTTOMLEFT) {
-					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
-					deltaX = (oldLeft - block->GetLeft()) * oldRatio;
-					if (fabs(oldBottom - point.y) < fabs(oldLeft - point.x)) {
-						block->SetLeft(oldLeft - deltaY);
-					}
-					else {
-						block->SetBottom(oldBottom + deltaX);
-					}
-				}
-				else if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-					deltaY = (block->GetBottom() - oldBottom) / oldRatio;
-					deltaX = (block->GetRight() - oldRight) * oldRatio;
-					if (fabs(oldBottom - point.y) < fabs(oldRight - point.x)) {
-						block->SetRight(oldRight + deltaY);
-					}
-					else {
-						block->SetBottom(oldBottom + deltaX);
-					}
-				}
+				CDoubleRect newRect(block->GetLeft(), block->GetTop(), block->GetRight(), block->GetBottom());
+				CGeometryHelper::EnforceAspectRatio(oldRect, newRect, GetSubMode(), point);
+				block->SetRect(newRect.left, newRect.top, newRect.right, newRect.bottom);
 			}
 		}
-		
 	
 		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(element);
 		if (edge) {
 
 			// handle shift key for edges: mainly snap them to horizontal, vertical or 45 degrees diagonal lines
 			if ((nFlags & MK_SHIFT) == MK_SHIFT) {
-				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-					if ((fabs(edge->GetBottom() - edge->GetTop())) / 2 > fabs(edge->GetLeft() - edge->GetRight())) {
-						edge->SetRight(edge->GetLeft());
-					}
-					else if (fabs(edge->GetBottom() - edge->GetTop()) < (fabs(edge->GetLeft() - edge->GetRight())) / 2) {
-						edge->SetBottom(edge->GetTop());
-					}
-					else {
-						if (fabs(edge->GetBottom() - edge->GetTop()) > fabs(edge->GetLeft() - edge->GetRight())) {
-							if (edge->GetBottom() > edge->GetTop()) {
-								edge->SetBottom(edge->GetTop() + fabs(edge->GetLeft() - edge->GetRight()));
-							}
-							else {
-								edge->SetBottom(edge->GetTop() - fabs(edge->GetLeft() - edge->GetRight()));
-							}
-						}
-						else {
-							if (edge->GetRight() > edge->GetLeft()) {
-								edge->SetRight(edge->GetLeft() + fabs(edge->GetTop() - edge->GetBottom()));
-							}
-							else {
-								edge->SetRight(edge->GetLeft() - fabs(edge->GetTop() - edge->GetBottom()));
-							}
-						}
-					}
-				}
-
-				else {
-					if ((fabs(edge->GetBottom() - edge->GetTop())) / 2 > fabs(edge->GetLeft() - edge->GetRight())) {
-						edge->SetLeft(edge->GetRight());
-					}
-					else if (fabs(edge->GetBottom() - edge->GetTop()) < (fabs(edge->GetLeft() - edge->GetRight())) / 2) {
-						edge->SetTop(edge->GetBottom());
-					}
-					else {
-						if (fabs(edge->GetBottom() - edge->GetTop()) > fabs(edge->GetLeft() - edge->GetRight())) {
-							if (edge->GetBottom() > edge->GetTop()) {
-								edge->SetTop(edge->GetBottom() - fabs(edge->GetLeft() - edge->GetRight()));
-							}
-							else {
-								edge->SetTop(edge->GetBottom() + fabs(edge->GetLeft() - edge->GetRight()));
-							}
-						}
-						else {
-							if (edge->GetRight() > edge->GetLeft()) {
-								edge->SetLeft(edge->GetRight() - fabs(edge->GetTop() - edge->GetBottom()));
-							}
-							else {
-								edge->SetLeft(edge->GetRight() + fabs(edge->GetTop() - edge->GetBottom()));
-							}
-						}
-					}
-				}
+				CDoubleRect newRect(edge->GetLeft(), edge->GetTop(), edge->GetRight(), edge->GetBottom());
+				CGeometryHelper::AlignToAxis(newRect, GetSubMode());
+				edge->SetRect(newRect.left, newRect.top, newRect.right, newRect.bottom);
 			}
 
-			//check if edge is part of a multi-edge and, if so, keep it connected
-			if (edge->GetSource() != NULL) {
-				CProMoEdgeView* src = dynamic_cast<CProMoEdgeView*>(edge->GetSource());
-				if (src) {
-					src->SetRight(edge->GetLeft());
-					src->SetBottom(edge->GetTop());
-				}
-			}
-			if (edge->GetDestination() != NULL) {
-				CProMoEdgeView* dest = dynamic_cast<CProMoEdgeView*>(edge->GetDestination());
-				if (dest) {
-					dest->SetLeft(edge->GetRight());
-					dest->SetTop(edge->GetBottom());
-				}
-			}
 		}
 	}
 	else {
@@ -608,33 +486,9 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (GetInteractMode() == MODE_MOVING || GetInteractMode() == MODE_RESIZING || IsDrawing())
 	{
-		CPoint target = point;
-		ScreenToVirtual(target);
-		CProMoEdgeView* edge = NULL;
-		if (GetInteractMode() == MODE_RESIZING) {
-			edge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
-			//use actual point rather than cursor position
-			if (edge) {
-				if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-					target = edge->GetRect().BottomRight();
-				}
-				else if (GetSubMode() == DEHT_TOPLEFT)  {
-					target = edge->GetRect().TopLeft();
-				}
-			}
-		}
-
-		//we may relax the constraint on selectcount
-		if ((GetInteractMode() == MODE_MOVING) || IsDrawing() || edge) {
-			//associate only one element at a time
-			//TODO: consider generalizing to multiple blocks (for sure, edges are not part of the selection)
-			if (GetSelectCount() <= 1) {
-				/*check if we are dropping the object inside a block*/
-				CProMoBlockView* targetBlock = GetTargetBlock(target);
-				if (targetBlock) {
-					targetBlock->SetTarget(TRUE);
-				}
-			}
+		CProMoBlockView* targetBlock = GetTargetBlock(point);
+		if (targetBlock) {
+			targetBlock->SetTarget(TRUE);
 		}
 
 		SetRedraw(TRUE);
@@ -673,15 +527,9 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 		//bottomdown is the resize mode set afterwards
 
 		if (objs) {
-
 			UnselectAll();
-
 			// Identify clicked block (if any)
-			CPoint virtpoint = point;
-			ScreenToVirtual(virtpoint);
-
-			target = GetTargetBlock(virtpoint);
-
+			target = GetTargetBlock(point);
 		}
 	}
 

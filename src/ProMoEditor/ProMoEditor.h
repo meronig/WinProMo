@@ -43,6 +43,7 @@ protected:
 	virtual CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards);
 	virtual void DeselectChildBlocks(CProMoBlockView* block);
 	virtual void SelectChildBlocks(CProMoBlockView* block);
+	virtual void DeselectInvalidElements();
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
 	virtual CObArray* GetProperties(CDiagramEntity* element);

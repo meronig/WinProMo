@@ -42,7 +42,7 @@ protected:
     virtual void DrawHead(CDC* dc, CRect rect, int size);
     virtual void DrawTail(CDC* dc, CRect rect, int size);
     virtual void Reposition();
-
+    
     CProMoEdgeView* m_source;
     CProMoEdgeView* m_dest;
 
@@ -50,6 +50,16 @@ protected:
 
 private:
     CPropertyDialog	m_dlg;
+
+    BOOL m_propagating;
+
+    class CScopedUpdate {
+    public:
+        CScopedUpdate(BOOL& flag) : m_flag(flag) { m_flag = TRUE; }
+        ~CScopedUpdate() { m_flag = FALSE; }
+    private:
+        BOOL& m_flag;
+    };
 
 // Overrides
 public:
@@ -61,6 +71,14 @@ public:
     virtual void	DrawSelectionMarkers(CDC* dc, CRect rect) const;
 
     virtual void	ShowPopup(CPoint point, CWnd* parent);
+
+    virtual void	SetRect(CRect rect);
+    virtual void    SetRect(double left, double top, double right, double bottom);
+    virtual void	SetLeft(double left);
+    virtual void	SetRight(double right);
+    virtual void	SetTop(double top);
+    virtual void	SetBottom(double bottom);
+
 
 protected:
     virtual CString				GetDefaultGetString() const;

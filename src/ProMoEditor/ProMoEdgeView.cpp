@@ -637,6 +637,152 @@ BOOL CProMoEdgeView::IsLastSegment() const
 	return TRUE;
 }
 
+void CProMoEdgeView::SetRect(CRect rect)
+/* ============================================================
+	Function :		CProMoEdgeView::SetRect
+	Description :	Sets the object rectangle, normalized.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CRect rect	-	The rectangle to set.
+
+	Usage :			Call to place the object.
+
+   ============================================================*/
+{
+
+	CDiagramLine::SetRect(rect);
+
+}
+
+void CProMoEdgeView::SetRect(double left, double top, double right, double bottom)
+/* ============================================================
+	Function :		CProMoEdgeView::SetRect
+	Description :	Sets the object rectangle.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double left		-	Left edge
+					double top		-	Top edge
+					double right	-	Right edge
+					double bottom	-	Bottom edge
+
+	Usage :			Call to place the object.
+
+   ============================================================*/
+{
+
+	CDiagramEntity::SetRect(left, top, right, bottom);
+
+}
+
+void CProMoEdgeView::SetLeft(double left)
+/* ============================================================
+	Function :		CProMoEdgeView::SetLeft
+	Description :	Sets the left edge of the object rectangle
+	Access :		Public
+
+	Return :		void
+	Parameters :	double left	-	New left position
+
+	Usage :			Call to set the left edge of the object.
+					The object coordinates are expressed as
+					double values to allow unlimited zoom.
+
+   ============================================================*/
+{
+
+	CDiagramLine::SetLeft(left);
+	if (GetSource() != NULL && !m_propagating) {
+		CScopedUpdate guard(m_propagating);
+		CProMoEdgeView* src = dynamic_cast<CProMoEdgeView*>(GetSource());
+		if (src) {
+			src->SetRight(GetLeft());
+		}
+	}
+}
+
+void CProMoEdgeView::SetRight(double right)
+/* ============================================================
+	Function :		CProMoEdgeView::SetRight
+	Description :	Sets the right edge of the object
+					rectangle
+	Access :		Public
+
+	Return :		void
+	Parameters :	double right	-	New right position
+
+	Usage :			Call to set the right edge of the object.
+					The object coordinates are expressed as
+					double values to allow unlimited zoom.
+
+   ============================================================*/
+{
+
+	CDiagramLine::SetRight(right);
+	if (GetDestination() != NULL && !m_propagating) {
+		CScopedUpdate guard(m_propagating);
+		CProMoEdgeView* dest = dynamic_cast<CProMoEdgeView*>(GetDestination());
+		if (dest) {
+			dest->SetLeft(GetRight());
+		}
+	}
+
+}
+
+void CProMoEdgeView::SetTop(double top)
+/* ============================================================
+	Function :		CProMoEdgeView::SetTop
+	Description :	Sets the top edge of the object rectangle
+	Access :		Public
+
+	Return :		void
+	Parameters :	double top	-	New top position
+
+	Usage :			Call to set the top edge of the object.
+					The object coordinates are expressed as
+					double values to allow unlimited zoom.
+
+   ============================================================*/
+{
+	CDiagramLine::SetTop(top);
+	if (GetSource() != NULL && !m_propagating) {
+		CScopedUpdate guard(m_propagating);
+		CProMoEdgeView* src = dynamic_cast<CProMoEdgeView*>(GetSource());
+		if (src) {
+			src->SetBottom(GetTop());
+		}
+	}
+}
+
+void CProMoEdgeView::SetBottom(double bottom)
+/* ============================================================
+	Function :		CProMoEdgeView::SetBottom
+	Description :	Sets the bottom edge of the object
+					rectangle
+	Access :		Public
+
+	Return :		void
+	Parameters :	double bottom	-	New bottom position
+
+	Usage :			Call to set the bottom edge of the object.
+					The object coordinates are expressed as
+					double values to allow unlimited zoom.
+
+   ============================================================*/
+{
+
+	CDiagramLine::SetBottom(bottom);
+	if (GetDestination() != NULL && !m_propagating) {
+		CScopedUpdate guard(m_propagating);
+		CProMoEdgeView* dest = dynamic_cast<CProMoEdgeView*>(GetDestination());
+		if (dest) {
+			dest->SetTop(GetBottom());
+		}
+	}
+}
+
+
 CProMoEdgeView* CProMoEdgeView::Split()
 /* ============================================================
 	Function :		CProMoEdgeView::Split
@@ -660,20 +806,16 @@ CProMoEdgeView* CProMoEdgeView::Split()
 	CProMoEdgeView* newEdge = dynamic_cast<CProMoEdgeView*>(newEntity);
 
 	if (newEdge) {
-		//compute the length and position of both edges
-		CRect edgeRect = GetRect();
-		CRect newEdgeRect(edgeRect);
-		edgeRect.bottom = edgeRect.top + (edgeRect.Height() / 2);
-		edgeRect.right = edgeRect.left + (edgeRect.Width() / 2);
-		SetRect(edgeRect);
+		//compute the length and position of the new edge
+		CRect newEdgeRect(GetRect());
 		newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
 		newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
-		newEdge->SetRect(newEdgeRect);
 		newEdge->Select(FALSE);
 		//update edge links
 		newEdge->SetDestination(GetDestination());
 		newEdge->SetSource(this);
 		newEdge->SetModel(GetModel());
+		newEdge->SetRect(newEdgeRect);
 		//clear duplicated properties
 		newEdge->SetTitle(_T(""));
 		return newEdge;
