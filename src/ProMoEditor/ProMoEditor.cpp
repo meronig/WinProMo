@@ -202,8 +202,6 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 
    ============================================================*/
 {
-	ResetTarget();
-
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int j = GetObjectCount() - 1; j >= 0; j--) {
 		CProMoBlockView* currObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(j));
@@ -486,11 +484,12 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 	if (GetInteractMode() == MODE_MOVING || GetInteractMode() == MODE_RESIZING || IsDrawing())
 	{
+		ResetTarget();
 		CProMoBlockView* targetBlock = GetTargetBlock(point);
 		if (targetBlock) {
 			targetBlock->SetTarget(TRUE);
 		}
-
+		
 		SetRedraw(TRUE);
 		RedrawWindow();
 	}
@@ -529,6 +528,7 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 		if (objs) {
 			UnselectAll();
 			// Identify clicked block (if any)
+			ResetTarget();
 			target = GetTargetBlock(point);
 		}
 	}
