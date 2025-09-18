@@ -2,6 +2,7 @@
 #include "../Helpers/MfcAssertHelpers.h"
 #include "../Helpers/PointerAssertHelpers.h"
 #include "../../src/ProMoEditor/ProMoModel.h"
+#include "../WinProMoTests.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -11,6 +12,11 @@ namespace CProMoModelTests
     TEST_CLASS(ProMoModelTests)
     {
     public:
+        TEST_METHOD_INITIALIZE(SetUp)
+        {
+            WinProMoTestHelpers::BootstrapMFC();
+        }
+
 
 #pragma region ViewTests
 

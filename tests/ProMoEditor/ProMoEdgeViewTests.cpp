@@ -4,6 +4,7 @@
 #include "../../src/ProMoEditor/ProMoEdgeView.h"
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
 #include <vector>
+#include "../WinProMoTests.h"
 
 class CProMoBlockViewTestStub : public CProMoBlockView
 {
@@ -24,8 +25,11 @@ namespace CProMoEdgeViewTests
     TEST_CLASS(CProMoEdgeViewTests)
     {
 
-
     public:
+        TEST_METHOD_INITIALIZE(SetUp)
+        {
+            WinProMoTestHelpers::BootstrapMFC();
+        }
 
 #pragma region ConstructionAndDefaults
 
@@ -34,20 +38,6 @@ namespace CProMoEdgeViewTests
             CProMoEdgeView view;
 
             TestHelpers::PointerAssert::IsNotNull(view.GetModel());
-        }
-
-#pragma endregion
-
-#pragma region ModelLinking
-
-        TEST_METHOD(SetModel_WhenAssigned_GetModelReturnsSamePointer)
-        {
-            CProMoEdgeView* view = new CProMoEdgeView();
-            CProMoEdgeModel* model = new CProMoEdgeModel();
-
-            view->SetModel(model);
-
-            TestHelpers::PointerAssert::AreEqual(model, view->GetModel());
         }
 
 #pragma endregion
@@ -305,7 +295,7 @@ namespace CProMoEdgeViewTests
             view2.SetName(CString("View2"));
             view2.SetRect(CRect(250, 120, 200, 150));
 
-            view2.SetModel(view1.GetModel());
+            //view2.SetModel(view1.GetModel());
             view2.SetSource(&view1);
 
             CProMoEdgeView view3;
@@ -315,7 +305,7 @@ namespace CProMoEdgeViewTests
             view3.SetTitle(CString("My View"));
             view3.SetRect(CRect(200, 150, 200, 100));
 
-            view3.SetModel(view2.GetModel());
+            //view3.SetModel(view2.GetModel());
             view3.SetSource(&view2);
 
             viewString1 = view1.GetString();
@@ -419,7 +409,7 @@ namespace CProMoEdgeViewTests
 
             view2.SetRect(CRect(250, 120, 200, 150));
 
-            view2.SetModel(view1.GetModel());
+            //view2.SetModel(view1.GetModel());
             view2.SetSource(&view1);
 
             CProMoEdgeView view3;
@@ -428,7 +418,7 @@ namespace CProMoEdgeViewTests
             view3.SetTitle(CString("My View")); 
             view3.SetRect(CRect(200, 150, 200, 120));
 
-            view3.SetModel(view2.GetModel());
+            //view3.SetModel(view2.GetModel());
             view3.SetSource(&view2);
 
             // Create memory DC

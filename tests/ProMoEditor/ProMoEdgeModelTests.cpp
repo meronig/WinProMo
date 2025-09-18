@@ -3,7 +3,20 @@
 #include "../Helpers/PointerAssertHelpers.h"
 #include "../../src/ProMoEditor/ProMoBlockModel.h"
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
+#include "../WinProMoTests.h"
 
+class CProMoEdgeModelTestStub : public CProMoEdgeModel
+{
+public:
+    void SetSource(CProMoModel* source) {
+        CProMoEdgeModel::SetSource(source);
+    }
+    
+    void SetDestination(CProMoModel* source) {
+        CProMoEdgeModel::SetDestination(source);
+    }
+    
+};
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -13,25 +26,30 @@ namespace CProMoEdgeModelTests
     TEST_CLASS(ProMoEdgeModelTests)
     {
     public:
+        TEST_METHOD_INITIALIZE(SetUp)
+        {
+            WinProMoTestHelpers::BootstrapMFC();
+        }
+
 
 #pragma region SourceBlockTests
 
         TEST_METHOD(SetSource_WhenBlockAdded_ReturnBlock)
         {
             CProMoBlockModel model;
-            CProMoEdgeModel edge;
+            CProMoEdgeModelTestStub edge;
 
             edge.SetSource(&model);
 
             Assert::AreEqual((INT_PTR)1, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModel*)model.GetOutgoingEdges()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModelTestStub*)model.GetOutgoingEdges()->GetAt(0));
             TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModel*)edge.GetSource());
         }
 
         TEST_METHOD(SetSource_WhenNullIsPassed_ReturnNull)
         {
             CProMoBlockModel model;
-            CProMoEdgeModel edge;
+            CProMoEdgeModelTestStub edge;
 
             edge.SetSource(&model);
             edge.SetSource(NULL);
@@ -42,7 +60,7 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(GetSource_WhenNoBlockExists_ReturnNull)
         {
-            CProMoEdgeModel edge;
+            CProMoEdgeModelTestStub edge;
             
             TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)edge.GetSource());
         }
@@ -54,19 +72,19 @@ namespace CProMoEdgeModelTests
         TEST_METHOD(SetDestination_WhenBlockAdded_ReturnBlock)
         {
             CProMoBlockModel model;
-            CProMoEdgeModel edge;
+            CProMoEdgeModelTestStub edge;
 
             edge.SetDestination(&model);
 
             Assert::AreEqual((INT_PTR)1, model.GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModel*)model.GetIncomingEdges()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModelTestStub*)model.GetIncomingEdges()->GetAt(0));
             TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModel*)edge.GetDestination());
         }
 
         TEST_METHOD(SetDestination_WhenNullIsPassed_ReturnNull)
         {
             CProMoBlockModel model;
-            CProMoEdgeModel edge;
+            CProMoEdgeModelTestStub edge;
 
             edge.SetSource(&model);
             edge.SetSource(NULL);
@@ -77,9 +95,9 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(GetDestination_WhenNoBlockExists_ReturnNull)
         {
-            CProMoEdgeModel edge;
+            CProMoEdgeModelTestStub edge;
 
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)edge.GetDestination());
+            TestHelpers::PointerAssert::IsNull((CProMoEdgeModelTestStub*)edge.GetDestination());
         }
 
 #pragma endregion
@@ -88,7 +106,7 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(GetLastSegment_WhenOneViewExists_ReturnView)
         {
-            CProMoEdgeModel model;
+            CProMoEdgeModelTestStub model;
             CProMoEdgeView view;
 
             model.LinkView(&view);
@@ -98,14 +116,14 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(GetLastSegment_WhenNoViewExists_ReturnNull)
         {
-            CProMoEdgeModel model;
+            CProMoEdgeModelTestStub model;
 
             TestHelpers::PointerAssert::IsNull(model.GetLastSegment());
         }
 
         TEST_METHOD(GetLastSegment_WhenManyViewsExist_ReturnLastSegment)
         {
-            CProMoEdgeModel model;
+            CProMoEdgeModelTestStub model;
             CProMoEdgeView v1, v2, v3;
 
             v1.SetDestination(&v2);
@@ -120,7 +138,7 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(GetFirstSegment_WhenOneViewExists_ReturnView)
         {
-            CProMoEdgeModel model;
+            CProMoEdgeModelTestStub model;
             CProMoEdgeView view;
 
             model.LinkView(&view);
@@ -130,18 +148,20 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(GetFirstSegment_WhenNoViewExists_ReturnNull)
         {
-            CProMoEdgeModel model;
+            CProMoEdgeModelTestStub model;
 
             TestHelpers::PointerAssert::IsNull(model.GetFirstSegment());
         }
 
         TEST_METHOD(GetFirstSegment_WhenManyViewsExist_ReturnFirstSegment)
         {
-            CProMoEdgeModel model;
+            CProMoEdgeModelTestStub model;
             CProMoEdgeView v1, v2, v3;
 
             v1.SetDestination(&v2);
             v2.SetDestination(&v3);
+
+            model.UnlinkAllViews();
 
             model.LinkView(&v1);
             model.LinkView(&v2);
@@ -157,9 +177,9 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(GetDefaultGetString_WhenInvoked_ReturnsCorrectString)
         {
-            CProMoEdgeModel edge1;
-            CProMoEdgeModel edge2;
-            CProMoEdgeModel edge3;
+            CProMoEdgeModelTestStub edge1;
+            CProMoEdgeModelTestStub edge2;
+            CProMoEdgeModelTestStub edge3;
             CProMoBlockModel sourceBlock;
             CProMoBlockModel destBlock;
             CString edge1String;
@@ -189,9 +209,9 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(CreateFromString_WhenCorrectStringIsPassed_ParsesCorrectly)
         {
-            CProMoEdgeModel edge1;
-            CProMoEdgeModel edge2;
-            CProMoEdgeModel edge3;
+            CProMoEdgeModelTestStub edge1;
+            CProMoEdgeModelTestStub edge2;
+            CProMoEdgeModelTestStub edge3;
 
             edge1.CreateFromString(CString("promo_edge_model:Edge1,Source,Destination;"));
 
@@ -208,9 +228,9 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(CreateFromString_WhenStringWithExtraParametersIsPassed_ParsesCorrectly)
         {
-            CProMoEdgeModel edge1;
-            CProMoEdgeModel edge2;
-            CProMoEdgeModel edge3;
+            CProMoEdgeModelTestStub edge1;
+            CProMoEdgeModelTestStub edge2;
+            CProMoEdgeModelTestStub edge3;
 
             edge1.CreateFromString(CString("promo_edge_model:Edge1,Source,Destination,Extra1,Extra2;"));
 
@@ -227,8 +247,8 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(CreateFromString_WhenIncorrectStringIsPassed_IgnoreParameters)
         {
-            CProMoEdgeModel edge1;
-            CProMoEdgeModel edge2;
+            CProMoEdgeModelTestStub edge1;
+            CProMoEdgeModelTestStub edge2;
 
             edge1.CreateFromString(CString("wrong_type:;"));
 
@@ -245,7 +265,7 @@ namespace CProMoEdgeModelTests
 
         TEST_METHOD(Clone_WhenCalled_ReturnsIndependentCopy)
         {
-            CProMoEdgeModel model;
+            CProMoEdgeModelTestStub model;
             
             std::unique_ptr<CProMoModel> clone(model.Clone());
 

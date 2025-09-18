@@ -16,6 +16,9 @@ class AFX_EXT_CLASS CProMoEdgeModel : public CProMoModel
 {
 
 public:
+    friend class CProMoEdgeView;
+    friend class CProMoBlockModel;
+
     // Creation/initialization
     CProMoEdgeModel();
     virtual ~CProMoEdgeModel();
@@ -23,12 +26,10 @@ public:
     virtual	CProMoModel* Clone();
 
     // Source links
-    virtual void SetSource(CProMoModel* source);
     virtual CProMoModel* GetSource() const;
     virtual BOOL CanConnectSource(CProMoModel* source);
 
     // Destination links
-    virtual void SetDestination(CProMoModel* destination);
     virtual CProMoModel* GetDestination() const;
     virtual BOOL CanConnectDestination(CProMoModel* destination);
 
@@ -38,6 +39,9 @@ public:
 
     
 protected:
+    virtual void SetSource(CProMoModel* source);
+    virtual void SetDestination(CProMoModel* destination);
+
     CProMoModel* m_source;
     CProMoModel* m_dest;
 

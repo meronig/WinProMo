@@ -170,7 +170,7 @@
     <ClCompile Include="ProMoEditor\ProMoEditorTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoEntityContainerTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoModelTests.cpp" />
-    <ClCompile Include="WinProMo.Tests.cpp" />
+    <ClCompile Include="WinProMoTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Helpers\MfcAssertHelpers.h" />

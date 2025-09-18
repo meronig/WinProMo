@@ -24,10 +24,7 @@ public:
     
     virtual	CDiagramEntity* Clone();
     virtual void	Copy(CDiagramEntity* obj);
-    
-    // Model-view links
     virtual CProMoEdgeModel* GetModel() const;
-    virtual void SetModel(CProMoEdgeModel* model);
 
     // Edge-specific methods
     virtual void SetSource(CDiagramEntity *source);
@@ -42,6 +39,13 @@ protected:
     virtual void DrawHead(CDC* dc, CRect rect, int size);
     virtual void DrawTail(CDC* dc, CRect rect, int size);
     virtual void Reposition();
+    
+    // Model-view links
+    virtual void SetModel(CProMoEdgeModel* model);
+    virtual void SetSourceEdge(CProMoEdgeView* source);
+    virtual void SetSourceBlock(CProMoBlockView* source);
+    virtual void SetDestinationEdge(CProMoEdgeView* destination);
+    virtual void SetDestinationBlock(CProMoBlockView* destination);
     
     CProMoEdgeView* m_source;
     CProMoEdgeView* m_dest;

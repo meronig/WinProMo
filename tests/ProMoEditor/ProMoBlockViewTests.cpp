@@ -4,6 +4,7 @@
 #include "../../src/ProMoEditor/ProMoBlockView.h"
 #include "../../src/ProMoEditor/ProMoEdgeView.h"
 #include <vector>
+#include "../WinProMoTests.h"
 
 class CProMoBlockViewTestStub : public CProMoBlockView
 {
@@ -24,8 +25,11 @@ namespace CProMoBlockViewTests
     TEST_CLASS(CProMoBlockViewTests)
     {
         
-
     public:
+        TEST_METHOD_INITIALIZE(SetUp)
+        {
+            WinProMoTestHelpers::BootstrapMFC();
+        }
 
 #pragma region ConstructionAndDefaults
 
@@ -77,20 +81,6 @@ namespace CProMoBlockViewTests
             view.SetLockedProportions(FALSE);
 
             Assert::IsFalse(view.HasLockedProportions());
-        }
-
-#pragma endregion
-
-#pragma region ModelLinking
-
-        TEST_METHOD(SetModel_WhenAssigned_GetModelReturnsSamePointer)
-        {
-            CProMoBlockViewTestStub* view = new CProMoBlockViewTestStub();
-            CProMoBlockModel* model = new CProMoBlockModel();
-
-            view->SetModel(model);
-
-            TestHelpers::PointerAssert::AreEqual(model, view->GetModel());
         }
 
 #pragma endregion

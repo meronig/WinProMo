@@ -70,20 +70,26 @@ CProMoEdgeView::~CProMoEdgeView()
 
    ============================================================*/
 {
+	CProMoModel* sourceBlock = GetModel()->GetSource();
+	CProMoModel* destBlock = GetModel()->GetDestination();
+
 	if (m_source) {
-		m_source->SetBottom(GetBottom());
-		m_source->SetRight(GetRight());
-		m_source->SetDestination(GetDestination());
+		CProMoEdgeView* oldSourceEdge = m_source;
+		oldSourceEdge->SetBottom(GetBottom());
+		oldSourceEdge->SetRight(GetRight());
+		oldSourceEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
+		oldSourceEdge->GetModel()->SetSource(sourceBlock);
+		oldSourceEdge->GetModel()->SetDestination(destBlock);
 	}
 	
 	if (m_dest) {
-		m_dest->SetTop(GetTop());
-		m_dest->SetLeft(GetLeft());
-		m_dest->SetSource(GetSource());
+		CProMoEdgeView* oldDestEdge = m_dest;
+		oldDestEdge->SetTop(GetTop());
+		oldDestEdge->SetLeft(GetLeft());
+		oldDestEdge->SetSourceEdge(dynamic_cast<CProMoEdgeView*>(GetSource()));
+		oldDestEdge->GetModel()->SetSource(sourceBlock);
+		oldDestEdge->GetModel()->SetDestination(destBlock);
 	}
-	
-	SetSource(NULL);
-	SetDestination(NULL);
 
 	if (m_dlg.m_hWnd)
 		m_dlg.DestroyWindow();
@@ -258,35 +264,56 @@ void CProMoEdgeView::Reposition()
 
 {
 	if (m_source != NULL) {
-		// Dead code?
-		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_source);
-		if (obj) {
-			CPoint pt = obj->GetIntersection(GetRect().TopLeft(), GetRect().BottomRight());
-			if (pt.x >= 0) {
-				SetTop(pt.y);
-				SetLeft(pt.x);
-			}
-		}
 		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(m_source);
 		if (edge) {
 			SetTop(edge->GetBottom());
 			SetLeft(edge->GetRight());
 		}
 	}
-	if (m_dest != NULL) {
-		// Dead code?
-		CProMoBlockView* obj = dynamic_cast<CProMoBlockView*>(m_dest);
-		if (obj) {
-			CPoint pt = obj->GetIntersection(GetRect().BottomRight(), GetRect().TopLeft());
-			if (pt.x >= 0) {
-				SetBottom(pt.y);
-				SetRight(pt.x);
+	else {
+		if (IsFirstSegment() && GetModel()->GetSource()) {
+			CProMoBlockModel* sourceBlockModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetSource());
+			if (sourceBlockModel) {
+				CProMoBlockView* sourceBlockView = sourceBlockModel->GetMainView();
+				if (sourceBlockView) {
+					CPoint pt = sourceBlockView->GetIntersection(GetRect().TopLeft(), GetRect().BottomRight());
+					// No intersection exists, set to block center and compute again
+					if (pt.x < 0) {
+						pt = sourceBlockView->GetIntersection(sourceBlockView->GetRect().BottomRight() - sourceBlockView->GetRect().TopLeft(), GetRect().BottomRight());
+					}
+					if (pt.x >= 0) {
+						SetTop(pt.y);
+						SetLeft(pt.x);
+					}
+				}
 			}
 		}
+	}
+	
+	if (m_dest != NULL) {
 		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(m_dest);
 		if (edge) {
 			SetBottom(edge->GetTop());
 			SetRight(edge->GetLeft());
+		}
+	}
+	else {
+		if (IsLastSegment() && GetModel()->GetDestination()) {
+			CProMoBlockModel* destBlockModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetDestination());
+			if (destBlockModel) {
+				CProMoBlockView* destBlockView = destBlockModel->GetMainView();
+				if (destBlockView) {
+					CPoint pt = destBlockView->GetIntersection(GetRect().BottomRight(), GetRect().TopLeft());
+					// No intersection exists, set to block center and compute again
+					if (pt.x < 0) {
+						pt = destBlockView->GetIntersection(GetRect().TopLeft(), destBlockView->GetRect().BottomRight() - destBlockView->GetRect().TopLeft());
+					}
+					if (pt.x >= 0) {
+						SetBottom(pt.y);
+						SetRight(pt.x);
+					}
+				}
+			}
 		}
 	}
 }
@@ -474,43 +501,13 @@ void CProMoEdgeView::SetSource(CDiagramEntity *source)
 
    ============================================================*/
 {
-	//save the old source edge view
-	CProMoEdgeView* oldSourceView = m_source;
-
 	CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(source);
-	//new source is a block view
-	if (blockView) {
-		//connect the elements at the model level
-		GetModel()->SetSource(blockView->GetModel());
-		//disconnect the edges at the view level
-		m_source = NULL;
-	}
-	
-	//new source is an edge view
 	CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source);
 
-	// the source edge view has changed
-	if (source != oldSourceView) {
-
-		if (edgeView) {
-			//just connect the two views
-			m_source = edgeView;
-			edgeView->SetDestination(this);
-		}
-
-		else {
-			m_source = NULL;
-		}
-		
-		if (m_source != oldSourceView) {
-			//set the destination to null
-			if (oldSourceView) {
-				oldSourceView->m_dest = NULL;
-			}
-		}
-		
-	}
-	
+	// If the new source is an edge, set it. Otherwise, set it to NULL;
+	SetSourceEdge(edgeView);
+	// If the new source is a block, set it.
+	SetSourceBlock(blockView);
 
 	Reposition();
 
@@ -531,42 +528,14 @@ void CProMoEdgeView::SetDestination(CDiagramEntity *destination)
 
    ============================================================*/
 {
-	//save the old source edge view
-	CProMoEdgeView* oldDestView = m_dest;
-
-	CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(destination);
-	//new source is a block view
-	if (blockView) {
-		//connect the elements at the model level
-		GetModel()->SetDestination(blockView->GetModel());
-		//disconnect the edges at the view level
-		m_dest = NULL;
-	}
-
-	//new source is an edge view
 	CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(destination);
-
-	if (oldDestView != destination) {
-
-		if (edgeView) {
-			//just connect the two views
-			m_dest = edgeView;
-			edgeView->SetSource(this);
-		}
-
-		else {
-			m_dest = NULL;
-		}
-
-		// the source edge view has changed
-		if (m_dest != oldDestView) {
-			//set the destination to null
-			if (oldDestView) {
-				oldDestView->m_source = NULL;
-			}
-		}
-	}
-
+	CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(destination);
+	
+	// If the new destination is an edge, set it. Otherwise, set it to NULL;
+	SetDestinationEdge(edgeView);
+	// If the new destination is a block, set it.
+	SetDestinationBlock(blockView);
+	
 	Reposition();
 
 }
@@ -812,8 +781,8 @@ CProMoEdgeView* CProMoEdgeView::Split()
 		newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
 		newEdge->Select(FALSE);
 		//update edge links
-		newEdge->SetDestination(GetDestination());
-		newEdge->SetSource(this);
+		newEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
+		newEdge->SetSourceEdge(this);
 		newEdge->SetModel(GetModel());
 		newEdge->SetRect(newEdgeRect);
 		//clear duplicated properties
@@ -861,6 +830,12 @@ void CProMoEdgeView::SetModel(CProMoEdgeModel* model)
 		//link this class to the new model
 		if (model) {
 			model->LinkView(this);
+			if (m_source) {
+				m_source->SetModel(model);
+			}
+			if (m_dest) {
+				m_dest->SetModel(model);
+			}
 		}
 		//unlink this class from the old model
 		if (oldModel) {
@@ -871,6 +846,98 @@ void CProMoEdgeView::SetModel(CProMoEdgeModel* model)
 			}
 		}
 	}
+}
+
+void CProMoEdgeView::SetSourceEdge(CProMoEdgeView* source)
+{
+	//save the old source edge view
+	CProMoEdgeView* oldSourceView = m_source;
+
+	// the source edge view has changed
+
+	if (source != oldSourceView) {
+
+		if (source) {
+			//just connect the two views
+			/*CRect newEdgeRect(GetRect());
+			newEdgeRect.top = source->GetBottom();
+			newEdgeRect.left = source->GetRight();
+			SetRect(newEdgeRect);*/
+
+			m_source = source;
+			source->SetDestinationEdge(this);
+			source->SetModel(GetModel());
+		}
+
+		else {
+			m_source = NULL;
+			SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
+		}
+
+		if (oldSourceView) {
+			oldSourceView->m_dest = NULL;
+		}	
+	}
+}
+
+void CProMoEdgeView::SetSourceBlock(CProMoBlockView* source)
+{
+	if (source) {
+		//connect the elements at the model level
+		GetModel()->SetSource(source->GetModel());
+	}
+	else {
+		if (GetModel()) {
+			GetModel()->SetSource(NULL);
+		}
+	}
+}
+
+void CProMoEdgeView::SetDestinationEdge(CProMoEdgeView* destination)
+{
+	//save the old source edge view
+	CProMoEdgeView* oldDestView = m_dest;
+
+	if (oldDestView != destination) {
+
+		if (destination) {
+			//just connect the two views
+			/*CRect newEdgeRect(GetRect());
+			newEdgeRect.bottom = destination->GetTop();
+			newEdgeRect.right = destination->GetLeft();
+			SetRect(newEdgeRect);*/
+			
+			m_dest = destination;
+			destination->SetSourceEdge(this);
+			destination->SetModel(GetModel());
+		}
+
+		else {
+			m_dest = NULL;
+			SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
+		}
+
+		// the source edge view has changed
+		if (oldDestView) {
+			oldDestView->m_source = NULL;
+		}
+	}
+
+}
+
+void CProMoEdgeView::SetDestinationBlock(CProMoBlockView* destination)
+{
+	if (destination) {
+		//connect the elements at the model level
+		GetModel()->SetDestination(destination->GetModel());
+
+	}
+	else {
+		if (GetModel()) {
+			GetModel()->SetDestination(NULL);
+		}
+	}
+
 }
 
 CString CProMoEdgeView::GetDefaultGetString() const

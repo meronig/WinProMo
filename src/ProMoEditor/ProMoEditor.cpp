@@ -1011,7 +1011,7 @@ void CProMoEditor::ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock)
 						edge->SetSource(sourceBlock);
 					}
 					else {
-						edge->GetModel()->SetSource(NULL);
+						edge->SetSource(NULL);
 					}
 					//Need to reorder shapes according to nesting
 					objs->Reorder();
@@ -1050,7 +1050,7 @@ void CProMoEditor::ConnectSelectedEdgeToDestination(CProMoBlockView* destBlock)
 						edge->SetDestination(destBlock);
 					}
 					else {
-						edge->GetModel()->SetDestination(NULL);
+						edge->SetDestination(NULL);
 					}
 					//Need to reorder shapes according to nesting
 					objs->Reorder();

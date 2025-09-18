@@ -3,6 +3,7 @@
 #include "../Helpers/PointerAssertHelpers.h"
 #include "../../src/ProMoEditor/ProMoBlockModel.h"
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
+#include "../WinProMoTests.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -13,6 +14,11 @@ namespace CProMoBlockModelTests
     TEST_CLASS(ProMoBlockModelTests)
     {
     public:
+
+        TEST_METHOD_INITIALIZE(SetUp)
+        {
+            WinProMoTestHelpers::BootstrapMFC();
+        }
 
 #pragma region SubBlockTests
 
@@ -174,7 +180,7 @@ namespace CProMoBlockModelTests
         {
             CProMoBlockModel model;
             CProMoEdgeModel edge;
-
+            
             model.LinkIncomingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)1, model.GetIncomingEdges()->GetSize());

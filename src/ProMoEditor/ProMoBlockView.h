@@ -26,8 +26,7 @@ public:
 		
 	// Model-view links
 	virtual CProMoBlockModel* GetModel() const;
-	virtual void SetModel(CProMoBlockModel*);
-
+	
 	// Block-specific methods
 	virtual void AutoResize();
 		
@@ -50,6 +49,9 @@ protected:
 	virtual void KeepElementsConnected(double left, double top, double right, double bottom);
 	virtual CPoint MapPointToNewRect(CPoint oldPoint, double left, double top, double right, double bottom);
 	virtual CRect ComputeTextRect(const CString &text, const CFont &font);
+
+	virtual void SetModel(CProMoBlockModel*);
+
 
 private:
 	CPropertyDialog	m_dlg;
