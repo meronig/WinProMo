@@ -666,7 +666,9 @@ void CProMoEdgeView::SetLeft(double left)
 		CScopedUpdate guard(m_propagating);
 		CProMoEdgeView* src = dynamic_cast<CProMoEdgeView*>(GetSource());
 		if (src) {
-			src->SetRight(GetLeft());
+			if (!src->IsSelected()) {
+				src->SetRight(GetLeft());
+			}
 		}
 	}
 }
@@ -693,7 +695,9 @@ void CProMoEdgeView::SetRight(double right)
 		CScopedUpdate guard(m_propagating);
 		CProMoEdgeView* dest = dynamic_cast<CProMoEdgeView*>(GetDestination());
 		if (dest) {
-			dest->SetLeft(GetRight());
+			if (!dest->IsSelected()) {
+				dest->SetLeft(GetRight());
+			}
 		}
 	}
 
@@ -719,7 +723,9 @@ void CProMoEdgeView::SetTop(double top)
 		CScopedUpdate guard(m_propagating);
 		CProMoEdgeView* src = dynamic_cast<CProMoEdgeView*>(GetSource());
 		if (src) {
-			src->SetBottom(GetTop());
+			if (!src->IsSelected()) {
+				src->SetBottom(GetTop());
+			}
 		}
 	}
 }
@@ -746,7 +752,9 @@ void CProMoEdgeView::SetBottom(double bottom)
 		CScopedUpdate guard(m_propagating);
 		CProMoEdgeView* dest = dynamic_cast<CProMoEdgeView*>(GetDestination());
 		if (dest) {
-			dest->SetTop(GetBottom());
+			if (!dest->IsSelected()) {
+				dest->SetTop(GetBottom());
+			}
 		}
 	}
 }

@@ -5,6 +5,7 @@
 #include "../../src/ProMoEditor/ProMoClipboardHandler.h"
 #include "../../src/ProMoEditor/ProMoEdgeView.h"
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
+#include "../WinProMoTests.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -15,6 +16,10 @@ namespace CProMoClipboardHandlerTests
     TEST_CLASS(CProMoClipboardHandlerTests)
     {
     public:
+        TEST_METHOD_INITIALIZE(SetUp)
+        {
+            WinProMoTestHelpers::BootstrapMFC();
+        }
 
 #pragma region ClipboardTest
 
@@ -47,7 +52,7 @@ namespace CProMoClipboardHandlerTests
             a2->GetModel()->SetParentBlock(a->GetModel());
             b1->GetModel()->SetParentBlock(b->GetModel());
             b2->GetModel()->SetParentBlock(b->GetModel());
-            x->SetModel(y->GetModel());
+            //x->SetModel(y->GetModel());
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
@@ -103,7 +108,7 @@ namespace CProMoClipboardHandlerTests
             a2->GetModel()->SetParentBlock(a->GetModel());
             b1->GetModel()->SetParentBlock(b->GetModel());
             b2->GetModel()->SetParentBlock(b->GetModel());
-            x->SetModel(y->GetModel());
+            //x->SetModel(y->GetModel());
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);

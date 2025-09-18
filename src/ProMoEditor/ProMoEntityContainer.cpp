@@ -156,13 +156,10 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 					if (edgeView->GetSource() == sourceEdgeView) {
 						newEdgeView->SetSource(newSourceEdgeView);
 					}
-					if (edgeView->GetModel() == sourceEdgeView->GetModel()) {
-						newSourceEdgeView->SetModel(newEdgeView->GetModel());
 					}
 				}
 			}
 		}
-	}
 
 	for (i = 0; i < source->GetSize(); i++) {
 		//preserve links for edgeModels
@@ -171,7 +168,7 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 		if (edgeView && newEdgeView) {
 			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edgeView->GetModel());
 			CProMoEdgeModel* newEdgeModel = dynamic_cast<CProMoEdgeModel*>(newEdgeView->GetModel());
-			if (edgeModel && newEdgeModel) {
+			if (edgeModel && newEdgeModel && (edgeView->IsFirstSegment() || edgeView->IsLastSegment())) {
 				if (edgeModel->GetSource() != NULL || edgeModel->GetDestination() != NULL) {
 					for (int j = 0; j < source->GetSize(); j++) {
 						CProMoBlockView* connectedBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
@@ -180,11 +177,11 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 							CProMoBlockModel* connectedBlockModel = connectedBlockView->GetModel();
 							CProMoBlockModel* newConnectedBlockModel = newConnectedBlockView->GetModel();
 
-							if (edgeModel->GetSource() == connectedBlockModel) {
-								newEdgeModel->SetSource(newConnectedBlockModel);
+							if (edgeModel->GetSource() == connectedBlockModel && edgeView->IsFirstSegment()) {
+								newEdgeView->SetSource(newConnectedBlockView);
 							}
-							if (edgeModel->GetDestination() == connectedBlockModel) {
-								newEdgeModel->SetDestination(newConnectedBlockModel);
+							if (edgeModel->GetDestination() == connectedBlockModel && edgeView->IsLastSegment()) {
+								newEdgeView->SetDestination(newConnectedBlockView);
 							}
 						}
 					}
