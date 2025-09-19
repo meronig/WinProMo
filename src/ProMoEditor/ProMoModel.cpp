@@ -97,7 +97,7 @@ void CProMoModel::LinkView(CDiagramEntity* view)
 /* ============================================================
 	Function :		CProMoModel::LinkView
 	Description :	Links a new view to this object.
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CDiagramEntity* view - the view to link
@@ -111,7 +111,7 @@ void CProMoModel::UnlinkView(CDiagramEntity* view)
 /* ============================================================
 	Function :		CProMoModel::UnlinkView
 	Description :	Unlinks a view from this object.
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CDiagramEntity* view - the view to unlink
@@ -132,7 +132,7 @@ void CProMoModel::UnlinkAllViews()
 /* ============================================================
 	Function :		CProMoModel::UnlinkAllViews
 	Description :	Unlinks all views from this object.
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	none

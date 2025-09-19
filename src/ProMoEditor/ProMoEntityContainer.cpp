@@ -107,12 +107,12 @@ void CProMoEntityContainer::RemoveAt(int index)
 				CProMoBlockModel* subBlockModel = NULL;
 				subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
 				if (subBlockModel) {
-					this->Remove(subBlockModel->GetMainView());
+					Remove(subBlockModel->GetMainView());
 				}
 			}
 			if (block->GetModel()->GetParentBlock()) {
 				//remove from parent
-				block->GetModel()->GetParentBlock()->UnlinkSubBlock(block->GetModel());
+				block->SetParentBlock(NULL);
 			}
 		}
 		CDiagramEntityContainer::RemoveAt(index);
@@ -202,7 +202,7 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 						CProMoBlockModel* parentBlockModel = parentBlockView->GetModel();
 						CProMoBlockModel* newParentBlockModel = newParentBlockView->GetModel();
 						if (blockModel->GetParentBlock() == parentBlockModel) {
-							newBlockModel->SetParentBlock(newParentBlockModel);
+							newBlockView->SetParentBlock(newParentBlockView);
 							break;
 						}
 					}
@@ -365,7 +365,7 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 
 							CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
 							if (parent) {
-								blockModel->SetParentBlock(parent);
+								blockModel->GetMainView()->SetParentBlock(parent->GetMainView());
 							}
 						}
 					}

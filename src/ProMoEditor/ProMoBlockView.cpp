@@ -311,7 +311,7 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 					Override this method if the shape being
 					drawn is changed, in order to compute the 
 					point accordingly.
-	Access :		Protected
+	Access :		Public
 
 	Return :		CPoint				-	"CPoint" that lies
 											on the border of
@@ -1152,4 +1152,40 @@ CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str, CProMoMode
 
 	return obj;
 
+}
+
+void CProMoBlockView::SetParentBlock(CProMoBlockView* parent)
+/* ============================================================
+	Function :		CProMoBlockView::SetParentBlock
+	Description :	Makes the block being passed as input
+					parameter the parent of this block
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoBlockView* block	-	the block that
+												should be the
+												parent block
+
+   ============================================================*/
+{
+	if (parent) {
+		GetModel()->SetParentBlock(parent->GetModel());
+	}
+	else {
+		GetModel()->SetParentBlock(NULL);
+	}
+}
+
+void CProMoBlockView::UnlinkAllSubBlocks()
+/* ============================================================
+	Function :		CProMoBlockView::UnlinkAllSubBlocks
+	Description :	Removes all the children of this block
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+	GetModel()->UnlinkAllSubBlocks();
 }

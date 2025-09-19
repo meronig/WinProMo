@@ -5,6 +5,47 @@
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
 #include "../WinProMoTests.h"
 
+class CProMoBlockModelTestStub : public CProMoBlockModel
+{
+public:
+    void LinkSubBlock(CProMoBlockModel* subblock) {
+        CProMoBlockModel::LinkSubBlock(subblock);
+    }
+    void UnlinkSubBlock(CProMoBlockModel* subblock) {
+        CProMoBlockModel::UnlinkSubBlock(subblock);
+    }
+    void UnlinkAllSubBlocks() {
+        CProMoBlockModel::UnlinkAllSubBlocks();
+    }
+    void SetParentBlock(CProMoBlockModel* parent) {
+        CProMoBlockModel::SetParentBlock(parent);
+    }
+
+    void LinkOutgoingEdge(CProMoEdgeModel* edge) {
+        CProMoBlockModel::LinkOutgoingEdge(edge);
+    }
+    void UnlinkOutgoingEdge(CProMoEdgeModel* edge) {
+        CProMoBlockModel::UnlinkOutgoingEdge(edge);
+    }
+    void UnlinkAllOutgoingEdges() {
+        CProMoBlockModel::UnlinkAllOutgoingEdges();
+    }
+
+    void LinkIncomingEdge(CProMoEdgeModel* edge) {
+        CProMoBlockModel::LinkIncomingEdge(edge);
+    }
+    void UnlinkIncomingEdge(CProMoEdgeModel* edge) {
+        CProMoBlockModel::UnlinkIncomingEdge(edge);
+    }
+    void UnlinkAllIncomingEdges() {
+        CProMoBlockModel::UnlinkAllIncomingEdges();
+    }
+
+    void LinkView(CDiagramEntity* view) {
+        CProMoModel::LinkView(view);
+    }
+
+};
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -24,20 +65,20 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(LinkSubBlock_WhenNewBlockAdded_SubblockAppearsInList)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
 
             parent.LinkSubBlock(&child);
 
             Assert::AreEqual((INT_PTR)1, parent.GetSubBlocks()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModel*)parent.GetSubBlocks()->GetAt(0));
-            TestHelpers::PointerAssert::AreEqual(&parent, child.GetParentBlock());
+            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModelTestStub*)parent.GetSubBlocks()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual(&parent, (CProMoBlockModelTestStub*)child.GetParentBlock());
         }
 
         TEST_METHOD(UnlinkSubBlock_WhenBlockPresent_RemovesFromList)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
 
             parent.LinkSubBlock(&child);
             parent.UnlinkSubBlock(&child);
@@ -48,8 +89,8 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(UnlinkAllSubBlocks_WhenMultipleBlocks_LinkArrayIsCleared)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel c1, c2;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub c1, c2;
 
             parent.LinkSubBlock(&c1);
             parent.LinkSubBlock(&c2);
@@ -63,7 +104,7 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(Contains_WhenRecursiveCheck_ReturnsTrueForDeepNesting)
         {
-            CProMoBlockModel root, mid, leaf;
+            CProMoBlockModelTestStub root, mid, leaf;
 
             root.LinkSubBlock(&mid);
             mid.LinkSubBlock(&leaf);
@@ -73,20 +114,20 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(CanBeNestedBy_WhenNoParentSame_ReturnsTrue)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
             Assert::IsTrue(child.CanBeNestedBy(&parent));
         }
 
         TEST_METHOD(CanBeNestedBy_WhenParentIsSame_ReturnsFalse)
         {
-            CProMoBlockModel block;
+            CProMoBlockModelTestStub block;
             Assert::IsFalse(block.CanBeNestedBy(&block));
         }
         
         TEST_METHOD(CanBeNestedBy_WhenCircularDependency_ReturnsFalse)
         {
-            CProMoBlockModel root, mid, leaf;
+            CProMoBlockModelTestStub root, mid, leaf;
 
             root.LinkSubBlock(&mid);
             mid.LinkSubBlock(&leaf);
@@ -95,32 +136,32 @@ namespace CProMoBlockModelTests
         }
         TEST_METHOD(SetParentBlock_WhenBlockHasNoParent_SetParent)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
 
             child.SetParentBlock(&parent);
 
             Assert::AreEqual((INT_PTR)1, parent.GetSubBlocks()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModel*)parent.GetSubBlocks()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModelTestStub*)parent.GetSubBlocks()->GetAt(0));
         }
 
         TEST_METHOD(SetParentBlock_WhenBlockHasParent_ChangeParent)
         {
-            CProMoBlockModel oldParent;
-            CProMoBlockModel newParent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub oldParent;
+            CProMoBlockModelTestStub newParent;
+            CProMoBlockModelTestStub child;
 
             child.SetParentBlock(&oldParent);
             child.SetParentBlock(&newParent);
 
             Assert::AreEqual((INT_PTR)0, oldParent.GetSubBlocks()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModel*)newParent.GetSubBlocks()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModelTestStub*)newParent.GetSubBlocks()->GetAt(0));
         }
 
         TEST_METHOD(SetParentBlock_WhenNullIsPassed_RemoveParent)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
 
             child.SetParentBlock(&parent);
             child.SetParentBlock(NULL);
@@ -135,31 +176,31 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(LinkOutgoingEdge_WhenEdgeAdded_AppearsInList)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CProMoEdgeModel edge;
 
             model.LinkOutgoingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)1, model.GetOutgoingEdges()->GetSize());
             TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModel*)model.GetOutgoingEdges()->GetAt(0));
-            TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModel*)edge.GetSource());
+            TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModelTestStub*)edge.GetSource());
         }
 
         TEST_METHOD(UnlinkOutgoingEdge_WhenEdgePresent_RemovesFromList)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CProMoEdgeModel edge;
 
             model.LinkOutgoingEdge(&edge);
             model.UnlinkOutgoingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)0, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)edge.GetSource());
+            TestHelpers::PointerAssert::IsNull((CProMoBlockModelTestStub*)edge.GetSource());
         }
 
         TEST_METHOD(UnlinkAllOutgoingEdges_WhenMultipleEdges_LinkArrayIsCleared)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CProMoEdgeModel e1, e2;
 
             model.LinkOutgoingEdge(&e1);
@@ -168,8 +209,8 @@ namespace CProMoBlockModelTests
             model.UnlinkAllOutgoingEdges();
 
             Assert::AreEqual((INT_PTR)0, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)e1.GetSource());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)e2.GetSource());
+            TestHelpers::PointerAssert::IsNull((CProMoBlockModelTestStub*)e1.GetSource());
+            TestHelpers::PointerAssert::IsNull((CProMoBlockModelTestStub*)e2.GetSource());
         }
 
 #pragma endregion
@@ -178,31 +219,31 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(LinkIncomingEdge_WhenEdgeAdded_AppearsInList)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CProMoEdgeModel edge;
             
             model.LinkIncomingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)1, model.GetIncomingEdges()->GetSize());
             TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModel*)model.GetIncomingEdges()->GetAt(0));
-            TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModel*)edge.GetDestination());
+            TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModelTestStub*)edge.GetDestination());
         }
 
         TEST_METHOD(UnlinkIncomingEdge_WhenEdgePresent_RemovesFromList)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CProMoEdgeModel edge;
 
             model.LinkIncomingEdge(&edge);
             model.UnlinkIncomingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)0, model.GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)edge.GetDestination());
+            TestHelpers::PointerAssert::IsNull((CProMoBlockModelTestStub*)edge.GetDestination());
         }
 
         TEST_METHOD(UnlinkAllIncomingEdges_WhenMultipleEdges_LinkArrayIsCleared)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CProMoEdgeModel e1, e2;
 
             model.LinkIncomingEdge(&e1);
@@ -221,7 +262,7 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(GetMainView_WhenOneViewExists_ReturnView)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CProMoBlockView view;
 
             model.LinkView(&view);
@@ -231,14 +272,14 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(GetMainView_WhenNoViewExists_ReturnNull)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             
             TestHelpers::PointerAssert::IsNull(model.GetMainView());
         }
 
         TEST_METHOD(GetMainView_WhenManyViewsExist_ReturnFirstView)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CProMoBlockView v1, v2;
 
             model.LinkView(&v1);
@@ -249,7 +290,7 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(GetMainView_WhenManyViewTypesExist_ReturnFirstCProMoBlockView)
         {
-            CProMoBlockModel model;
+            CProMoBlockModelTestStub model;
             CDiagramEntity v1;
             CProMoBlockView v2;
 
@@ -265,8 +306,8 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(GetDefaultGetString_WhenInvoked_ReturnsCorrectString)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
             CString parentString;
             CString childString;
             
@@ -284,8 +325,8 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(CreateFromString_WhenCorrectStringIsPassed_ParsesCorrectly)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
 
             parent.CreateFromString(CString("promo_block_model:Parent,;"));
 
@@ -299,8 +340,8 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(CreateFromString_WhenStringWithExtraParametersIsPassed_ParsesCorrectly)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
 
             parent.CreateFromString(CString("promo_block_model:Parent,,Extra1,Extra2;"));
 
@@ -313,8 +354,8 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(CreateFromString_WhenIncorrectStringIsPassed_IgnoreParameters)
         {
-            CProMoBlockModel parent;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
 
             parent.CreateFromString(CString("wrong_type:;"));
 
@@ -331,8 +372,8 @@ namespace CProMoBlockModelTests
 
         TEST_METHOD(Clone_WhenCalled_ReturnsIndependentCopy)
         {
-            CProMoBlockModel model;
-            CProMoBlockModel child;
+            CProMoBlockModelTestStub model;
+            CProMoBlockModelTestStub child;
             model.LinkSubBlock(&child);
 
             std::unique_ptr<CProMoModel> clone(model.Clone());

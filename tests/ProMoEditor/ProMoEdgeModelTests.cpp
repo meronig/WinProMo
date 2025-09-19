@@ -15,7 +15,16 @@ public:
     void SetDestination(CProMoModel* source) {
         CProMoEdgeModel::SetDestination(source);
     }
-    
+
+    void LinkView(CDiagramEntity* view) {
+        CProMoModel::LinkView(view);
+    }
+    void UnlinkView(CDiagramEntity* view) {
+        CProMoModel::UnlinkView(view);
+    }
+    void UnlinkAllViews() {
+        CProMoModel::UnlinkAllViews();
+    }
 };
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

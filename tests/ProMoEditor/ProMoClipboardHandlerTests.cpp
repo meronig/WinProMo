@@ -48,11 +48,11 @@ namespace CProMoClipboardHandlerTests
             CProMoEdgeView* y = new CProMoEdgeView();
             CProMoEdgeView* z = new CProMoEdgeView();
 
-            a1->GetModel()->SetParentBlock(a->GetModel());
-            a2->GetModel()->SetParentBlock(a->GetModel());
-            b1->GetModel()->SetParentBlock(b->GetModel());
-            b2->GetModel()->SetParentBlock(b->GetModel());
-            //x->SetModel(y->GetModel());
+            a1->SetParentBlock(a);
+            a2->SetParentBlock(a);
+            b1->SetParentBlock(b);
+            b2->SetParentBlock(b);
+            
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
@@ -104,11 +104,11 @@ namespace CProMoClipboardHandlerTests
             CProMoEdgeView* y = new CProMoEdgeView();
             CProMoEdgeView* z = new CProMoEdgeView();
 
-            a1->GetModel()->SetParentBlock(a->GetModel());
-            a2->GetModel()->SetParentBlock(a->GetModel());
-            b1->GetModel()->SetParentBlock(b->GetModel());
-            b2->GetModel()->SetParentBlock(b->GetModel());
-            //x->SetModel(y->GetModel());
+            a1->SetParentBlock(a);
+            a2->SetParentBlock(a);
+            b1->SetParentBlock(b);
+            b2->SetParentBlock(b);
+
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);

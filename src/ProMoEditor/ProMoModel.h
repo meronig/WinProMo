@@ -24,9 +24,6 @@ public:
 
 
 	// Model-view links
-	virtual void LinkView(CDiagramEntity* view);
-	virtual void UnlinkView(CDiagramEntity* view);
-	virtual void UnlinkAllViews();
 	virtual CObArray* GetViews();
 
 	virtual BOOL	FromString(const CString& str);
@@ -50,6 +47,11 @@ protected:
 	virtual CString				GetDefaultGetString() const;
 	virtual CString				GetHeaderFromString(CString& str);
 	virtual BOOL				GetDefaultFromString(CString& str);
+
+	virtual void LinkView(CDiagramEntity* view);
+	virtual void UnlinkView(CDiagramEntity* view);
+	virtual void UnlinkAllViews();
+
 
 private:
 	CString m_type;

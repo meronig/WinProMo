@@ -69,7 +69,7 @@ namespace CProMoEntityContainerTests
             CProMoEntityContainer c;
             CProMoBlockView* parent = new CProMoBlockView();
             CProMoBlockView* child = new CProMoBlockView();
-            child->GetModel()->SetParentBlock(parent->GetModel());
+            child->SetParentBlock(parent);
 
             c.Add(parent);
             c.Add(child);
@@ -146,11 +146,11 @@ namespace CProMoEntityContainerTests
             CProMoEdgeView* y = new CProMoEdgeView();
             CProMoEdgeView* z = new CProMoEdgeView();
 
-            a1->GetModel()->SetParentBlock(a->GetModel());
-            a2->GetModel()->SetParentBlock(a->GetModel());
-            b1->GetModel()->SetParentBlock(b->GetModel());
-            b2->GetModel()->SetParentBlock(b->GetModel());
-            
+            a1->SetParentBlock(a);
+            a2->SetParentBlock(a);
+            b1->SetParentBlock(b);
+            b2->SetParentBlock(b);
+
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
@@ -202,8 +202,8 @@ namespace CProMoEntityContainerTests
             c.Add(a);
             c.Add(a1);
             c.Add(a2);
-            a1->GetModel()->SetParentBlock(a->GetModel());
-            a2->GetModel()->SetParentBlock(a->GetModel());
+            a1->SetParentBlock(a);
+            a2->SetParentBlock(a);
             c.Snapshot();
 
             c.Add(x);
@@ -218,8 +218,8 @@ namespace CProMoEntityContainerTests
             c.Add(z);
             c.Add(b2);
             c.Add(b);
-            b1->GetModel()->SetParentBlock(b->GetModel());
-            b2->GetModel()->SetParentBlock(b->GetModel());
+            b1->SetParentBlock(b);
+            b2->SetParentBlock(b);
             z->SetSource(b);
             z->SetDestination(a2);
             
@@ -258,8 +258,8 @@ namespace CProMoEntityContainerTests
             c.Add(a);
             c.Add(a1);
             c.Add(a2);
-            a1->GetModel()->SetParentBlock(a->GetModel());
-            a2->GetModel()->SetParentBlock(a->GetModel());
+            a1->SetParentBlock(a);
+            a2->SetParentBlock(a);
             c.Snapshot();
 
             c.Add(x);
@@ -274,8 +274,8 @@ namespace CProMoEntityContainerTests
             c.Add(z);
             c.Add(b2);
             c.Add(b);
-            b1->GetModel()->SetParentBlock(b->GetModel());
-            b2->GetModel()->SetParentBlock(b->GetModel());
+            b1->SetParentBlock(b);
+            b2->SetParentBlock(b);
             z->SetSource(b);
             z->SetDestination(a2);
 
@@ -497,11 +497,11 @@ namespace CProMoEntityContainerTests
             CProMoEdgeView* y = new CProMoEdgeView();
             CProMoEdgeView* z = new CProMoEdgeView();
 
-            a1->GetModel()->SetParentBlock(a->GetModel());
-            a2->GetModel()->SetParentBlock(a->GetModel());
-            b1->GetModel()->SetParentBlock(b->GetModel());
-            b2->GetModel()->SetParentBlock(b->GetModel());
-            
+            a1->SetParentBlock(a);
+            a2->SetParentBlock(a);
+            b1->SetParentBlock(b);
+            b2->SetParentBlock(b);
+
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);

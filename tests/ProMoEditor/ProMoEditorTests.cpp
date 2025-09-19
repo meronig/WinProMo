@@ -48,10 +48,10 @@ namespace CProMoEditorTests
             m_y = new CProMoEdgeView();
             m_z = new CProMoEdgeView();
 
-            m_a1->GetModel()->SetParentBlock(m_a->GetModel());
-            m_a2->GetModel()->SetParentBlock(m_a->GetModel());
-            m_b1->GetModel()->SetParentBlock(m_b->GetModel());
-            m_b2->GetModel()->SetParentBlock(m_b->GetModel());
+            m_a1->SetParentBlock(m_a);
+            m_a2->SetParentBlock(m_a);
+            m_b1->SetParentBlock(m_b);
+            m_b2->SetParentBlock(m_b);
             
             m_x->SetSource(m_a);
             m_x->SetDestination(m_y);

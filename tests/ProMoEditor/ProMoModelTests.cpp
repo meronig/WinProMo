@@ -4,6 +4,20 @@
 #include "../../src/ProMoEditor/ProMoModel.h"
 #include "../WinProMoTests.h"
 
+class CProMoModelTestStub : public CProMoModel
+{
+public:
+    void LinkView(CDiagramEntity* view) {
+        CProMoModel::LinkView(view);
+    }
+    void UnlinkView(CDiagramEntity* view) {
+        CProMoModel::UnlinkView(view);
+    }
+    void UnlinkAllViews() {
+        CProMoModel::UnlinkAllViews();
+    }
+};
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace CProMoModelTests
@@ -22,7 +36,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(LinkView_WhenNewViewAdded_ViewAppearsInList)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
             CDiagramEntity view;
 
             model.LinkView(&view);
@@ -33,7 +47,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(UnlinkView_WhenViewPresent_RemovesFromList)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
             CDiagramEntity view;
 
             model.LinkView(&view);
@@ -44,7 +58,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(UnlinkAllViews_WhenMultipleViews_LinkArrayIsCleared)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
             CDiagramEntity v1, v2;
 
             model.LinkView(&v1);
@@ -61,7 +75,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(CreateFromString_WhenCorrectStringIsPassed_ParsesCorrectly)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
             
             model.CreateFromString(CString("promo_model:Model,;"));
 
@@ -71,7 +85,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(CreateFromString_WhenStringWithExtraParametersIsPassed_ParsesCorrectly)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
             
             model.CreateFromString(CString("promo_model:Model,,Extra1,Extra2;"));
 
@@ -81,7 +95,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(CreateFromString_WhenIncorrectStringIsPassed_IgnoreParameters)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
             
             model.CreateFromString(CString("wrong_type:;"));
 
@@ -90,7 +104,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(LoadFromString_WhenCorrectStringIsPassed_ParsesCorrectly)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
 
             model.LoadFromString(CString("promo_model:Model,;"));
 
@@ -100,7 +114,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(LoadFromString_WhenStringWithExtraParametersIsPassed_ParsesCorrectly)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
 
             model.LoadFromString(CString("promo_model:Model,,Extra1,Extra2;"));
 
@@ -110,7 +124,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(LoadFromString_WhenIncorrectStringIsPassed_IgnoreParameters)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
 
             model.LoadFromString(CString("wrong_type:;"));
 
@@ -123,7 +137,7 @@ namespace CProMoModelTests
 
         TEST_METHOD(Clone_WhenCalled_ReturnsIndependentCopy)
         {
-            CProMoModel model;
+            CProMoModelTestStub model;
             CDiagramEntity view;
 
             model.LinkView(&view);

@@ -110,7 +110,7 @@ void CProMoBlockModel::LinkSubBlock(CProMoBlockModel* block)
 	Function :		CProMoBlockModel::LinkSubBlock
 	Description :	Makes the block being passed as input 
 					parameter a child of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoBlockModel* block	-	the block that
@@ -138,7 +138,7 @@ void CProMoBlockModel::UnlinkSubBlock(CProMoBlockModel* subblock)
 	Function :		CProMoBlockModel::UnlinkSubBlock
 	Description :	Removes the block being passed as input 
 					parameter from the children of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoBlockModel* block	-	the block that
@@ -159,7 +159,7 @@ void CProMoBlockModel::UnlinkAllSubBlocks()
 /* ============================================================
 	Function :		CProMoBlockModel::UnlinkAllSubBlocks
 	Description :	Removes all the children of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	none
@@ -195,7 +195,7 @@ void CProMoBlockModel::SetParentBlock(CProMoBlockModel* parent)
 	Function :		CProMoBlockModel::SetParentBlock
 	Description :	Makes the block being passed as input
 					parameter the parent of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoBlockModel* block	-	the block that
@@ -275,7 +275,7 @@ void CProMoBlockModel::LinkOutgoingEdge(CProMoEdgeModel* edge)
 	Function :		CProMoBlockModel::LinkOutgoingEdge
 	Description :	Makes the edge being passed as input
 					parameter an outgoing edge of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoEdgeModel* edge	-	the edge that
@@ -293,7 +293,7 @@ void CProMoBlockModel::UnlinkOutgoingEdge(CProMoEdgeModel* edge)
 	Description :	Removes the edge being passed as input
 					parameter from the outgoing edges of this 
 					block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoEdgeModel* edge	-	the edge that
@@ -312,7 +312,7 @@ void CProMoBlockModel::UnlinkAllOutgoingEdges()
 /* ============================================================
 	Function :		CProMoBlockModel::UnlinkAllOutgoingEdges
 	Description :	Removes all the outgoing edges of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	none
@@ -350,7 +350,7 @@ void CProMoBlockModel::LinkIncomingEdge(CProMoEdgeModel* edge)
 	Function :		CProMoBlockModel::LinkIncomingEdge
 	Description :	Makes the edge being passed as input
 					parameter an incoming edge of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoEdgeModel* edge	-	the edge that
@@ -368,7 +368,7 @@ void CProMoBlockModel::UnlinkIncomingEdge(CProMoEdgeModel* edge)
 	Description :	Removes the edge being passed as input
 					parameter from the incoming edges of this
 					block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoEdgeModel* edge	-	the edge that
@@ -387,7 +387,7 @@ void CProMoBlockModel::UnlinkAllIncomingEdges()
 /* ============================================================
 	Function :		CProMoBlockModel::UnlinkAllIncomingEdges
 	Description :	Removes all the incoming edges of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	none

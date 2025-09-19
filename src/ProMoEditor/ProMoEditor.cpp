@@ -668,14 +668,14 @@ void CProMoEditor::Cut()
 	{
 		objs->Snapshot();
 		objs->CopyAllSelected();
+		//Unlink child blocks if not selected, to avoid them being deleted
 		for (int i = 0; i < objs->GetSize(); i++) {
 			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
 			if (block) {
 				if (block->IsSelected()) {
-					block->GetModel()->UnlinkAllSubBlocks();
+					block->UnlinkAllSubBlocks();
 				}
 			}
-
 		}
 		DeleteAllSelected();
 	}
@@ -937,13 +937,13 @@ void CProMoEditor::NestSelectedBlock(CProMoBlockView* parentBlock)
 				if (parentBlock) {
 					if (selObj->GetModel()->GetParentBlock() != parentBlock->GetModel()) {
 						// Set the parent to be that object
-						selObj->GetModel()->SetParentBlock(parentBlock->GetModel());
+						selObj->SetParentBlock(parentBlock);
 					}
 				}
 				else
 				{
 					//no object got hit, then the selected one has no parent
-					selObj->GetModel()->SetParentBlock(NULL);
+					selObj->SetParentBlock(NULL);
 				}
 			}
 		}

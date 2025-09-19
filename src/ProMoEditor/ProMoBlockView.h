@@ -15,7 +15,6 @@ class AFX_EXT_CLASS CProMoBlockView : public CDiagramEntity
 {
 
 public:
-	friend class CProMoEdgeView;
 	// Creation/initialization
 	CProMoBlockView();
 	virtual ~CProMoBlockView();
@@ -40,13 +39,18 @@ public:
 
 	virtual void SetFitTitle(BOOL hasFitTitle);
 	virtual BOOL HasFitTitle();
-	
+
+	// Parent-child block links
+	virtual void SetParentBlock(CProMoBlockView* parent);
+	virtual void UnlinkAllSubBlocks();
+
+	virtual CPoint GetIntersection(CPoint innerPoint, CPoint outerPoint);
+
 protected:
 	BOOL m_target;
 	CProMoBlockModel* m_blockmodel;
 
 	virtual void RecomputeIntersectionLinks();
-	virtual CPoint GetIntersection(CPoint innerPoint, CPoint outerPoint);
 	virtual void KeepElementsConnected(double left, double top, double right, double bottom);
 	virtual CPoint MapPointToNewRect(CPoint oldPoint, double left, double top, double right, double bottom);
 	virtual CRect ComputeTextRect(const CString &text, const CFont &font);

@@ -143,7 +143,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub child;
             child.SetRect(10, 10, 50, 120); // bottom protrudes
 
-            child.GetModel()->SetParentBlock(parent.GetModel());
+            child.SetParentBlock(&parent);
 
             parent.AutoResize();
 
@@ -160,7 +160,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub child;
             child.SetRect(10, 10, 140, 50); // right protrudes
 
-            child.GetModel()->SetParentBlock(parent.GetModel());
+            child.SetParentBlock(&parent);
 
             parent.AutoResize();
 
@@ -177,7 +177,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub child;
             child.SetRect(10, -20, 50, 50); // top protrudes
 
-            child.GetModel()->SetParentBlock(parent.GetModel());
+            child.SetParentBlock(&parent);
 
             parent.AutoResize();
 
@@ -194,7 +194,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub child;
             child.SetRect(-30, 10, 50, 50); // left protrudes
 
-            child.GetModel()->SetParentBlock(parent.GetModel());
+            child.SetParentBlock(&parent);
 
             parent.AutoResize();
 
@@ -211,12 +211,12 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub parent;
             parent.SetRect(10, 10, 80, 80);
 
-            parent.GetModel()->SetParentBlock(grandParent.GetModel());
+            parent.SetParentBlock(&grandParent);
 
             CProMoBlockViewTestStub child;
             child.SetRect(10, 10, 200, 50); // right protrudes
 
-            child.GetModel()->SetParentBlock(parent.GetModel());
+            child.SetParentBlock(&parent);
 
             parent.AutoResize();
 
@@ -238,17 +238,19 @@ namespace CProMoBlockViewTests
             // Add incoming edge
             CProMoEdgeView inEdgeView;
             inEdgeView.SetRect(CRect(0, 0, 10, 10));
-            parent.GetModel()->LinkIncomingEdge(inEdgeView.GetModel());
+            //parent.GetModel()->LinkIncomingEdge(inEdgeView.GetModel());
+            inEdgeView.SetDestination(&parent);
             
             // Add outgoing edge
             CProMoEdgeView outEdgeView;
             outEdgeView.SetRect(CRect(0, 0, 10, 10));
-            parent.GetModel()->LinkOutgoingEdge(outEdgeView.GetModel());
+            //parent.GetModel()->LinkOutgoingEdge(outEdgeView.GetModel());
+            outEdgeView.SetSource(&parent);
 
             // Add a child block
             CProMoBlockView child;
             child.SetRect(150, 50, 250, 120);
-            child.GetModel()->SetParentBlock(parent.GetModel());
+            child.SetParentBlock(&parent);
             
             // Act
             parent.AutoResize(); // indirectly calls RecomputeIntersectionLinks
@@ -271,7 +273,8 @@ namespace CProMoBlockViewTests
             for (auto& edgeView : incomingEdges)
             {
                 edgeView.SetRect(CRect(0, 0, 10, 10));
-                parent.GetModel()->LinkIncomingEdge(edgeView.GetModel());
+                //parent.GetModel()->LinkIncomingEdge(edgeView.GetModel());
+                edgeView.SetDestination(&parent);
             }
 
             // Add multiple outgoing edges
@@ -279,7 +282,8 @@ namespace CProMoBlockViewTests
             for (auto& edgeView : outgoingEdges)
             {
                 edgeView.SetRect(CRect(0, 0, 10, 10));
-                parent.GetModel()->LinkOutgoingEdge(edgeView.GetModel());
+                //parent.GetModel()->LinkOutgoingEdge(edgeView.GetModel());
+                edgeView.SetSource(&parent);
             }
 
             // Add multiple child blocks
@@ -287,7 +291,7 @@ namespace CProMoBlockViewTests
             for (auto& child : children)
             {
                 child.SetRect(100, 50, 250, 120);
-                child.GetModel()->SetParentBlock(parent.GetModel());
+                child.SetParentBlock(&parent);
             }
 
             // Act
@@ -391,7 +395,7 @@ namespace CProMoBlockViewTests
             child.SetTarget(TRUE);
             child.SetRect(0, 0, 150, 80);
             child.SetTitle(CString("Child"));
-            child.GetModel()->SetParentBlock(parent.GetModel());
+            child.SetParentBlock(&parent);
             
             // Create memory DC
             CDC memDC;
