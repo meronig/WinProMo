@@ -77,18 +77,24 @@ CProMoEdgeView::~CProMoEdgeView()
 		CProMoEdgeView* oldSourceEdge = m_source;
 		oldSourceEdge->SetBottom(GetBottom());
 		oldSourceEdge->SetRight(GetRight());
-		oldSourceEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
-		oldSourceEdge->GetModel()->SetSource(sourceBlock);
-		oldSourceEdge->GetModel()->SetDestination(destBlock);
+		if (GetDestination()) {
+			oldSourceEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
+		}
+		else {
+			oldSourceEdge->m_dest = NULL;
+		}
 	}
 	
 	if (m_dest) {
 		CProMoEdgeView* oldDestEdge = m_dest;
 		oldDestEdge->SetTop(GetTop());
 		oldDestEdge->SetLeft(GetLeft());
-		oldDestEdge->SetSourceEdge(dynamic_cast<CProMoEdgeView*>(GetSource()));
-		oldDestEdge->GetModel()->SetSource(sourceBlock);
-		oldDestEdge->GetModel()->SetDestination(destBlock);
+		if (GetSource()) {
+			oldDestEdge->SetSourceEdge(dynamic_cast<CProMoEdgeView*>(GetSource()));
+		}
+		else {
+			oldDestEdge->m_source = NULL;
+		}
 	}
 
 	if (m_dlg.m_hWnd)
@@ -487,11 +493,55 @@ CDiagramEntity* CProMoEdgeView::CreateFromString(const CString& str)
 
 }
 
+
+CDiagramEntity* CProMoEdgeView::CreateFromString(const CString& str, CProMoModel* model)
+/* ============================================================
+	Function :		CProMoEdgeView::CreateFromString
+	Description :	Static factory function that creates and
+					returns an instance of this class if str
+					is a valid representation.
+
+	Return :		CDiagramEntity*		-	The object, or NULL
+											if str is not a
+											representation of
+											this type.
+	Parameters :	const CString& str	-	The string to create
+											from.
+					CProMoModel* model	-	A model to be
+											associated to the
+											object being created.
+
+	Usage :			Can be used as a factory for text file loads.
+					Each object type should have its own
+					version - the default one is a model
+					implementation.
+
+   ============================================================*/
+{
+
+	CProMoEdgeView* obj = new CProMoEdgeView;
+	if (!obj->FromString(str))
+	{
+		delete obj;
+		obj = NULL;
+	}
+
+	CProMoEdgeModel* blockModel = dynamic_cast<CProMoEdgeModel*>(model);
+
+	if (blockModel) {
+		obj->SetModel(blockModel);
+	}
+
+	return obj;
+
+}
+
 void CProMoEdgeView::SetSource(CDiagramEntity *source)
 /* ============================================================
 	Function :		CProMoEdgeView::SetSource
 	Description :	Makes the object being passed as input
-					parameter the source of this edge.
+					parameter the source of this edge, while
+					keeping the model relations consistent.
 	Access :		Public
 
 	Return :		void
@@ -517,7 +567,9 @@ void CProMoEdgeView::SetDestination(CDiagramEntity *destination)
 /* ============================================================
 	Function :		CProMoEdgeView::SetDestination
 	Description :	Makes the object being passed as input
-					parameter the destination of this edge
+					parameter the destination of this edge, 
+					while keeping the model relations 
+					consistent.
 	Access :		Public
 
 	Return :		void
@@ -788,10 +840,17 @@ CProMoEdgeView* CProMoEdgeView::Split()
 		newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
 		newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
 		newEdge->Select(FALSE);
+		CProMoBlockModel* sourceBlockModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetSource());
+		CProMoBlockModel* destBlockModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetDestination());
 		//update edge links
 		newEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
 		newEdge->SetSourceEdge(this);
-		newEdge->SetModel(GetModel());
+		if (destBlockModel) {
+			newEdge->SetDestinationBlock(destBlockModel->GetMainView());
+		}
+		if (sourceBlockModel) {
+			newEdge->SetSourceBlock(sourceBlockModel->GetMainView());
+		}
 		newEdge->SetRect(newEdgeRect);
 		//clear duplicated properties
 		newEdge->SetTitle(_T(""));
@@ -822,7 +881,7 @@ void CProMoEdgeView::SetModel(CProMoEdgeModel* model)
 	Function :		CProMoEdgeView::SetModel
 	Description :	Makes the object being passed as input
 					parameter the model for this edge
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoEdgeModel* block	-	the object that
@@ -857,6 +916,19 @@ void CProMoEdgeView::SetModel(CProMoEdgeModel* model)
 }
 
 void CProMoEdgeView::SetSourceEdge(CProMoEdgeView* source)
+/* ============================================================
+	Function :		CProMoEdgeView::SetSourceEdge
+	Description :	Makes the object being passed as input
+					parameter the source of this edge, while
+					keeping the model relations consistent.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoEdgeView* source	-	the object that
+												should be the
+												source
+
+   ============================================================*/
 {
 	//save the old source edge view
 	CProMoEdgeView* oldSourceView = m_source;
@@ -866,20 +938,21 @@ void CProMoEdgeView::SetSourceEdge(CProMoEdgeView* source)
 	if (source != oldSourceView) {
 
 		if (source) {
-			//just connect the two views
-			/*CRect newEdgeRect(GetRect());
-			newEdgeRect.top = source->GetBottom();
-			newEdgeRect.left = source->GetRight();
-			SetRect(newEdgeRect);*/
-
 			m_source = source;
 			source->SetDestinationEdge(this);
+			
+			CProMoBlockModel* oldSourceModel = dynamic_cast<CProMoBlockModel*>(source->GetModel()->GetSource());
 			source->SetModel(GetModel());
+			source->GetModel()->SetSource(oldSourceModel);
 		}
 
 		else {
 			m_source = NULL;
+			
+			CProMoBlockModel* oldDestModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetDestination());
+			GetModel()->SetDestination(NULL);
 			SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
+			GetModel()->SetDestination(oldDestModel);
 		}
 
 		if (oldSourceView) {
@@ -889,6 +962,19 @@ void CProMoEdgeView::SetSourceEdge(CProMoEdgeView* source)
 }
 
 void CProMoEdgeView::SetSourceBlock(CProMoBlockView* source)
+/* ============================================================
+	Function :		CProMoEdgeView::SetSourceBlock
+	Description :	Makes the object being passed as input
+					parameter the source of this edge, while
+					keeping the model relations consistent.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoBlockView* source	-	the object that
+												should be the
+												source
+
+   ============================================================*/
 {
 	if (source) {
 		//connect the elements at the model level
@@ -902,27 +988,43 @@ void CProMoEdgeView::SetSourceBlock(CProMoBlockView* source)
 }
 
 void CProMoEdgeView::SetDestinationEdge(CProMoEdgeView* destination)
+/* ============================================================
+	Function :		CProMoEdgeView::SetDestinationEdge
+	Description :	Makes the object being passed as input
+					parameter the destination of this edge,
+					while keeping the model relations
+					consistent.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoEdgeView* destination	-	the object
+													that should
+													be the
+													destination
+
+   ============================================================*/
 {
 	//save the old source edge view
 	CProMoEdgeView* oldDestView = m_dest;
 
 	if (oldDestView != destination) {
-
 		if (destination) {
-			//just connect the two views
-			/*CRect newEdgeRect(GetRect());
-			newEdgeRect.bottom = destination->GetTop();
-			newEdgeRect.right = destination->GetLeft();
-			SetRect(newEdgeRect);*/
-			
 			m_dest = destination;
 			destination->SetSourceEdge(this);
+
+			CProMoBlockModel* oldDestModel = dynamic_cast<CProMoBlockModel*>(destination->GetModel()->GetDestination());
 			destination->SetModel(GetModel());
+			destination->GetModel()->SetDestination(oldDestModel);
+			
 		}
 
 		else {
 			m_dest = NULL;
+			
+			CProMoBlockModel* oldSourceModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetSource());
+			GetModel()->SetSource(NULL);
 			SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
+			GetModel()->SetSource(oldSourceModel);
 		}
 
 		// the source edge view has changed
@@ -934,6 +1036,21 @@ void CProMoEdgeView::SetDestinationEdge(CProMoEdgeView* destination)
 }
 
 void CProMoEdgeView::SetDestinationBlock(CProMoBlockView* destination)
+/* ============================================================
+	Function :		CProMoEdgeView::SetDestinationBlock
+	Description :	Makes the object being passed as input
+					parameter the destination of this edge,
+					while keeping the model relations
+					consistent.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoBlockView* destination	-	the object
+													that should
+													be the
+													destination
+
+   ============================================================*/
 {
 	if (destination) {
 		//connect the elements at the model level

@@ -5,6 +5,7 @@
 #include "../../src/ProMoEditor/ProMoClipboardHandler.h"
 #include "../../src/ProMoEditor/ProMoEdgeView.h"
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
+#include "../WinProMoTests.h"
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -15,6 +16,11 @@ namespace CProMoEntityContainerTests
     TEST_CLASS(CProMoEntityContainerTests)
     {
     public:
+        TEST_METHOD_INITIALIZE(SetUp)
+        {
+            WinProMoTestHelpers::BootstrapMFC();
+        }
+
 
 #pragma region ConstructorTests
 
@@ -144,7 +150,7 @@ namespace CProMoEntityContainerTests
             a2->GetModel()->SetParentBlock(a->GetModel());
             b1->GetModel()->SetParentBlock(b->GetModel());
             b2->GetModel()->SetParentBlock(b->GetModel());
-            x->SetModel(y->GetModel());
+            
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
@@ -202,8 +208,8 @@ namespace CProMoEntityContainerTests
 
             c.Add(x);
             c.Add(y);
-            x->SetModel(y->GetModel());
             c.Add(b1);
+            
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
@@ -258,8 +264,8 @@ namespace CProMoEntityContainerTests
 
             c.Add(x);
             c.Add(y);
-            x->SetModel(y->GetModel());
             c.Add(b1);
+            
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
@@ -352,8 +358,6 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(Load_WhenStringArrayIsPassed_CreateDiagramElements)
         {
-            //AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0);
-            
             CProMoClipboardHandler clip;
             CProMoEntityContainer c(CString("custom"), &clip);
 
@@ -474,8 +478,6 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(Save_WhenInvoked_CreateStringArray)
         {
-            //AfxWinInit(::GetModuleHandle(NULL), NULL, ::GetCommandLine(), 0);
-
             CProMoClipboardHandler clip;
             CProMoEntityContainer c(CString("custom"), &clip);
 
@@ -499,7 +501,7 @@ namespace CProMoEntityContainerTests
             a2->GetModel()->SetParentBlock(a->GetModel());
             b1->GetModel()->SetParentBlock(b->GetModel());
             b2->GetModel()->SetParentBlock(b->GetModel());
-            x->SetModel(y->GetModel());
+            
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);

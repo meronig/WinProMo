@@ -40,7 +40,7 @@ static char THIS_FILE[] = __FILE__;
 
 CDiagramEntity* CProMoControlFactory::CreateViewFromString( const CString& str )
 /* ============================================================
-	Function :		CProMoControlFactory::CreateFromString
+	Function :		CProMoControlFactory::CreateViewFromString
 	Description :	The function returns an object from the 
 					parameter str.
 					
@@ -68,7 +68,59 @@ CDiagramEntity* CProMoControlFactory::CreateViewFromString( const CString& str )
 	return obj;
 }
 
+CDiagramEntity* CProMoControlFactory::CreateViewFromString(const CString& str, CProMoModel* model)
+/* ============================================================
+	Function :		CProMoControlFactory::CreateViewFromString
+	Description :	The function returns an object from the
+					parameter str.
+
+	Return :		CDiagramEntity*		-	The new object, or
+											NULL is str is not a
+											valid representation.
+	Parameters :	const CString& str	-	The string to create
+											a new object from
+					CProMoModel* model	-	The model that will
+											be linked to the
+											created object
+
+	Usage :			Call this static function while reading
+					string representations of objects from a
+					text file. Note that the caller is
+					responsible for the allocated memory of
+					the created object only. The created object
+					will take ownership of the model being 
+					passed, which should be created on the heap.
+
+   ============================================================*/
+{
+	CDiagramEntity* obj;
+
+	obj = CProMoBlockView::CreateFromString(str, model);
+
+	if (!obj)
+		obj = CProMoEdgeView::CreateFromString(str, model);
+
+	return obj;
+}
+
 CProMoModel* CProMoControlFactory::CreateModelFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoControlFactory::CreateModelFromString
+	Description :	The function returns an object from the
+					parameter str.
+
+	Return :		CDiagramEntity*		-	The new object, or
+											NULL is str is not a
+											valid representation.
+	Parameters :	const CString& str	-	The string to create
+											a new object from
+
+	Usage :			Call this static function while reading
+					string representations of objects from a
+					text file. Note that the caller is
+					responsible for the allocated memory.
+
+   ============================================================*/
 {
 	CProMoModel* obj;
 

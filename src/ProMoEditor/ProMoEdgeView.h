@@ -24,6 +24,8 @@ public:
     
     virtual	CDiagramEntity* Clone();
     virtual void	Copy(CDiagramEntity* obj);
+    static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
+
     virtual CProMoEdgeModel* GetModel() const;
 
     // Edge-specific methods

@@ -102,7 +102,7 @@ void CProMoEdgeModel::SetSource(CProMoModel* source)
 	Function :		CProMoEdgeModel::SetSource
 	Description :	Makes the object being passed as input
 					parameter the source of this edge
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoModel* source	-	the object that
@@ -157,7 +157,7 @@ void CProMoEdgeModel::SetDestination(CProMoModel* destination)
 	Function :		CProMoEdgeModel::SetDestination
 	Description :	Makes the object being passed as input
 					parameter the destination of this edge
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoModel* destination	-	the object

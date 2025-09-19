@@ -239,20 +239,17 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 	int max = static_cast<int>(stra.GetSize());
 	int t = 0;
 
+	Clear();
+
 	CObArray models;
 
-	//First read: create model and view elements
+	//First read: create models
 	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
 		if (!FromString(str))
 		{
 			//check for unicity
-			CDiagramEntity* obj = fact->CreateViewFromString(str);
-			if (obj)
-				if (!GetNamedView(obj->GetName()))
-					Add(obj);
-
 			CProMoModel* model = fact->CreateModelFromString(str);
 			if (model)
 				if (!GetNamedModel(models, model->GetName()))
@@ -260,7 +257,55 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 		}
 	}
 
-	//Second read: create logical links between elements
+	//Second read: create views and link them to corresponding model
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			CDiagramEntity* obj = NULL;
+			CTokenizer main(str, _T(":"));
+			CString header;
+			CString data;
+			if (main.GetSize() == 2)
+			{
+				main.GetAt(0, header);
+				main.GetAt(1, data);
+				header.TrimLeft();
+				header.TrimRight();
+				data.TrimLeft();
+				data.TrimRight();
+
+				CString nodeName;
+				CString modelName;
+
+				CTokenizer tok(data.Left(data.GetLength() - 1));
+				int size = tok.GetSize();
+
+				if (size >= 1) {
+					tok.GetAt(0, nodeName);
+					if (size >= 8) {
+						tok.GetAt(7, modelName);
+						if (!GetNamedView(nodeName)) {
+							CProMoModel* blockModel = GetNamedModel(models, modelName);
+							if (blockModel) {
+								obj = fact->CreateViewFromString(str, blockModel);
+							}
+						}
+					}
+				}
+			}
+			//If no model exists for that view, create one from scratch
+			if (!obj) {
+				obj = fact->CreateViewFromString(str);
+			}
+			if (obj) {
+				Add(obj);
+			}
+		}
+	}
+
+	//Third read: create logical links between elements
 	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
@@ -288,18 +333,6 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 				if (size >= 1) {
 					tok.GetAt(0, nodeName);
 
-					//current element is a block view
-					CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(GetNamedView(nodeName));
-					if (blockView) {
-						if (size >= 8) {
-							tok.GetAt(7, modelName);
-							CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, modelName));
-							if (blockModel) {
-								blockView->SetModel(blockModel);
-							}
-						}
-					}
-
 					//current element is an edge view
 					CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedView(nodeName));
 					if (edgeView) {
@@ -312,10 +345,6 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 							tok.GetAt(8, sourceName);
 							tok.GetAt(9, destName);
 
-							CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, modelName));
-							if (edgeModel) {
-								edgeView->SetModel(edgeModel);
-							}
 							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedView(sourceName));
 							if (source) {
 								edgeView->SetSource(source);
@@ -352,11 +381,11 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 
 							CProMoBlockModel* source = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, sourceName));
 							if (source) {
-								edgeModel->SetSource(source);
+								edgeModel->GetFirstSegment()->SetSource(source->GetMainView());
 							}
 							CProMoBlockModel* dest = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, destName));
 							if (dest) {
-								edgeModel->SetDestination(dest);
+								edgeModel->GetLastSegment()->SetDestination(dest->GetMainView());
 							}
 						}
 					}

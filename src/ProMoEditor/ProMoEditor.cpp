@@ -74,6 +74,8 @@ CProMoEditor::CProMoEditor()
 	SetRestraints(RESTRAINT_VIRTUAL);
 	m_pageBreaksVisible = TRUE;
 	m_paperSize = CSize(0,0);
+	m_printResolutionX = 0;
+	m_printResolutionY = 0;
 	SetMargins(0,0,0,0);
 }
 

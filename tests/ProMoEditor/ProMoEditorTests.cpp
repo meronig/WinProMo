@@ -4,6 +4,7 @@
 #include "../../src/ProMoEditor/ProMoEditor.h"
 #include "../../src/ProMoEditor/ProMoEntityContainer.h"
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
+#include "../WinProMoTests.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -31,6 +32,7 @@ namespace CProMoEditorTests
         
         TEST_METHOD_INITIALIZE(SetUp)
         {
+            WinProMoTestHelpers::BootstrapMFC(); 
             CProMoEntityContainer* c = new CProMoEntityContainer(CString("custom"));
             m_editor.SetDiagramEntityContainer(c);
             m_editor.SetVirtualSize(CSize(2000, 2000));
@@ -50,7 +52,7 @@ namespace CProMoEditorTests
             m_a2->GetModel()->SetParentBlock(m_a->GetModel());
             m_b1->GetModel()->SetParentBlock(m_b->GetModel());
             m_b2->GetModel()->SetParentBlock(m_b->GetModel());
-            m_x->SetModel(m_y->GetModel());
+            
             m_x->SetSource(m_a);
             m_x->SetDestination(m_y);
             m_y->SetDestination(m_b1);

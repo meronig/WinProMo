@@ -515,7 +515,7 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 	Function :		CProMoBlockView::KeepElementsConnected
 	Description :	Repositions child blocks and 
 					connected edges.
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	double left		-	Left edge
@@ -776,7 +776,7 @@ void CProMoBlockView::SetModel(CProMoBlockModel* model)
 	Function :		CProMoBlockView::SetModel
 	Description :	Makes the object being passed as input
 					parameter the model for this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CProMoBlockModel* block	-	the object that
@@ -1106,6 +1106,48 @@ CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str)
 	{
 		delete obj;
 		obj = NULL;
+	}
+
+	return obj;
+
+}
+
+CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str, CProMoModel* model)
+/* ============================================================
+	Function :		CProMoBlockView::CreateFromString
+	Description :	Static factory function that creates and
+					returns an instance of this class if str
+					is a valid representation.
+
+	Return :		CDiagramEntity*		-	The object, or NULL
+											if str is not a
+											representation of
+											this type.
+	Parameters :	const CString& str	-	The string to create
+											from.
+					CProMoModel* model	-	A model to be
+											associated to the
+											object being created.
+
+	Usage :			Can be used as a factory for text file loads.
+					Each object type should have its own
+					version - the default one is a model
+					implementation.
+
+   ============================================================*/
+{
+
+	CProMoBlockView* obj = new CProMoBlockView;
+	if (!obj->FromString(str))
+	{
+		delete obj;
+		obj = NULL;
+	}
+
+	CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(model);
+
+	if (blockModel) {
+		obj->SetModel(blockModel);
 	}
 
 	return obj;

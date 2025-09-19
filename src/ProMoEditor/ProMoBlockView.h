@@ -23,6 +23,7 @@ public:
 	virtual CDiagramEntity* Clone();
 	virtual void	Copy(CDiagramEntity* obj);
 
+	static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
 		
 	// Model-view links
 	virtual CProMoBlockModel* GetModel() const;
