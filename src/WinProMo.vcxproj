@@ -215,7 +215,6 @@
     <ClCompile Include="ProMoEditor\ProMoEntityContainer.cpp" />
     <ClCompile Include="ProMoEditor\ProMoModel.cpp" />
     <ClCompile Include="ProMoEditor\ProMoNameFactory.cpp" />
-    <ClCompile Include="ProMoEditor\PropertyDialog.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="WinProMo.cpp" />
     <ClCompile Include="WinProMoDoc.cpp" />
@@ -258,7 +257,6 @@
     <ClInclude Include="ProMoEditor\ProMoEntityContainer.h" />
     <ClInclude Include="ProMoEditor\ProMoModel.h" />
     <ClInclude Include="ProMoEditor\ProMoNameFactory.h" />
-    <ClInclude Include="ProMoEditor\PropertyDialog.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="WinProMoDoc.h" />

@@ -34,8 +34,7 @@ public:
 
 protected:
 	CProMoModel* GetNamedModel(const CObArray& array, const CString& name) const;
-	void DeleteModel(CObArray& array, const CString& name);
-
+	
 private:
 	// Private helpers
 	void ReorderR(CProMoBlockView* block, CObArray* m_newOrder);

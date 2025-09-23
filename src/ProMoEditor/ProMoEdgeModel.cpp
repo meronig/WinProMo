@@ -59,22 +59,8 @@ CProMoEdgeModel::~CProMoEdgeModel()
 
    ============================================================*/
 {
-	CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(m_source);
-	if (edge) {
-		edge->SetDestination(GetDestination());
-	}
-
-
-	edge = dynamic_cast<CProMoEdgeModel*>(m_dest);
-	if (edge) {
-		edge->SetSource(GetSource());
-	}
-
-
 	SetSource(NULL);
 	SetDestination(NULL);
-
-	
 }
 
 CProMoModel* CProMoEdgeModel::Clone()
@@ -97,7 +83,7 @@ CProMoModel* CProMoEdgeModel::Clone()
 }
 
 
-void CProMoEdgeModel::SetSource(CProMoModel* source)
+void CProMoEdgeModel::SetSource(CProMoBlockModel* source)
 /* ============================================================
 	Function :		CProMoEdgeModel::SetSource
 	Description :	Makes the object being passed as input
@@ -105,9 +91,10 @@ void CProMoEdgeModel::SetSource(CProMoModel* source)
 	Access :		Protected
 
 	Return :		void
-	Parameters :	CProMoModel* source	-	the object that
-											should be the
-											source
+	Parameters :	CProMoBlockModel* source	-	the object 
+													that should
+													be the
+													source
 
    ============================================================*/
 {
@@ -115,44 +102,26 @@ void CProMoEdgeModel::SetSource(CProMoModel* source)
 	if (m_source != source && (!source || CanConnectSource(source))) {
 
 		//set the new source	
-		CProMoModel* oldSource = m_source;
+		CProMoBlockModel* oldSource = m_source;
 		m_source = source;
 
+		//if a previous source block exists, remove the reference from the old source block
 		if (oldSource) {
-			//if a previous source block exists, remove the reference from the old source block
-			CProMoBlockModel* obj = dynamic_cast<CProMoBlockModel*>(oldSource);
-			if (obj) {
-				for (int i = 0; i < obj->m_outgoingEdges.GetSize(); i++) {
-					if (obj->m_outgoingEdges.GetAt(i) == this) {
-						obj->m_outgoingEdges.RemoveAt(i);
-					}
+			for (int i = 0; i < oldSource->m_outgoingEdges.GetSize(); i++) {
+				if (oldSource->m_outgoingEdges.GetAt(i) == this) {
+					oldSource->m_outgoingEdges.RemoveAt(i);
 				}
-			}
-			//if a previous source edge exists, remove the reference from the old source edge
-			CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(oldSource);
-			if (edge) {
-				//edge->SetDestination(NULL);
-				edge->m_dest = NULL;
 			}
 		}
 
+		//if the new source block exists, add a reference to the new source block
 		if (source) {
-			//if the new source block exists, add a reference to the new source block
-			CProMoBlockModel* obj = dynamic_cast<CProMoBlockModel*>(source);
-			if (obj) {
-				obj->m_outgoingEdges.Add(this);
-			}
-			//if the new source edge exists, add a reference to the new source edge
-			CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(m_source);
-			if (edge) {
-				edge->SetDestination(this);
-				//edge->m_dest = this;
-			}
+			source->m_outgoingEdges.Add(this);
 		}
 	}
 }
 
-void CProMoEdgeModel::SetDestination(CProMoModel* destination)
+void CProMoEdgeModel::SetDestination(CProMoBlockModel* destination)
 /* ============================================================
 	Function :		CProMoEdgeModel::SetDestination
 	Description :	Makes the object being passed as input
@@ -160,62 +129,45 @@ void CProMoEdgeModel::SetDestination(CProMoModel* destination)
 	Access :		Protected
 
 	Return :		void
-	Parameters :	CProMoModel* destination	-	the object
-													that should
-													be the
-													destination
+	Parameters :	CProMoBlockModel* destination	-	the 
+														object
+														that 
+														should
+														be the
+														destination
 
    ============================================================*/
 {
 	if (m_dest != destination && (!destination || CanConnectDestination(destination))) {
 
 		//set the new destination	
-		CProMoModel* oldDest = m_dest;
+		CProMoBlockModel* oldDest = m_dest;
 		m_dest = destination;
 
+		//if a previous destination block exists, remove the reference from the old destination block
 		if (oldDest) {
-			//if a previous destination block exists, remove the reference from the old destination block
-			CProMoBlockModel* obj = dynamic_cast<CProMoBlockModel*>(oldDest);
-			if (obj) {
-				for (int i = 0; i < obj->m_incomingEdges.GetSize(); i++) {
-					if (obj->m_incomingEdges.GetAt(i) == this) {
-						obj->m_incomingEdges.RemoveAt(i);
-					}
+			for (int i = 0; i < oldDest->m_incomingEdges.GetSize(); i++) {
+				if (oldDest->m_incomingEdges.GetAt(i) == this) {
+					oldDest->m_incomingEdges.RemoveAt(i);
 				}
-			}
-			//if a previous destination edge exists, remove the reference from the old destination edge
-			CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(oldDest);
-			if (edge) {
-				edge->m_source = NULL;
-				//edge->SetSource(NULL);
 			}
 		}
 
-
+		//if the new destination block exists, add a reference to the new destination block
 		if (destination) {
-			//if the new destination block exists, add a reference to the new destination block
-			CProMoBlockModel* obj = dynamic_cast<CProMoBlockModel*>(destination);
-			if (obj) {
-				obj->m_incomingEdges.Add(this);
-			}
-			//if a previous destination edge exists, remove the reference from the old destination edge
-			CProMoEdgeModel* edge = dynamic_cast<CProMoEdgeModel*>(m_dest);
-			if (edge) {
-				//edge->m_source = this;
-				edge->SetSource(this);
-			}
+			destination->m_incomingEdges.Add(this);
 		}
 	}
 }
 
-CProMoModel* CProMoEdgeModel::GetSource() const
+CProMoBlockModel* CProMoEdgeModel::GetSource() const
 /* ============================================================
 	Function :		CProMoEdgeModel::GetSource
 	Description :	Returns a pointer to the source object
 	Access :		Public
 
-	Return :		CProMoModel*	-	A pointer to the source
-										object
+	Return :		CProMoBlockModel*	-	A pointer to the 
+											source object
 	Parameters :	none
 
    ============================================================*/
@@ -223,14 +175,14 @@ CProMoModel* CProMoEdgeModel::GetSource() const
 	return m_source;
 }
 
-CProMoModel* CProMoEdgeModel::GetDestination() const
+CProMoBlockModel* CProMoEdgeModel::GetDestination() const
 /* ============================================================
 	Function :		CProMoEdgeModel::GetDestination
 	Description :	Returns a pointer to the destination object
 	Access :		Public
 
-	Return :		CProMoModel*	-	A pointer to the 
-										destination object
+	Return :		CProMoBlockModel*	-	A pointer to the 
+											destination object
 	Parameters :	none
 
    ============================================================*/
@@ -239,7 +191,7 @@ CProMoModel* CProMoEdgeModel::GetDestination() const
 }
 
 
-BOOL CProMoEdgeModel::CanConnectSource(CProMoModel* source)
+BOOL CProMoEdgeModel::CanConnectSource(CProMoBlockModel* source)
 /* ============================================================
 	Function :		CProMoEdgeModel::CanConnectSource
 	Description :	Returns if the object being passed as input
@@ -247,12 +199,12 @@ BOOL CProMoEdgeModel::CanConnectSource(CProMoModel* source)
 					Override to implement diagram-specific logic.
 	Access :		Public
 
-	Return :		BOOL					-	"TRUE" if the
-												object can be
-												a source
-	Parameters :	CProMoModel* source	-	the object that
-												should be
-												the source
+	Return :		BOOL						-	"TRUE" if the
+													object can be
+													a source
+	Parameters :	CProMoBlockModel* source	-	the object 
+													that should 
+													be the source
 
    ============================================================*/
 {
@@ -262,7 +214,7 @@ BOOL CProMoEdgeModel::CanConnectSource(CProMoModel* source)
 	return FALSE;
 }
 
-BOOL CProMoEdgeModel::CanConnectDestination(CProMoModel* destination)
+BOOL CProMoEdgeModel::CanConnectDestination(CProMoBlockModel* destination)
 /* ============================================================
 	Function :		CProMoEdgeModel::CanConnectDestination
 	Description :	Returns if the object being passed as input
@@ -270,14 +222,16 @@ BOOL CProMoEdgeModel::CanConnectDestination(CProMoModel* destination)
 					Override to implement diagram-specific logic.
 	Access :		Public
 
-	Return :		BOOL						-	"TRUE" if 
-													the object 
-													can be a 
-													destination
-	Parameters :	CProMoModel* destination	-	the object 
-													that should 
-													be the
-													destination
+	Return :		BOOL							-	"TRUE" if 
+														the object 
+														can be a 
+														destination
+	Parameters :	CProMoBlockModel* destination	-	the 
+														object 
+														that 
+														should 
+														be the
+														destination
 
    ============================================================*/
 {
@@ -306,7 +260,8 @@ CProMoEdgeView* CProMoEdgeModel::GetLastSegment()
 	for (int i = 0; i < views->GetSize(); i++) {
 		CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(views->GetAt(i));
 		if (view) {
-			if (view->GetDestination() == NULL) {
+			CProMoEdgeView* destView = dynamic_cast<CProMoEdgeView*>(view->GetDestination());
+			if (!destView) {
 				return view;
 			}
 		}
@@ -333,7 +288,8 @@ CProMoEdgeView* CProMoEdgeModel::GetFirstSegment()
 	for (int i = 0; i < views->GetSize(); i++) {
 		CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(views->GetAt(i));
 		if (view) {
-			if (view->GetSource() == NULL) {
+			CProMoEdgeView* sourceView = dynamic_cast<CProMoEdgeView*>(view->GetSource());
+			if (!sourceView) {
 				return view;
 			}
 		}

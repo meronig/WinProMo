@@ -9,7 +9,6 @@
 #define _PROMOEDGEVIEW_H_
 
 #include "../DiagramEditor/DiagramLine.h"
-#include "PropertyDialog.h"
 #include "ProMoBlockView.h"
 
 #define DEHT_CENTER		10
@@ -55,8 +54,6 @@ protected:
     CProMoEdgeModel* m_edgemodel;	
 
 private:
-    CPropertyDialog	m_dlg;
-
     BOOL m_propagating;
 
     class CScopedUpdate {

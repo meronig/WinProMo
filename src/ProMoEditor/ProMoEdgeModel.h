@@ -26,12 +26,12 @@ public:
     virtual	CProMoModel* Clone();
 
     // Source links
-    virtual CProMoModel* GetSource() const;
-    virtual BOOL CanConnectSource(CProMoModel* source);
+    virtual CProMoBlockModel* GetSource() const;
+    virtual BOOL CanConnectSource(CProMoBlockModel* source);
 
     // Destination links
-    virtual CProMoModel* GetDestination() const;
-    virtual BOOL CanConnectDestination(CProMoModel* destination);
+    virtual CProMoBlockModel* GetDestination() const;
+    virtual BOOL CanConnectDestination(CProMoBlockModel* destination);
 
     // Model-view links
     virtual CProMoEdgeView* GetLastSegment();
@@ -39,11 +39,11 @@ public:
 
     
 protected:
-    virtual void SetSource(CProMoModel* source);
-    virtual void SetDestination(CProMoModel* destination);
+    virtual void SetSource(CProMoBlockModel* source);
+    virtual void SetDestination(CProMoBlockModel* destination);
 
-    CProMoModel* m_source;
-    CProMoModel* m_dest;
+    CProMoBlockModel* m_source;
+    CProMoBlockModel* m_dest;
 
 // Overrides
 public:

@@ -71,8 +71,8 @@ namespace CProMoBlockModelTests
             parent.LinkSubBlock(&child);
 
             Assert::AreEqual((INT_PTR)1, parent.GetSubBlocks()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModelTestStub*)parent.GetSubBlocks()->GetAt(0));
-            TestHelpers::PointerAssert::AreEqual(&parent, (CProMoBlockModelTestStub*)child.GetParentBlock());
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)parent.GetSubBlocks()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&parent, child.GetParentBlock());
         }
 
         TEST_METHOD(UnlinkSubBlock_WhenBlockPresent_RemovesFromList)
@@ -142,7 +142,7 @@ namespace CProMoBlockModelTests
             child.SetParentBlock(&parent);
 
             Assert::AreEqual((INT_PTR)1, parent.GetSubBlocks()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModelTestStub*)parent.GetSubBlocks()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)parent.GetSubBlocks()->GetAt(0));
         }
 
         TEST_METHOD(SetParentBlock_WhenBlockHasParent_ChangeParent)
@@ -155,7 +155,7 @@ namespace CProMoBlockModelTests
             child.SetParentBlock(&newParent);
 
             Assert::AreEqual((INT_PTR)0, oldParent.GetSubBlocks()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&child, (CProMoBlockModelTestStub*)newParent.GetSubBlocks()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)newParent.GetSubBlocks()->GetAt(0));
         }
 
         TEST_METHOD(SetParentBlock_WhenNullIsPassed_RemoveParent)
@@ -182,8 +182,8 @@ namespace CProMoBlockModelTests
             model.LinkOutgoingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)1, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModel*)model.GetOutgoingEdges()->GetAt(0));
-            TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModelTestStub*)edge.GetSource());
+            TestHelpers::PointerAssert::AreEqual((CProMoEdgeModel*)&edge, (CProMoEdgeModel*)model.GetOutgoingEdges()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&model, edge.GetSource());
         }
 
         TEST_METHOD(UnlinkOutgoingEdge_WhenEdgePresent_RemovesFromList)
@@ -195,7 +195,7 @@ namespace CProMoBlockModelTests
             model.UnlinkOutgoingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)0, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModelTestStub*)edge.GetSource());
+            TestHelpers::PointerAssert::IsNull(edge.GetSource());
         }
 
         TEST_METHOD(UnlinkAllOutgoingEdges_WhenMultipleEdges_LinkArrayIsCleared)
@@ -209,8 +209,8 @@ namespace CProMoBlockModelTests
             model.UnlinkAllOutgoingEdges();
 
             Assert::AreEqual((INT_PTR)0, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModelTestStub*)e1.GetSource());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModelTestStub*)e2.GetSource());
+            TestHelpers::PointerAssert::IsNull(e1.GetSource());
+            TestHelpers::PointerAssert::IsNull(e2.GetSource());
         }
 
 #pragma endregion
@@ -225,8 +225,8 @@ namespace CProMoBlockModelTests
             model.LinkIncomingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)1, model.GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModel*)model.GetIncomingEdges()->GetAt(0));
-            TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModelTestStub*)edge.GetDestination());
+            TestHelpers::PointerAssert::AreEqual((CProMoEdgeModel*)&edge, (CProMoEdgeModel*)model.GetIncomingEdges()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&model, edge.GetDestination());
         }
 
         TEST_METHOD(UnlinkIncomingEdge_WhenEdgePresent_RemovesFromList)
@@ -238,7 +238,7 @@ namespace CProMoBlockModelTests
             model.UnlinkIncomingEdge(&edge);
 
             Assert::AreEqual((INT_PTR)0, model.GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModelTestStub*)edge.GetDestination());
+            TestHelpers::PointerAssert::IsNull(edge.GetDestination());
         }
 
         TEST_METHOD(UnlinkAllIncomingEdges_WhenMultipleEdges_LinkArrayIsCleared)
@@ -252,8 +252,8 @@ namespace CProMoBlockModelTests
             model.UnlinkAllIncomingEdges();
 
             Assert::AreEqual((INT_PTR)0, model.GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)e1.GetDestination());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)e2.GetDestination());
+            TestHelpers::PointerAssert::IsNull(e1.GetDestination());
+            TestHelpers::PointerAssert::IsNull(e2.GetDestination());
         }
 
 #pragma endregion

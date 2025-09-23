@@ -107,7 +107,7 @@ namespace CProMoEdgeViewTests
 
             edgeView.SetSource(&blockView);
 
-            TestHelpers::PointerAssert::IsNull(edgeView.GetSource());
+            TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockView*>(edgeView.GetSource()));
             TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockModel*>(edgeView.GetModel()->GetSource())->GetMainView());
             TestHelpers::PointerAssert::IsNotNull(blockView.GetModel()->GetOutgoingEdges());
             Assert::AreEqual((INT_PTR)1, blockView.GetModel()->GetOutgoingEdges()->GetSize());
@@ -182,7 +182,7 @@ namespace CProMoEdgeViewTests
 
             edgeView.SetDestination(&blockView);
 
-            TestHelpers::PointerAssert::IsNull(edgeView.GetDestination());
+            TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockView*>(edgeView.GetDestination()));
             TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockModel*>(edgeView.GetModel()->GetDestination())->GetMainView());
             TestHelpers::PointerAssert::IsNotNull(blockView.GetModel()->GetIncomingEdges());
             Assert::AreEqual((INT_PTR)1, blockView.GetModel()->GetIncomingEdges()->GetSize());
@@ -295,7 +295,6 @@ namespace CProMoEdgeViewTests
             view2.SetName(CString("View2"));
             view2.SetRect(CRect(250, 120, 200, 150));
 
-            //view2.SetModel(view1.GetModel());
             view2.SetSource(&view1);
 
             CProMoEdgeView view3;
@@ -305,7 +304,6 @@ namespace CProMoEdgeViewTests
             view3.SetTitle(CString("My View"));
             view3.SetRect(CRect(200, 150, 200, 100));
 
-            //view3.SetModel(view2.GetModel());
             view3.SetSource(&view2);
 
             viewString1 = view1.GetString();
@@ -409,7 +407,6 @@ namespace CProMoEdgeViewTests
 
             view2.SetRect(CRect(250, 120, 200, 150));
 
-            //view2.SetModel(view1.GetModel());
             view2.SetSource(&view1);
 
             CProMoEdgeView view3;
@@ -418,7 +415,6 @@ namespace CProMoEdgeViewTests
             view3.SetTitle(CString("My View")); 
             view3.SetRect(CRect(200, 150, 200, 120));
 
-            //view3.SetModel(view2.GetModel());
             view3.SetSource(&view2);
 
             // Create memory DC

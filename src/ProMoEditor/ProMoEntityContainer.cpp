@@ -166,8 +166,8 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
 		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(i));
 		if (edgeView && newEdgeView) {
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edgeView->GetModel());
-			CProMoEdgeModel* newEdgeModel = dynamic_cast<CProMoEdgeModel*>(newEdgeView->GetModel());
+			CProMoEdgeModel* edgeModel = edgeView->GetModel();
+			CProMoEdgeModel* newEdgeModel = newEdgeView->GetModel();
 			if (edgeModel && newEdgeModel && (edgeView->IsFirstSegment() || edgeView->IsLastSegment())) {
 				if (edgeModel->GetSource() != NULL || edgeModel->GetDestination() != NULL) {
 					for (int j = 0; j < source->GetSize(); j++) {
@@ -345,11 +345,11 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 							tok.GetAt(8, sourceName);
 							tok.GetAt(9, destName);
 
-							CDiagramEntity* source = dynamic_cast<CDiagramEntity*>(GetNamedView(sourceName));
+							CDiagramEntity* source = GetNamedView(sourceName);
 							if (source) {
 								edgeView->SetSource(source);
 							}
-							CDiagramEntity* dest = dynamic_cast<CDiagramEntity*>(GetNamedView(destName));
+							CDiagramEntity* dest = GetNamedView(destName);
 							if (dest) {
 								edgeView->SetDestination(dest);
 							}
@@ -504,7 +504,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
 			if (edgeModel) {
 				CObArray* views = edgeModel->GetViews();
-				CProMoBlockModel* sourceModel = dynamic_cast<CProMoBlockModel*>(edgeModel->GetSource());
+				CProMoBlockModel* sourceModel = edgeModel->GetSource();
 				if (sourceModel) {
 					for (int j = 0; j < newOrder->GetSize(); j++) {
 						//source node has already been explored
@@ -530,7 +530,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
 			if (edgeModel) {
 				CObArray* views = edgeModel->GetViews();
-				CProMoBlockModel* destModel = dynamic_cast<CProMoBlockModel*>(edgeModel->GetDestination());
+				CProMoBlockModel* destModel = edgeModel->GetDestination();
 				if (destModel) {
 					//do not include self-loops
 					if (destModel != block->GetModel()) {
@@ -866,30 +866,6 @@ CProMoModel* CProMoEntityContainer::GetNamedModel(const CObArray& array, const C
 	}
 
 	return result;
-}
-
-void CProMoEntityContainer::DeleteModel(CObArray& array, const CString& name)
-/* ============================================================
-	Function :		CProMoEntityContainer::DeleteModel
-	Description :	Deletes the model with the name name from
-					the input array
-	Access :		Protected
-
-	Return :		void
-	Parameters :	const CObArray& array	-	Array of models
-					const CString& name		-	The name of the
-												object to find.
-
-   ============================================================*/
-{
-	int count = static_cast<int>(array.GetSize());
-	CProMoModel* obj;
-	for (int t = count - 1; t >= 0; t--)
-	{
-		obj = dynamic_cast<CProMoModel*>(array.GetAt(t));
-		if (obj && obj->GetName() == name)
-			array.RemoveAt(t);
-	}
 }
 
 CString CProMoEntityContainer::GetString() const

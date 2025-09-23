@@ -298,13 +298,13 @@ CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL back
 {
 	CProMoBlockModel* model = NULL;
 	if (backwards) {
-		model = dynamic_cast<CProMoBlockModel*>(line->GetModel()->GetSource());
+		model = line->GetModel()->GetSource();
 		if (model) {
 			return model->GetMainView();
 		}
 	}
 	else {
-		model = dynamic_cast<CProMoBlockModel*>(line->GetModel()->GetDestination());
+		model = line->GetModel()->GetDestination();
 		if (model) {
 			return model->GetMainView();
 		}

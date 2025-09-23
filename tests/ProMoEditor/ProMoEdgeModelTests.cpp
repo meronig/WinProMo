@@ -8,11 +8,11 @@
 class CProMoEdgeModelTestStub : public CProMoEdgeModel
 {
 public:
-    void SetSource(CProMoModel* source) {
+    void SetSource(CProMoBlockModel* source) {
         CProMoEdgeModel::SetSource(source);
     }
     
-    void SetDestination(CProMoModel* source) {
+    void SetDestination(CProMoBlockModel* source) {
         CProMoEdgeModel::SetDestination(source);
     }
 
@@ -51,8 +51,8 @@ namespace CProMoEdgeModelTests
             edge.SetSource(&model);
 
             Assert::AreEqual((INT_PTR)1, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModelTestStub*)model.GetOutgoingEdges()->GetAt(0));
-            TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModel*)edge.GetSource());
+            TestHelpers::PointerAssert::AreEqual((CProMoEdgeModel*)&edge, (CProMoEdgeModel*)model.GetOutgoingEdges()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual(&model, edge.GetSource());
         }
 
         TEST_METHOD(SetSource_WhenNullIsPassed_ReturnNull)
@@ -64,14 +64,14 @@ namespace CProMoEdgeModelTests
             edge.SetSource(NULL);
 
             Assert::AreEqual((INT_PTR)0, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)edge.GetSource());
+            TestHelpers::PointerAssert::IsNull(edge.GetSource());
         }
 
         TEST_METHOD(GetSource_WhenNoBlockExists_ReturnNull)
         {
             CProMoEdgeModelTestStub edge;
             
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)edge.GetSource());
+            TestHelpers::PointerAssert::IsNull(edge.GetSource());
         }
 
 #pragma endregion
@@ -86,8 +86,8 @@ namespace CProMoEdgeModelTests
             edge.SetDestination(&model);
 
             Assert::AreEqual((INT_PTR)1, model.GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&edge, (CProMoEdgeModelTestStub*)model.GetIncomingEdges()->GetAt(0));
-            TestHelpers::PointerAssert::AreEqual(&model, (CProMoBlockModel*)edge.GetDestination());
+            TestHelpers::PointerAssert::AreEqual((CProMoEdgeModel*)&edge, (CProMoEdgeModel*)model.GetIncomingEdges()->GetAt(0));
+            TestHelpers::PointerAssert::AreEqual(&model, edge.GetDestination());
         }
 
         TEST_METHOD(SetDestination_WhenNullIsPassed_ReturnNull)
@@ -99,14 +99,14 @@ namespace CProMoEdgeModelTests
             edge.SetSource(NULL);
 
             Assert::AreEqual((INT_PTR)0, model.GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::IsNull((CProMoBlockModel*)edge.GetDestination());
+            TestHelpers::PointerAssert::IsNull(edge.GetDestination());
         }
 
         TEST_METHOD(GetDestination_WhenNoBlockExists_ReturnNull)
         {
             CProMoEdgeModelTestStub edge;
 
-            TestHelpers::PointerAssert::IsNull((CProMoEdgeModelTestStub*)edge.GetDestination());
+            TestHelpers::PointerAssert::IsNull(edge.GetDestination());
         }
 
 #pragma endregion

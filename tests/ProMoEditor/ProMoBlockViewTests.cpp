@@ -97,7 +97,7 @@ namespace CProMoBlockViewTests
             auto* clonedView = dynamic_cast<CProMoBlockView*>(clone.get());
 
             TestHelpers::PointerAssert::IsNotNull(clonedView);
-            TestHelpers::PointerAssert::AreNotEqual(dynamic_cast<CProMoBlockView*>(&view), clonedView);
+            TestHelpers::PointerAssert::AreNotEqual((CProMoBlockView*)(&view), clonedView);
             TestHelpers::PointerAssert::AreNotEqual(view.GetModel(), clonedView->GetModel());
             Assert::AreNotEqual(view.IsTarget(), clonedView->IsTarget());
             Assert::AreEqual(view.HasLockedProportions(), clonedView->HasLockedProportions());

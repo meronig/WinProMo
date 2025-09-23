@@ -47,8 +47,6 @@ CProMoEdgeView::CProMoEdgeView()
 	SetType(_T("promo_edge_view"));
 	SetTitle(_T(""));
 
-	SetPropertyDialog(&m_dlg, CPropertyDialog::IDD);
-
 	SetName(CProMoNameFactory::GetID());
 
 	m_source = NULL;
@@ -70,15 +68,12 @@ CProMoEdgeView::~CProMoEdgeView()
 
    ============================================================*/
 {
-	CProMoModel* sourceBlock = GetModel()->GetSource();
-	CProMoModel* destBlock = GetModel()->GetDestination();
-
 	if (m_source) {
 		CProMoEdgeView* oldSourceEdge = m_source;
 		oldSourceEdge->SetBottom(GetBottom());
 		oldSourceEdge->SetRight(GetRight());
-		if (GetDestination()) {
-			oldSourceEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
+		if (m_dest) {
+			oldSourceEdge->SetDestinationEdge(m_dest);
 		}
 		else {
 			oldSourceEdge->m_dest = NULL;
@@ -89,16 +84,13 @@ CProMoEdgeView::~CProMoEdgeView()
 		CProMoEdgeView* oldDestEdge = m_dest;
 		oldDestEdge->SetTop(GetTop());
 		oldDestEdge->SetLeft(GetLeft());
-		if (GetSource()) {
-			oldDestEdge->SetSourceEdge(dynamic_cast<CProMoEdgeView*>(GetSource()));
+		if (m_source) {
+			oldDestEdge->SetSourceEdge(m_source);
 		}
 		else {
 			oldDestEdge->m_source = NULL;
 		}
 	}
-
-	if (m_dlg.m_hWnd)
-		m_dlg.DestroyWindow();
 
 	SetModel(NULL);
 
@@ -269,16 +261,13 @@ void CProMoEdgeView::Reposition()
    ============================================================*/
 
 {
-	if (m_source != NULL) {
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(m_source);
-		if (edge) {
-			SetTop(edge->GetBottom());
-			SetLeft(edge->GetRight());
-		}
+	if (m_source) {
+		SetTop(m_source->GetBottom());
+		SetLeft(m_source->GetRight());
 	}
 	else {
 		if (IsFirstSegment() && GetModel()->GetSource()) {
-			CProMoBlockModel* sourceBlockModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetSource());
+			CProMoBlockModel* sourceBlockModel = GetModel()->GetSource();
 			if (sourceBlockModel) {
 				CProMoBlockView* sourceBlockView = sourceBlockModel->GetMainView();
 				if (sourceBlockView) {
@@ -296,16 +285,13 @@ void CProMoEdgeView::Reposition()
 		}
 	}
 	
-	if (m_dest != NULL) {
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(m_dest);
-		if (edge) {
-			SetBottom(edge->GetTop());
-			SetRight(edge->GetLeft());
-		}
+	if (m_dest) {
+		SetBottom(m_dest->GetTop());
+		SetRight(m_dest->GetLeft());
 	}
 	else {
 		if (IsLastSegment() && GetModel()->GetDestination()) {
-			CProMoBlockModel* destBlockModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetDestination());
+			CProMoBlockModel* destBlockModel = GetModel()->GetDestination();
 			if (destBlockModel) {
 				CProMoBlockView* destBlockView = destBlockModel->GetMainView();
 				if (destBlockView) {
@@ -604,7 +590,15 @@ CDiagramEntity* CProMoEdgeView::GetSource() const
 
    ============================================================*/
 {
-	return m_source;
+	if (m_source) {
+		return m_source;
+	}
+	if (IsFirstSegment()) {
+		if (GetModel()->GetSource()) {
+			return GetModel()->GetSource()->GetMainView();
+		}
+	}
+	return NULL;
 }
 
 CDiagramEntity* CProMoEdgeView::GetDestination() const
@@ -619,7 +613,15 @@ CDiagramEntity* CProMoEdgeView::GetDestination() const
 
    ============================================================*/
 {
-	return m_dest;
+	if (m_dest) {
+		return m_dest;
+	}
+	if (IsLastSegment()) {
+		if (GetModel()->GetDestination()) {
+			return GetModel()->GetDestination()->GetMainView();
+		}
+	}
+	return NULL;
 }
 
 BOOL CProMoEdgeView::IsFirstSegment() const
@@ -634,7 +636,7 @@ BOOL CProMoEdgeView::IsFirstSegment() const
 
    ============================================================*/
 {
-	if (GetSource()){
+	if (m_source){
 		return FALSE;
 	}
 	return TRUE;
@@ -652,7 +654,7 @@ BOOL CProMoEdgeView::IsLastSegment() const
 
    ============================================================*/
 {
-	if (GetDestination()) {
+	if (m_dest) {
 		return FALSE;
 	}
 	return TRUE;
@@ -714,13 +716,10 @@ void CProMoEdgeView::SetLeft(double left)
 {
 
 	CDiagramLine::SetLeft(left);
-	if (GetSource() != NULL && !m_propagating) {
+	if (m_source && !m_propagating) {
 		CScopedUpdate guard(m_propagating);
-		CProMoEdgeView* src = dynamic_cast<CProMoEdgeView*>(GetSource());
-		if (src) {
-			if (!src->IsSelected()) {
-				src->SetRight(GetLeft());
-			}
+		if (!m_source->IsSelected()) {
+			m_source->SetRight(GetLeft());
 		}
 	}
 }
@@ -743,13 +742,10 @@ void CProMoEdgeView::SetRight(double right)
 {
 
 	CDiagramLine::SetRight(right);
-	if (GetDestination() != NULL && !m_propagating) {
+	if (m_dest && !m_propagating) {
 		CScopedUpdate guard(m_propagating);
-		CProMoEdgeView* dest = dynamic_cast<CProMoEdgeView*>(GetDestination());
-		if (dest) {
-			if (!dest->IsSelected()) {
-				dest->SetLeft(GetRight());
-			}
+		if (!m_dest->IsSelected()) {
+			m_dest->SetLeft(GetRight());
 		}
 	}
 
@@ -771,13 +767,10 @@ void CProMoEdgeView::SetTop(double top)
    ============================================================*/
 {
 	CDiagramLine::SetTop(top);
-	if (GetSource() != NULL && !m_propagating) {
+	if (m_source && !m_propagating) {
 		CScopedUpdate guard(m_propagating);
-		CProMoEdgeView* src = dynamic_cast<CProMoEdgeView*>(GetSource());
-		if (src) {
-			if (!src->IsSelected()) {
-				src->SetBottom(GetTop());
-			}
+		if (!m_source->IsSelected()) {
+			m_source->SetBottom(GetTop());
 		}
 	}
 }
@@ -800,13 +793,10 @@ void CProMoEdgeView::SetBottom(double bottom)
 {
 
 	CDiagramLine::SetBottom(bottom);
-	if (GetDestination() != NULL && !m_propagating) {
+	if (m_dest && !m_propagating) {
 		CScopedUpdate guard(m_propagating);
-		CProMoEdgeView* dest = dynamic_cast<CProMoEdgeView*>(GetDestination());
-		if (dest) {
-			if (!dest->IsSelected()) {
-				dest->SetTop(GetBottom());
-			}
+		if (!m_dest->IsSelected()) {
+			m_dest->SetTop(GetBottom());
 		}
 	}
 }
@@ -840,8 +830,8 @@ CProMoEdgeView* CProMoEdgeView::Split()
 		newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
 		newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
 		newEdge->Select(FALSE);
-		CProMoBlockModel* sourceBlockModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetSource());
-		CProMoBlockModel* destBlockModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetDestination());
+		CProMoBlockModel* sourceBlockModel = GetModel()->GetSource();
+		CProMoBlockModel* destBlockModel = GetModel()->GetDestination();
 		//update edge links
 		newEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
 		newEdge->SetSourceEdge(this);
@@ -941,7 +931,7 @@ void CProMoEdgeView::SetSourceEdge(CProMoEdgeView* source)
 			m_source = source;
 			source->SetDestinationEdge(this);
 			
-			CProMoBlockModel* oldSourceModel = dynamic_cast<CProMoBlockModel*>(source->GetModel()->GetSource());
+			CProMoBlockModel* oldSourceModel = source->GetModel()->GetSource();
 			source->SetModel(GetModel());
 			source->GetModel()->SetSource(oldSourceModel);
 		}
@@ -949,7 +939,7 @@ void CProMoEdgeView::SetSourceEdge(CProMoEdgeView* source)
 		else {
 			m_source = NULL;
 			
-			CProMoBlockModel* oldDestModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetDestination());
+			CProMoBlockModel* oldDestModel = GetModel()->GetDestination();
 			GetModel()->SetDestination(NULL);
 			SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
 			GetModel()->SetDestination(oldDestModel);
@@ -1012,7 +1002,7 @@ void CProMoEdgeView::SetDestinationEdge(CProMoEdgeView* destination)
 			m_dest = destination;
 			destination->SetSourceEdge(this);
 
-			CProMoBlockModel* oldDestModel = dynamic_cast<CProMoBlockModel*>(destination->GetModel()->GetDestination());
+			CProMoBlockModel* oldDestModel = destination->GetModel()->GetDestination();
 			destination->SetModel(GetModel());
 			destination->GetModel()->SetDestination(oldDestModel);
 			
@@ -1021,7 +1011,7 @@ void CProMoEdgeView::SetDestinationEdge(CProMoEdgeView* destination)
 		else {
 			m_dest = NULL;
 			
-			CProMoBlockModel* oldSourceModel = dynamic_cast<CProMoBlockModel*>(GetModel()->GetSource());
+			CProMoBlockModel* oldSourceModel = GetModel()->GetSource();
 			GetModel()->SetSource(NULL);
 			SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
 			GetModel()->SetSource(oldSourceModel);
@@ -1105,10 +1095,8 @@ CString CProMoEdgeView::GetDefaultGetString() const
 
 	CString sourceString = _T("");
 
-	CDiagramEntity* source = GetSource();
-
-	if (source) {
-		sourceString = source->GetName();
+	if (m_source) {
+		sourceString = m_source->GetName();
 		CStringReplace(sourceString, _T(":"), _T("\\colon"));
 		CStringReplace(sourceString, _T(";"), _T("\\semicolon"));
 		CStringReplace(sourceString, _T(","), _T("\\comma"));
@@ -1117,10 +1105,8 @@ CString CProMoEdgeView::GetDefaultGetString() const
 
 	CString destString = _T("");
 
-	CDiagramEntity* dest = GetDestination();
-
-	if (dest) {
-		destString = dest->GetName();
+	if (m_dest) {
+		destString = m_dest->GetName();
 		CStringReplace(destString, _T(":"), _T("\\colon"));
 		CStringReplace(destString, _T(";"), _T("\\semicolon"));
 		CStringReplace(destString, _T(","), _T("\\comma"));

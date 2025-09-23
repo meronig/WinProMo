@@ -27,6 +27,7 @@
 #include "../DiagramEditor/Tokenizer.h"
 #include "ProMoEdgeView.h"
 #include "ProMoEdgeModel.h"
+#include "../resource.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -63,8 +64,6 @@ CProMoBlockView::CProMoBlockView()
 	}
 	this->m_target = FALSE;
 
-	SetPropertyDialog(&m_dlg, CPropertyDialog::IDD);
-
 	SetName(CProMoNameFactory::GetID());
 
 	
@@ -82,9 +81,6 @@ CProMoBlockView::~CProMoBlockView()
 
    ============================================================*/
 {
-
-	if (m_dlg.m_hWnd)
-		m_dlg.DestroyWindow();
 
 	SetModel(NULL);
 
@@ -574,7 +570,7 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 		for (i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
 			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 			if (childModel) {
-				CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
+				CProMoBlockView* childView = childModel->GetMainView();
 				if (childView) {
 					//move child nodes that are not selected (otherwise they will be moved twice)
 					if (!childView->IsSelected()) {
@@ -746,7 +742,7 @@ void CProMoBlockView::RecomputeIntersectionLinks()
 	for (i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
 		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 		if (childModel) {
-			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
+			CProMoBlockView* childView = childModel->GetMainView();
 			if (childView) {
 				childView->RecomputeIntersectionLinks();
 			}
@@ -821,7 +817,7 @@ void CProMoBlockView::AutoResize()
 	for (int i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
 		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 		if (childModel) {
-			CProMoBlockView* childView = dynamic_cast<CProMoBlockView*>(childModel->GetMainView());
+			CProMoBlockView* childView = childModel->GetMainView();
 			if (childView) {
 				if (childView->GetBottom() > this->GetBottom()) {
 					this->SetRect(GetLeft(), GetTop(), GetRight(), childView->GetBottom() + 5);

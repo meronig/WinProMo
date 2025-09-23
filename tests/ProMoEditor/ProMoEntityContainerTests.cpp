@@ -455,11 +455,11 @@ namespace CProMoEntityContainerTests
 
             TestHelpers::PointerAssert::AreEqual(x, dynamic_cast<CProMoEdgeView*>(y->GetSource()));
             TestHelpers::PointerAssert::AreEqual(y, dynamic_cast<CProMoEdgeView*>(x->GetDestination()));
-            TestHelpers::PointerAssert::IsNull(x->GetSource());
-            TestHelpers::PointerAssert::IsNull(y->GetDestination());
+            TestHelpers::PointerAssert::AreEqual(a, dynamic_cast<CProMoBlockView* > (x->GetSource()));
+            TestHelpers::PointerAssert::AreEqual(b1, dynamic_cast<CProMoBlockView*>(y->GetDestination()));
             TestHelpers::PointerAssert::AreEqual(x->GetModel(), y->GetModel());
-            TestHelpers::PointerAssert::IsNull(z->GetSource());
-            TestHelpers::PointerAssert::IsNull(z->GetDestination());
+            TestHelpers::PointerAssert::AreEqual(b, dynamic_cast<CProMoBlockView*> (z->GetSource()));
+            TestHelpers::PointerAssert::AreEqual(a2, dynamic_cast<CProMoBlockView*>(z->GetDestination()));
             TestHelpers::PointerAssert::AreNotEqual(z->GetModel(), y->GetModel());
 
             TestHelpers::PointerAssert::AreEqual(a, a1->GetModel()->GetParentBlock()->GetMainView());
@@ -469,10 +469,10 @@ namespace CProMoEntityContainerTests
             TestHelpers::PointerAssert::IsNull(a->GetModel()->GetParentBlock());
             TestHelpers::PointerAssert::IsNull(b->GetModel()->GetParentBlock());
             
-            TestHelpers::PointerAssert::AreEqual(a->GetModel(), dynamic_cast<CProMoBlockModel*>(x->GetModel()->GetSource()));
-            TestHelpers::PointerAssert::AreEqual(b1->GetModel(), dynamic_cast<CProMoBlockModel*>(x->GetModel()->GetDestination()));
-            TestHelpers::PointerAssert::AreEqual(b->GetModel(), dynamic_cast<CProMoBlockModel*>(z->GetModel()->GetSource()));
-            TestHelpers::PointerAssert::AreEqual(a2->GetModel(), dynamic_cast<CProMoBlockModel*>(z->GetModel()->GetDestination()));
+            TestHelpers::PointerAssert::AreEqual(a->GetModel(), x->GetModel()->GetSource());
+            TestHelpers::PointerAssert::AreEqual(b1->GetModel(), x->GetModel()->GetDestination());
+            TestHelpers::PointerAssert::AreEqual(b->GetModel(), z->GetModel()->GetSource());
+            TestHelpers::PointerAssert::AreEqual(a2->GetModel(), z->GetModel()->GetDestination());
 
         }
 

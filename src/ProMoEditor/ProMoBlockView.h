@@ -9,7 +9,6 @@
 #define _PROMOBLOCKVIEW_H_
 
 #include "../DiagramEditor/DiagramEntity.h"
-#include "PropertyDialog.h"
 #include "ProMoBlockModel.h"
 class AFX_EXT_CLASS CProMoBlockView : public CDiagramEntity
 {
@@ -59,7 +58,6 @@ protected:
 
 
 private:
-	CPropertyDialog	m_dlg;
 	BOOL			m_moved;
 	BOOL			m_lockProportions;
 	BOOL			m_fitTitle;
