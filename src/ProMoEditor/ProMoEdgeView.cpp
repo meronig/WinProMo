@@ -540,11 +540,11 @@ void CProMoEdgeView::SetSource(CDiagramEntity *source)
 	CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(source);
 	CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source);
 
-	// If the new source is an edge, set it. Otherwise, set it to NULL;
-	SetSourceEdge(edgeView);
 	// If the new source is a block, set it.
 	SetSourceBlock(blockView);
-
+	// If the new source is an edge, set it. Otherwise, set it to NULL;
+	SetSourceEdge(edgeView);
+	
 	Reposition();
 
 }
@@ -569,11 +569,11 @@ void CProMoEdgeView::SetDestination(CDiagramEntity *destination)
 	CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(destination);
 	CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(destination);
 	
-	// If the new destination is an edge, set it. Otherwise, set it to NULL;
-	SetDestinationEdge(edgeView);
 	// If the new destination is a block, set it.
 	SetDestinationBlock(blockView);
-	
+	// If the new destination is an edge, set it. Otherwise, set it to NULL;
+	SetDestinationEdge(edgeView);
+
 	Reposition();
 
 }

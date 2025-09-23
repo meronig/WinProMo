@@ -144,73 +144,47 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 	ASSERT(destination->GetSize() == source->GetSize());
 
 	int i = 0;
-	//preserve links for edgeViews and cardinalities with model
+
 	for (i = 0; i < source->GetSize(); i++) {
 		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
 		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(i));
-		if (edgeView && newEdgeView) {
-			for (int j = 0; j < source->GetSize(); j++) {
-				CProMoEdgeView* sourceEdgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(j));
-				CProMoEdgeView* newSourceEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(j));
-				if (sourceEdgeView && newSourceEdgeView) {
-					if (edgeView->GetSource() == sourceEdgeView) {
-						newEdgeView->SetSource(newSourceEdgeView);
-					}
-					}
-				}
-			}
-		}
-
-	for (i = 0; i < source->GetSize(); i++) {
-		//preserve links for edgeModels
-		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
-		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(i));
-		if (edgeView && newEdgeView) {
-			CProMoEdgeModel* edgeModel = edgeView->GetModel();
-			CProMoEdgeModel* newEdgeModel = newEdgeView->GetModel();
-			if (edgeModel && newEdgeModel && (edgeView->IsFirstSegment() || edgeView->IsLastSegment())) {
-				if (edgeModel->GetSource() != NULL || edgeModel->GetDestination() != NULL) {
-					for (int j = 0; j < source->GetSize(); j++) {
-						CProMoBlockView* connectedBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
-						CProMoBlockView* newConnectedBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
-						if (connectedBlockView && newConnectedBlockView) {
-							CProMoBlockModel* connectedBlockModel = connectedBlockView->GetModel();
-							CProMoBlockModel* newConnectedBlockModel = newConnectedBlockView->GetModel();
-
-							if (edgeModel->GetSource() == connectedBlockModel && edgeView->IsFirstSegment()) {
-								newEdgeView->SetSource(newConnectedBlockView);
-							}
-							if (edgeModel->GetDestination() == connectedBlockModel && edgeView->IsLastSegment()) {
-								newEdgeView->SetDestination(newConnectedBlockView);
-							}
-						}
-					}
-				}
-			}
-		}
-		//preserve nesting for nodes
 		CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(source->GetAt(i));
 		CProMoBlockView* newBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(i));
-		if (blockView && newBlockView) {
-			CProMoBlockModel* blockModel = blockView->GetModel();
-			CProMoBlockModel* newBlockModel = newBlockView->GetModel();
-			if (blockModel->GetParentBlock() != NULL) {
-				for (int j = 0; j < source->GetSize(); j++) {
-					CProMoBlockView* parentBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
-					CProMoBlockView* newParentBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
-					if (parentBlockView && newParentBlockView) {
-						CProMoBlockModel* parentBlockModel = parentBlockView->GetModel();
-						CProMoBlockModel* newParentBlockModel = newParentBlockView->GetModel();
-						if (blockModel->GetParentBlock() == parentBlockModel) {
-							newBlockView->SetParentBlock(newParentBlockView);
-							break;
-						}
+		
+		for (int j = 0; j < source->GetSize(); j++) {
+			CProMoEdgeView* connectedEdgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(j));
+			CProMoEdgeView* newConnectedEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(j));
+			CProMoBlockView* connectedBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
+			CProMoBlockView* newConnectedBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
+				
+			//preserve block nesting
+			if (blockView && newBlockView && connectedBlockView && newConnectedBlockView) {
+				if (blockView->GetParentBlock() == connectedBlockView) {
+					newBlockView->SetParentBlock(newConnectedBlockView);
+				}
+			}
+				
+			if (edgeView && newEdgeView) {
+				
+				//preserve links within edges and cardinalities with model
+				if (connectedEdgeView && newConnectedEdgeView) {
+					if (edgeView->GetSource() == connectedEdgeView) {
+						newEdgeView->SetSource(newConnectedEdgeView);
+					}
+				}
+				
+				//preserve links between edges and blocks
+				if (connectedBlockView && newConnectedBlockView) {
+					if (edgeView->GetSource() == connectedBlockView && edgeView->IsFirstSegment()) {
+						newEdgeView->SetSource(newConnectedBlockView);
+					}
+					if (edgeView->GetDestination() == connectedBlockView && edgeView->IsLastSegment()) {
+						newEdgeView->SetDestination(newConnectedBlockView);
 					}
 				}
 			}
 		}
 	}
-
 }
 
 void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory* fact)

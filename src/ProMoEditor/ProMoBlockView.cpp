@@ -1172,6 +1172,24 @@ void CProMoBlockView::SetParentBlock(CProMoBlockView* parent)
 	}
 }
 
+CProMoBlockView* CProMoBlockView::GetParentBlock() const
+/* ============================================================
+	Function :		CProMoBlockView::GetParentBlock
+	Description :	Returns a pointer to the parent block
+	Access :		Public
+
+	Return :		CProMoBlockView*	-	A pointer to the 
+											parent block
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (GetModel()->GetParentBlock()) {
+		return GetModel()->GetParentBlock()->GetMainView();
+	}
+	return NULL;
+}
+
 void CProMoBlockView::UnlinkAllSubBlocks()
 /* ============================================================
 	Function :		CProMoBlockView::UnlinkAllSubBlocks

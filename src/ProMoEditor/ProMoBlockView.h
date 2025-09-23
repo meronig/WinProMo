@@ -41,6 +41,7 @@ public:
 
 	// Parent-child block links
 	virtual void SetParentBlock(CProMoBlockView* parent);
+	virtual CProMoBlockView* GetParentBlock() const;
 	virtual void UnlinkAllSubBlocks();
 
 	virtual CPoint GetIntersection(CPoint innerPoint, CPoint outerPoint);
