@@ -1475,7 +1475,7 @@ void CProMoEditor::SetPageLayout(CDC* dc)
 	}
 }
 
-void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory* fact)
+void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
 /* ============================================================
 	Function :		CProMoEditor::Load
 	Description :	Sets the container properties (normally 

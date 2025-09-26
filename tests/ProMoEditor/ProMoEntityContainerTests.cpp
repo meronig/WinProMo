@@ -383,7 +383,7 @@ namespace CProMoEntityContainerTests
             diagram.Add(CString("promo_edge_model:391,4,49;"));
             diagram.Add(CString("promo_block_model:119,15;"));
 
-            c.Load(diagram, &factory);
+            c.Load(diagram, factory);
 
             Assert::AreEqual(9, c.GetSize());
             Assert::AreEqual(CString("custom"), c.GetModelType());
@@ -440,7 +440,7 @@ namespace CProMoEntityContainerTests
             diagram.Add(CString("promo_edge_model:391,4,49;"));
             diagram.Add(CString("promo_block_model:119,15;"));
 
-            c.Load(diagram, &factory);
+            c.Load(diagram, factory);
 
             CProMoBlockView* a = dynamic_cast<CProMoBlockView*>(c.GetNamedView(CString("6")));
             CProMoBlockView* a1 = dynamic_cast<CProMoBlockView*>(c.GetNamedView(CString("32")));

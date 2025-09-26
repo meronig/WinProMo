@@ -191,6 +191,7 @@
     <ClCompile Include="GeometryUtils\DoubleRect.cpp" />
     <ClCompile Include="GeometryUtils\GeometryHelper.cpp" />
     <ClCompile Include="GridSizeDialog.cpp" />
+    <ClCompile Include="FileUtils\FileParser.cpp" />
     <ClCompile Include="PropertyItem\CustomPropertyItem.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
     <ClCompile Include="DiagramEditor\DiagramEditor.cpp" />
@@ -229,6 +230,7 @@
     <ClInclude Include="GeometryUtils\DoubleRect.h" />
     <ClInclude Include="GeometryUtils\GeometryHelper.h" />
     <ClInclude Include="GridSizeDialog.h" />
+    <ClInclude Include="FileUtils\FileParser.h" />
     <ClInclude Include="PropertyItem\CustomPropertyItem.h" />
     <ClInclude Include="DiagramEditor\DiagramClipboardHandler.h" />
     <ClInclude Include="DiagramEditor\DiagramEditor.h" />

@@ -26,8 +26,10 @@
 #include "ProMoEdgeModel.h"
 #include "ProMoBlockView.h"
 #include "ProMoNameFactory.h"
-#include "../DiagramEditor/Tokenizer.h"
 #include <math.h>
+#include "../DiagramEditor/Tokenizer.h"
+#include "../FileUtils/FileParser.h"
+
 
 CProMoEdgeView::CProMoEdgeView()
 /* ============================================================
@@ -42,7 +44,8 @@ CProMoEdgeView::CProMoEdgeView()
 
    ============================================================*/
 {
-
+	SetZoom(1.0);
+	
 	SetMinimumSize(CSize(-1, -1));
 	SetType(_T("promo_edge_view"));
 	SetTitle(_T(""));
@@ -511,11 +514,12 @@ CDiagramEntity* CProMoEdgeView::CreateFromString(const CString& str, CProMoModel
 		delete obj;
 		obj = NULL;
 	}
+	else {
+		CProMoEdgeModel* blockModel = dynamic_cast<CProMoEdgeModel*>(model);
 
-	CProMoEdgeModel* blockModel = dynamic_cast<CProMoEdgeModel*>(model);
-
-	if (blockModel) {
-		obj->SetModel(blockModel);
+		if (blockModel) {
+			obj->SetModel(blockModel);
+		}
 	}
 
 	return obj;
@@ -1055,6 +1059,28 @@ void CProMoEdgeView::SetDestinationBlock(CProMoBlockView* destination)
 
 }
 
+CString CProMoEdgeView::GetHeaderFromString(CString& str)
+/* ============================================================
+	Function :		CProMoEdgeView::GetHeaderFromString
+	Description :	Gets the header from "str".
+	Access :		Protected
+
+	Return :		CString			-	The type of "str".
+	Parameters :	CString& str	-	"CString" to get type from.
+
+	Usage :			Call as a part of loading the object. "str"
+					will have the type removed after the call.
+
+   ============================================================*/
+{
+	CString header;
+
+	CFileParser::GetHeaderFromString(str, header);
+
+	return header;
+}
+
+
 CString CProMoEdgeView::GetDefaultGetString() const
 {
 	/* ============================================================
@@ -1076,41 +1102,26 @@ CString CProMoEdgeView::GetDefaultGetString() const
 	CString str;
 
 	CString model = GetModel()->GetName();
-	CStringReplace(model, _T(":"), _T("\\colon"));
-	CStringReplace(model, _T(";"), _T("\\semicolon"));
-	CStringReplace(model, _T(","), _T("\\comma"));
-	CStringReplace(model, _T("\r\n"), _T("\\newline"));
-
+	CFileParser::EncodeString(model);
+	
 	CString title = GetTitle();
-	CStringReplace(title, _T(":"), _T("\\colon"));
-	CStringReplace(title, _T(";"), _T("\\semicolon"));
-	CStringReplace(title, _T(","), _T("\\comma"));
-	CStringReplace(title, _T("\r\n"), _T("\\newline"));
-
+	CFileParser::EncodeString(title);
+	
 	CString name = GetName();
-	CStringReplace(name, _T(":"), _T("\\colon"));
-	CStringReplace(name, _T(";"), _T("\\semicolon"));
-	CStringReplace(name, _T(","), _T("\\comma"));
-	CStringReplace(name, _T("\r\n"), _T("\\newline"));
-
+	CFileParser::EncodeString(name);
+	
 	CString sourceString = _T("");
 
 	if (m_source) {
 		sourceString = m_source->GetName();
-		CStringReplace(sourceString, _T(":"), _T("\\colon"));
-		CStringReplace(sourceString, _T(";"), _T("\\semicolon"));
-		CStringReplace(sourceString, _T(","), _T("\\comma"));
-		CStringReplace(sourceString, _T("\r\n"), _T("\\newline"));
+		CFileParser::EncodeString(sourceString);
 	}
 
 	CString destString = _T("");
 
 	if (m_dest) {
 		destString = m_dest->GetName();
-		CStringReplace(destString, _T(":"), _T("\\colon"));
-		CStringReplace(destString, _T(";"), _T("\\semicolon"));
-		CStringReplace(destString, _T(","), _T("\\comma"));
-		CStringReplace(destString, _T("\r\n"), _T("\\newline"));
+		CFileParser::EncodeString(destString);
 	}
 
 	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)sourceString, (LPCTSTR)destString);
@@ -1138,59 +1149,43 @@ BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
    ============================================================*/
 {
 	BOOL result = FALSE;
-	CString data(str);
-	if (data[data.GetLength() - 1] == _TCHAR(';'))
-		data = data.Left(data.GetLength() - 1); // Strip the ';'
+	
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	if (tok) {
 
-	CTokenizer tok(data);
-	int size = tok.GetSize();
-	if (size >= 7)
-	{
-		CString name;
-		double left;
-		double top;
-		double right;
-		double bottom;
-		CString title;
-		int group;
-		int count = 0;
+		int size = tok->GetSize();
 
-		tok.GetAt(count++, name);
-		tok.GetAt(count++, left);
-		tok.GetAt(count++, top);
-		tok.GetAt(count++, right);
-		tok.GetAt(count++, bottom);
-		tok.GetAt(count++, title);
-		tok.GetAt(count++, group);
-
-		CDiagramEntity::SetRect(left, top, right, bottom);
-
-		CStringReplace(title, _T("\\colon"), _T(":"));
-		CStringReplace(title, _T("\\semicolon"), _T(";"));
-		CStringReplace(title, _T("\\comma"), _T(","));
-		CStringReplace(title, _T("\\newline"), _T("\r\n"));
-
-		CStringReplace(name, _T("\\colon"), _T(":"));
-		CStringReplace(name, _T("\\semicolon"), _T(";"));
-		CStringReplace(name, _T("\\comma"), _T(","));
-		CStringReplace(name, _T("\\newline"), _T("\r\n"));
-
-		SetTitle(title);
-		SetName(name);
-		SetGroup(group);
-
-		// Rebuild rest of string
-		str = _T("");
-		for (int t = count; t < size; t++)
+		if (size >= 7)
 		{
-			tok.GetAt(t, data);
+			CString name;
+			double left;
+			double top;
+			double right;
+			double bottom;
+			CString title;
+			int group;
+			int count = 0;
 
-			str += data;
-			if (t < size - 1)
-				str += _T(",");
+			tok->GetAt(count++, name);
+			tok->GetAt(count++, left);
+			tok->GetAt(count++, top);
+			tok->GetAt(count++, right);
+			tok->GetAt(count++, bottom);
+			tok->GetAt(count++, title);
+			tok->GetAt(count++, group);
+
+			CDiagramEntity::SetRect(left, top, right, bottom);
+
+			CFileParser::DecodeString(title);
+			CFileParser::DecodeString(name);
+
+			SetTitle(title);
+			SetName(name);
+			SetGroup(group);
+
+			result = TRUE;
 		}
-
-		result = TRUE;
+		delete tok;
 	}
 
 	return result;
@@ -1296,4 +1291,95 @@ CRect CProMoEdgeView::GetSelectionMarkerRect(UINT marker, CRect rect) const
 
 	}
 	return CDiagramLine::GetSelectionMarkerRect(marker, rect);
+}
+
+
+CString CProMoEdgeView::GetSourceFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoEdgeView::GetSourceFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the
+					name of the source object
+	Access :		Public
+
+	Return :		CString			-	The name of the source
+										object
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString sourceName;
+	if (tok) {
+		tok->GetAt(8, sourceName);
+		delete tok;
+	}
+	return sourceName;
+}
+
+CString CProMoEdgeView::GetDestinationFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoEdgeView::GetDestinationFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the
+					name of the destination object
+	Access :		Public
+
+	Return :		CString			-	The name of the 
+										destination object
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString destName;
+	if (tok) {
+		tok->GetAt(9, destName);
+		delete tok;
+	}
+	return destName;
+}
+
+CString CProMoEdgeView::GetModelFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoEdgeView::GetModelFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the
+					name of the associated model object
+	Access :		Public
+
+	Return :		CString			-	The name of the model
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString modelName;
+	if (tok) {
+		tok->GetAt(7, modelName);
+		delete tok;
+	}
+	return modelName;
+}
+
+CString CProMoEdgeView::GetNameFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoEdgeView::GetNameFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the
+					name of the object
+	Access :		Public
+
+	Return :		CString			-	The name of the object
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString name;
+	if (tok) {
+		tok->GetAt(0, name);
+		delete tok;
+	}
+	return name;
 }

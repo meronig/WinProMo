@@ -389,6 +389,34 @@ namespace CProMoEdgeViewTests
             TestHelpers::PointerAssert::IsNull(view);
         }
 
+        TEST_METHOD(GetNameFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoEdgeView::GetNameFromString(CString("promo_edge_view:View1,100.000000,50.000000,250.000000,120.000000,My View,0,Model1,,View2;"));
+            CString str2 = CProMoEdgeView::GetNameFromString(CString("promo_edge_view:View2,250.000000,120.000000,200.000000,150.000000,,0,Model2,View1,View3;"));
+            Assert::AreEqual(CString("View1"), str1);
+            Assert::AreEqual(CString("View2"), str2);
+        }
+
+        TEST_METHOD(GetModelFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoEdgeView::GetModelFromString(CString("promo_edge_view:View1,100.000000,50.000000,250.000000,120.000000,My View,0,Model1,,View2;"));
+            CString str2 = CProMoEdgeView::GetModelFromString(CString("promo_edge_view:View2,250.000000,120.000000,200.000000,150.000000,,0,Model2,View1,View3;"));
+            Assert::AreEqual(CString("Model1"), str1);
+            Assert::AreEqual(CString("Model2"), str2);
+        }
+
+        TEST_METHOD(GetSourceFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoEdgeView::GetSourceFromString(CString("promo_edge_view:View1,100.000000,50.000000,250.000000,120.000000,My View,0,Model1,,View2;"));
+            CString str2 = CProMoEdgeView::GetSourceFromString(CString("promo_edge_view:View2,250.000000,120.000000,200.000000,150.000000,,0,Model2,View1,View3;"));
+            Assert::AreEqual(CString(""), str1);
+            Assert::AreEqual(CString("View1"), str2);
+        }
+
+        TEST_METHOD(GetDestinationFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoEdgeView::GetDestinationFromString(CString("promo_edge_view:View1,100.000000,50.000000,250.000000,120.000000,My View,0,Model1,View2,;"));
+            CString str2 = CProMoEdgeView::GetDestinationFromString(CString("promo_edge_view:View2,250.000000,120.000000,200.000000,150.000000,,0,Model2,View1,View3;"));
+            Assert::AreEqual(CString(""), str1);
+            Assert::AreEqual(CString("View3"), str2);
+        }
+
 #pragma endregion
 
 #pragma region GDISmokeTests

@@ -27,6 +27,7 @@
 #include "ProMoEdgeModel.h"
 #include "ProMoEdgeView.h"
 #include "ProMoClipboardHandler.h"
+#include "../FileUtils/FileParser.h"
 
 CProMoEntityContainer::CProMoEntityContainer(CDiagramClipboardHandler* clip)
 /* ============================================================
@@ -187,7 +188,7 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 	}
 }
 
-void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory* fact)
+void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory& fact)
 /* ============================================================
 	Function :		CProMoEntityContainer::Load
 	Description :	Sets the container properties (normally
@@ -210,165 +211,15 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory*
 
    ============================================================*/
 {
-	int max = static_cast<int>(stra.GetSize());
-	int t = 0;
-
 	Clear();
 
 	CObArray models;
 
-	//First read: create models
-	for (t = 0; t < max; t++)
-	{
-		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			//check for unicity
-			CProMoModel* model = fact->CreateModelFromString(str);
-			if (model)
-				if (!GetNamedModel(models, model->GetName()))
-					models.Add(model);
-		}
-	}
-
-	//Second read: create views and link them to corresponding model
-	for (t = 0; t < max; t++)
-	{
-		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			CDiagramEntity* obj = NULL;
-			CTokenizer main(str, _T(":"));
-			CString header;
-			CString data;
-			if (main.GetSize() == 2)
-			{
-				main.GetAt(0, header);
-				main.GetAt(1, data);
-				header.TrimLeft();
-				header.TrimRight();
-				data.TrimLeft();
-				data.TrimRight();
-
-				CString nodeName;
-				CString modelName;
-
-				CTokenizer tok(data.Left(data.GetLength() - 1));
-				int size = tok.GetSize();
-
-				if (size >= 1) {
-					tok.GetAt(0, nodeName);
-					if (size >= 8) {
-						tok.GetAt(7, modelName);
-						if (!GetNamedView(nodeName)) {
-							CProMoModel* blockModel = GetNamedModel(models, modelName);
-							if (blockModel) {
-								obj = fact->CreateViewFromString(str, blockModel);
-							}
-						}
-					}
-				}
-			}
-			//If no model exists for that view, create one from scratch
-			if (!obj) {
-				obj = fact->CreateViewFromString(str);
-			}
-			if (obj) {
-				Add(obj);
-			}
-		}
-	}
-
-	//Third read: create logical links between elements
-	for (t = 0; t < max; t++)
-	{
-		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			BOOL result = FALSE;
-			CTokenizer main(str, _T(":"));
-			CString header;
-			CString data;
-			if (main.GetSize() == 2)
-			{
-				main.GetAt(0, header);
-				main.GetAt(1, data);
-				header.TrimLeft();
-				header.TrimRight();
-				data.TrimLeft();
-				data.TrimRight();
-
-				CString nodeName;
-				CString modelName;
-
-				CTokenizer tok(data.Left(data.GetLength() - 1));
-				int size = tok.GetSize();
-
-				if (size >= 1) {
-					tok.GetAt(0, nodeName);
-
-					//current element is an edge view
-					CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedView(nodeName));
-					if (edgeView) {
-
-						if (size >= 10) {
-							CString modelName;
-							CString sourceName;
-							CString destName;
-							tok.GetAt(7, modelName);
-							tok.GetAt(8, sourceName);
-							tok.GetAt(9, destName);
-
-							CDiagramEntity* source = GetNamedView(sourceName);
-							if (source) {
-								edgeView->SetSource(source);
-							}
-							CDiagramEntity* dest = GetNamedView(destName);
-							if (dest) {
-								edgeView->SetDestination(dest);
-							}
-						}
-					}
-
-					//current element is a block model
-					CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, nodeName));
-					if (blockModel) {
-						if (size >= 2) {
-							CString parentName;
-							tok.GetAt(1, parentName);
-
-							CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
-							if (parent) {
-								blockModel->GetMainView()->SetParentBlock(parent->GetMainView());
-							}
-						}
-					}
-
-					//current element is an edge model
-					CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, nodeName));
-					if (edgeModel) {
-						if (size >= 3) {
-							CString sourceName;
-							CString destName;
-							tok.GetAt(1, sourceName);
-							tok.GetAt(2, destName);
-
-							CProMoBlockModel* source = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, sourceName));
-							if (source) {
-								edgeModel->GetFirstSegment()->SetSource(source->GetMainView());
-							}
-							CProMoBlockModel* dest = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, destName));
-							if (dest) {
-								edgeModel->GetLastSegment()->SetDestination(dest->GetMainView());
-							}
-						}
-					}
-				}
-
-			}
-		}
-	}
-
+	LoadModels(stra, fact, models);
+	LoadViews(stra, fact, models);
+	LinkViews(stra, models);
+	LinkModels(stra, models);
+	
 	SetModified(FALSE);
 }
 
@@ -842,6 +693,227 @@ CProMoModel* CProMoEntityContainer::GetNamedModel(const CObArray& array, const C
 	return result;
 }
 
+void CProMoEntityContainer::LoadModels(const CStringArray& stra, CProMoControlFactory& fact, CObArray& models)
+/* ============================================================
+	Function :		CProMoEntityContainer::LoadModels
+	Description :	Creates model objects from their string 
+					representation in "stra".
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CStringArray& stra			-	The array
+													to read
+					CProMoControlFactory& fact	-	The factory
+													object to
+													create
+													objects
+					CObArray& models			-	The array
+													that will
+													contain
+													model 
+													objects
+													being
+													created
+
+   ============================================================*/
+{
+	int max = static_cast<int>(stra.GetSize());
+	int t = 0;
+
+	Clear();
+
+	//create models
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			//check for unicity
+			CProMoModel* model = fact.CreateModelFromString(str);
+			if (model)
+				if (!GetNamedModel(models, model->GetName()))
+					models.Add(model);
+		}
+	}
+}
+
+void CProMoEntityContainer::LoadViews(const CStringArray& stra, CProMoControlFactory& fact, const CObArray& models)
+/* ============================================================
+	Function :		CProMoEntityContainer::LoadViews
+	Description :	Creates view objects from their string
+					representation in "stra", and links them
+					to the corresponding model.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CStringArray& stra			-	The array
+													to read
+					CProMoControlFactory& fact	-	The factory
+													object to
+													create
+													objects
+					CObArray& models			-	The array
+													that will
+													contain
+													model
+													objects
+													to be linked
+													to the view
+													objects
+
+   ============================================================*/
+{
+	int max = static_cast<int>(stra.GetSize());
+	int t = 0;
+	
+	//create views and link them to corresponding model
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			CDiagramEntity* obj = NULL;
+
+			CString nodeName = CProMoBlockView::GetNameFromString(str);
+			CString modelName = CProMoBlockView::GetModelFromString(str);
+
+			if (!GetNamedView(nodeName)) {
+				CProMoModel* blockModel = GetNamedModel(models, modelName);
+				if (blockModel) {
+					obj = fact.CreateViewFromString(str, blockModel);
+				}
+			}
+				
+			//If no model exists for that view, create one from scratch
+			if (!obj) {
+				obj = fact.CreateViewFromString(str);
+			}
+			if (obj) {
+				Add(obj);
+			}
+		}
+	}
+
+}
+
+void CProMoEntityContainer::LinkModels(const CStringArray& stra, const CObArray& models)
+/* ============================================================
+	Function :		CProMoEntityContainer::LinkModels
+	Description :	Links model objects to preserve the 
+					relations specified in their string 
+					representation in "stra".
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CStringArray& stra			-	The array
+													to read
+					CObArray& models			-	The array
+													that will
+													contain
+													model
+													objects
+
+   ============================================================*/
+{
+	int max = static_cast<int>(stra.GetSize());
+	int t = 0;
+	
+	//create logical links between elements
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			BOOL result = FALSE;
+			
+			CString nodeName = CProMoModel::GetNameFromString(str);
+
+			//current element is a block model
+			CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, nodeName));
+			if (blockModel) {
+				CString parentName = blockModel->GetParentFromString(str);
+
+				CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
+				if (parent && blockModel->GetMainView()) {
+					blockModel->GetMainView()->SetParentBlock(parent->GetMainView());
+				}
+						
+			}
+
+			//current element is an edge model
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, nodeName));
+			if (edgeModel) {
+				CString sourceName = edgeModel->GetSourceFromString(str);
+				CString destName = edgeModel->GetDestinationFromString(str);
+
+				CProMoBlockModel* source = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, sourceName));
+				if (source && edgeModel->GetFirstSegment()) {
+					edgeModel->GetFirstSegment()->SetSource(source->GetMainView());
+				}
+				CProMoBlockModel* dest = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, destName));
+				if (dest && edgeModel->GetLastSegment()) {
+					edgeModel->GetLastSegment()->SetDestination(dest->GetMainView());
+				}
+						
+			}
+		}
+	}
+
+}
+
+void CProMoEntityContainer::LinkViews(const CStringArray& stra, const CObArray& models)
+/* ============================================================
+	Function :		CProMoEntityContainer::LinkViews
+	Description :	Links view objects to preserve the
+					relations specified in their string
+					representation in "stra".
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CStringArray& stra			-	The array
+													to read
+					CObArray& models			-	The array
+													that will
+													contain
+													model
+													objects
+
+   ============================================================*/
+{
+	int max = static_cast<int>(stra.GetSize());
+	int t = 0;
+
+	//create logical links between elements
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			BOOL result = FALSE;
+
+			CString nodeName = CProMoBlockView::GetNameFromString(str);
+			
+			//current element is an edge view
+			CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedView(nodeName));
+			if (edgeView) {
+
+				CString sourceName = edgeView->GetSourceFromString(str);
+				CString destName = edgeView->GetDestinationFromString(str);
+
+				CDiagramEntity* source = GetNamedView(sourceName);
+				if (source) {
+					edgeView->SetSource(source);
+				}
+				CDiagramEntity* dest = GetNamedView(destName);
+				if (dest) {
+					edgeView->SetDestination(dest);
+				}
+			}
+		}
+	}
+
+}
+
 CString CProMoEntityContainer::GetString() const
 /* ============================================================
 	Function :		CProMoEntityContainer::GetString
@@ -884,33 +956,25 @@ BOOL CProMoEntityContainer::FromString(const CString& str)
 
 	BOOL result = FALSE;
 
-	CTokenizer main(str, _T(":"));
 	CString header;
 	CString data;
-	if (main.GetSize() == 2)
-	{
-		main.GetAt(0, header);
-		main.GetAt(1, data);
-		header.TrimLeft();
-		header.TrimRight();
-		data.TrimLeft();
-		data.TrimRight();
-		if (header == m_modelType)
+	CFileParser::GetHeaderFromString(str, header);
+	
+	if (header == m_modelType) {
+		CTokenizer* tok = CFileParser::Tokenize(str);
+		int size = tok->GetSize();
+		if (size >= 2)
 		{
-			CTokenizer tok(data.Left(data.GetLength() - 1));
-			int size = tok.GetSize();
-			if (size >= 2)
-			{
-				int right;
-				int bottom;
+			int right;
+			int bottom;
 
-				tok.GetAt(0, right);
-				tok.GetAt(1, bottom);
+			tok->GetAt(0, right);
+			tok->GetAt(1, bottom);
 
-				SetVirtualSize(CSize(right, bottom));
-				result = TRUE;
-			}
+			SetVirtualSize(CSize(right, bottom));
+			result = TRUE;
 		}
+		delete tok;
 	}
 
 	return result;

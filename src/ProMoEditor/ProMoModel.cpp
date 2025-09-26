@@ -23,6 +23,7 @@
 #include "ProMoModel.h"
 #include "../DiagramEditor/Tokenizer.h"
 #include "ProMoNameFactory.h"
+#include "../FileUtils/FileParser.h"
 
 
 CProMoModel::CProMoModel()
@@ -203,25 +204,11 @@ CString CProMoModel::GetHeaderFromString(CString& str)
 
    ============================================================*/
 {
-
-	CTokenizer main(str, _T(":"));
 	CString header;
-	CString data;
-	if (main.GetSize() == 2)
-	{
 
-		main.GetAt(0, header);
-		main.GetAt(1, data);
-		header.TrimLeft();
-		header.TrimRight();
-		data.TrimLeft();
-		data.TrimRight();
-
-		str = data;
-	}
-
+	CFileParser::GetHeaderFromString(str,header);
+	
 	return header;
-
 }
 
 BOOL CProMoModel::GetDefaultFromString(CString& str)
@@ -243,39 +230,25 @@ BOOL CProMoModel::GetDefaultFromString(CString& str)
    ============================================================*/
 {
 	BOOL result = FALSE;
-	CString data(str);
-	if (data[data.GetLength() - 1] == _TCHAR(';'))
-		data = data.Left(data.GetLength() - 1); // Strip the ';'
-
-	CTokenizer tok(data);
-	int size = tok.GetSize();
+	
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	
+	int size = tok->GetSize();
 	if (size >= 1)
 	{
 		CString name;
 		int count = 0;
 
-		tok.GetAt(count++, name);
-		
-		CDiagramEntity::CStringReplace(name, _T("\\colon"), _T(":"));
-		CDiagramEntity::CStringReplace(name, _T("\\semicolon"), _T(";"));
-		CDiagramEntity::CStringReplace(name, _T("\\comma"), _T(","));
-		CDiagramEntity::CStringReplace(name, _T("\\newline"), _T("\r\n"));
+		tok->GetAt(count++, name);
+
+		CFileParser::DecodeString(name);
 
 		SetName(name);
 		
-		// Rebuild rest of string
-		str = _T("");
-		for (int t = count; t < size; t++)
-		{
-			tok.GetAt(t, data);
-
-			str += data;
-			if (t < size - 1)
-				str += _T(",");
-		}
-
 		result = TRUE;
 	}
+
+	delete tok;
 
 	return result;
 
@@ -381,10 +354,8 @@ CString CProMoModel::GetDefaultGetString() const
 	CString str;
 
 	CString name = GetName();
-	CDiagramEntity::CStringReplace(name, _T(":"), _T("\\colon"));
-	CDiagramEntity::CStringReplace(name, _T(";"), _T("\\semicolon"));
-	CDiagramEntity::CStringReplace(name, _T(","), _T("\\comma"));
-	CDiagramEntity::CStringReplace(name, _T("\r\n"), _T("\\newline"));
+
+	CFileParser::EncodeString(name);
 
 	str.Format(_T("%s:%s"), (LPCTSTR)GetType(), (LPCTSTR)name);
 
@@ -487,4 +458,26 @@ CString CProMoModel::Export(UINT /*format*/) const
 
 	return _T("");
 
+}
+
+CString CProMoModel::GetNameFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoModel::GetNameFromString
+	Description :	Static factory function that
+					parses a formatted string and extracts the
+					name of the object
+	Access :		Public
+
+	Return :		CString			-	The name of the object
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString name;
+	if (tok) {
+		tok->GetAt(0, name);
+		delete tok;
+	}
+	return name;
 }

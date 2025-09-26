@@ -37,6 +37,9 @@ public:
     virtual CProMoEdgeView* GetLastSegment();
     virtual CProMoEdgeView* GetFirstSegment();
 
+    static CString GetSourceFromString(const CString& str);
+    static CString GetDestinationFromString(const CString& str);
+
     
 protected:
     virtual void SetSource(CProMoBlockModel* source);

@@ -22,6 +22,9 @@ public:
 	virtual void	Copy(CDiagramEntity* obj);
 
 	static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
+
+	static CString GetModelFromString(const CString& str);
+	static CString GetNameFromString(const CString& str);
 		
 	// Model-view links
 	virtual CProMoBlockModel* GetModel() const;
@@ -83,6 +86,7 @@ public:
 
 protected:
 	virtual CString				GetDefaultGetString() const;
+	virtual CString				GetHeaderFromString(CString& str);
 	virtual BOOL				GetDefaultFromString(CString& str);
 
 

@@ -118,8 +118,6 @@ public:
 
 	void						SetParent( CDiagramEntityContainer* parent );
 	CDiagramEntityContainer*	GetParent() const;
-	//String replacement
-	static	void				CStringReplace(CString& str, const CString& from, const CString& to);
 
 protected:
 

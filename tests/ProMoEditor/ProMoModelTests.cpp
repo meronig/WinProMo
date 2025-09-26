@@ -131,6 +131,11 @@ namespace CProMoModelTests
             Assert::AreEqual(CString("promo_model"), model.GetType());
         }
 
+        TEST_METHOD(GetNameFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoModelTestStub::GetNameFromString(CString("promo_model:Model,;"));
+            Assert::AreEqual(CString("Model"), str1);
+        }
+
 #pragma endregion
 
 #pragma region CloneTests

@@ -28,6 +28,7 @@
 #include "ProMoEdgeView.h"
 #include "ProMoEdgeModel.h"
 #include "../resource.h"
+#include "../FileUtils/FileParser.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -52,8 +53,10 @@ CProMoBlockView::CProMoBlockView()
 	m_fitTitle = FALSE;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
-	m_titleRect = CRect(CPoint(0,0),GetMinimumSize());
+	m_titleRect = CRect(0,0,0,0);
 	SetType(_T("promo_block_view"));
+
+	SetZoom(1.0);
 
 	CString title;
 	BOOL result;
@@ -865,28 +868,41 @@ CString CProMoBlockView::GetDefaultGetString() const
 	CString str;
 	
 	CString model = GetModel()->GetName();
-	CStringReplace(model, _T(":"), _T("\\colon"));
-	CStringReplace(model, _T(";"), _T("\\semicolon"));
-	CStringReplace(model, _T(","), _T("\\comma"));
-	CStringReplace(model, _T("\r\n"), _T("\\newline"));
+	CFileParser::EncodeString(model);
 	
 	CString title = GetTitle();
-	CStringReplace(title, _T(":"), _T("\\colon"));
-	CStringReplace(title, _T(";"), _T("\\semicolon"));
-	CStringReplace(title, _T(","), _T("\\comma"));
-	CStringReplace(title, _T("\r\n"), _T("\\newline"));
-
+	CFileParser::EncodeString(title);
+	
 	CString name = GetName();
-	CStringReplace(name, _T(":"), _T("\\colon"));
-	CStringReplace(name, _T(";"), _T("\\semicolon"));
-	CStringReplace(name, _T(","), _T("\\comma"));
-	CStringReplace(name, _T("\r\n"), _T("\\newline"));
-
+	CFileParser::EncodeString(name);
+	
 	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model);
 	
 	return str;
 
 }
+
+CString CProMoBlockView::GetHeaderFromString(CString& str)
+/* ============================================================
+	Function :		CProMoBlockView::GetHeaderFromString
+	Description :	Gets the header from "str".
+	Access :		Protected
+
+	Return :		CString			-	The type of "str".
+	Parameters :	CString& str	-	"CString" to get type from.
+
+	Usage :			Call as a part of loading the object. "str"
+					will have the type removed after the call.
+
+   ============================================================*/
+{
+	CString header;
+
+	CFileParser::GetHeaderFromString(str, header);
+
+	return header;
+}
+
 
 BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 /* ============================================================
@@ -907,59 +923,42 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
    ============================================================*/
 {
 	BOOL result = FALSE;
-	CString data(str);
-	if (data[data.GetLength() - 1] == _TCHAR(';'))
-		data = data.Left(data.GetLength() - 1); // Strip the ';'
+	
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	if (tok) {
 
-	CTokenizer tok(data);
-	int size = tok.GetSize();
-	if (size >= 7)
-	{
-		CString name;
-		double left;
-		double top;
-		double right;
-		double bottom;
-		CString title;
-		int group;
-		int count = 0;
-
-		tok.GetAt(count++, name);
-		tok.GetAt(count++, left);
-		tok.GetAt(count++, top);
-		tok.GetAt(count++, right);
-		tok.GetAt(count++, bottom);
-		tok.GetAt(count++, title);
-		tok.GetAt(count++, group);
-
-		SetRect(left, top, right, bottom);
-
-		CStringReplace(title, _T("\\colon"), _T(":"));
-		CStringReplace(title, _T("\\semicolon"), _T(";"));
-		CStringReplace(title, _T("\\comma"), _T(","));
-		CStringReplace(title, _T("\\newline"), _T("\r\n"));
-
-		CStringReplace(name, _T("\\colon"), _T(":"));
-		CStringReplace(name, _T("\\semicolon"), _T(";"));
-		CStringReplace(name, _T("\\comma"), _T(","));
-		CStringReplace(name, _T("\\newline"), _T("\r\n"));
-
-		SetTitle(title);
-		SetName(name);
-		SetGroup(group);
-
-		// Rebuild rest of string
-		str = _T("");
-		for (int t = count; t < size; t++)
+		int size = tok->GetSize();
+		if (size >= 7)
 		{
-			tok.GetAt(t, data);
+			CString name;
+			double left;
+			double top;
+			double right;
+			double bottom;
+			CString title;
+			int group;
+			int count = 0;
 
-			str += data;
-			if (t < size - 1)
-				str += _T(",");
+			tok->GetAt(count++, name);
+			tok->GetAt(count++, left);
+			tok->GetAt(count++, top);
+			tok->GetAt(count++, right);
+			tok->GetAt(count++, bottom);
+			tok->GetAt(count++, title);
+			tok->GetAt(count++, group);
+
+			SetRect(left, top, right, bottom);
+
+			CFileParser::DecodeString(title);
+			CFileParser::DecodeString(name);
+
+			SetTitle(title);
+			SetName(name);
+			SetGroup(group);
+
+			result = TRUE;
 		}
-
-		result = TRUE;
+		delete tok;
 	}
 
 	return result;
@@ -1139,11 +1138,12 @@ CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str, CProMoMode
 		delete obj;
 		obj = NULL;
 	}
+	else {
+		CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(model);
 
-	CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(model);
-
-	if (blockModel) {
-		obj->SetModel(blockModel);
+		if (blockModel) {
+			obj->SetModel(blockModel);
+		}
 	}
 
 	return obj;
@@ -1202,4 +1202,48 @@ void CProMoBlockView::UnlinkAllSubBlocks()
    ============================================================*/
 {
 	GetModel()->UnlinkAllSubBlocks();
+}
+
+CString CProMoBlockView::GetModelFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoBlockView::GetModelFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the
+					name of the associated model object
+	Access :		Public
+
+	Return :		CString			-	The name of the model
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString modelName;
+	if (tok) {
+		tok->GetAt(7, modelName);
+		delete tok;
+	}
+	return modelName;
+}
+
+CString CProMoBlockView::GetNameFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoBlockView::GetNameFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the
+					name of the object
+	Access :		Public
+
+	Return :		CString			-	The name of the object
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString name;
+	if (tok) {
+		tok->GetAt(0, name);
+		delete tok;
+	}
+	return name;
 }

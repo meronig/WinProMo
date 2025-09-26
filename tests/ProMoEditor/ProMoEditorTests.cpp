@@ -256,7 +256,7 @@ namespace CProMoEditorTests
             diagram.Add(CString("promo_edge_model:391,4,49;"));
             diagram.Add(CString("promo_block_model:119,15;"));
 
-            m_editor.Load(diagram, &factory);
+            m_editor.Load(diagram, factory);
 
             CProMoEntityContainer* c = dynamic_cast<CProMoEntityContainer*>(m_editor.GetDiagramEntityContainer());
 

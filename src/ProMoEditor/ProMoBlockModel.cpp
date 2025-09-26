@@ -24,6 +24,8 @@
 #include "ProMoBlockModel.h"
 #include "ProMoEdgeModel.h"
 #include "ProMoNameFactory.h"
+#include "../DiagramEditor/Tokenizer.h"
+#include "../FileUtils/FileParser.h"
 
 CProMoBlockModel::CProMoBlockModel()
 	/* ============================================================
@@ -228,6 +230,30 @@ CProMoBlockModel* CProMoBlockModel::GetParentBlock() const
    ============================================================*/
 {
 	return this->m_parentBlock;
+}
+
+
+CString CProMoBlockModel::GetParentFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoBlockModel::GetParentFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the 
+					name of the parent block
+	Access :		Public
+
+	Return :		CString			-	The name of the parent 
+										block
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString parentName;
+	if (tok) {
+		tok->GetAt(1, parentName);
+		delete tok;
+	}
+	return parentName;
 }
 
 BOOL CProMoBlockModel::Contains(CProMoBlockModel* block, BOOL recursive)
@@ -503,11 +529,8 @@ CString CProMoBlockModel::GetDefaultGetString() const
 
 	if (m_parentBlock) {
 		parentString = m_parentBlock->GetName();
-		CDiagramEntity::CStringReplace(parentString, _T(":"), _T("\\colon"));
-		CDiagramEntity::CStringReplace(parentString, _T(";"), _T("\\semicolon"));
-		CDiagramEntity::CStringReplace(parentString, _T(","), _T("\\comma"));
-		CDiagramEntity::CStringReplace(parentString, _T("\r\n"), _T("\\newline"));
-		
+		CFileParser::EncodeString(parentString);
+
 	}
 
 	str.Format(_T(",%s"), (LPCTSTR)parentString);

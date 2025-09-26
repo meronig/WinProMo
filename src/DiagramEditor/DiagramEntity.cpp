@@ -65,6 +65,7 @@
 #include "DiagramEntity.h"
 #include "DiagramEntityContainer.h"
 #include "Tokenizer.h"
+#include "../FileUtils/FileParser.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -298,16 +299,9 @@ BOOL CDiagramEntity::GetDefaultFromString( CString& str )
 
 		SetRect( left, top, right, bottom );
 
-		CStringReplace(title, _T( "\\colon" ), _T( ":" ) );
-		CStringReplace(title, _T( "\\semicolon" ), _T( ";" ) );
-		CStringReplace(title, _T( "\\comma" ), _T( "," ) );
-		CStringReplace(title, _T( "\\newline" ), _T( "\r\n" ) );
-		
-		CStringReplace(name, _T( "\\colon" ), _T( ":" ) );
-		CStringReplace(name, _T( "\\semicolon" ), _T( ";" ) );
-		CStringReplace(name, _T( "\\comma" ), _T( "," ) );
-		CStringReplace(name, _T( "\\newline" ), _T( "\r\n" ) );
-		
+		CFileParser::DecodeString(title);
+		CFileParser::DecodeString(name);
+
 		SetTitle( title );
 		SetName( name );
 		SetGroup( group );
@@ -430,16 +424,10 @@ CString CDiagramEntity::GetDefaultGetString() const
 	CString str;
 
 	CString title = GetTitle();
-	CStringReplace(title, _T( ":" ), _T( "\\colon" ) );
-	CStringReplace(title, _T( ";" ), _T( "\\semicolon" ) );
-	CStringReplace(title, _T( "," ), _T( "\\comma" ) );
-	CStringReplace(title, _T( "\r\n" ), _T( "\\newline" ) );
-
+	CFileParser::EncodeString(title);
+	
 	CString name = GetName();
-	CStringReplace(name, _T( ":" ), _T( "\\colon" ) );
-	CStringReplace(name, _T( ";" ), _T( "\\semicolon" ) );
-	CStringReplace(name, _T( "," ), _T( "\\comma" ) );
-	CStringReplace(name, _T( "\r\n" ), _T( "\\newline" ) );
+	CFileParser::EncodeString(name);
 	
 	str.Format( _T( "%s:%f,%f,%f,%f,%s,%s,%i" ), (LPCTSTR)GetType(), GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, (LPCTSTR)name, GetGroup() );
 
@@ -1835,19 +1823,4 @@ int CDiagramEntity::GetHitCode( const CPoint& point, const CRect& rect ) const
 
 	return result;
 
-}
-
-void CDiagramEntity::CStringReplace(CString& str, const CString& from, const CString& to)
-{
-    int pos = 0;
-    int fromLen = from.GetLength();
-    int toLen = to.GetLength();
-	
-	if (from.IsEmpty())
-		return;
-
-    while ((pos = str.Find(from)) != -1)
-    {
-        str = str.Left(pos) + to + str.Mid(pos + fromLen);
-    }
 }

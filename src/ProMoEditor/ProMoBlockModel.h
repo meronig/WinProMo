@@ -39,6 +39,9 @@ public:
 	// Model-view links
 	virtual CProMoBlockView* GetMainView() const;
 
+	static CString GetParentFromString(const CString& str);
+	
+
 protected:
 	CObArray m_subblocks;
 	CObArray m_outgoingEdges;

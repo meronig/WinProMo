@@ -366,6 +366,13 @@ namespace CProMoBlockModelTests
             Assert::AreEqual(CString("promo_block_model"), child.GetType());
         }
 
+        TEST_METHOD(GetParentFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoBlockModelTestStub::GetParentFromString(CString("promo_block_model:Parent,;"));
+            CString str2 = CProMoBlockModelTestStub::GetParentFromString(CString("promo_block_model:Child,Parent;"));
+            Assert::AreEqual(CString(""), str1);
+            Assert::AreEqual(CString("Parent"), str2);
+        }
+
 #pragma endregion
 
 #pragma region CloneTests

@@ -24,6 +24,8 @@
 #include "ProMoEdgeModel.h"
 #include "ProMoBlockModel.h"
 #include "ProMoNameFactory.h"
+#include "../DiagramEditor/Tokenizer.h"
+#include "../FileUtils/FileParser.h"
 
 
 CProMoEdgeModel::CProMoEdgeModel()
@@ -297,6 +299,52 @@ CProMoEdgeView* CProMoEdgeModel::GetFirstSegment()
 	return NULL;
 }
 
+CString CProMoEdgeModel::GetSourceFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoEdgeModel::GetSourceFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the
+					name of the source object
+	Access :		Public
+
+	Return :		CString			-	The name of the source
+										object
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString sourceName;
+	if (tok) {
+		tok->GetAt(1, sourceName);
+		delete tok;
+	}
+	return sourceName;
+}
+
+CString CProMoEdgeModel::GetDestinationFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoEdgeModel::GetDestinationFromString
+	Description :	Static factory function that 
+					parses a formatted string and extracts the
+					name of the destination object
+	Access :		Public
+
+	Return :		CString			-	The name of the 
+										destination object
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString destName;
+	if (tok) {
+		tok->GetAt(2, destName);
+		delete tok;
+	}
+	return destName;
+}
+
 
 CProMoModel* CProMoEdgeModel::CreateFromString(const CString& str)
 /* ============================================================
@@ -356,18 +404,12 @@ CString CProMoEdgeModel::GetDefaultGetString() const
 
 	if (m_source) {
 		sourceString = m_source->GetName();
-		CDiagramEntity::CStringReplace(sourceString, _T(":"), _T("\\colon"));
-		CDiagramEntity::CStringReplace(sourceString, _T(";"), _T("\\semicolon"));
-		CDiagramEntity::CStringReplace(sourceString, _T(","), _T("\\comma"));
-		CDiagramEntity::CStringReplace(sourceString, _T("\r\n"), _T("\\newline"));
+		CFileParser::EncodeString(sourceString);
 	}
 
 	if (m_dest) {
 		destString = m_dest->GetName();
-		CDiagramEntity::CStringReplace(destString, _T(":"), _T("\\colon"));
-		CDiagramEntity::CStringReplace(destString, _T(";"), _T("\\semicolon"));
-		CDiagramEntity::CStringReplace(destString, _T(","), _T("\\comma"));
-		CDiagramEntity::CStringReplace(destString, _T("\r\n"), _T("\\newline"));
+		CFileParser::EncodeString(destString);
 	}
 
 	str.Format(_T(",%s,%s"), (LPCTSTR)sourceString, (LPCTSTR)destString );

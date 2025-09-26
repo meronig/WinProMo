@@ -380,6 +380,17 @@ namespace CProMoBlockViewTests
             TestHelpers::PointerAssert::IsNull(view);
         }
 
+        TEST_METHOD(GetNameFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoBlockView::GetNameFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model;"));
+            Assert::AreEqual(CString("View"), str1);
+        }
+
+        TEST_METHOD(GetModelFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoBlockView::GetModelFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model;"));
+            Assert::AreEqual(CString("Model"), str1);
+        }
+
+
 #pragma region GDISmokeTests
 
         TEST_METHOD(Draw_WhenCalledWithMemoryDC_DoesNotCrash)

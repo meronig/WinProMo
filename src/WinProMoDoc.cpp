@@ -201,7 +201,7 @@ void CWinProMoDoc::Serialize(CArchive& ar)
 				arr.Add(line);
 			}
 			if (m_fact) {
-				m_objs->Load(arr, m_fact);
+				m_objs->Load(arr, *m_fact);
 			}
 			
 		}

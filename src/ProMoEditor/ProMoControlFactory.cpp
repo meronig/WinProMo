@@ -6,9 +6,9 @@
 
 	Author :		Giovanni Meroni
 
-	Purpose :		CProMoControlFactory is a factory-class with one 
-					single member, allowing the creation of CDiagramEntity-
-					derived objects from a string.	
+	Purpose :		CProMoControlFactory is a factory-class with members 
+					allowing the creation of CDiagramEntity and CProMoModel
+					-derived objects from a string.	
 
 	Description :	CreateFromString tries to instantiate one of the control 
 					objects by testing the control object static function 
@@ -16,7 +16,7 @@
 					resulting pointer is then returned and can be added to 
 					the application data.
 
-	Usage :			Call CProMoControlFactory::CreateFromString and if 
+	Usage :			Call CProMoControlFactory::CreateViewFromString and if 
 					a non-NULL pointer is returned, add it to the 
 					editor data.
 

@@ -25,6 +25,12 @@ public:
     virtual void	Copy(CDiagramEntity* obj);
     static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
 
+    static CString GetSourceFromString(const CString& str);
+    static CString GetDestinationFromString(const CString& str);
+    static CString GetModelFromString(const CString& str);
+    static CString GetNameFromString(const CString& str);
+
+
     virtual CProMoEdgeModel* GetModel() const;
 
     // Edge-specific methods
@@ -85,6 +91,7 @@ public:
 
 protected:
     virtual CString				GetDefaultGetString() const;
+    virtual CString				GetHeaderFromString(CString& str);
     virtual BOOL				GetDefaultFromString(CString& str);
 
     virtual CRect	GetSelectionMarkerRect(UINT marker, CRect rect) const;

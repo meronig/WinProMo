@@ -268,6 +268,20 @@ namespace CProMoEdgeModelTests
             Assert::AreEqual(CString("promo_edge_model"), edge2.GetType());
         }
 
+        TEST_METHOD(GetSourceFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoEdgeModelTestStub::GetSourceFromString(CString("promo_edge_model:Edge1,,Destination;"));
+            CString str2 = CProMoEdgeModelTestStub::GetSourceFromString(CString("promo_edge_model:Edge1,Source,Destination;"));
+            Assert::AreEqual(CString(""), str1);
+            Assert::AreEqual(CString("Source"), str2);
+        }
+
+        TEST_METHOD(GetDestinationFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoEdgeModelTestStub::GetDestinationFromString(CString("promo_edge_model:Edge1,Source,;"));
+            CString str2 = CProMoEdgeModelTestStub::GetDestinationFromString(CString("promo_edge_model:Edge1,Source,Destination;"));
+            Assert::AreEqual(CString(""), str1);
+            Assert::AreEqual(CString("Destination"), str2);
+        }
+
 #pragma endregion
 
 #pragma region CloneTests

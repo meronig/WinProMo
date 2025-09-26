@@ -40,6 +40,8 @@ public:
 	virtual CString	GetName() const;
 	virtual void	SetName(CString name);
 
+	static CString GetNameFromString(const CString& str);
+
 
 protected:
 	CObArray m_views;
