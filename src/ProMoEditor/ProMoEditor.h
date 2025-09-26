@@ -12,6 +12,8 @@
 #include "ProMoBlockView.h"
 #include "ProMoEdgeView.h"
 #include "ProMoControlFactory.h"
+#include "../GeometryUtils/GeometryHelper.h"
+
 
 #define WM_SELECTION_CHANGED (WM_APP + 100)
 
@@ -48,6 +50,8 @@ protected:
 	virtual void AutoResizeAll();
 	virtual CObArray* GetProperties(CDiagramEntity* element);
 	virtual void DrawPageBreaks(CDC* dc, CRect rect, double zoom) const;
+	virtual void HandleSelectedElements(CProMoBlockView* target, BOOL isNew);
+	virtual void HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point);
 
 // Overrides:
 public:

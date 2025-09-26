@@ -29,17 +29,8 @@ public:
     void SetTarget(CProMoBlockView* obj, BOOL select) {
         CProMoEditor::SetTarget(obj, select);
     }
-    void NestSelectedBlock(CProMoBlockView* parentBlock) {
-        CProMoEditor::NestSelectedBlock(parentBlock);
-    }
-    void SplitSelectedEdge() {
-        CProMoEditor::SplitSelectedEdge();
-    }
-    void ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock) {
-        CProMoEditor::ConnectSelectedEdgeToSource(sourceBlock);
-    }
-    void ConnectSelectedEdgeToDestination(CProMoBlockView* destBlock) {
-        CProMoEditor::ConnectSelectedEdgeToDestination(destBlock);
+    void HandleSelectedElements(CProMoBlockView* target, BOOL isNew) {
+        CProMoEditor::HandleSelectedElements(target, isNew);
     }
     void SetInteractMode(int interactMode, int subMode) {
         CProMoEditor::SetInteractMode(interactMode, subMode);
@@ -538,37 +529,64 @@ namespace CProMoEditorTests
 
 #pragma region ModelEditingTests
 
-        TEST_METHOD(NestSelectedBlock_WhenInvoked_NestBlock) {
+        TEST_METHOD(HandleSelectedElements_WhenCreatingNewBlock_NestBlock) {
+            
             m_b->Select(TRUE);
 
-            m_editor.NestSelectedBlock(m_a);
+            m_editor.StartDrawingObject(m_b);
+
+            m_editor.HandleSelectedElements(m_a, TRUE);
 
             TestHelpers::PointerAssert::AreEqual(m_a, m_b->GetParentBlock());
         }
 
-        TEST_METHOD(SplitSelectedEdge_WhenInvoked_SplitEdge) {
+        TEST_METHOD(HandleSelectedElements_WhenCreatingNewEdge_ChangeSource) {
+            
+            m_x->Select(TRUE);
+            
+            m_editor.StartDrawingObject(m_x);
+
+            m_editor.HandleSelectedElements(m_a, TRUE);
+
+            TestHelpers::PointerAssert::AreEqual(m_a, dynamic_cast<CProMoBlockView*>(m_x->GetSource()));
+        }
+
+        TEST_METHOD(HandleSelectedElements_WhenMovingBlock_NestBlock) {
+            m_b->Select(TRUE);
+
+            m_editor.SetInteractMode(MODE_MOVING, NULL);
+            m_editor.HandleSelectedElements(m_a, FALSE);
+
+            TestHelpers::PointerAssert::AreEqual(m_a, m_b->GetParentBlock());
+        }
+        TEST_METHOD(HandleSelectedElements_WhenResizingEdgeCenter_SplitEdge) {
             m_z->Select(TRUE);
             
             m_editor.SetInteractMode(MODE_RESIZING, DEHT_CENTER);
-            m_editor.SplitSelectedEdge();
-
+            
+            m_editor.HandleSelectedElements(NULL, FALSE);
+            
             TestHelpers::PointerAssert::AreNotEqual(m_a2, dynamic_cast<CProMoBlockView*>(m_z->GetDestination()));
             TestHelpers::PointerAssert::IsNotNull(dynamic_cast<CProMoEdgeView*>(m_z->GetDestination()));
         }
 
-        TEST_METHOD(ConnectSelectedEdgeToSource_WhenInvoked_ChangeSource) {
+        TEST_METHOD(HandleSelectedElements_WhenResizingEdgeTopLeft_ChangeSource) {
             m_x->Select(TRUE);
 
-            m_editor.ConnectSelectedEdgeToSource(m_a1);
+            m_editor.SetInteractMode(MODE_RESIZING, DEHT_TOPLEFT);
 
+            m_editor.HandleSelectedElements(m_a1, FALSE);
+            
             TestHelpers::PointerAssert::AreEqual(m_a1, dynamic_cast<CProMoBlockView*>(m_x->GetSource()));
         }
 
-        TEST_METHOD(ConnectSelectedEdgeToDestination_WhenInvoked_ChangeDestination) {
+        TEST_METHOD(HandleSelectedElements_WhenResizingEdgeBottomRight_ChangeDestination) {
             m_y->Select(TRUE);
 
-            m_editor.ConnectSelectedEdgeToDestination(m_b);
+            m_editor.SetInteractMode(MODE_RESIZING, DEHT_BOTTOMRIGHT);
 
+            m_editor.HandleSelectedElements(m_b, FALSE);
+            
             TestHelpers::PointerAssert::AreEqual(m_b, dynamic_cast<CProMoBlockView*>(m_y->GetDestination()));
         }
 

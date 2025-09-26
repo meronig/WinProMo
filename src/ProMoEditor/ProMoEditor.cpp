@@ -46,9 +46,7 @@
 #include "../PropertyItem/PropertyWrappers.h"
 #include "../PropertyItem/CustomPropertyItem.h"
 #include "../PropertyItem/TypedPropertyItem.h"
-
 #include <math.h>
-#include "../GeometryUtils/GeometryHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -126,6 +124,7 @@ void CProMoEditor::DrawObjects(CDC* dc, double zoom) const
 /* ============================================================
 	Function :		CProMoEditor::DrawObjects
 	Description :	Draws the object
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CDC* dc		-	CDC to draw to
@@ -173,6 +172,7 @@ void CProMoEditor::SaveObjects(CStringArray& stra)
 /* ============================================================
 	Function :		CProMoEditor::SaveObjects
 	Description :	Saves all the objects to a CStringArray.
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CStringArray& stra	-	CStringArray to
@@ -420,6 +420,7 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 					elements being drawn/moved/resized, to keep
 					linked elements connected, and to handle
 					SHIFT/CTRL keys to keep proportions.
+	Access :		Protected
 
 	Return :		void
 	Parameters :	UINT nFlags		-	Not used
@@ -457,28 +458,7 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 		CDiagramEditor::OnMouseMove(nFlags, point);
 
-		CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(element);
-		if (block) {
-			//handle shift key for nodes: keep proportions
-			//note: always enabled if the block says so
-			if ((nFlags & MK_SHIFT) == MK_SHIFT || block->HasLockedProportions()) {
-				CDoubleRect newRect(block->GetLeft(), block->GetTop(), block->GetRight(), block->GetBottom());
-				CGeometryHelper::EnforceAspectRatio(oldRect, newRect, GetSubMode(), point);
-				block->SetRect(newRect.left, newRect.top, newRect.right, newRect.bottom);
-			}
-		}
-	
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(element);
-		if (edge) {
-
-			// handle shift key for edges: mainly snap them to horizontal, vertical or 45 degrees diagonal lines
-			if ((nFlags & MK_SHIFT) == MK_SHIFT) {
-				CDoubleRect newRect(edge->GetLeft(), edge->GetTop(), edge->GetRight(), edge->GetBottom());
-				CGeometryHelper::AlignToAxis(newRect, GetSubMode());
-				edge->SetRect(newRect.left, newRect.top, newRect.right, newRect.bottom);
-			}
-
-		}
+		HandlePostResize(element, nFlags, oldRect, point);
 	}
 	else {
 		CDiagramEditor::OnMouseMove(nFlags, point);
@@ -496,6 +476,52 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 		RedrawWindow();
 	}
 
+}
+
+void CProMoEditor::HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point)
+/* ============================================================
+	Function :		CProMoEditor::HandlePostResize
+	Description :	Handles SHIFT/CTRL keys to keep proportions.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CDiagramEntity* element	-	Selected
+												element
+					UINT nFlags				-	Determines if
+												SHIFT key is
+												pressed
+					CDoubleRect& oldRect	-	Size and 
+												position of
+												selected
+												element before
+												having been
+												resized
+					CPoint point			-	Cursor location
+
+   ============================================================*/
+{
+	CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(element);
+	if (block) {
+		//handle shift key for nodes: keep proportions
+		//note: always enabled if the block says so
+		if ((nFlags & MK_SHIFT) == MK_SHIFT || block->HasLockedProportions()) {
+			CDoubleRect newRect(block->GetLeft(), block->GetTop(), block->GetRight(), block->GetBottom());
+			CGeometryHelper::EnforceAspectRatio(oldRect, newRect, GetSubMode(), point);
+			block->SetRect(newRect.left, newRect.top, newRect.right, newRect.bottom);
+		}
+	}
+
+	CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(element);
+	if (edge) {
+
+		// handle shift key for edges: mainly snap them to horizontal, vertical or 45 degrees diagonal lines
+		if ((nFlags & MK_SHIFT) == MK_SHIFT) {
+			CDoubleRect newRect(edge->GetLeft(), edge->GetTop(), edge->GetRight(), edge->GetBottom());
+			CGeometryHelper::AlignToAxis(newRect, GetSubMode());
+			edge->SetRect(newRect.left, newRect.top, newRect.right, newRect.bottom);
+		}
+
+	}
 }
 
 void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
@@ -532,19 +558,15 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 			// Identify clicked block (if any)
 			ResetTarget();
 			target = GetTargetBlock(point);
+
 		}
 	}
 
 	// Create a new element as usual
 	CDiagramEditor::OnLButtonDown(nFlags, point);
 	
-	if (target) {
-		NestSelectedBlock(target);
-		ConnectSelectedEdgeToSource(target);
-	}
-	SplitSelectedEdge();
-
-	
+	HandleSelectedElements(target, TRUE);
+		
 }
 
 
@@ -565,26 +587,12 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 
    ============================================================*/
 {
-
-	CProMoBlockView* currObj = NULL;
+	OnMouseMove(nFlags, point);
+	
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 
-	if (GetInteractMode() == MODE_MOVING) {
-
-		OnMouseMove(nFlags, point);
-		NestSelectedBlock(objs->GetTarget());
-		
-	}
-
-	if (GetInteractMode() == MODE_RESIZING) {
-		if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-			ConnectSelectedEdgeToDestination(objs->GetTarget());
-		}
-		else if (GetSubMode() == DEHT_TOPLEFT) {
-			ConnectSelectedEdgeToSource(objs->GetTarget());
-		}
-	}
-
+	HandleSelectedElements(objs->GetTarget(), FALSE);
+	
 	//reset target, so that blocks appear as normal
 	ResetTarget();
 
@@ -969,17 +977,15 @@ void CProMoEditor::SplitSelectedEdge()
 		CProMoEdgeView* edge;
 		edge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
 		if (edge) {
-			// We need to split the edge into two.
-			if (GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER) {
-				//take a snapshot to undo changes
-				GetDiagramEntityContainer()->Snapshot();
-				//split the edge into two
-				CProMoEdgeView* newEdge = edge->Split();
-				//add new edge
-				AddObject(newEdge);
-				//switch to resizing the old edge
-				SetInteractMode(MODE_RESIZING, DEHT_BOTTOMRIGHT);
-			}
+			//take a snapshot to undo changes
+			GetDiagramEntityContainer()->Snapshot();
+			//split the edge into two
+			CProMoEdgeView* newEdge = edge->Split();
+			//add new edge
+			AddObject(newEdge);
+			//switch to resizing the old edge
+			SetInteractMode(MODE_RESIZING, DEHT_BOTTOMRIGHT);
+			
 		}
 	}
 }
@@ -1008,16 +1014,15 @@ void CProMoEditor::ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock)
 			//check if the current edge view is the first segment
 			CProMoEdgeView* srcEdge = dynamic_cast<CProMoEdgeView*>(edge->GetSource());
 			if (!srcEdge) {
-				if (!(GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER)) {
-					if (sourceBlock != NULL) {
-						edge->SetSource(sourceBlock);
-					}
-					else {
-						edge->SetSource(NULL);
-					}
-					//Need to reorder shapes according to nesting
-					objs->Reorder();
+				if (sourceBlock != NULL) {
+					edge->SetSource(sourceBlock);
 				}
+				else {
+					edge->SetSource(NULL);
+				}
+				//Need to reorder shapes according to nesting
+				objs->Reorder();
+				
 			}
 		}
 	}
@@ -1047,16 +1052,15 @@ void CProMoEditor::ConnectSelectedEdgeToDestination(CProMoBlockView* destBlock)
 			//check if the current edge view is the last segment
 			CProMoEdgeView* destEdge = dynamic_cast<CProMoEdgeView*>(edge->GetDestination());
 			if (!destEdge) {
-				if (!(GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER)) {
-					if (destBlock != NULL) {
-						edge->SetDestination(destBlock);
-					}
-					else {
-						edge->SetDestination(NULL);
-					}
-					//Need to reorder shapes according to nesting
-					objs->Reorder();
+				if (destBlock != NULL) {
+					edge->SetDestination(destBlock);
 				}
+				else {
+					edge->SetDestination(NULL);
+				}
+				//Need to reorder shapes according to nesting
+				objs->Reorder();
+				
 			}
 		}
 	}
@@ -1212,6 +1216,52 @@ void CProMoEditor::DrawPageBreaks(CDC* dc, CRect rect, double zoom) const
 
 	dc->SelectObject(pOldPen);
 
+}
+
+void CProMoEditor::HandleSelectedElements(CProMoBlockView* target, BOOL isNew)
+/* ============================================================
+	Function :		CProMoEditor::HandleSelectedElements
+	Description :	Handles block nesting and edge connections
+					for selected element
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoBlockView* target	-	Target block
+					BOOL isNew				-	True if the
+												selected element
+												has been created
+
+   ============================================================*/
+
+{
+	
+	if (isNew && target) {
+		NestSelectedBlock(target);
+		ConnectSelectedEdgeToSource(target);
+	}
+	else {
+		
+		if (GetInteractMode() == MODE_MOVING) {
+
+			NestSelectedBlock(target);
+
+		}
+
+		if (GetInteractMode() == MODE_RESIZING) {
+			if (GetSubMode() == DEHT_BOTTOMRIGHT) {
+				ConnectSelectedEdgeToDestination(target);
+			}
+			else if (GetSubMode() == DEHT_TOPLEFT) {
+				ConnectSelectedEdgeToSource(target);
+			}
+			else if (GetSubMode() == DEHT_CENTER) {
+				SplitSelectedEdge();
+			}
+		}
+		
+	}
+	
+	
 }
 
 void CProMoEditor::LeftAlignSelected()
