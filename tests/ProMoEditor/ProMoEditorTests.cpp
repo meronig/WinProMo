@@ -6,6 +6,46 @@
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
 #include "../WinProMoTests.h"
 
+class CProMoEditorTestStub : public CProMoEditor {
+public:
+    CProMoBlockView* GetTargetBlock(CPoint point) {
+        return CProMoEditor::GetTargetBlock(point);
+    }
+    CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards) {
+        return CProMoEditor::GetConnectedBlock(line, backwards);
+    }
+    void DeselectChildBlocks(CProMoBlockView* block) {
+        CProMoEditor::DeselectChildBlocks(block);
+    }
+    void SelectChildBlocks(CProMoBlockView* block) {
+        CProMoEditor::SelectChildBlocks(block);
+    }
+    void DeselectInvalidElements() {
+        CProMoEditor::DeselectInvalidElements();
+    }
+    void ResetTarget() {
+        CProMoEditor::ResetTarget();
+    }
+    void SetTarget(CProMoBlockView* obj, BOOL select) {
+        CProMoEditor::SetTarget(obj, select);
+    }
+    void NestSelectedBlock(CProMoBlockView* parentBlock) {
+        CProMoEditor::NestSelectedBlock(parentBlock);
+    }
+    void SplitSelectedEdge() {
+        CProMoEditor::SplitSelectedEdge();
+    }
+    void ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock) {
+        CProMoEditor::ConnectSelectedEdgeToSource(sourceBlock);
+    }
+    void ConnectSelectedEdgeToDestination(CProMoBlockView* destBlock) {
+        CProMoEditor::ConnectSelectedEdgeToDestination(destBlock);
+    }
+    void SetInteractMode(int interactMode, int subMode) {
+        CProMoEditor::SetInteractMode(interactMode, subMode);
+    }
+};
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace CProMoEditorTests
@@ -14,7 +54,7 @@ namespace CProMoEditorTests
     TEST_CLASS(CProMoEditorTests)
     {
     private:
-        CProMoEditor m_editor;
+        CProMoEditorTestStub m_editor;
         
         CProMoBlockView* m_a;
         CProMoBlockView* m_a1;
@@ -369,9 +409,170 @@ namespace CProMoEditorTests
 
         }
 
+        TEST_METHOD(DeselectInvalidElements_WhenInvoked_DeselectDanglingEdges) {
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_a2->Select(TRUE);
+            m_z->Select(TRUE);
+
+            m_editor.DeselectInvalidElements();
+
+            Assert::IsFalse(m_a2->IsSelected());
+            Assert::IsFalse(m_x->IsSelected());
+            Assert::IsFalse(m_z->IsSelected());
+            Assert::IsTrue(m_a->IsSelected());
+        }
+
+        TEST_METHOD(DeselectInvalidElements_WhenInvoked_KeepEdgesWhenBothEndsAreSelected) {
+            m_b->Select(TRUE);
+            m_x->Select(TRUE);
+            m_a2->Select(TRUE);
+            m_z->Select(TRUE);
+
+            m_editor.DeselectInvalidElements();
+
+            Assert::IsTrue(m_a2->IsSelected());
+            Assert::IsFalse(m_x->IsSelected());
+            Assert::IsTrue(m_z->IsSelected());
+            Assert::IsTrue(m_b->IsSelected());
+        }
+
+        TEST_METHOD(DeselectChildBlocks_WhenInvoked_DeselectChildBlocks) {
+            m_a1->Select(TRUE);
+            m_a->Select(TRUE);
+
+            m_editor.DeselectChildBlocks(m_a);
+            Assert::IsFalse(m_a1->IsSelected());
+            Assert::IsFalse(m_a2->IsSelected());
+            Assert::IsTrue(m_a->IsSelected());
+        }
+
+        TEST_METHOD(SelectChildBlocks_WhenInvoked_SelectChildBlocks) {
+            m_a1->Select(TRUE);
+            
+            m_editor.SelectChildBlocks(m_a);
+            Assert::IsFalse(m_a->IsSelected());
+            Assert::IsTrue(m_a1->IsSelected());
+            Assert::IsTrue(m_a2->IsSelected());
+        }
+
 #pragma endregion
 
-        //TODO: OnXX
+#pragma region TargetTests
+
+        TEST_METHOD(SetTarget_WhenInvoked_SetsBlockAsTarget) {
+            m_editor.SetTarget(m_a1, TRUE);
+
+            Assert::IsTrue(m_a1->IsTarget());
+        }
+
+        TEST_METHOD(ResetTarget_WhenInvoked_ResetTarget) {
+            m_a1->SetTarget(TRUE);
+            
+            m_editor.ResetTarget();
+
+            Assert::IsFalse(m_a1->IsTarget());
+        }
+
+        //This must be more extensively tested
+        TEST_METHOD(GetTargetBlock_WhenMovingBlock_ReturnTopmostBlock) {
+
+            m_editor.SetInteractMode(MODE_MOVING, NULL);
+            
+            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400,140));
+
+            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+        }
+
+        TEST_METHOD(GetTargetBlock_WhenChangingEdgeDest_ReturnTopmostBlock) {
+
+            m_x->Select(TRUE);
+
+            m_editor.SetInteractMode(MODE_RESIZING, DEHT_BOTTOMRIGHT);
+
+            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400, 140));
+
+            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+        }
+
+        TEST_METHOD(GetTargetBlock_WhenChangingEdgeSource_ReturnTopmostBlock) {
+
+            m_x->Select(TRUE);
+
+            m_editor.SetInteractMode(MODE_RESIZING, DEHT_TOPLEFT);
+
+            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400, 140));
+
+            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+        }
+
+        TEST_METHOD(GetTargetBlock_WhenCreatingNewBlock_ReturnTopmostBlock) {
+
+            CProMoBlockView* newBlock = new CProMoBlockView;
+
+            m_editor.StartDrawingObject(newBlock);
+
+            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400, 140));
+
+            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+        }
+
+        TEST_METHOD(GetTargetBlock_WhenCreatingNewEdge_ReturnTopmostBlock) {
+
+            CProMoEdgeView* newEdge = new CProMoEdgeView;
+
+            m_editor.StartDrawingObject(newEdge);
+
+            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400, 140));
+
+            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+        }
+
+        TEST_METHOD(GetTargetBlock_WhenPointOutsideBlock_ReturnNull) {
+            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(100, 140));
+
+            TestHelpers::PointerAssert::IsNull(target);
+        }
+
+#pragma endregion
+
+#pragma region ModelEditingTests
+
+        TEST_METHOD(NestSelectedBlock_WhenInvoked_NestBlock) {
+            m_b->Select(TRUE);
+
+            m_editor.NestSelectedBlock(m_a);
+
+            TestHelpers::PointerAssert::AreEqual(m_a, m_b->GetParentBlock());
+        }
+
+        TEST_METHOD(SplitSelectedEdge_WhenInvoked_SplitEdge) {
+            m_z->Select(TRUE);
+            
+            m_editor.SetInteractMode(MODE_RESIZING, DEHT_CENTER);
+            m_editor.SplitSelectedEdge();
+
+            TestHelpers::PointerAssert::AreNotEqual(m_a2, dynamic_cast<CProMoBlockView*>(m_z->GetDestination()));
+            TestHelpers::PointerAssert::IsNotNull(dynamic_cast<CProMoEdgeView*>(m_z->GetDestination()));
+        }
+
+        TEST_METHOD(ConnectSelectedEdgeToSource_WhenInvoked_ChangeSource) {
+            m_x->Select(TRUE);
+
+            m_editor.ConnectSelectedEdgeToSource(m_a1);
+
+            TestHelpers::PointerAssert::AreEqual(m_a1, dynamic_cast<CProMoBlockView*>(m_x->GetSource()));
+        }
+
+        TEST_METHOD(ConnectSelectedEdgeToDestination_WhenInvoked_ChangeDestination) {
+            m_y->Select(TRUE);
+
+            m_editor.ConnectSelectedEdgeToDestination(m_b);
+
+            TestHelpers::PointerAssert::AreEqual(m_b, dynamic_cast<CProMoBlockView*>(m_y->GetDestination()));
+        }
+
+#pragma endregion
 
 #pragma region GDISmokeTests
 
@@ -386,11 +587,21 @@ namespace CProMoEditorTests
 
             CRect rect(0, 0, 2000, 2000);
 
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+
             m_editor.SetPageLayout(&memDC);
             m_editor.ShowPageBreaks(TRUE);
 
             m_editor.Draw(&memDC, rect);
 
+            m_editor.SetInteractMode(MODE_MOVING, NULL);
+
+            m_editor.Draw(&memDC, rect);
+
+            m_editor.SetInteractMode(MODE_RESIZING, NULL);
+
+            m_editor.Draw(&memDC, rect);
         }
 
 #pragma endregion
