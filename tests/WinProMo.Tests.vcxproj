@@ -170,6 +170,9 @@
     <ClCompile Include="ProMoEditor\ProMoEditorTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoEntityContainerTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoModelTests.cpp" />
+    <ClCompile Include="PropertyItem\CustomPropertyItemTests.cpp" />
+    <ClCompile Include="PropertyItem\PropertyItemTests.cpp" />
+    <ClCompile Include="PropertyItem\TypedPropertyItemTests.cpp" />
     <ClCompile Include="WinProMoTests.h" />
   </ItemGroup>
   <ItemGroup>

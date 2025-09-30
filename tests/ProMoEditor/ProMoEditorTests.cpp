@@ -32,6 +32,10 @@ public:
     void HandleSelectedElements(CProMoBlockView* target, BOOL isNew) {
         CProMoEditor::HandleSelectedElements(target, isNew);
     }
+    void HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point) {
+        CProMoEditor::HandlePostResize(element, nFlags, oldRect, point);
+    }
+
     void SetInteractMode(int interactMode, int subMode) {
         CProMoEditor::SetInteractMode(interactMode, subMode);
     }
@@ -465,7 +469,6 @@ namespace CProMoEditorTests
             Assert::IsFalse(m_a1->IsTarget());
         }
 
-        //This must be more extensively tested
         TEST_METHOD(GetTargetBlock_WhenMovingBlock_ReturnTopmostBlock) {
 
             m_editor.SetInteractMode(MODE_MOVING, NULL);
@@ -588,6 +591,39 @@ namespace CProMoEditorTests
             m_editor.HandleSelectedElements(m_b, FALSE);
             
             TestHelpers::PointerAssert::AreEqual(m_b, dynamic_cast<CProMoBlockView*>(m_y->GetDestination()));
+        }
+
+        TEST_METHOD(HandlePostResize_WhenShiftIsPressed_KeepBlockProportions) {
+            
+            CDoubleRect oldRect;
+
+            oldRect.SetRect(m_a->GetLeft(), m_a->GetTop(), m_a->GetRight(), m_a->GetBottom());
+
+            m_a->SetRight(m_a->GetRight() + 50);
+            m_editor.SetInteractMode(MODE_RESIZING, DEHT_RIGHTMIDDLE);
+            m_editor.HandlePostResize(m_a, MK_SHIFT, oldRect, CPoint(0,0));
+
+            Assert::AreEqual(oldRect.right + 50, m_a->GetRight());
+            Assert::AreEqual(oldRect.left, m_a->GetLeft());
+            Assert::IsTrue((m_a->GetTop() - oldRect.top - 5) < 1);
+            Assert::IsTrue((oldRect.bottom - 5 - m_a->GetBottom()) < 1);
+
+        }
+
+        TEST_METHOD(HandlePostResize_WhenShiftIsPressed_AlignEdgeToAxis) {
+            
+            CDoubleRect oldRect;
+
+            oldRect.SetRect(m_z->GetLeft(), m_z->GetTop(), m_z->GetRight(), m_z->GetBottom());
+
+            m_z->SetRight(m_z->GetRight() + 50);
+            m_editor.SetInteractMode(MODE_RESIZING, DEHT_BOTTOMRIGHT);
+            m_editor.HandlePostResize(m_z, MK_SHIFT, oldRect, CPoint(0, 0));
+
+            Assert::AreEqual(oldRect.right + 50, m_z->GetRight());
+            Assert::AreEqual(oldRect.left, m_z->GetLeft());
+            Assert::AreEqual(oldRect.top, m_z->GetTop());
+            Assert::AreEqual(oldRect.top - 50 , m_z->GetBottom());
         }
 
 #pragma endregion
