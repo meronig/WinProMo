@@ -24,6 +24,7 @@
 #include "stdafx.h"
 #include "WinProMoDoc.h"
 #include "WinProMoView.h"
+#include "FileUtils/FileSerializer.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -135,73 +136,23 @@ BOOL CWinProMoDoc::OnNewDocument()
 void CWinProMoDoc::Serialize(CArchive& ar)
 {
 	CString str;
-	CStringArray arr;
-	CFile* pFile = ar.GetFile();
+	CStringArray data;
 	
 	if (m_objs) {
 		if (ar.IsStoring())
 		{
-			m_objs->Save(arr);
+			m_objs->Save(data);
 			
-#ifndef _UNICODE 
-
-			for (int i = 0; i < arr.GetSize(); i++) {
-				CString line = arr.GetAt(i) + "\r\n";
-				ar.WriteString(line);
-			}
-
-#else
-
-			for (int i = 0; i < arr.GetSize(); i++) {
-				CStringW wideLine = arr.GetAt(i) + L"\r\n";
-
-				// Convert UTF-16 to UTF-8
-				int utf8Len = WideCharToMultiByte(CP_UTF8, 0, wideLine, -1, NULL, 0, NULL, NULL);
-				char* utf8Line = new char[utf8Len];
-				WideCharToMultiByte(CP_UTF8, 0, wideLine, -1, utf8Line, utf8Len, NULL, NULL);
-
-				// Write excluding null terminator
-				pFile->Write(utf8Line, utf8Len - 1);
-				delete[] utf8Line;
-			}
-#endif
+			CFileSerializer::Save(ar, data);
 		}
 		else
 		{
-			// Loading can handle ANSI or UTF8 encoding only
-
 			m_objs->Clear();
 			
-			DWORD size = (DWORD)pFile->GetLength();
-			char* buffer = new char[size + 1];
-			pFile->Read(buffer, size);
-			buffer[size] = '\0';
-
-			CString content(buffer);
-			delete[] buffer;
-
-			int pos = 0;
-			while (pos >= 0)
-			{
-				CString rest = content.Mid(pos);
-				int rel = rest.Find(_T("\r\n"));
-				CString line;
-
-				if (rel == -1)
-				{
-					line = rest;
-					pos = -1;
-				}
-				else
-				{
-					line = rest.Left(rel);
-					pos += rel + 2;
-				}
-
-				arr.Add(line);
-			}
+			CFileSerializer::Load(ar, data);
+			
 			if (m_fact) {
-				m_objs->Load(arr, *m_fact);
+				m_objs->Load(data, *m_fact);
 			}
 			
 		}

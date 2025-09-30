@@ -114,6 +114,9 @@
     <ClCompile Include="FileUtils\FileParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileUtils\FileSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="WinProMo.def">
@@ -236,6 +239,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileUtils\FileParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileUtils\FileSerializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -188,6 +188,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CanvasSizeDialog.cpp" />
+    <ClCompile Include="FileUtils\FileSerializer.cpp" />
     <ClCompile Include="GeometryUtils\DoubleRect.cpp" />
     <ClCompile Include="GeometryUtils\GeometryHelper.cpp" />
     <ClCompile Include="GridSizeDialog.cpp" />
@@ -227,6 +228,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CanvasSizeDialog.h" />
+    <ClInclude Include="FileUtils\FileSerializer.h" />
     <ClInclude Include="GeometryUtils\DoubleRect.h" />
     <ClInclude Include="GeometryUtils\GeometryHelper.h" />
     <ClInclude Include="GridSizeDialog.h" />

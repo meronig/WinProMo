@@ -3,7 +3,7 @@
 
 #include "DoubleRect.h"
 
-class CGeometryHelper
+class AFX_EXT_CLASS CGeometryHelper
 {
 public:
 	static void EnforceAspectRatio(const CDoubleRect &oldRect, CDoubleRect &newRect, int submode, const CPoint &cursorLocation);
