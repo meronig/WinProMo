@@ -10,6 +10,11 @@
 
 #include "../DiagramEditor/DiagramEntity.h"
 #include "ProMoBlockModel.h"
+
+#define SHAPE_RECTANGLE 0
+#define SHAPE_ELLIPSE 1
+#define SHAPE_POLYGON 2
+
 class AFX_EXT_CLASS CProMoBlockView : public CDiagramEntity
 {
 
@@ -60,12 +65,15 @@ protected:
 
 	virtual void SetModel(CProMoBlockModel*);
 
+	virtual void SetShape(const int& type);
+	virtual int GetShape() const;
 
 private:
 	BOOL			m_moved;
 	BOOL			m_lockProportions;
 	BOOL			m_fitTitle;
 	CRect			m_titleRect;
+	int				m_perimeter;
 		
 // Overrides
 public:

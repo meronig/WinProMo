@@ -52,6 +52,7 @@ CProMoBlockView::CProMoBlockView()
 	m_blockmodel = NULL;
 	m_lockProportions = FALSE;
 	m_fitTitle = FALSE;
+	m_perimeter = SHAPE_RECTANGLE;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
 	m_titleRect = CRect(0,0,0,0);
@@ -325,7 +326,14 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 
    ============================================================*/
 {
-	CDoublePoint result = CIntersectionHelper::SegmentIntersectsRect(innerPoint, outerPoint, GetRect());
+	CDoublePoint result;
+	if (GetShape() == SHAPE_RECTANGLE) {
+		result = CIntersectionHelper::SegmentIntersectsRect(innerPoint, outerPoint, GetRect());
+	}
+	else if (GetShape() == SHAPE_ELLIPSE) {
+		result = CIntersectionHelper::SegmentIntersectsEllipse(innerPoint, outerPoint, GetRect());
+	}
+	
 	return result.ToCPoint();
 }
 
@@ -748,6 +756,52 @@ void CProMoBlockView::SetModel(CProMoBlockModel* model)
 			}
 		}
 	}
+}
+
+void CProMoBlockView::SetShape(const int& type)
+/* ============================================================
+	Function :		CProMoBlockView::SetShape
+	Description :	Sets the shape of the block
+
+	Return :		void
+	Parameters :	int& type	-	the shape of the block
+									
+	Usage :			Virtual. Can be overridden in a derived
+					class to support additional shapes. 
+					"type" can be one of the following:
+						"PERIMETER_RECTANGLE" A rectangle
+						"PERIMETER_ELLIPSE" An ellipse
+						"PERIMETER_POLYGON" A n-sided
+							polygon
+					The shape will always be inscribed by the 
+					CRect object obtained by invoking GetRect()
+						
+   ============================================================*/
+{
+	m_perimeter = type;
+}
+
+int CProMoBlockView::GetShape() const
+/* ============================================================
+	Function :		CProMoBlockView::GetShape
+	Description :	Returns the shape of the block
+
+	Return :		int& type	-	the shape of the block
+	Parameters :	none
+
+	Usage :			Virtual. Can be overridden in a derived
+					class to support additional shapes.
+					"type" can be one of the following:
+						"PERIMETER_RECTANGLE" A rectangle
+						"PERIMETER_ELLIPSE" An ellipse
+						"PERIMETER_POLYGON" A n-sided
+							polygon
+					The shape will always be inscribed by the
+					CRect object obtained by invoking GetRect()
+
+   ============================================================*/
+{
+	return m_perimeter;
 }
 
 void CProMoBlockView::AutoResize()
