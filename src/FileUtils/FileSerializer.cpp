@@ -1,3 +1,17 @@
+/* ==========================================================================
+
+	Copyright © 2025 Technical University of Denmark
+
+	CFileParser
+
+	Author :		Giovanni Meroni
+
+	Purpose :		"CFileSerializer" is a class to assist loading and saving
+					text files using ANSI or UTF8 encoding, avoiding file
+					incompatibilities when compiled under old versions of 
+					Windows and/or MSVC.
+
+   ========================================================================*/
 #include "stdafx.h"
 #include "FileSerializer.h"
 
