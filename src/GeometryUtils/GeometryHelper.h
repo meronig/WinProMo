@@ -1,5 +1,5 @@
-#ifndef _GEOMETRYHELPERS_H_
-#define _GEOMETRYHELPERS_H_
+#ifndef _GEOMETRYHELPER_H_
+#define _GEOMETRYHELPER_H_
 
 #include "DoubleRect.h"
 
@@ -10,4 +10,4 @@ public:
 	static void AlignToAxis(CDoubleRect &rect, int submode);
 };
 
-#endif //_GEOMETRYHELPERS_H_
+#endif //_GEOMETRYHELPER_H_

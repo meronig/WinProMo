@@ -117,6 +117,12 @@
     <ClCompile Include="FileUtils\FileSerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryUtils\DoublePoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryUtils\IntersectionHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="WinProMo.def">
@@ -242,6 +248,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileUtils\FileSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryUtils\DoublePoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeometryUtils\IntersectionHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -188,11 +188,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CanvasSizeDialog.cpp" />
+    <ClCompile Include="GeometryUtils\DoublePoint.cpp" />
     <ClCompile Include="FileUtils\FileSerializer.cpp" />
     <ClCompile Include="GeometryUtils\DoubleRect.cpp" />
     <ClCompile Include="GeometryUtils\GeometryHelper.cpp" />
     <ClCompile Include="GridSizeDialog.cpp" />
     <ClCompile Include="FileUtils\FileParser.cpp" />
+    <ClCompile Include="GeometryUtils\IntersectionHelper.cpp" />
     <ClCompile Include="PropertyItem\CustomPropertyItem.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
     <ClCompile Include="DiagramEditor\DiagramEditor.cpp" />
@@ -228,11 +230,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CanvasSizeDialog.h" />
+    <ClInclude Include="GeometryUtils\DoublePoint.h" />
     <ClInclude Include="FileUtils\FileSerializer.h" />
     <ClInclude Include="GeometryUtils\DoubleRect.h" />
     <ClInclude Include="GeometryUtils\GeometryHelper.h" />
     <ClInclude Include="GridSizeDialog.h" />
     <ClInclude Include="FileUtils\FileParser.h" />
+    <ClInclude Include="GeometryUtils\IntersectionHelper.h" />
     <ClInclude Include="PropertyItem\CustomPropertyItem.h" />
     <ClInclude Include="DiagramEditor\DiagramClipboardHandler.h" />
     <ClInclude Include="DiagramEditor\DiagramEditor.h" />

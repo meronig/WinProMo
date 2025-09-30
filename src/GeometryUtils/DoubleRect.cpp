@@ -13,7 +13,6 @@
    ========================================================================*/
 #include "StdAfx.h"
 #include "DoubleRect.h"
-#include "../DiagramEditor/DiagramEntity.h"
 
 CDoubleRect::CDoubleRect()
 /* ============================================================
@@ -112,7 +111,7 @@ double CDoubleRect::Ratio() const
 
 CRect CDoubleRect::ToCRect() const
 /* ============================================================
-	Function :		CDoubleRect::GetRect
+	Function :		CDoubleRect::ToCRect
 	Description :	Returns the object rectangle.
 	Access :		Public
 

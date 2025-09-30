@@ -1,7 +1,8 @@
 #ifndef _DOUBLERECT_H_
 #define _DOUBLERECT_H_
 
-class AFX_EXT_CLASS CDoubleRect : public CObject {
+class AFX_EXT_CLASS CDoubleRect 
+{
 
 public:
 	CDoubleRect();

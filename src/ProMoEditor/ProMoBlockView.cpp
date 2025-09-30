@@ -29,6 +29,7 @@
 #include "ProMoEdgeModel.h"
 #include "../resource.h"
 #include "../FileUtils/FileParser.h"
+#include "../GeometryUtils/IntersectionHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -307,8 +308,8 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 					block that intersects with a (virtual) 
 					line. Can be used to know where to trim a 
 					connected edge.
-					Override this method if the shape being
-					drawn is changed, in order to compute the 
+					Override this method if a custom shape is
+					being drawn, in order to compute the 
 					point accordingly.
 	Access :		Public
 
@@ -324,62 +325,8 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 
    ============================================================*/
 {
-	CRect r = GetRect();
-	
-	double xA = r.left;
-	double yA = r.top;
-	double xC = r.right;
-	double yC = r.bottom;
-	double xX = innerPoint.x;
-	double yX = innerPoint.y;
-	double xY = outerPoint.x;
-	double yY = outerPoint.y;
-	
-	double t = 0;
-
-	if (innerPoint.x >= r.left && innerPoint.x <= r.right && innerPoint.y >= r.top && innerPoint.y <= r.bottom) {
-		if (!(outerPoint.x >= r.left && outerPoint.x <= r.right && outerPoint.y >= r.top && outerPoint.y <= r.bottom)) {
-
-			if (xY == xX) {
-				t = max((yA - yX) / (yY - yX), (yC - yX) / (yY - yX));
-			}
-			else {
-				if (yY == yX) {
-					t = max((xA - xX) / (xY - xX), (xC - xX) / (xY - xX));
-				}
-				else {
-					if (xY > xX) {
-						if (yY > yX) {
-							t = min((xC - xX) / (xY - xX), (yC - yX) / (yY - yX));
-						}
-						else {
-							t = min((xC - xX) / (xY - xX), (yA - yX) / (yY - yX));
-						}
-					}
-					else {
-						if (yY > yX) {
-							t = min((xA - xX) / (xY - xX), (yC - yX) / (yY - yX));
-						}
-						else {
-							t = min((xA - xX) / (xY - xX), (yA - yX) / (yY - yX));
-						}
-					}
-				}
-			}
-			
-			CPoint result;
-			result.x = (t * xY + (1 - t) * xX);
-			result.y = (t * yY + (1 - t) * yX);
-
-			/* uncomment for debugging */
-			/*msg.Format(_T("intersection: (%d, %d)"), result.x, result.y);
-			AfxMessageBox(msg);*/
-
-			return result;
-		}
-	}
-
-	return CPoint(-1,-1);
+	CDoublePoint result = CIntersectionHelper::SegmentIntersectsRect(innerPoint, outerPoint, GetRect());
+	return result.ToCPoint();
 }
 
 void CProMoBlockView::SetLeft(double left)
