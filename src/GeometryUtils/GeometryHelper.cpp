@@ -187,3 +187,11 @@ void CGeometryHelper::AlignToAxis(CDoubleRect& rect, int submode)
 		}
 	}
 }
+
+CDoublePoint CGeometryHelper::ScaleVertex(const CDoublePoint& v, const CDoubleRect& rect)
+{
+	return CDoublePoint(
+		rect.left + v.x * rect.Width(),
+		rect.top + v.y * rect.Height()
+	);
+}

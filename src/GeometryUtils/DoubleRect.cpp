@@ -33,14 +33,14 @@ CDoubleRect::CDoubleRect()
 	right = 0;
 }
 
-CDoubleRect::CDoubleRect(CRect rect)
+CDoubleRect::CDoubleRect(const CRect& rect)
 /* ============================================================
 	Function :		CDoubleRect::CDoubleRect
 	Description :	Constructor
 	Access :		Public
 
 	Return :		void
-	Parameters :	CRect rect	-	A 'CRect' rectangle to
+	Parameters :	CRect& rect	-	A 'CRect' rectangle to
 									copy coordinates from
 
 	Usage :
@@ -50,23 +50,60 @@ CDoubleRect::CDoubleRect(CRect rect)
 	CDoubleRect::SetRect(rect);
 }
 
-CDoubleRect::CDoubleRect(double left, double top, double right, double bottom)
+CDoubleRect::CDoubleRect(const double& left, const double& top, const double& right, const double& bottom)
 /* ============================================================
 	Function :		CDoubleRect::CDoubleRect
 	Description :	Constructor
 	Access :		Public
 
 	Return :		void
-	Parameters :	double left		-	Left edge
-					double top		-	Top edge
-					double right	-	Right edge
-					double bottom	-	Bottom edge
+	Parameters :	double& left	-	Left edge
+					double& top		-	Top edge
+					double& right	-	Right edge
+					double& bottom	-	Bottom edge
 
 	Usage :
 
    ============================================================*/
 {
 	CDoubleRect::SetRect(left, top, right, bottom);
+}
+
+CDoubleRect::CDoubleRect(const CDoubleRect &other)
+/* ============================================================
+	Function :		CDoubleRect::CDoubleRect
+	Description :	Copy constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDoubleRect& other	-	rect to copy
+											information from
+
+	Usage :
+
+   ============================================================*/
+{
+	top = other.top;
+	left = other.left;
+	bottom = other.bottom;
+	right = other.right;
+}
+
+CDoubleRect& CDoubleRect::operator=(const CDoubleRect& other)
+/* ============================================================
+	Function :		CDoubleRect::operator=
+	Description :	Assignment operator
+	Access :		Public
+
+   ============================================================*/
+{
+	if (this != &other) {
+		top = other.top;
+		left = other.left;
+		bottom = other.bottom;
+		right = other.right;
+	}
+	return *this;
 }
 
 double CDoubleRect::Width() const
@@ -126,14 +163,14 @@ CRect CDoubleRect::ToCRect() const
 	return CRect((int)left, (int)top, (int)right, (int)bottom);
 }
 
-void CDoubleRect::SetRect(CRect rect)
+void CDoubleRect::SetRect(const CRect &rect)
 /* ============================================================
 	Function :		CDoubleRect::SetRect
 	Description :	Sets the object rectangle, normalized.
 	Access :		Public
 
 	Return :		void
-	Parameters :	CRect rect	-	The rectangle to set.
+	Parameters :	CRect& rect	-	The rectangle to set.
 
    ============================================================*/
 {
@@ -145,17 +182,17 @@ void CDoubleRect::SetRect(CRect rect)
 
 }
 
-void CDoubleRect::SetRect(double left, double top, double right, double bottom)
+void CDoubleRect::SetRect(const double& left, const double& top, const double& right, const double& bottom)
 /* ============================================================
 	Function :		CDoubleRect::SetRect
 	Description :	Sets the object rectangle.
 	Access :		Public
 
 	Return :		void
-	Parameters :	double left		-	Left edge
-					double top		-	Top edge
-					double right	-	Right edge
-					double bottom	-	Bottom edge
+	Parameters :	double& left	-	Left edge
+					double& top		-	Top edge
+					double& right	-	Right edge
+					double& bottom	-	Bottom edge
 
    ============================================================*/
 {

@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "IntersectionHelper.h"
+#include "GeometryHelper.h"
+
+static const CDoublePoint NO_INTERSECTION(-1.0, -1.0);
 
 CDoublePoint CIntersectionHelper::SegmentIntersectsRect(const CDoublePoint& innerPoint, const CDoublePoint& outerPoint, const CDoubleRect& rect)
 /* ============================================================
@@ -77,7 +80,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsRect(const CDoublePoint& inne
 		}
 	}
 
-	return CDoublePoint(-1, -1);
+	return NO_INTERSECTION;
 }
 
 CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& innerPoint, const CDoublePoint& outerPoint, const CDoubleRect& rect)
@@ -100,7 +103,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
     double b = (bottom - top) / 2.0;
 
     if (a < 1e-6 || b < 1e-6)
-        return CPoint(-1, -1); // Avoid divide-by-zero
+        return NO_INTERSECTION; // Avoid divide-by-zero
 
 
     // 3. Translate points to ellipse-centered coordinate system
@@ -138,7 +141,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
         }
         else {
             // Truly no intersection
-            return CDoublePoint(-1, -1);
+            return NO_INTERSECTION;
         }
     }
 
@@ -166,4 +169,76 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
     }
 
     return CDoublePoint((xi + 0.5), (yi + 0.5));
+}
+
+CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p1, const CDoublePoint& p2, const CDoubleRect& rect, const CObArray* points)
+{
+    if (!points || points->GetSize() < 3)
+        return NO_INTERSECTION; // Not a valid polygon
+
+    // Scale normalized vertices into polygon coordinates
+    CArray<CDoublePoint, CDoublePoint&> scaled;
+    scaled.SetSize(points->GetSize());
+
+    for (int i = 0; i < points->GetSize(); ++i)
+    {
+        CDoublePoint* v = reinterpret_cast<CDoublePoint*>(points->GetAt(i));
+        if (v)
+        {
+            scaled[i] = CGeometryHelper::ScaleVertex(*v, rect); // maps [0,1] -> rect coords
+        }
+        else
+        {
+            return NO_INTERSECTION; // safety check
+        }
+    }
+
+    // Check segment against each polygon edge
+    for (int i = 0; i < scaled.GetSize(); ++i)
+    {
+        const CDoublePoint& q1 = scaled[i];
+        const CDoublePoint& q2 = scaled[(i + 1) % scaled.GetSize()]; // wrap to first
+
+        CDoublePoint inter = SegmentIntersectsSegment(p1, p2, q1, q2);
+        if (!(inter.x == -1.0 && inter.y == -1.0))
+            return inter; // Found an intersection
+    }
+
+    return NO_INTERSECTION; // No edge intersection
+}
+
+CDoublePoint CIntersectionHelper::SegmentIntersectsSegment(const CDoublePoint& p1, const CDoublePoint& p2,
+    const CDoublePoint& q1, const CDoublePoint& q2)
+{
+    auto cross = [](const CDoublePoint& a, const CDoublePoint& b, const CDoublePoint& c) {
+        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+        };
+
+    double d1 = cross(p1, p2, q1);
+    double d2 = cross(p1, p2, q2);
+    double d3 = cross(q1, q2, p1);
+    double d4 = cross(q1, q2, p2);
+
+    if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
+        ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0)))
+    {
+        // Compute intersection point
+        double A1 = p2.y - p1.y;
+        double B1 = p1.x - p2.x;
+        double C1 = A1 * p1.x + B1 * p1.y;
+
+        double A2 = q2.y - q1.y;
+        double B2 = q1.x - q2.x;
+        double C2 = A2 * q1.x + B2 * q1.y;
+
+        double det = A1 * B2 - A2 * B1;
+        if (det != 0.0)
+        {
+            double x = (B2 * C1 - B1 * C2) / det;
+            double y = (A1 * C2 - A2 * C1) / det;
+            return CDoublePoint(x, y);
+        }
+    }
+
+    return NO_INTERSECTION;
 }

@@ -31,14 +31,14 @@ CDoublePoint::CDoublePoint()
 	y = 0;
 }
 
-CDoublePoint::CDoublePoint(CPoint pt)
+CDoublePoint::CDoublePoint(const CPoint& pt)
 /* ============================================================
 	Function :		CDoublePoint::CDoublePoint
 	Description :	Constructor
 	Access :		Public
 
 	Return :		void
-	Parameters :	CPoint pt	-	A 'CPoint' rectangle to
+	Parameters :	CPoint& pt	-	A 'CPoint' rectangle to
 									copy coordinates from
 
 	Usage :
@@ -48,21 +48,55 @@ CDoublePoint::CDoublePoint(CPoint pt)
 	CDoublePoint::SetPoint(pt);
 }
 
-CDoublePoint::CDoublePoint(double x, double y)
+CDoublePoint::CDoublePoint(const double& x, const double& y)
 /* ============================================================
 	Function :		CDoublePoint::CDoublePoint
 	Description :	Constructor
 	Access :		Public
 
 	Return :		void
-	Parameters :	double x		-	horizontal position
-					double y		-	vertical position
+	Parameters :	double& x		-	horizontal position
+					double& y		-	vertical position
 
 	Usage :
 
    ============================================================*/
 {
 	CDoublePoint::SetPoint(x,y);
+}
+
+CDoublePoint::CDoublePoint(const CDoublePoint& other)
+/* ============================================================
+	Function :		CDoublePoint::CDoublePoint
+	Description :	Copy constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDoublePoint& other	-	point to copy 
+											information from
+
+	Usage :
+
+   ============================================================*/
+{
+	x = other.x;
+	y = other.y;
+}
+
+CDoublePoint& CDoublePoint::operator=(const CDoublePoint& other)
+/* ============================================================
+	Function :		CDoublePoint::operator=
+	Description :	Assignment operator
+	Access :		Public
+
+   ============================================================*/
+{
+	if (this != &other) {
+		// call CObject assignment if ever needed
+		x = other.x;
+		y = other.y;
+	}
+	return *this;
 }
 
 CPoint CDoublePoint::ToCPoint() const
@@ -82,14 +116,14 @@ CPoint CDoublePoint::ToCPoint() const
 	return CPoint((int)x, (int)y);
 }
 
-void CDoublePoint::SetPoint(CPoint pt)
+void CDoublePoint::SetPoint(const CPoint& pt)
 /* ============================================================
 	Function :		CDoublePoint::SetPoint
 	Description :	Sets the position, normalized.
 	Access :		Public
 
 	Return :		void
-	Parameters :	CPoint pt	-	The position to set.
+	Parameters :	CPoint& pt	-	The position to set.
 
    ============================================================*/
 {
@@ -99,15 +133,15 @@ void CDoublePoint::SetPoint(CPoint pt)
 
 }
 
-void CDoublePoint::SetPoint(double x, double y)
+void CDoublePoint::SetPoint(const double& x, const double& y)
 /* ============================================================
 	Function :		CDoublePoint::SetPoint
 	Description :	Sets the position.
 	Access :		Public
 
 	Return :		void
-	Parameters :	double x		-	horizontal position
-					double y		-	vertical position
+	Parameters :	double& x		-	horizontal position
+					double& y		-	vertical position
 
    ============================================================*/
 {

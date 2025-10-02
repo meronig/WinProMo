@@ -29,6 +29,7 @@
 #include "ProMoEdgeModel.h"
 #include "../resource.h"
 #include "../FileUtils/FileParser.h"
+#include "../GeometryUtils/GeometryHelper.h"
 #include "../GeometryUtils/IntersectionHelper.h"
 
 #ifdef _DEBUG
@@ -52,7 +53,7 @@ CProMoBlockView::CProMoBlockView()
 	m_blockmodel = NULL;
 	m_lockProportions = FALSE;
 	m_fitTitle = FALSE;
-	m_perimeter = SHAPE_RECTANGLE;
+	m_perimeter = SHAPE_CUSTOM;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
 	m_titleRect = CRect(0,0,0,0);
@@ -71,7 +72,11 @@ CProMoBlockView::CProMoBlockView()
 
 	SetName(CProMoNameFactory::GetID());
 
-	
+	//test: a triangle
+	//m_vertexes.Add(new CDoublePoint(0.5, 0));
+	//m_vertexes.Add(new CDoublePoint(1, 1));
+	//m_vertexes.Add(new CDoublePoint(0, 1));
+	//m_perimeter = SHAPE_POLYGON;
 }
 
 CProMoBlockView::~CProMoBlockView()
@@ -88,7 +93,7 @@ CProMoBlockView::~CProMoBlockView()
 {
 
 	SetModel(NULL);
-
+	ClearVertexes();
 }
 
 void CProMoBlockView::Draw(CDC* dc, CRect rect)
@@ -110,24 +115,13 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 {
 	ASSERT_VALID(this->GetModel());
 
-	dc->SelectStockObject(BLACK_PEN);
-	dc->SelectStockObject(WHITE_BRUSH);
+	DrawShape(dc, rect);
+	DrawTargetBox(dc, rect);
+	DrawTitle(dc, rect);
+}
 
-	CSize sz = GetMarkerSize();
-	CPoint pt;
-	pt.x = round((double)sz.cx * GetZoom());
-	pt.y = round((double)sz.cy * GetZoom());
-
-	if (IsTarget()) {
-		CPen p;
-		p.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
-		CPen* pOldPen = dc->SelectObject(&p);
-		dc->RoundRect(rect, pt);
-	}
-	else {
-		dc->RoundRect(rect, pt);
-	}
-
+void CProMoBlockView::DrawTitle(CDC* dc, CRect& rect)
+{
 	CFont font;
 	CString str;
 	/* uncomment line below for debug */
@@ -136,7 +130,7 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 	font.CreateFont(-round(12.0 * GetZoom()), 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, _T("Courier New"));
 	dc->SelectObject(&font);
 	int mode = dc->SetBkMode(TRANSPARENT);
-	
+
 	if (this->GetModel()->GetSubBlocks()->GetSize() == 0) {
 		dc->DrawText(str, rect, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER);
 	}
@@ -145,6 +139,57 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 	}
 	dc->SelectStockObject(DEFAULT_GUI_FONT);
 	dc->SetBkMode(mode);
+}
+
+void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
+{
+	dc->SelectStockObject(BLACK_PEN);
+	dc->SelectStockObject(WHITE_BRUSH);
+
+	CSize sz = GetMarkerSize();
+	CPoint pt;
+	pt.x = round((double)sz.cx * GetZoom());
+	pt.y = round((double)sz.cy * GetZoom());
+
+	switch (GetShape()) {
+	case SHAPE_ELLIPSE:
+		dc->Ellipse(rect);
+		break;
+	case SHAPE_POLYGON:
+		if (m_vertexes.GetSize() > 2) {
+			CArray<POINT, POINT&> scaledPoints;
+			scaledPoints.SetSize(m_vertexes.GetSize());
+
+			for (int i = 0; i < m_vertexes.GetSize(); ++i)
+			{
+				CDoublePoint* v = (CDoublePoint*)m_vertexes[i];
+				CDoublePoint scaled = CGeometryHelper::ScaleVertex(*v, rect);
+
+				scaledPoints[i].x = (LONG)scaled.x;
+				scaledPoints[i].y = (LONG)scaled.y;
+			}
+
+			dc->Polygon(scaledPoints.GetData(), scaledPoints.GetSize());
+			break;
+		}
+	case SHAPE_RECTANGLE:
+		dc->Rectangle(rect);
+		break;
+	default:
+		dc->RoundRect(rect, pt);
+	}
+
+}
+
+void CProMoBlockView::DrawTargetBox(CDC* dc, CRect& rect)
+{
+	CPen p;
+	if (IsTarget()) {
+		p.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
+		dc->SelectObject(&p);
+		dc->SelectStockObject(NULL_BRUSH);
+		dc->Rectangle(rect);
+	}
 }
 
 
@@ -327,13 +372,14 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
    ============================================================*/
 {
 	CDoublePoint result;
-	if (GetShape() == SHAPE_RECTANGLE) {
+	if (GetShape() == SHAPE_ELLIPSE) {
+		result = CIntersectionHelper::SegmentIntersectsEllipse(innerPoint, outerPoint, GetRect());
+	} else if (GetShape() == SHAPE_POLYGON) {
+		result = CIntersectionHelper::SegmentIntersectsPolygon(innerPoint, outerPoint, GetRect(), GetVertexes());
+	} else {
 		result = CIntersectionHelper::SegmentIntersectsRect(innerPoint, outerPoint, GetRect());
 	}
-	else if (GetShape() == SHAPE_ELLIPSE) {
-		result = CIntersectionHelper::SegmentIntersectsEllipse(innerPoint, outerPoint, GetRect());
-	}
-	
+		
 	return result.ToCPoint();
 }
 
@@ -802,6 +848,28 @@ int CProMoBlockView::GetShape() const
    ============================================================*/
 {
 	return m_perimeter;
+}
+
+BOOL CProMoBlockView::AddVertex(const CDoublePoint& point)
+{
+	if (0 <= point.x <= 1 && 0 <= point.y <= 1) {
+		CDoublePoint* vertex = new CDoublePoint(point);
+		m_vertexes.Add(vertex);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+CObArray* CProMoBlockView::GetVertexes()
+{
+	return &m_vertexes;
+}
+
+void CProMoBlockView::ClearVertexes()
+{
+	for (int i = 0; i < m_vertexes.GetSize(); i++) {
+		delete m_vertexes.GetAt(i);
+	}
 }
 
 void CProMoBlockView::AutoResize()

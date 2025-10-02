@@ -1,13 +1,17 @@
 #ifndef _DOUBLERECT_H_
 #define _DOUBLERECT_H_
 
-class AFX_EXT_CLASS CDoubleRect 
+class AFX_EXT_CLASS CDoubleRect : public CObject
 {
 
 public:
 	CDoubleRect();
-	CDoubleRect(CRect rect);
-	CDoubleRect(double left, double top, double right, double bottom);
+	CDoubleRect(const CRect& rect);
+	CDoubleRect(const double& left, const double& top, const double& right, const double& bottom);
+	CDoubleRect(const CDoubleRect& other);
+
+	CDoubleRect& operator=(const CDoubleRect& other);
+
 
 	double Width() const;
 	double Height() const;
@@ -15,8 +19,8 @@ public:
 
 	CRect ToCRect() const;
 
-	void SetRect(CRect rect);
-	void SetRect(double left, double top, double right, double bottom);
+	void SetRect(const CRect& rect);
+	void SetRect(const double& left, const double& top, const double& right, const double& bottom);
 
 	//member variables are public to ensure efficiency and compatibility with CRect
 	double top;

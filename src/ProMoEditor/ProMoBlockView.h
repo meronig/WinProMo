@@ -10,10 +10,12 @@
 
 #include "../DiagramEditor/DiagramEntity.h"
 #include "ProMoBlockModel.h"
+#include "../GeometryUtils/DoublePoint.h"
 
-#define SHAPE_RECTANGLE 0
-#define SHAPE_ELLIPSE 1
-#define SHAPE_POLYGON 2
+#define SHAPE_CUSTOM 0
+#define SHAPE_RECTANGLE 1
+#define SHAPE_ELLIPSE 2
+#define SHAPE_POLYGON 3
 
 class AFX_EXT_CLASS CProMoBlockView : public CDiagramEntity
 {
@@ -68,12 +70,17 @@ protected:
 	virtual void SetShape(const int& type);
 	virtual int GetShape() const;
 
+	virtual BOOL AddVertex(const CDoublePoint &point);
+	virtual CObArray* GetVertexes();
+	virtual void ClearVertexes();
+
 private:
 	BOOL			m_moved;
 	BOOL			m_lockProportions;
 	BOOL			m_fitTitle;
 	CRect			m_titleRect;
 	int				m_perimeter;
+	CObArray		m_vertexes;
 		
 // Overrides
 public:
@@ -89,6 +96,12 @@ public:
 	static	CDiagramEntity* CreateFromString(const CString& str);
 	
 	virtual void Draw(CDC* dc, CRect rect);
+
+	void DrawTitle(CDC* dc, CRect& rect);
+
+	void DrawShape(CDC* dc, CRect& rect);
+
+	void DrawTargetBox(CDC* dc, CRect& rect);
 
 	virtual void	ShowPopup(CPoint point, CWnd* parent);
 
