@@ -209,7 +209,6 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 		CProMoBlockView* currObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(j));
 
 		if (currObj) {
-			ScreenToVirtual(point);
 			int hitCode = currObj->GetHitCode(point);
 			if (hitCode == DEHT_BODY) {
 				// We found the object that was clicked
@@ -467,7 +466,10 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 	if (GetInteractMode() == MODE_MOVING || GetInteractMode() == MODE_RESIZING || IsDrawing())
 	{
 		ResetTarget();
-		CProMoBlockView* targetBlock = GetTargetBlock(point);
+
+		CPoint target = point;
+		ScreenToVirtual(target);
+		CProMoBlockView* targetBlock = GetTargetBlock(target);
 		if (targetBlock) {
 			targetBlock->SetTarget(TRUE);
 		}
@@ -557,7 +559,9 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 			UnselectAll();
 			// Identify clicked block (if any)
 			ResetTarget();
-			target = GetTargetBlock(point);
+			CPoint virtpoint = point;
+			ScreenToVirtual(virtpoint);
+			target = GetTargetBlock(virtpoint);
 
 		}
 	}
