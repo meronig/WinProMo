@@ -33,7 +33,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsRect(const CDoublePoint& inne
 													of the
 													rectangle
 
-============================================================*/
+    ============================================================*/
 {
 	
 	double t = 0;
@@ -84,6 +84,37 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsRect(const CDoublePoint& inne
 }
 
 CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& innerPoint, const CDoublePoint& outerPoint, const CDoubleRect& rect)
+/* ============================================================
+    Function :		CIntersectionHelper::SegmentIntersectsEllipse
+    Description :	Determines the point on the border of the
+                    ellipse that intersects with a (virtual)
+                    line. Can be used to know where to trim a
+                    connected edge.
+    Access :		Public
+
+    Return :		CDoublePoint				-	point
+                                                    that lies
+                                                    on the
+                                                    border of
+                                                    the
+                                                    ellipse
+    Parameters :	CDoublePoint& innerPoint	-	point
+                                                    that lies
+                                                    inside
+                                                    the
+                                                    ellipse
+                    CDoublePoint& outerPoint	-	point
+                                                    that lies
+                                                    outside
+                                                    the
+                                                    ellipse
+                    CDoubleRect& rect			-	perimeter
+                                                    of the
+                                                    rectangle
+                                                    incribing
+                                                    the ellipse
+
+    ============================================================*/
 {
     double ipx = innerPoint.x;
     double ipy = innerPoint.y;
@@ -172,6 +203,43 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
 }
 
 CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p1, const CDoublePoint& p2, const CDoubleRect& rect, const CObArray* points)
+/* ============================================================
+    Function :		CIntersectionHelper::SegmentIntersectsPolygon
+    Description :	Determines the point on the border of the
+                    polygon that intersects with a (virtual)
+                    line. Can be used to know where to trim a
+                    connected edge.
+    Access :		Public
+
+    Return :		CDoublePoint				-	point
+                                                    that lies
+                                                    on the
+                                                    border of
+                                                    the
+                                                    polygon
+    Parameters :	CDoublePoint& innerPoint	-	point
+                                                    that lies
+                                                    inside
+                                                    the
+                                                    polygon
+                    CDoublePoint& outerPoint	-	point
+                                                    that lies
+                                                    outside
+                                                    the
+                                                    polygon
+                    CDoubleRect& rect			-	perimeter
+                                                    of the
+                                                    rectangle
+                                                    incribing
+                                                    the polygon
+                    CObArray* points            -   array of
+                                                    points
+                                                    representing
+                                                    the vertices
+                                                    of the 
+                                                    polygon
+
+    ============================================================*/
 {
     if (!points || points->GetSize() < 3)
         return NO_INTERSECTION; // Not a valid polygon
@@ -185,7 +253,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p
         CDoublePoint* v = reinterpret_cast<CDoublePoint*>(points->GetAt(i));
         if (v)
         {
-            scaled[i] = CGeometryHelper::ScaleVertex(*v, rect); // maps [0,1] -> rect coords
+            scaled[i] = CGeometryHelper::ScaleToRect(*v, rect); // maps [0,1] -> rect coords
         }
         else
         {
@@ -209,6 +277,29 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p
 
 CDoublePoint CIntersectionHelper::SegmentIntersectsSegment(const CDoublePoint& p1, const CDoublePoint& p2,
     const CDoublePoint& q1, const CDoublePoint& q2)
+/* ============================================================
+    Function :		CIntersectionHelper::SegmentIntersectsSegment
+    Description :	Determines the point in which two segments
+                    intersect with each other.
+    Access :		Public
+
+    Return :		CDoublePoint		-	point where the
+                                            two segments
+                                            intersect
+    Parameters :	CDoublePoint& p1	-	point where the
+                                            first segment
+                                            starts
+                    CDoublePoint& p2	-	point where the
+                                            first segment
+                                            ends
+                    CDoublePoint& p1	-	point where the
+                                            second segment
+                                            starts
+                    CDoublePoint& p2	-	point where the
+                                            second segment
+                                            ends
+
+    ============================================================*/
 {
     auto cross = [](const CDoublePoint& a, const CDoublePoint& b, const CDoublePoint& c) {
         return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);

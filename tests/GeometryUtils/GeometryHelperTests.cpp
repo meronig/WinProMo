@@ -18,6 +18,20 @@ namespace CGeometryHelperTests
             WinProMoTestHelpers::BootstrapMFC();
         }
 
+#pragma region ScaleToRectTests
+
+        TEST_METHOD(ScaleToRect_CorrectRange_Scale) {
+
+            CDoubleRect boundRect(10, 20, 30, 40);
+            CDoublePoint point(0.5, 0.5);
+            CDoublePoint scaledPoint = CGeometryHelper::ScaleToRect(point, boundRect);
+
+            Assert::AreEqual(20.0, scaledPoint.x);
+            Assert::AreEqual(30.0, scaledPoint.y);
+        }
+
+#pragma endregion
+
 #pragma region AspectRatioTests
 
         TEST_METHOD(EnforceAspectRatio_TopMiddle_AdjustsWidth)

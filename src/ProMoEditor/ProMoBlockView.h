@@ -39,7 +39,6 @@ public:
 	// Block-specific methods
 	virtual void AutoResize();
 		
-	virtual void Highlight(CDC* dc, CRect rect);
 	virtual BOOL IsTarget();
 	virtual void SetTarget(BOOL isTarget);
 	
@@ -71,8 +70,13 @@ protected:
 	virtual int GetShape() const;
 
 	virtual BOOL AddVertex(const CDoublePoint &point);
-	virtual CObArray* GetVertexes();
-	virtual void ClearVertexes();
+	virtual CObArray* GetVertices();
+	virtual void ClearVertices();
+
+	virtual void DrawTitle(CDC* dc, CRect& rect);
+	virtual void DrawShape(CDC* dc, CRect& rect);
+	virtual void Highlight(CDC* dc, CRect rect);
+
 
 private:
 	BOOL			m_moved;
@@ -80,7 +84,7 @@ private:
 	BOOL			m_fitTitle;
 	CRect			m_titleRect;
 	int				m_perimeter;
-	CObArray		m_vertexes;
+	CObArray		m_vertices;
 		
 // Overrides
 public:
@@ -96,12 +100,6 @@ public:
 	static	CDiagramEntity* CreateFromString(const CString& str);
 	
 	virtual void Draw(CDC* dc, CRect rect);
-
-	void DrawTitle(CDC* dc, CRect& rect);
-
-	void DrawShape(CDC* dc, CRect& rect);
-
-	void DrawTargetBox(CDC* dc, CRect& rect);
 
 	virtual void	ShowPopup(CPoint point, CWnd* parent);
 

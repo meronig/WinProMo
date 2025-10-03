@@ -46,6 +46,16 @@ namespace CDoubleRectTests
             Assert::AreEqual(30.3, rect.right);
         }
 
+        TEST_METHOD(Constructor_WhenCDoubleRectIsPassed_SetCorrectMeasures)
+        {
+            CDoubleRect rect(10.1, 20.2, 30.3, 40.4);
+            CDoubleRect rect2(rect);
+            Assert::AreEqual(20.2, rect2.top);
+            Assert::AreEqual(10.1, rect2.left);
+            Assert::AreEqual(40.4, rect2.bottom);
+            Assert::AreEqual(30.3, rect2.right);
+        }
+
 #pragma endregion
 
 #pragma region PropertyComputationTests
@@ -100,6 +110,18 @@ namespace CDoubleRectTests
             CDoubleRect rect(10.1, 20.2, 30.3, 40.4);
             CRect crect = rect.ToCRect();
             Assert::AreEqual(CRect(10,20,30,40), crect);
+        }
+        
+        TEST_METHOD(Assignment_WhenPerformed_ReturnCorrectMeasures)
+        {
+            CDoubleRect rect(10.1, 20.2, 30.3, 40.4);
+            CDoubleRect rect2(50.5,60.6,70.7,80.8);
+            rect2 = rect;
+
+            Assert::AreEqual(20.2, rect2.top);
+            Assert::AreEqual(10.1, rect2.left);
+            Assert::AreEqual(40.4, rect2.bottom);
+            Assert::AreEqual(30.3, rect2.right);
         }
 #pragma endregion
 

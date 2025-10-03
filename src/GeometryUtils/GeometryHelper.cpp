@@ -21,7 +21,8 @@ void CGeometryHelper::EnforceAspectRatio(const CDoubleRect& oldRect, CDoubleRect
 					the same aspect ratio as a reference 
 					rectangle.
 
-	Parameters :	CDoubleRect& oldRect	-	rectangle 
+	Return :		void
+	Parameters :	CDoubleRect& oldRect	-	rectangle
 												providing the 
 												original ratio
 					CDoubleRect& newRect	-	rectangle
@@ -116,6 +117,7 @@ void CGeometryHelper::AlignToAxis(CDoubleRect& rect, int submode)
 					segment aligns with the X-axis at an angle 
 					that is a multiple of 45°.
 
+	Return :		void
 	Parameters :	CDoubleRect& rect	-	the rectangle to
 											be aligned
 					int submode			-	which edge or 
@@ -188,7 +190,25 @@ void CGeometryHelper::AlignToAxis(CDoubleRect& rect, int submode)
 	}
 }
 
-CDoublePoint CGeometryHelper::ScaleVertex(const CDoublePoint& v, const CDoubleRect& rect)
+CDoublePoint CGeometryHelper::ScaleToRect(const CDoublePoint& v, const CDoubleRect& rect)
+/* ============================================================
+	Function :		CGeometryHelper::ScaleToRect
+	Description :	Scales a point with respect to a 
+					bounding rectangle.
+
+	Return :		CDoublePoint		-	point scaled w.r.t
+											bounding rectangle
+	Parameters :	CDoublePoint& v		-	point specifying
+											the position in 
+											0-1 range.
+					CDoubleRect& rect	-	rectangle to be 
+											used to scale the
+											point.
+
+	Usage :			Use to scale the point with respect to the
+					given bounding rectangle.
+
+   ============================================================*/
 {
 	return CDoublePoint(
 		rect.left + v.x * rect.Width(),

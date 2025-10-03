@@ -93,7 +93,7 @@ CProMoBlockView::~CProMoBlockView()
 {
 
 	SetModel(NULL);
-	ClearVertexes();
+	ClearVertices();
 }
 
 void CProMoBlockView::Draw(CDC* dc, CRect rect)
@@ -116,11 +116,21 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 	ASSERT_VALID(this->GetModel());
 
 	DrawShape(dc, rect);
-	DrawTargetBox(dc, rect);
+	Highlight(dc, rect);
 	DrawTitle(dc, rect);
 }
 
 void CProMoBlockView::DrawTitle(CDC* dc, CRect& rect)
+/* ============================================================
+	Function :		CProMoBlockView::DrawTitle
+	Description :	Draws the title of the block.
+
+	Return :		void
+	Parameters :	CDC* dc		-	The CDC to draw to.
+					CRect rect	-	The real rectangle of the
+									object.
+
+   ============================================================*/
 {
 	CFont font;
 	CString str;
@@ -142,6 +152,16 @@ void CProMoBlockView::DrawTitle(CDC* dc, CRect& rect)
 }
 
 void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
+/* ============================================================
+	Function :		CProMoBlockView::DrawShape
+	Description :	Draws the shape of the block.
+
+	Return :		void
+	Parameters :	CDC* dc		-	The CDC to draw to.
+					CRect rect	-	The real rectangle of the
+									object.
+
+   ============================================================*/
 {
 	dc->SelectStockObject(BLACK_PEN);
 	dc->SelectStockObject(WHITE_BRUSH);
@@ -156,14 +176,14 @@ void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
 		dc->Ellipse(rect);
 		break;
 	case SHAPE_POLYGON:
-		if (m_vertexes.GetSize() > 2) {
+		if (m_vertices.GetSize() > 2) {
 			CArray<POINT, POINT&> scaledPoints;
-			scaledPoints.SetSize(m_vertexes.GetSize());
+			scaledPoints.SetSize(m_vertices.GetSize());
 
-			for (int i = 0; i < m_vertexes.GetSize(); ++i)
+			for (int i = 0; i < m_vertices.GetSize(); ++i)
 			{
-				CDoublePoint* v = (CDoublePoint*)m_vertexes[i];
-				CDoublePoint scaled = CGeometryHelper::ScaleVertex(*v, rect);
+				CDoublePoint* v = (CDoublePoint*)m_vertices[i];
+				CDoublePoint scaled = CGeometryHelper::ScaleToRect(*v, rect);
 
 				scaledPoints[i].x = (LONG)scaled.x;
 				scaledPoints[i].y = (LONG)scaled.y;
@@ -181,45 +201,31 @@ void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
 
 }
 
-void CProMoBlockView::DrawTargetBox(CDC* dc, CRect& rect)
+void CProMoBlockView::Highlight(CDC* dc, CRect rect)
+/* ============================================================
+	Function :		CProMoBlockView::Highlight
+	Description :	Highlights the object by making its border
+					thicker and red.
+
+	Return :		void
+	Parameters :	CDC* dc		-	The CDC to draw to.
+					CRect rect	-	The real rectangle of the
+									object.
+
+	Usage :			The function should clean up all selected
+					objects. Note that the CDC is a memory CDC,
+					so creating a memory CDC in this function
+					will probably not speed up the function.
+
+	============================================================*/
 {
-	CPen p;
 	if (IsTarget()) {
+		CPen p;
 		p.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
 		dc->SelectObject(&p);
 		dc->SelectStockObject(NULL_BRUSH);
 		dc->Rectangle(rect);
 	}
-}
-
-
-
-void CProMoBlockView::Highlight(CDC* dc, CRect rect) {
-	/* ============================================================
-		Function :		CProMoBlockView::Highlight
-		Description :	Highlights the object by making its border
-						thicker and red.
-
-		Return :		void
-		Parameters :	CDC* dc		-	The CDC to draw to.
-						CRect rect	-	The real rectangle of the
-										object.
-
-		Usage :			The function should clean up all selected
-						objects. Note that the CDC is a memory CDC,
-						so creating a memory CDC in this function
-						will probably not speed up the function.
-
-	   ============================================================*/
-	CPen p;
-	p.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
-	CPen *pOldPen = dc->SelectObject(&p);
-	CSize sz = GetMarkerSize();
-	CPoint pt;
-	pt.x = round((double)sz.cx * GetZoom());
-	pt.y = round((double)sz.cy * GetZoom());
-	dc->RoundRect(rect, pt);
-	dc->SelectObject(pOldPen);
 }
 
 
@@ -375,7 +381,7 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 	if (GetShape() == SHAPE_ELLIPSE) {
 		result = CIntersectionHelper::SegmentIntersectsEllipse(innerPoint, outerPoint, GetRect());
 	} else if (GetShape() == SHAPE_POLYGON) {
-		result = CIntersectionHelper::SegmentIntersectsPolygon(innerPoint, outerPoint, GetRect(), GetVertexes());
+		result = CIntersectionHelper::SegmentIntersectsPolygon(innerPoint, outerPoint, GetRect(), GetVertices());
 	} else {
 		result = CIntersectionHelper::SegmentIntersectsRect(innerPoint, outerPoint, GetRect());
 	}
@@ -851,25 +857,59 @@ int CProMoBlockView::GetShape() const
 }
 
 BOOL CProMoBlockView::AddVertex(const CDoublePoint& point)
+/* ============================================================
+	Function :		CProMoBlockView::AddVertex
+	Description :	Adds a new vertex to the polygon 
+					representing the shape of the block.
+	Access :		Protected
+
+	Return :		BOOL				-	"TRUE" if the vertex
+											was added.
+	Parameters :	CDoublePoint& point	-	Vertex to be added
+
+   ============================================================*/
 {
 	if (0 <= point.x <= 1 && 0 <= point.y <= 1) {
 		CDoublePoint* vertex = new CDoublePoint(point);
-		m_vertexes.Add(vertex);
+		m_vertices.Add(vertex);
 		return TRUE;
 	}
 	return FALSE;
 }
 
-CObArray* CProMoBlockView::GetVertexes()
+CObArray* CProMoBlockView::GetVertices()
+/* ============================================================
+	Function :		CProMoBlockView::GetVertices
+	Description :	Returns the vertices of the polygon
+					representing the shape of the block.
+	Access :		Protected
+
+	Return :		CObArray*			-	Array containing
+											pointers to the
+											vertices.
+	Parameters :	none
+
+   ============================================================*/
 {
-	return &m_vertexes;
+	return &m_vertices;
 }
 
-void CProMoBlockView::ClearVertexes()
+void CProMoBlockView::ClearVertices()
+/* ============================================================
+	Function :		CProMoBlockView::ClearVertices
+	Description :	Removes all the vertices of the polygon
+					representing the shape of the block.
+	Access :		Protected
+
+	Return :		none
+	Parameters :	none
+
+   ============================================================*/
 {
-	for (int i = 0; i < m_vertexes.GetSize(); i++) {
-		delete m_vertexes.GetAt(i);
+	for (int i = m_vertices.GetSize() - 1; i >= 0; i--) {
+		delete m_vertices.GetAt(i);
 	}
+	m_vertices.RemoveAll();
 }
 
 void CProMoBlockView::AutoResize()
@@ -891,6 +931,8 @@ void CProMoBlockView::AutoResize()
 		if (childModel) {
 			CProMoBlockView* childView = childModel->GetMainView();
 			if (childView) {
+				BOOL isSelected = childView->IsSelected();
+				childView->Select(TRUE);
 				if (childView->GetBottom() > this->GetBottom()) {
 					this->SetRect(GetLeft(), GetTop(), GetRight(), childView->GetBottom() + 5);
 				}
@@ -903,6 +945,7 @@ void CProMoBlockView::AutoResize()
 				if (childView->GetLeft() < this->GetLeft()) {
 					this->SetRect(childView->GetLeft() - 5, GetTop(), GetRight(), GetBottom());
 				}
+				childView->Select(isSelected);
 			}
 		}
 	}

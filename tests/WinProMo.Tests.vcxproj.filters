@@ -66,6 +66,9 @@
     <ClCompile Include="GeometryUtils\GeometryHelperTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeometryUtils\DoublePointTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

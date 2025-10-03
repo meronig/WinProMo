@@ -238,13 +238,11 @@ namespace CProMoBlockViewTests
             // Add incoming edge
             CProMoEdgeView inEdgeView;
             inEdgeView.SetRect(CRect(0, 0, 10, 10));
-            //parent.GetModel()->LinkIncomingEdge(inEdgeView.GetModel());
             inEdgeView.SetDestination(&parent);
             
             // Add outgoing edge
             CProMoEdgeView outEdgeView;
             outEdgeView.SetRect(CRect(0, 0, 10, 10));
-            //parent.GetModel()->LinkOutgoingEdge(outEdgeView.GetModel());
             outEdgeView.SetSource(&parent);
 
             // Add a child block
@@ -273,7 +271,6 @@ namespace CProMoBlockViewTests
             for (auto& edgeView : incomingEdges)
             {
                 edgeView.SetRect(CRect(0, 0, 10, 10));
-                //parent.GetModel()->LinkIncomingEdge(edgeView.GetModel());
                 edgeView.SetDestination(&parent);
             }
 
@@ -282,7 +279,6 @@ namespace CProMoBlockViewTests
             for (auto& edgeView : outgoingEdges)
             {
                 edgeView.SetRect(CRect(0, 0, 10, 10));
-                //parent.GetModel()->LinkOutgoingEdge(edgeView.GetModel());
                 edgeView.SetSource(&parent);
             }
 
@@ -420,24 +416,6 @@ namespace CProMoBlockViewTests
             // Act / Assert: should not crash
             parent.Draw(&memDC, rect);
             child.Draw(&memDC, rect);
-        }
-
-        TEST_METHOD(Highlight_WhenCalledWithMemoryDC_DoesNotCrash)
-        {
-            // Arrange
-            CProMoBlockView block;
-            block.SetRect(0, 0, 200, 100);
-
-            CDC memDC;
-            CBitmap bmp;
-            memDC.CreateCompatibleDC(NULL);
-            bmp.CreateCompatibleBitmap(&memDC, 200, 100);
-            memDC.SelectObject(&bmp);
-
-            CRect rect(0, 0, 200, 100);
-
-            // Act / Assert
-            block.Highlight(&memDC, rect);
         }
 
         TEST_METHOD(ShowPopup_WhenCalledWithDesktopWindow_DoesNotCrash)
