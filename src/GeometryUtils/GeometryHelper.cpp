@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "GeometryHelper.h"
 #include "../DiagramEditor/DiagramEntity.h"
+#include <math.h>
 
 void CGeometryHelper::EnforceAspectRatio(const CDoubleRect& oldRect, CDoubleRect& newRect, int submode, const CPoint& cursorLocation)
 /* ============================================================
@@ -135,7 +136,7 @@ void CGeometryHelper::AlignToAxis(CDoubleRect& rect, int submode)
 	const double dy = fabs(rect.bottom - rect.top);
 
 	// Are we dragging from bottom-right, or from top-left?
-	const bool fromBottomRight = (submode == DEHT_BOTTOMRIGHT);
+	const BOOL fromBottomRight = (submode == DEHT_BOTTOMRIGHT);
 
 	if (dy / 2 > dx) {
 		// Snap to vertical

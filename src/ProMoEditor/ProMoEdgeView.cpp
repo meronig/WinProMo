@@ -277,7 +277,7 @@ void CProMoEdgeView::Reposition()
 					CPoint pt = sourceBlockView->GetIntersection(GetRect().TopLeft(), GetRect().BottomRight());
 					// No intersection exists, set to block center and compute again
 					if (pt.x < 0) {
-						pt = sourceBlockView->GetIntersection(sourceBlockView->GetRect().BottomRight() - sourceBlockView->GetRect().TopLeft(), GetRect().BottomRight());
+						pt = sourceBlockView->GetIntersection(CPoint(sourceBlockView->GetRect().BottomRight() - sourceBlockView->GetRect().TopLeft()), GetRect().BottomRight());
 					}
 					if (pt.x >= 0) {
 						SetTop(pt.y);
@@ -301,7 +301,7 @@ void CProMoEdgeView::Reposition()
 					CPoint pt = destBlockView->GetIntersection(GetRect().BottomRight(), GetRect().TopLeft());
 					// No intersection exists, set to block center and compute again
 					if (pt.x < 0) {
-						pt = destBlockView->GetIntersection(GetRect().TopLeft(), destBlockView->GetRect().BottomRight() - destBlockView->GetRect().TopLeft());
+						pt = destBlockView->GetIntersection(GetRect().TopLeft(), CPoint(destBlockView->GetRect().BottomRight() - destBlockView->GetRect().TopLeft()));
 					}
 					if (pt.x >= 0) {
 						SetBottom(pt.y);

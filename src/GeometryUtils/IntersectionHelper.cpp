@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "IntersectionHelper.h"
 #include "GeometryHelper.h"
+#include <math.h>
+#include <afxtempl.h>
 
 static const CDoublePoint NO_INTERSECTION(-1.0, -1.0);
 static const double EPS = 1e-6;
@@ -235,14 +237,15 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p
 
     ============================================================*/
 {
-    if (!points || points->GetSize() < 3)
+    int i = 0;
+	if (!points || points->GetSize() < 3)
         return NO_INTERSECTION; // Not a valid polygon
 
     // Scale normalized vertices into polygon coordinates
     CArray<CDoublePoint, CDoublePoint&> scaled;
     scaled.SetSize(points->GetSize());
 
-    for (int i = 0; i < points->GetSize(); ++i)
+    for (i = 0; i < points->GetSize(); ++i)
     {
         CDoublePoint* v = reinterpret_cast<CDoublePoint*>(points->GetAt(i));
         if (v)
@@ -256,7 +259,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p
     }
 
     // Check segment against each polygon edge
-    for (int i = 0; i < scaled.GetSize(); ++i)
+    for (i = 0; i < scaled.GetSize(); ++i)
     {
         const CDoublePoint& q1 = scaled[i];
         const CDoublePoint& q2 = scaled[(i + 1) % scaled.GetSize()]; // wrap to first

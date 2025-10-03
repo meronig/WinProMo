@@ -22,6 +22,7 @@
 
    ========================================================================*/
 #include "stdafx.h"
+#include <afxtempl.h>
 #include "ProMoBlockView.h"
 #include "ProMoNameFactory.h"
 #include "../DiagramEditor/Tokenizer.h"
