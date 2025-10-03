@@ -3,6 +3,7 @@
 #include "GeometryHelper.h"
 
 static const CDoublePoint NO_INTERSECTION(-1.0, -1.0);
+static const double EPS = 1e-6;
 
 CDoublePoint CIntersectionHelper::SegmentIntersectsRect(const CDoublePoint& innerPoint, const CDoublePoint& outerPoint, const CDoubleRect& rect)
 /* ============================================================
@@ -133,7 +134,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
     double a = (right - left) / 2.0;
     double b = (bottom - top) / 2.0;
 
-    if (a < 1e-6 || b < 1e-6)
+    if (a < EPS || b < EPS)
         return NO_INTERSECTION; // Avoid divide-by-zero
 
 
@@ -149,7 +150,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
 
     const double pushOut = 1.5;
     double len = sqrt(dx * dx + dy * dy);
-    if (len > 1e-6) {
+    if (len > EPS) {
         double scale = (len + pushOut / max(a, b)) / len;
         x2 = x1 + dx * scale;
         y2 = y1 + dy * scale;
@@ -162,18 +163,11 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
     double B = 2.0 * (x1 * dx + y1 * dy);
     double C = x1 * x1 + y1 * y1 - 1.0;
 
-    const double EPS = 1e-9;
+    //const double EPS = 1e-9;
     double discriminant = B * B - 4.0 * A * C;
 
     if (discriminant < 0.0) {
-        if (discriminant > -EPS) {
-            // Treat as tangent
-            discriminant = 0.0;
-        }
-        else {
-            // Truly no intersection
-            return NO_INTERSECTION;
-        }
+        discriminant = 0.0;
     }
 
     double sqrtD = sqrt(discriminant);
@@ -192,14 +186,14 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
     double ex = (xi - cx) / a;
     double ey = (yi - cy) / b;
     double norm = sqrt(ex * ex + ey * ey);
-    if (norm > 1e-6) {
+    if (norm > EPS) {
         ex /= norm;
         ey /= norm;
         xi = cx + ex * a;
         yi = cy + ey * b;
     }
 
-    return CDoublePoint((xi + 0.5), (yi + 0.5));
+    return CDoublePoint((xi), (yi));
 }
 
 CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p1, const CDoublePoint& p2, const CDoubleRect& rect, const CObArray* points)
@@ -292,23 +286,20 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsSegment(const CDoublePoint& p
                     CDoublePoint& p2	-	point where the
                                             first segment
                                             ends
-                    CDoublePoint& p1	-	point where the
+                    CDoublePoint& q1	-	point where the
                                             second segment
                                             starts
-                    CDoublePoint& p2	-	point where the
+                    CDoublePoint& q2	-	point where the
                                             second segment
                                             ends
 
     ============================================================*/
 {
-    auto cross = [](const CDoublePoint& a, const CDoublePoint& b, const CDoublePoint& c) {
-        return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
-        };
+    double d1 = (p2.x - p1.x) * (q1.y - p1.y) - (p2.y - p1.y) * (q1.x - p1.x);
+    double d2 = (p2.x - p1.x) * (q2.y - p1.y) - (p2.y - p1.y) * (q2.x - p1.x);
+    double d3 = (q2.x - q1.x) * (p1.y - q1.y) - (q2.y - q1.y) * (p1.x - q1.x);
+    double d4 = (q2.x - q1.x) * (p2.y - q1.y) - (q2.y - q1.y) * (p2.x - q1.x);
 
-    double d1 = cross(p1, p2, q1);
-    double d2 = cross(p1, p2, q2);
-    double d3 = cross(q1, q2, p1);
-    double d4 = cross(q1, q2, p2);
 
     if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) &&
         ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0)))
@@ -323,13 +314,59 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsSegment(const CDoublePoint& p
         double C2 = A2 * q1.x + B2 * q1.y;
 
         double det = A1 * B2 - A2 * B1;
-        if (det != 0.0)
+        if (fabs(det) > EPS)
         {
             double x = (B2 * C1 - B1 * C2) / det;
             double y = (A1 * C2 - A2 * C1) / det;
-            return CDoublePoint(x, y);
+            CDoublePoint raw(x, y);
+            return ProjectToSegment(raw, p1, p2); // snap to first segment
         }
     }
 
     return NO_INTERSECTION;
+
+}
+
+CDoublePoint CIntersectionHelper::ProjectToSegment(const CDoublePoint& raw, const CDoublePoint& p1, const CDoublePoint& p2)
+/* ============================================================
+    Function :		CIntersectionHelper::ProjectToSegment
+    Description :	Projects a point to a segment.
+    Access :		Public
+
+    Return :		CDoublePoint		-	point lying on the
+                                            segment
+    Parameters :	CDoublePoint& raw	-	point to be 
+                                            projected
+                    CDoublePoint& p1	-	point where the
+                                            segment starts
+                    CDoublePoint& p2	-	point where the
+                                            segment ends
+
+    ============================================================*/
+{
+    // If raw is NO_INTERSECTION, forward it
+    if (raw.x == NO_INTERSECTION.x && raw.y == NO_INTERSECTION.y)
+        return NO_INTERSECTION;
+
+    double dx = p2.x - p1.x;
+    double dy = p2.y - p1.y;
+    double len2 = dx * dx + dy * dy;
+
+    // Degenerate edge -> return endpoint A
+    if (len2 < EPS) {
+        return CDoublePoint(p1.x, p1.y);
+    }
+
+    // Project raw onto AB: t = ((raw-A)·(B-A)) / |B-A|^2
+    double t = ((raw.x - p1.x) * dx + (raw.y - p1.y) * dy) / len2;
+
+    // Clamp t to [0,1]
+    if (t < 0.0) t = 0.0;
+    else if (t > 1.0) t = 1.0;
+
+    // Reconstruct exact point on segment
+    double x = p1.x + t * dx;
+    double y = p1.y + t * dy;
+
+    return CDoublePoint(x, y);
 }

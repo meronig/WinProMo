@@ -73,9 +73,9 @@ CProMoBlockView::CProMoBlockView()
 	SetName(CProMoNameFactory::GetID());
 
 	//test: a triangle
-	//m_vertexes.Add(new CDoublePoint(0.5, 0));
-	//m_vertexes.Add(new CDoublePoint(1, 1));
-	//m_vertexes.Add(new CDoublePoint(0, 1));
+	//m_vertices.Add(new CDoublePoint(0.5, 0));
+	//m_vertices.Add(new CDoublePoint(1, 1));
+	//m_vertices.Add(new CDoublePoint(0, 1));
 	//m_perimeter = SHAPE_POLYGON;
 }
 

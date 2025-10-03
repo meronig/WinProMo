@@ -11,7 +11,9 @@ public:
 	static CDoublePoint SegmentIntersectsPolygon(const CDoublePoint& p1, const CDoublePoint& p2, const CDoubleRect& rect, const CObArray* points);
 protected:
 	static CDoublePoint SegmentIntersectsSegment(const CDoublePoint& p1, const CDoublePoint& p2, const CDoublePoint& q1, const CDoublePoint& q2);
-	
+	static CDoublePoint ProjectToSegment(const CDoublePoint& raw,
+		const CDoublePoint& A,
+		const CDoublePoint& B);
 };
 
 #endif //_INTERSECTIONHELPER_H_
