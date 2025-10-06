@@ -142,7 +142,36 @@ void CProMoEdgeView::Copy(CDiagramEntity* obj)
 	}
 }
 
-void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, int size) 
+void CProMoEdgeView::DrawLine(CDC* dc, CRect rect)
+/* ============================================================
+	Function :		CProMoEdgeView::DrawLine
+	Description :	Draws the line of the edge.
+
+	Return :		void
+	Parameters :	CDC* dc		-	The CDC to draw to.
+					CRect rect	-	The real rectangle of the
+									object.
+
+   ============================================================*/
+{
+	dc->SelectStockObject(BLACK_PEN);
+
+	dc->MoveTo(rect.TopLeft());
+	dc->LineTo(rect.BottomRight());
+
+	//draw the tip only if it is the last segment
+	if (m_dest == NULL) {
+		DrawHead(dc, rect, 10 * GetZoom());
+	}
+
+	//draw the tail only if it is the last segment
+	if (m_source == NULL) {
+		DrawTail(dc, rect, 10 * GetZoom());
+	}
+
+}
+
+void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, int size)
 /* ============================================================
 	Function :		CProMoEdgeView::DrawHead
 	Description :	Draws the head of the edge.
@@ -331,22 +360,23 @@ void CProMoEdgeView::Draw(CDC* dc, CRect rect)
    ============================================================*/
 {
 
-	dc->SelectStockObject(BLACK_PEN);
+	DrawLine(dc, rect);
+	DrawTitle(dc, rect);
 
-	dc->MoveTo(rect.TopLeft());
-	dc->LineTo(rect.BottomRight());
+}
 
-	//draw the tip only if it is the last segment
-	if (m_dest == NULL) {
-		DrawHead(dc, rect, 10 * GetZoom());
-	}
+void CProMoEdgeView::DrawTitle(CDC* dc, CRect& rect)
+/* ============================================================
+	Function :		CProMoEdgeView::DrawTitle
+	Description :	Draws the title of the edge.
 
-	//draw the tail only if it is the last segment
-	if (m_source == NULL) {
-		DrawTail(dc, rect, 10 * GetZoom());
-	}
-		
-	
+	Return :		void
+	Parameters :	CDC* dc		-	The CDC to draw to.
+					CRect rect	-	The real rectangle of the
+									object.
+
+   ============================================================*/
+{
 	CString str = GetTitle();
 	if (str.GetLength())
 	{
@@ -377,7 +407,6 @@ void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 		dc->SetBkMode(mode);
 
 	}
-
 }
 
 int CProMoEdgeView::GetHitCode(const CPoint& point, const CRect& rect) const

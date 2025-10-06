@@ -64,7 +64,7 @@ protected:
 	virtual CPoint MapPointToNewRect(CPoint oldPoint, double left, double top, double right, double bottom);
 	virtual CRect ComputeTextRect(const CString &text, const CFont &font);
 
-	virtual void SetModel(CProMoBlockModel*);
+	virtual void SetModel(CProMoBlockModel* model);
 
 	virtual void SetShape(const int& type);
 	virtual int GetShape() const;
