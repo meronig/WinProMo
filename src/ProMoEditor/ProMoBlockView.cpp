@@ -54,7 +54,7 @@ CProMoBlockView::CProMoBlockView()
 	m_blockmodel = NULL;
 	m_lockProportions = FALSE;
 	m_fitTitle = FALSE;
-	m_perimeter = SHAPE_CUSTOM;
+	m_shape = SHAPE_CUSTOM;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
 	m_titleRect = CRect(0,0,0,0);
@@ -831,7 +831,7 @@ void CProMoBlockView::SetShape(const int& type)
 						
    ============================================================*/
 {
-	m_perimeter = type;
+	m_shape = type;
 }
 
 int CProMoBlockView::GetShape() const
@@ -854,7 +854,7 @@ int CProMoBlockView::GetShape() const
 
    ============================================================*/
 {
-	return m_perimeter;
+	return m_shape;
 }
 
 BOOL CProMoBlockView::AddVertex(const CDoublePoint& point)
@@ -862,6 +862,8 @@ BOOL CProMoBlockView::AddVertex(const CDoublePoint& point)
 	Function :		CProMoBlockView::AddVertex
 	Description :	Adds a new vertex to the polygon 
 					representing the shape of the block.
+					The operation succeeds only if the shape of
+					the block is SHAPE_POLYGON.
 	Access :		Protected
 
 	Return :		BOOL				-	"TRUE" if the vertex
@@ -870,7 +872,7 @@ BOOL CProMoBlockView::AddVertex(const CDoublePoint& point)
 
    ============================================================*/
 {
-	if (0 <= point.x <= 1 && 0 <= point.y <= 1) {
+	if (0 <= point.x && point.x <= 1 && 0 <= point.y && point.y <= 1 && m_shape == SHAPE_POLYGON) {
 		CDoublePoint* vertex = new CDoublePoint(point);
 		m_vertices.Add(vertex);
 		return TRUE;
@@ -883,6 +885,8 @@ CObArray* CProMoBlockView::GetVertices()
 	Function :		CProMoBlockView::GetVertices
 	Description :	Returns the vertices of the polygon
 					representing the shape of the block.
+					If the shape of the block is not 
+					SHAPE_POLYGON, return NULL.
 	Access :		Protected
 
 	Return :		CObArray*			-	Array containing
@@ -892,7 +896,10 @@ CObArray* CProMoBlockView::GetVertices()
 
    ============================================================*/
 {
-	return &m_vertices;
+	if (m_shape == SHAPE_POLYGON) {
+		return &m_vertices;
+	}
+	return NULL;
 }
 
 void CProMoBlockView::ClearVertices()

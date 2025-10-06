@@ -33,6 +33,15 @@ namespace CCustomPropertyItemTests
             Assert::IsTrue(item.SetValue());
         }
 
+        TEST_METHOD(SetValue_WhenEditorIsMissing_ReturnFalse)
+        {
+            CDiagramEntity entity;
+            CString test("test");
+            CCustomPropertyItem item(test, &entity, NULL, &DummyCustomFunction);
+
+            Assert::IsFalse (item.SetValue());
+        }
+
 #pragma endregion
 
     };

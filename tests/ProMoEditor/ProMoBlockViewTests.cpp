@@ -11,6 +11,20 @@ class CProMoBlockViewTestStub : public CProMoBlockView
 public:
     CPoint fixedIntersection = CPoint(123, 456);
 
+    virtual void SetShape(const int& type) override
+    {
+        CProMoBlockView::SetShape(type);
+    }
+    virtual BOOL AddVertex(const CDoublePoint& point) override
+    {
+        return CProMoBlockView::AddVertex(point);
+    }
+    virtual CObArray* GetVertices() override
+    {
+        return CProMoBlockView::GetVertices();
+    }
+
+
 protected:
     CPoint GetIntersection(CPoint /*inner*/, CPoint /*outer*/) override
     {
@@ -386,23 +400,82 @@ namespace CProMoBlockViewTests
             Assert::AreEqual(CString("Model"), str1);
         }
 
+#pragma endregion
+
+#pragma region ShapeTests
+
+        TEST_METHOD(GetVertices_WhenShapeIsPolygon_GetVertices) {
+            CProMoBlockViewTestStub block;
+            block.SetShape(SHAPE_POLYGON);
+
+            TestHelpers::PointerAssert::IsNotNull(block.GetVertices());
+        }
+
+        TEST_METHOD(GetVertices_WhenShapeIsNotPolygon_ReturnNull) {
+            CProMoBlockViewTestStub block;
+            block.SetShape(SHAPE_ELLIPSE);
+
+            TestHelpers::PointerAssert::IsNull(block.GetVertices());
+        }
+        
+        TEST_METHOD(AddVertex_WhenShapeIsPolygon_AddVertex) {
+            CProMoBlockViewTestStub block;
+            block.SetShape(SHAPE_POLYGON);
+            BOOL result = block.AddVertex(CDoublePoint(0, 0));
+
+            Assert::IsTrue(result);
+            TestHelpers::PointerAssert::IsNotNull(block.GetVertices());
+            Assert::AreEqual((INT_PTR)1, block.GetVertices()->GetSize());
+        }
+
+        TEST_METHOD(AddVertex_WhenVertexIsNotNormalized_DoesNotAddVertex) {
+            CProMoBlockViewTestStub block;
+            block.SetShape(SHAPE_POLYGON);
+            BOOL result = block.AddVertex(CDoublePoint(2, 0));
+
+            Assert::IsFalse(result);
+        }
+
+        TEST_METHOD(AddVertex_WhenShapeIsNotPolygon_DoesNotAddVertex) {
+            CProMoBlockViewTestStub block;
+            block.SetShape(SHAPE_ELLIPSE);
+            BOOL result = block.AddVertex(CDoublePoint(0, 0));
+
+            Assert::IsFalse(result);
+        }
+
+
+#pragma endregion
 
 #pragma region GDISmokeTests
 
         TEST_METHOD(Draw_WhenCalledWithMemoryDC_DoesNotCrash)
         {
             // Arrange
-            CProMoBlockView parent;
+            CProMoBlockViewTestStub parent;
             parent.SetLockedProportions(TRUE);
             parent.SetRect(0, 0, 200, 100);
             parent.SetFitTitle(TRUE);
             parent.SetTitle(CString("Parent with a very long long title"));
+            parent.SetShape(SHAPE_RECTANGLE);
             
-            CProMoBlockView child;
+            CProMoBlockViewTestStub child;
             child.SetTarget(TRUE);
             child.SetRect(0, 0, 150, 80);
             child.SetTitle(CString("Child"));
             child.SetParentBlock(&parent);
+            child.SetShape(SHAPE_ELLIPSE);
+
+            CProMoBlockViewTestStub unrelated;
+            unrelated.SetTarget(TRUE);
+            unrelated.SetRect(300, 300, 350, 380);
+            unrelated.SetTitle(CString("Unrelated"));
+            unrelated.SetParentBlock(&parent);
+            unrelated.SetShape(SHAPE_POLYGON);
+
+            unrelated.AddVertex(CDoublePoint(0, 0));
+            unrelated.AddVertex(CDoublePoint(0, 1)); 
+            unrelated.AddVertex(CDoublePoint(1, 1));
             
             // Create memory DC
             CDC memDC;
@@ -416,6 +489,7 @@ namespace CProMoBlockViewTests
             // Act / Assert: should not crash
             parent.Draw(&memDC, rect);
             child.Draw(&memDC, rect);
+            unrelated.Draw(&memDC, rect);
         }
 
         TEST_METHOD(ShowPopup_WhenCalledWithDesktopWindow_DoesNotCrash)

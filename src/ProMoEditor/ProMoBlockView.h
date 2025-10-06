@@ -83,7 +83,7 @@ private:
 	BOOL			m_lockProportions;
 	BOOL			m_fitTitle;
 	CRect			m_titleRect;
-	int				m_perimeter;
+	int				m_shape;
 	CObArray		m_vertices;
 		
 // Overrides
