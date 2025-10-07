@@ -47,6 +47,7 @@
 #include "../PropertyItem/CustomPropertyItem.h"
 #include "../PropertyItem/TypedPropertyItem.h"
 #include <math.h>
+#include "ProMoLabel.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -994,6 +995,35 @@ void CProMoEditor::SplitSelectedEdge()
 	}
 }
 
+void CProMoEditor::CreateLabels()
+/* ============================================================
+	Function :		CProMoEditor::CreateLabels
+	Description :	Creates labels for the selected object, in
+					case they do not exist yet.
+	Access :		Protected
+
+	Return :		void
+
+   ============================================================*/
+{
+	if (GetSelectedObject() != NULL) {
+		CProMoBlockView* selObj = NULL;
+		selObj = dynamic_cast<CProMoBlockView*>(GetSelectedObject());
+		if (selObj) {
+			CObArray* labels = selObj->GetModel()->RecreateLabels();
+			if (labels) {
+				for (int i = 0; i < labels->GetSize(); i++) {
+					CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+					if (label) {
+						GetDiagramEntityContainer()->Add(label);
+					}
+				}
+				delete labels;
+			}
+		}
+	}
+}
+
 void CProMoEditor::ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock)
 /* ============================================================
 	Function :		CProMoEditor::ConnectSelectedEdgeToSource
@@ -1239,9 +1269,12 @@ void CProMoEditor::HandleSelectedElements(CProMoBlockView* target, BOOL isNew)
 
 {
 	
-	if (isNew && target) {
-		NestSelectedBlock(target);
-		ConnectSelectedEdgeToSource(target);
+	if (isNew) {
+		if (target) {
+			NestSelectedBlock(target);
+			ConnectSelectedEdgeToSource(target);
+		}
+		CreateLabels();
 	}
 	else {
 		

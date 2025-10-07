@@ -24,6 +24,7 @@
 #include "../DiagramEditor/Tokenizer.h"
 #include "ProMoNameFactory.h"
 #include "../FileUtils/FileParser.h"
+#include "ProMoLabel.h"
 
 
 CProMoModel::CProMoModel()
@@ -56,6 +57,7 @@ CProMoModel::~CProMoModel()
 
    ============================================================*/
 {
+	UnlinkAllLabels();
 }
 
 CProMoModel* CProMoModel::Clone()
@@ -141,6 +143,72 @@ void CProMoModel::UnlinkAllViews()
    ============================================================*/
 {
 	m_views.RemoveAll();
+}
+
+void CProMoModel::LinkLabel(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoModel::LinkView
+	Description :	Links a new label to this object.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoLabel* label - the label to link
+
+   ============================================================*/
+{
+	if (label) {
+		if (label->m_model != this) {
+			if (label->m_model) {
+				label->m_model->UnlinkLabel(label);
+			}
+			label->m_model = this;
+			m_labels.Add(label);
+		}
+	}
+}
+
+void CProMoModel::UnlinkLabel(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoModel::UnlinkLabel
+	Description :	Unlinks a label from this object.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoLabel* label - the label to unlink
+
+   ============================================================*/
+{
+	if (label) {
+		for (int i = static_cast<int>(m_labels.GetSize()) - 1; i >= 0; i--) {
+			CProMoLabel* tempView = dynamic_cast<CProMoLabel*>(m_labels.GetAt(i));
+			if (tempView) {
+				if (tempView == label) {
+					tempView->m_model = NULL;
+					m_labels.RemoveAt(i);
+				}
+			}
+		}
+	}
+}
+
+void CProMoModel::UnlinkAllLabels()
+/* ============================================================
+	Function :		CProMoModel::UnlinkAllLabels
+	Description :	Unlinks all labels from this object.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+	for (int i = static_cast<int>(m_labels.GetSize()) - 1; i >= 0; i--) {
+		CProMoLabel* tempView = dynamic_cast<CProMoLabel*>(m_labels.GetAt(i));
+		if (tempView) {
+			tempView->m_model = NULL;
+		}
+	}
+	m_labels.RemoveAll();
 }
 
 CObArray* CProMoModel::GetViews()
@@ -481,3 +549,71 @@ CString CProMoModel::GetNameFromString(const CString& str)
 	}
 	return name;
 }
+
+CObArray* CProMoModel::GetLabels()
+/* ============================================================
+	Function :		CProMoModel::GetLabels
+	Description :	Accessor for the internal labels array
+	Access :		Public
+
+	Return :		CObArray*	-	A pointer to the labels
+									array
+	Parameters :	none
+
+   ============================================================*/
+{
+	return &m_labels;
+}
+
+CProMoLabel* CProMoModel::GetLabel(CString property)
+/* ============================================================
+	Function :		CProMoModel::GetLabel
+	Description :	Returns a pointer to the label displaying
+					a specific property
+	Access :		Public
+
+	Return :		CProMoLabel*		-	A pointer to the 
+											label
+	Parameters :	CString property	-	The name of the
+											property
+
+   ============================================================*/
+{
+	for (int i = 0; i < m_labels.GetSize(); i++) {
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(m_labels.GetAt(i));
+		if (label) {
+			if (label->GetProperty() == property) {
+				return label;
+			}
+		}
+	}
+	return NULL;
+}
+
+CObArray* CProMoModel::RecreateLabels()
+/* ============================================================
+	Function :		CProMoModel::RecreateLabels
+	Description :	Recreates labels for all the properties
+					that need to be displayed, if some of them
+					are not present.
+	Access :		Public
+
+	Return :		CObArray*	-	A pointer to the labels
+									being created (if any)
+	Parameters :	none
+
+   ============================================================*/
+{
+	CObArray* arr = new CObArray;
+	// Test, make it more modular
+	if (!GetLabel("title")) {
+		CProMoLabel* label = new CProMoLabel();
+		label->SetProperty("title");
+		label->SetLeft(10);
+		label->SetTop(10);
+		LinkLabel(label);
+		arr->Add(label);
+	}
+	return arr;
+}
+

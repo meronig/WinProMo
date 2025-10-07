@@ -39,6 +39,7 @@ protected:
 	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
 	virtual void NestSelectedBlock(CProMoBlockView* parentBlock);
 	virtual void SplitSelectedEdge();
+	virtual void CreateLabels();
 	virtual void ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock);
 	virtual void ConnectSelectedEdgeToDestination(CProMoBlockView* sourceBlock);
 	virtual CProMoBlockView* GetTargetBlock(CPoint point);
@@ -52,7 +53,7 @@ protected:
 	virtual void DrawPageBreaks(CDC* dc, CRect rect, double zoom) const;
 	virtual void HandleSelectedElements(CProMoBlockView* target, BOOL isNew);
 	virtual void HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point);
-
+	
 // Overrides:
 public:
 	// Visuals

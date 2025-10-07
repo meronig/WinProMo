@@ -9,32 +9,34 @@
 #define _PROMOLABEL_H_
 
 #include "../DiagramEditor/DiagramEntity.h"
+#include "ProMoModel.h"
 
 class AFX_EXT_CLASS CProMoLabel :
     public CDiagramEntity
 {
 public:
+	friend class CProMoModel;
+	
 	CProMoLabel();
 	virtual ~CProMoLabel();
 
 	virtual CDiagramEntity* Clone();
 	virtual void	Copy(CDiagramEntity* obj);
 
-	static	CDiagramEntity* CreateFromString(const CString& str, CDiagramEntity* entity);
+	static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
 
-	static CString GetEntityFromString(const CString& str);
+	static CString GetModelFromString(const CString& str);
 	static CString GetNameFromString(const CString& str);
 
-	virtual CDiagramEntity* GetEntity() const;
+	virtual CProMoModel* GetModel() const;
 	virtual CString GetProperty() const;
 	virtual BOOL IsSelectable() const;
 
 protected:
-	CDiagramEntity* m_entity;
+	CProMoModel* m_model;
 	CString m_property;
 	BOOL m_selectable;
 
-	virtual void SetEntity(CDiagramEntity* entity);
 	virtual void SetProperty(const CString& property);
 	virtual void Selectable(const BOOL& select);
 

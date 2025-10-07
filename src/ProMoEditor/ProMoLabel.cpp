@@ -31,7 +31,7 @@ CProMoLabel::CProMoLabel()
 	
 	SetName(CProMoNameFactory::GetID());
 
-	m_entity = NULL;
+	m_model = NULL;
 	m_selectable = TRUE;
 }
 
@@ -47,7 +47,9 @@ CProMoLabel::~CProMoLabel()
 
    ============================================================*/
 {
-
+	if (m_model) {
+		m_model->UnlinkLabel(this);
+	}
 }
 
 CDiagramEntity* CProMoLabel::Clone()
@@ -153,20 +155,20 @@ void CProMoLabel::ShowPopup(CPoint point, CWnd* parent)
 
 }
 
-CDiagramEntity* CProMoLabel::GetEntity() const
+CProMoModel* CProMoLabel::GetModel() const
 /* ============================================================
-	Function :		CProMoLabel::GetEntity()
-	Description :	Returns a pointer to the entity associated
+	Function :		CProMoLabel::GetModel()
+	Description :	Returns a pointer to the model associated
 					to this label
 	Access :		Public
 
-	Return :		CDiagramEntity*	-	A pointer to the
-										entity
+	Return :		CProMoModel*	-	A pointer to the
+										model
 	Parameters :	none
 
    ============================================================*/
 {
-	return m_entity;
+	return m_model;
 }
 
 CString CProMoLabel::GetProperty() const
@@ -201,42 +203,6 @@ BOOL CProMoLabel::IsSelectable() const
 	return m_selectable;
 }
 
-void CProMoLabel::SetEntity(CDiagramEntity* model)
-/* ============================================================
-	Function :		CProMoLabel::SetEntity
-	Description :	Makes the object being passed as input
-					parameter the entity for this label
-	Access :		Protected
-
-	Return :		void
-	Parameters :	CDiagramEntity* entity	-	the object that
-												should be the
-												entity
-
-   ============================================================*/
-{
-	//TODO revise
-	/*
-	if (m_blockmodel != model) {
-		CProMoBlockModel* oldModel = m_blockmodel;
-		m_blockmodel = model;
-
-		//link this class to the new model
-		if (model) {
-			model->LinkView(this);
-		}
-		//unlink this class from the old model
-		if (oldModel) {
-			oldModel->UnlinkView(this);
-			//if the old model has no views, delete it
-			if (oldModel->GetViews()->GetSize() == 0) {
-				delete oldModel;
-			}
-		}
-	}
-	*/
-}
-
 void CProMoLabel::SetProperty(const CString& property)
 /* ============================================================
 	Function :		CProMoLabel::SetProperty
@@ -268,7 +234,7 @@ void CProMoLabel::Selectable(const BOOL& select)
 	m_selectable = select;
 }
 
-CDiagramEntity* CProMoLabel::CreateFromString(const CString& str, CDiagramEntity* entity)
+CDiagramEntity* CProMoLabel::CreateFromString(const CString& str, CProMoModel* model)
 /* ============================================================
 	Function :		CProMoLabel::CreateFromString
 	Description :	Static factory function that creates and
@@ -282,8 +248,7 @@ CDiagramEntity* CProMoLabel::CreateFromString(const CString& str, CDiagramEntity
 												of this type.
 	Parameters :	const CString& str		-	The string to 
 												create from.
-					CDiagramEntity* entity	-	A block or edge
-												view to be
+					CProMoModel* model		-	A model to be
 												associated to 
 												the object 
 												being created.
@@ -304,8 +269,8 @@ CDiagramEntity* CProMoLabel::CreateFromString(const CString& str, CDiagramEntity
 		obj = NULL;
 	}
 	else {
-		if (entity) {
-			obj->SetEntity(entity);
+		if (model) {
+			model->LinkLabel(obj);
 		}
 	}
 
@@ -313,12 +278,12 @@ CDiagramEntity* CProMoLabel::CreateFromString(const CString& str, CDiagramEntity
 
 }
 
-CString CProMoLabel::GetEntityFromString(const CString& str)
+CString CProMoLabel::GetModelFromString(const CString& str)
 /* ============================================================
-	Function :		CProMoLabel::GetEntityFromString
+	Function :		CProMoLabel::GetModelFromString
 	Description :	Static factory function that
 					parses a formatted string and extracts the
-					name of the associated entity object
+					name of the associated model object
 	Access :		Public
 
 	Return :		CString			-	The name of the model
@@ -329,7 +294,6 @@ CString CProMoLabel::GetEntityFromString(const CString& str)
 	CTokenizer* tok = CFileParser::Tokenize(str);
 	CString entityName;
 	if (tok) {
-		//TODO revise
 		tok->GetAt(7, entityName);
 		delete tok;
 	}
@@ -409,12 +373,12 @@ CString CProMoLabel::GetDefaultGetString() const
 	
 	CString str;
 
-	CString entity;
+	CString model;
 	CString title;
 	CString property;
-	if (m_entity) {
-		entity = GetEntity()->GetName();
-		CFileParser::EncodeString(entity);
+	if (m_model) {
+		model = GetModel()->GetName();
+		CFileParser::EncodeString(model);
 		property = GetProperty();
 		CFileParser::EncodeString(property);
 	}
@@ -426,7 +390,7 @@ CString CProMoLabel::GetDefaultGetString() const
 	CString name = GetName();
 	CFileParser::EncodeString(name);
 
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)entity, (LPCTSTR)property);
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)property);
 
 	return str;
 

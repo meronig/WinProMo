@@ -10,11 +10,15 @@
 
 #include "../StdAfx.h"
 #include "../DiagramEditor/DiagramEntity.h"
+//#include "ProMoLabel.h"
+
+class AFX_EXT_CLASS CProMoLabel;
 
 class AFX_EXT_CLASS CProMoModel : public CObject
 {
 public:
-	
+	friend class CProMoLabel;
+
 	// Creation/initialization
 	CProMoModel();
 	virtual ~CProMoModel();
@@ -42,9 +46,14 @@ public:
 
 	static CString GetNameFromString(const CString& str);
 
+	virtual CObArray* GetLabels();
+	virtual CProMoLabel* GetLabel(CString property);
+	virtual CObArray* RecreateLabels();
+	
 
 protected:
 	CObArray m_views;
+	CObArray m_labels;
 
 	virtual CString				GetDefaultGetString() const;
 	virtual CString				GetHeaderFromString(CString& str);
@@ -53,7 +62,11 @@ protected:
 	virtual void LinkView(CDiagramEntity* view);
 	virtual void UnlinkView(CDiagramEntity* view);
 	virtual void UnlinkAllViews();
+	virtual void LinkLabel(CProMoLabel* label);
+	virtual void UnlinkLabel(CProMoLabel* label);
+	virtual void UnlinkAllLabels();
 
+	
 
 private:
 	CString m_type;
