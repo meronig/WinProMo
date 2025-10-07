@@ -195,6 +195,7 @@
     <ClCompile Include="GridSizeDialog.cpp" />
     <ClCompile Include="FileUtils\FileParser.cpp" />
     <ClCompile Include="GeometryUtils\IntersectionHelper.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoLabel.cpp" />
     <ClCompile Include="PropertyItem\CustomPropertyItem.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
     <ClCompile Include="DiagramEditor\DiagramEditor.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="GridSizeDialog.h" />
     <ClInclude Include="FileUtils\FileParser.h" />
     <ClInclude Include="GeometryUtils\IntersectionHelper.h" />
+    <ClInclude Include="ProMoEditor\ProMoLabel.h" />
     <ClInclude Include="PropertyItem\CustomPropertyItem.h" />
     <ClInclude Include="DiagramEditor\DiagramClipboardHandler.h" />
     <ClInclude Include="DiagramEditor\DiagramEditor.h" />
