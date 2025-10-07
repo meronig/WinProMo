@@ -28,6 +28,7 @@
 #include "ProMoEdgeView.h"
 #include "ProMoClipboardHandler.h"
 #include "../FileUtils/FileParser.h"
+#include "ProMoLabel.h"
 
 CProMoEntityContainer::CProMoEntityContainer(CDiagramClipboardHandler* clip)
 /* ============================================================
@@ -414,6 +415,7 @@ void CProMoEntityContainer::Reorder()
 	CObArray *objs;
 	CObArray newOrder;
 
+	// Step 1: blocks and edges
 	for (int t = 0; t < max; t++)
 	{
 		CDiagramEntity *obj = dynamic_cast<CDiagramEntity*>(GetAt(t));
@@ -430,6 +432,17 @@ void CProMoEntityContainer::Reorder()
 				if (!(edgeView->GetModel()->GetSource() || edgeView->GetModel()->GetDestination())) {
 					newOrder.Add(edgeView);
 				}
+			}
+		}
+	}
+	// Step 2: labels
+	for (int t = 0; t < max; t++)
+	{
+		CDiagramEntity* obj = dynamic_cast<CDiagramEntity*>(GetAt(t));
+		if (obj) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(obj);
+			if (label) {
+				newOrder.Add(label);
 			}
 		}
 	}

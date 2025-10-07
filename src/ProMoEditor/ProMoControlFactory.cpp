@@ -28,6 +28,7 @@
 #include "ProMoBlockView.h"
 #include "ProMoEdgeView.h"
 #include "ProMoEdgeModel.h"
+#include "ProMoLabel.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,7 +65,9 @@ CDiagramEntity* CProMoControlFactory::CreateViewFromString( const CString& str )
 	if( !obj )
 		obj = CProMoEdgeView::CreateFromString( str );
 	
-	
+	if (!obj)
+		obj = CProMoLabel::CreateFromString(str);
+
 	return obj;
 }
 
