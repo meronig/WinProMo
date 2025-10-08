@@ -91,9 +91,10 @@ void CProMoLabel::Copy(CDiagramEntity* obj)
 {
 	CDiagramEntity::Copy(obj);
 	CProMoLabel* objView = dynamic_cast<CProMoLabel*>(obj);
-	//TODO revise
-	//SetLockedProportions(objView->HasLockedProportions());
-	//SetFitTitle(objView->HasFitTitle());
+	if (objView) {
+		m_property = objView->m_property;
+		m_selectable = objView->m_selectable;
+	}
 }
 
 void CProMoLabel::Draw(CDC* dc, CRect rect)

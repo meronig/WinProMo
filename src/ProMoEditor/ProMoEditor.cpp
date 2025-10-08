@@ -359,6 +359,31 @@ void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
 	}
 }
 
+void CProMoEditor::DeselectLabels(CProMoBlockView* block)
+/* ============================================================
+	Function :		CProMoEditor::DeselectLabels
+	Description :	Deselects all labels associated with the input block.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoBlockView* block	-	Pointer to the block
+
+   ============================================================*/
+{
+	if (!block) return;
+	CProMoBlockModel* model = block->GetModel();
+	if (!model) return;
+	CObArray* labels = model->GetLabels();
+	if (labels) {
+		for (int i = 0; i < labels->GetSize(); ++i) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+			if (label) {
+				label->Select(FALSE);
+			}
+		}
+	}
+}
+
 void CProMoEditor::DeselectInvalidElements() 
 /* ============================================================
 	Function :		CProMoEditor::DeselectInvalidElements
@@ -382,6 +407,7 @@ void CProMoEditor::DeselectInvalidElements()
 		if (selObj) {
 			if (selObj->IsSelected()) {
 				DeselectChildBlocks(selObj);
+				DeselectLabels(selObj);
 			}
 		}
 
@@ -1015,6 +1041,10 @@ void CProMoEditor::CreateLabels()
 				for (int i = 0; i < labels->GetSize(); i++) {
 					CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
 					if (label) {
+						//TODO: change how to position label based on anchoring type
+						CRect blockRect = selObj->GetRect();
+						CRect labelRect = label->GetRect();
+						label->SetRect(blockRect.left, blockRect.top - 30, blockRect.left + labelRect.right - labelRect.left, blockRect.top - 30 + labelRect.bottom - labelRect.top);
 						GetDiagramEntityContainer()->Add(label);
 					}
 				}
@@ -1269,14 +1299,10 @@ void CProMoEditor::HandleSelectedElements(CProMoBlockView* target, BOOL isNew)
 
 {
 	
-	if (isNew) {
-		if (target) {
-			NestSelectedBlock(target);
-			ConnectSelectedEdgeToSource(target);
-		}
-		CreateLabels();
-	}
-	else {
+	if (isNew && target) {
+		NestSelectedBlock(target);
+		ConnectSelectedEdgeToSource(target);
+	} else {
 		
 		if (GetInteractMode() == MODE_MOVING) {
 
@@ -1298,7 +1324,9 @@ void CProMoEditor::HandleSelectedElements(CProMoBlockView* target, BOOL isNew)
 		
 	}
 	
-	
+	if (isNew) {
+		CreateLabels();
+	}
 }
 
 void CProMoEditor::LeftAlignSelected()

@@ -86,16 +86,15 @@ void CProMoEntityContainer::RemoveAt(int index)
 /* ============================================================
 	Function :		CProMoEntityContainer::RemoveAt
 	Description :	Removes the object at index. Will also
-					remove all links refering to this object.
+					remove all labels refering to this object,
+					and, if the object is a block, all its
+					subblocks.
 
 	Return :		void
 	Parameters :	int index	-	Index for object to remove.
 
-	Usage :			Overridden to remove links as well.
-
    ============================================================*/
 {
-
 	CDiagramEntity* obj = GetAt(index);
 	if (obj)
 	{
@@ -103,6 +102,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 		
 		CProMoBlockView *block = dynamic_cast<CProMoBlockView*>(obj);
 		if (block){
+			// remove sub-blocks
 			CObArray subBlockModels;
 			subBlockModels.Append(*(block->GetModel()->GetSubBlocks()));
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {
@@ -112,10 +112,22 @@ void CProMoEntityContainer::RemoveAt(int index)
 					Remove(subBlockModel->GetMainView());
 				}
 			}
+			// disconnect block from parent
 			if (block->GetModel()->GetParentBlock()) {
 				//remove from parent
 				block->SetParentBlock(NULL);
 			}
+			// remove labels
+			CObArray labels;
+			labels.Append(*(block->GetModel()->GetLabels()));
+			for (int i = 0; i < labels.GetSize(); i++) {
+				CProMoLabel* label = NULL;
+				label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+				if (label) {
+					Remove(label);
+				}
+			}
+
 		}
 		CDiagramEntityContainer::RemoveAt(index);
 	}
@@ -154,15 +166,25 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 		CProMoBlockView* newBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(i));
 		
 		for (int j = 0; j < source->GetSize(); j++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(source->GetAt(j));
+			CProMoLabel* newLabel = dynamic_cast<CProMoLabel*>(destination->GetAt(j));
 			CProMoEdgeView* connectedEdgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(j));
 			CProMoEdgeView* newConnectedEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(j));
 			CProMoBlockView* connectedBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
 			CProMoBlockView* newConnectedBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
 				
-			//preserve block nesting
-			if (blockView && newBlockView && connectedBlockView && newConnectedBlockView) {
-				if (blockView->GetParentBlock() == connectedBlockView) {
-					newBlockView->SetParentBlock(newConnectedBlockView);
+			if (blockView && newBlockView) {
+				//preserve block nesting
+				if (connectedBlockView && newConnectedBlockView) {
+					if (blockView->GetParentBlock() == connectedBlockView) {
+						newBlockView->SetParentBlock(newConnectedBlockView);
+					}
+				}
+				//preserve links between blocks and labels
+				if (label && newLabel) {
+					if (label->GetModel() == blockView->GetModel()) {
+						newBlockView->LinkLabel(newLabel);
+					}
 				}
 			}
 				

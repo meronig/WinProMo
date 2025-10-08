@@ -609,8 +609,7 @@ CObArray* CProMoModel::RecreateLabels()
 	if (!GetLabel("title")) {
 		CProMoLabel* label = new CProMoLabel();
 		label->SetProperty("title");
-		label->SetLeft(10);
-		label->SetTop(10);
+
 		LinkLabel(label);
 		arr->Add(label);
 	}

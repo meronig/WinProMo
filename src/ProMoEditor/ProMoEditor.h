@@ -53,7 +53,7 @@ protected:
 	virtual void DrawPageBreaks(CDC* dc, CRect rect, double zoom) const;
 	virtual void HandleSelectedElements(CProMoBlockView* target, BOOL isNew);
 	virtual void HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point);
-	
+	virtual void DeselectLabels(CProMoBlockView* block);
 // Overrides:
 public:
 	// Visuals

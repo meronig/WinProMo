@@ -55,6 +55,8 @@ public:
 
 	virtual CPoint GetIntersection(CPoint innerPoint, CPoint outerPoint);
 
+	virtual void LinkLabel(CProMoLabel* label);
+
 protected:
 	BOOL m_target;
 	CProMoBlockModel* m_blockmodel;

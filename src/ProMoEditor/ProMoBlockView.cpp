@@ -32,6 +32,7 @@
 #include "../FileUtils/FileParser.h"
 #include "../GeometryUtils/GeometryHelper.h"
 #include "../GeometryUtils/IntersectionHelper.h"
+#include "ProMoLabel.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -587,6 +588,16 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 					if (!childView->IsSelected()) {
 						childView->SetRect(childView->GetLeft() - deltaX, childView->GetTop() - deltaY, childView->GetRight() - deltaX, childView->GetBottom() - deltaY);
 					}
+				}
+			}
+		}
+
+		for (i = 0; i < model->GetLabels()->GetSize(); i++){
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
+			if (label) {
+				//move labels that are not selected (otherwise they will be moved twice)
+				if (!label->IsSelected()) {
+					label->SetRect(label->GetLeft() - deltaX, label->GetTop() - deltaY, label->GetRight() - deltaX, label->GetBottom() - deltaY);
 				}
 			}
 		}
@@ -1366,4 +1377,20 @@ CString CProMoBlockView::GetNameFromString(const CString& str)
 		delete tok;
 	}
 	return name;
+}
+
+void CProMoBlockView::LinkLabel(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoBlockView::LinkView
+	Description :	Links a new label to this object.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoLabel* label - the label to link
+
+   ============================================================*/
+{
+	if (label) {
+		GetModel()->LinkLabel(label);
+	}
 }
