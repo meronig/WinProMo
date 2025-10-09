@@ -417,7 +417,11 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 			}
 		}
 	}
-
+	// Check for labels
+	CObArray* labels = block->GetModel()->GetLabels();
+	if (labels) {
+		newOrder->Append(*labels);
+	}
 
 	CObArray *subBlockViews = block->GetModel()->GetSubBlocks();
 
@@ -473,20 +477,16 @@ void CProMoEntityContainer::Reorder()
 					newOrder.Add(edgeView);
 				}
 			}
-		}
-	}
-	// Step 2: labels
-	for (int t = 0; t < max; t++)
-	{
-		CDiagramEntity* obj = dynamic_cast<CDiagramEntity*>(GetAt(t));
-		if (obj) {
 			CProMoLabel* label = dynamic_cast<CProMoLabel*>(obj);
 			if (label) {
-				newOrder.Add(label);
+				//label is disconnected, so add it immediately
+				if (!(label->GetModel())) {
+					newOrder.Add(label);
+				}
 			}
 		}
 	}
-
+	
 	objs = GetData();
 	objs->RemoveAll();
 

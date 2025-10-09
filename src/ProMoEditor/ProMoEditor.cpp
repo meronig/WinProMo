@@ -234,11 +234,13 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 					//moving blocks
 					else if ((GetInteractMode() == MODE_MOVING)) {
 						BOOL isValid = TRUE;
+						BOOL noSelectedBlocks = TRUE;
 						// check that no circular dependencies exist with selected objects
 						for (int i = GetObjectCount() - 1; i >= 0; i--) {
 							CProMoBlockView* selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
 							if (selObj) {
 								if (selObj->IsSelected()) {
+									noSelectedBlocks = FALSE;
 									if (!(selObj->GetModel()->CanBeNestedBy(currObj->GetModel()))) {
 										isValid = FALSE;
 										break;
@@ -246,7 +248,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 								}
 							}
 						}
-						if (isValid) {
+						if (isValid && !noSelectedBlocks) {
 							return currObj;
 						}
 					}
