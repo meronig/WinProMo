@@ -96,7 +96,15 @@ void CProMoModel::Copy(CProMoModel* obj)
 					object type in overridden versions.
    ============================================================*/
 {
-
+	for (int i = 0; i < m_properties.GetSize(); i++) {
+		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+		if (prop) {
+			if (prop->IsPersistent()) {
+				COleVariant value = obj->GetPropertyValue(prop->GetName());
+				prop->SetValue(value);
+			}
+		}
+	}
 }
 
 void CProMoModel::LinkView(CDiagramEntity* view)
@@ -161,23 +169,26 @@ void CProMoModel::LinkLabel(CProMoLabel* label)
 {
 	if (label) {
 		if (label->m_model != this) {
+			for (int i = 0; i < m_properties.GetSize(); i++) {
+				CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+				if (prop) {
+					if (prop->GetName() == label->m_property && prop->IsLabelVisible()) {
+						// unlink existing label for this property (if any)
+						UnlinkLabel(GetLabel(label->m_property));
 
-			if (GetPropertyType(label->m_property) == TYPE_UNKNOWN) {
-				// The property does not exist in this model
-				return;
+						// unlink from previous model (if any)
+						if (label->m_model) {
+							label->m_model->UnlinkLabel(label);
+						}
+
+						// link the label
+						label->m_model = this;
+						m_labels.Add(label);
+						label->SetTitle(GetPropertyValue(label->m_property).bstrVal);
+					}
+				}
 			}
-			// unlink existing label for this property (if any)
-			UnlinkLabel(GetLabel(label->m_property));
-			
-			// unlink from previous model (if any)
-			if (label->m_model) {
-				label->m_model->UnlinkLabel(label);
-			}
-			
-			// link the label
-			label->m_model = this;
-			m_labels.Add(label);
-			label->SetTitle(GetPropertyValue(label->m_property).bstrVal);
+
 		}
 	}
 }
@@ -258,7 +269,7 @@ void CProMoModel::CreateProperties()
    ============================================================*/
 {
 	m_properties.RemoveAll();
-	m_properties.Add(new CProMoModelProperty(_T("Title"), TYPE_STRING, COleVariant(_T("Title")), FALSE, TRUE));
+	m_properties.Add(new CProMoModelProperty(_T("Title"), TYPE_STRING, COleVariant(_T("Title")), FALSE, TRUE, TRUE));
 }
 
 CObArray* CProMoModel::GetViews()
@@ -370,20 +381,20 @@ BOOL CProMoModel::GetDefaultFromString(CString& str)
 					CString stringValue;
 					int intValue;
 					double doubleValue;
-					switch (prop->m_type) {
+					switch (prop->GetType()) {
 					case TYPE_STRING:
 						tok->GetAt(count++, stringValue);
 						CFileParser::DecodeString(stringValue);
-						prop->m_value = COleVariant(stringValue);
+						prop->SetValue(COleVariant(stringValue));
 						break;
 					case TYPE_INT:
 					case TYPE_BOOL: // BOOLs are stored as ints (0/1)
 						tok->GetAt(count++, intValue);
-						prop->m_value = COleVariant((long)intValue);
+						prop->SetValue(COleVariant((long)intValue));
 						break;
 					case TYPE_DOUBLE:
 						tok->GetAt(count++, doubleValue);
-						prop->m_value = COleVariant(doubleValue);
+						prop->SetValue(COleVariant(doubleValue));
 						break;
 					default:
 						break;
@@ -510,25 +521,27 @@ CString CProMoModel::GetDefaultGetString() const
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
 		if (prop) {
-			CString value;
-			switch (prop->m_type) {
-			case TYPE_STRING:
-				value = prop->m_value.bstrVal;
-				CFileParser::EncodeString(value);
-				break;
-			case TYPE_INT:
-				value.Format(_T("%d"), prop->m_value.intVal);
-				break;
-			case TYPE_DOUBLE:
-				value.Format(_T("%f"), prop->m_value.dblVal);
-				break;
-			case TYPE_BOOL:
-				value = prop->m_value.boolVal ? _T("1") : _T("0");
-				break;
-			default:
-				break;
+			if (prop->IsPersistent()) {
+				CString value;
+				switch (prop->GetType()) {
+				case TYPE_STRING:
+					value = prop->GetValue().bstrVal;
+					CFileParser::EncodeString(value);
+					break;
+				case TYPE_INT:
+					value.Format(_T("%d"), prop->GetValue().intVal);
+					break;
+				case TYPE_DOUBLE:
+					value.Format(_T("%f"), prop->GetValue().dblVal);
+					break;
+				case TYPE_BOOL:
+					value = prop->GetValue().boolVal ? _T("1") : _T("0");
+					break;
+				default:
+					break;
+				}
+				str.AppendFormat(_T(",%s"), (LPCTSTR)value);
 			}
-			str.AppendFormat(_T(",%s"), (LPCTSTR)value);
 		}
 	}
 
@@ -629,7 +642,7 @@ void CProMoModel::GetPropertyNames(CStringArray& array) const
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
 		if (prop) {
-			array.Add(prop->m_name);
+			array.Add(prop->GetName());
 		}
 	}
 }
@@ -653,8 +666,8 @@ unsigned int CProMoModel::GetPropertyType(const CString& name) const
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
 		if (prop) {
-			if (prop->m_name == name) {
-				return prop->m_type;
+			if (prop->GetName() == name) {
+				return prop->GetType();
 			}
 		}
 	}
@@ -680,8 +693,8 @@ COleVariant& CProMoModel::GetPropertyValue(const CString& name) const
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
 		if (prop) {
-			if (prop->m_name == name) {
-				return prop->m_value;
+			if (prop->GetName() == name) {
+				return prop->GetValue();
 			}
 		}
 	}
@@ -705,11 +718,13 @@ BOOL CProMoModel::SetPropertyValue(const CString& name, const COleVariant& value
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
 		if (prop) {
-			if (prop->m_name == name && !prop->m_readOnly) {
-				prop->m_value = value;
+			if (prop->GetName() == name) {
+				BOOL result = prop->SetValue(value);
 				// update linked label (if any)
-				GetLabel(name)->SetTitle(value.bstrVal);
-				return TRUE;
+				if (result) {
+					GetLabel(name)->SetTitle(value.bstrVal);
+				}
+				return result;
 			}
 		}
 	}
@@ -817,10 +832,10 @@ CObArray* CProMoModel::RecreateLabels()
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
 		if (prop) {
-			if (prop->m_type != TYPE_UNKNOWN) {
-				if (!GetLabel(prop->m_name)) {
+			if (prop->GetType() != TYPE_UNKNOWN) {
+				if (!GetLabel(prop->GetName()) && prop->IsLabelVisible()) {
 					CProMoLabel* label = new CProMoLabel();
-					label->SetProperty(prop->m_name);
+					label->SetProperty(prop->GetName());
 					LinkLabel(label);
 					arr->Add(label);
 				}

@@ -12,6 +12,7 @@
 #include "../ProMoEditor/ProMoBlockModel.h"
 #include "../ProMoEditor/ProMoEdgeModel.h"
 #include "../ProMoEditor/ProMoLabel.h"
+#include "../ProMoEditor/ProMoEntityContainer.h"
 
 BOOL SetShapeTitle(CDiagramEntity* entity, CDiagramEditor* editor, const CString& val)
 /* ============================================================
@@ -91,6 +92,14 @@ BOOL SetShapeName(CDiagramEntity* entity, CDiagramEditor* editor, const CString&
 
 	// Check for unicity
 	int i;
+	CProMoEntityContainer* container = dynamic_cast<CProMoEntityContainer*>(entity->GetParent());
+	if (container) {
+		if (container->GetNamedView(val)) {
+			return FALSE;
+		}
+	}
+
+	/*
 	for (i = 0; i < editor->GetObjectCount(); i++) {
 		CDiagramEntity* e = editor->GetObject(i);
 		if (e) {
@@ -119,8 +128,8 @@ BOOL SetShapeName(CDiagramEntity* entity, CDiagramEditor* editor, const CString&
 				}
 			}
 			*/
-		}
-	}
+	//	}
+	//}
 	entity->SetName(val);
 	return TRUE;
 	

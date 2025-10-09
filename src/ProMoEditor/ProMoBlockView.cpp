@@ -65,11 +65,11 @@ CProMoBlockView::CProMoBlockView()
 
 	CString title;
 	BOOL result;
-	result = title.LoadString(IDS_PROMO_BLOCK);
 	SetModel(new CProMoBlockModel());
+	/*result = title.LoadString(IDS_PROMO_BLOCK);
 	if (result) {
 		SetTitle(title);
-	}
+	}*/
 	this->m_target = FALSE;
 
 	SetName(CProMoNameFactory::GetID());

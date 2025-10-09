@@ -49,7 +49,7 @@ CProMoEdgeView::CProMoEdgeView()
 	
 	SetMinimumSize(CSize(-1, -1));
 	SetType(_T("promo_edge_view"));
-	SetTitle(_T(""));
+	//SetTitle(_T(""));
 
 	SetName(CProMoNameFactory::GetID());
 
