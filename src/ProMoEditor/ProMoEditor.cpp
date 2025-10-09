@@ -1051,6 +1051,25 @@ void CProMoEditor::CreateLabels()
 				delete labels;
 			}
 		}
+		
+		CProMoEdgeView* selEdge = NULL;
+		selEdge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
+		if (selEdge) {
+			CObArray* labels = selEdge->GetModel()->RecreateLabels();
+			if (labels) {
+				for (int i = 0; i < labels->GetSize(); i++) {
+					CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+					if (label) {
+						//TODO: change how to position label based on anchoring type
+						CRect edgeRect = selEdge->GetRect();
+						CRect labelRect = label->GetRect();
+						label->SetRect(edgeRect.left, edgeRect.top - 30, edgeRect.left + labelRect.right - labelRect.left, edgeRect.top - 30 + labelRect.bottom - labelRect.top);
+						GetDiagramEntityContainer()->Add(label);
+					}
+				}
+				delete labels;
+			}
+		}
 	}
 }
 
@@ -1207,16 +1226,36 @@ CObArray* CProMoEditor::GetProperties(CDiagramEntity* element)
 	CObArray* pProps = new CObArray();
 
 	// Example: create property items with wrappers defined in this class
-	CString title = element->GetTitle(); // example getter
+	CString title;
+	CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(element);
+	if (block) {
+		title = block->GetModel()->GetPropertyValue(_T("Title"));
+	}
+	CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(element);
+	if (edge) {
+		title = edge->GetModel()->GetPropertyValue(_T("Title"));
+	}
+	CProMoLabel* label = dynamic_cast<CProMoLabel*>(element);
+	if (label) {
+		if (label->GetModel()) {
+			title = label->GetModel()->GetPropertyValue(_T("Title"));
+		}
+		else {
+			title = label->GetTitle();
+		}
+	}
+
+	if (block || edge || label) {
+		// Create a property item for "Title"
+		CTypedPropertyItem<CString>* pTitle = new CTypedPropertyItem<CString>(_T("Title"), element, this, &SetShapeTitle, title);
+		pProps->Add(pTitle);
+	}
+
 	CString name = element->GetName();
 
-	// Create a property item for "Title"
-	CTypedPropertyItem<CString>* pTitle = new CTypedPropertyItem<CString>(_T("Title"), element, this, &SetShapeTitle, title);
-	pProps->Add(pTitle);
-
 	// Create a property item for "Name"
-	pTitle = new CTypedPropertyItem<CString>(_T("Name"), element, this, &SetShapeName, name);
-	pProps->Add(pTitle);
+	CTypedPropertyItem<CString>* pName = new CTypedPropertyItem<CString>(_T("Name"), element, this, &SetShapeName, name);
+	pProps->Add(pName);
 
 	return pProps;
 }

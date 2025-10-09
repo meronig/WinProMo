@@ -96,6 +96,8 @@ void CProMoEntityContainer::RemoveAt(int index)
    ============================================================*/
 {
 	CDiagramEntity* obj = GetAt(index);
+	CObArray labels;
+
 	if (obj)
 	{
 		CString name = obj->GetName();
@@ -117,18 +119,26 @@ void CProMoEntityContainer::RemoveAt(int index)
 				//remove from parent
 				block->SetParentBlock(NULL);
 			}
-			// remove labels
-			CObArray labels;
+			// identify labels
 			labels.Append(*(block->GetModel()->GetLabels()));
-			for (int i = 0; i < labels.GetSize(); i++) {
-				CProMoLabel* label = NULL;
-				label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
-				if (label) {
-					Remove(label);
-				}
-			}
-
+			
 		}
+
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(obj);
+		if (edge) {
+			// identify labels
+			labels.Append(*(edge->GetModel()->GetLabels()));
+		}
+
+		// remove labels
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = NULL;
+			label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (label) {
+				Remove(label);
+			}
+		}
+
 		CDiagramEntityContainer::RemoveAt(index);
 	}
 
@@ -206,6 +216,13 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 						newEdgeView->SetDestination(newConnectedBlockView);
 					}
 				}
+
+				//preserve links between edges and labels
+				if (label && newLabel) {
+					if (label->GetModel() == edgeView->GetModel()) {
+						newEdgeView->LinkLabel(newLabel);
+					}
+				}
 			}
 		}
 	}
@@ -240,6 +257,7 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory&
 
 	LoadModels(stra, fact, models);
 	LoadViews(stra, fact, models);
+	
 	LinkViews(stra, models);
 	LinkModels(stra, models);
 	

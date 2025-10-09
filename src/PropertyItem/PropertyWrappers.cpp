@@ -11,6 +11,7 @@
 #include "../ProMoEditor/ProMoEdgeView.h"
 #include "../ProMoEditor/ProMoBlockModel.h"
 #include "../ProMoEditor/ProMoEdgeModel.h"
+#include "../ProMoEditor/ProMoLabel.h"
 
 BOOL SetShapeTitle(CDiagramEntity* entity, CDiagramEditor* editor, const CString& val)
 /* ============================================================
@@ -35,8 +36,25 @@ BOOL SetShapeTitle(CDiagramEntity* entity, CDiagramEditor* editor, const CString
    ============================================================*/
 {
 	if (entity) {
-		entity->SetTitle(val);
-		return TRUE;
+
+		CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(entity);
+		if (block) {
+			return block->GetModel()->SetPropertyValue(_T("Title"), COleVariant(val));
+		}
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(entity);
+		if (edge) {
+			return edge->GetModel()->SetPropertyValue(_T("Title"), COleVariant(val));
+		}
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(entity);
+		if (label) {
+			if (label->GetModel()){
+				return label->GetModel()->SetPropertyValue(_T("Title"), COleVariant(val));
+			}
+			else {
+				entity->SetTitle(val);
+				return TRUE;
+			}
+		}
 	}
 	return FALSE;
 }

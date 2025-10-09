@@ -452,6 +452,8 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 			CString title;
 			int group;
 			int count = 0;
+			CString model;
+			CString property;
 
 			tok->GetAt(count++, name);
 			tok->GetAt(count++, left);
@@ -460,15 +462,19 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 			tok->GetAt(count++, bottom);
 			tok->GetAt(count++, title);
 			tok->GetAt(count++, group);
+			tok->GetAt(count++, model);
+			tok->GetAt(count++, property);
 
 			SetRect(left, top, right, bottom);
 
 			CFileParser::DecodeString(title);
 			CFileParser::DecodeString(name);
+			CFileParser::DecodeString(property);
 
 			SetTitle(title);
 			SetName(name);
 			SetGroup(group);
+			SetProperty(property);
 
 			result = TRUE;
 		}

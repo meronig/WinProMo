@@ -29,6 +29,7 @@
 #include <math.h>
 #include "../DiagramEditor/Tokenizer.h"
 #include "../FileUtils/FileParser.h"
+#include "ProMoLabel.h"
 
 
 CProMoEdgeView::CProMoEdgeView()
@@ -277,6 +278,80 @@ void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, int size)
 
 	// 8. Draw the circle
 	dc->Ellipse(circleRect);
+}
+
+void CProMoEdgeView::KeepElementsConnected(double left, double top, double right, double bottom)
+/* ============================================================
+	Function :		CProMoEdgeView::KeepElementsConnected
+	Description :	Repositions labels and keeps edges 
+					connected.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	double left		-	Left edge
+					double top		-	Top edge
+					double right	-	Right edge
+					double bottom	-	Bottom edge
+
+	Usage :			Call *before* the object is moved or
+					resized to to reposition labels and
+					keep edges connected.
+
+   ============================================================*/
+{
+	ASSERT_VALID(this->GetModel());
+	CProMoEdgeModel* model = this->GetModel();
+
+	//keep connected edges connected
+	if (GetLeft() != left) {
+		if (m_source && !m_propagating) {
+			CScopedUpdate guard(m_propagating);
+			if (!m_source->IsSelected()) {
+				m_source->SetRight(left);
+			}
+		}
+	}
+	if (GetRight() != right) {
+		if (m_dest && !m_propagating) {
+			CScopedUpdate guard(m_propagating);
+			if (!m_dest->IsSelected()) {
+				m_dest->SetLeft(right);
+			}
+		}
+	}
+	if (GetTop() != top) {
+		if (m_source && !m_propagating) {
+			CScopedUpdate guard(m_propagating);
+			if (!m_source->IsSelected()) {
+				m_source->SetBottom(top);
+			}
+		}
+	}
+	if (GetBottom() != bottom) {
+		if (m_dest && !m_propagating) {
+			CScopedUpdate guard(m_propagating);
+			if (!m_dest->IsSelected()) {
+				m_dest->SetTop(bottom);
+			}
+		}
+	}
+
+	//move labels only if this is the first segment
+	if (model->GetFirstSegment() == this) {
+		for (int i = 0; i < model->GetLabels()->GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
+			if (label) {
+				//move labels that are not selected (otherwise they will be moved twice)
+				if (!label->IsSelected()) {
+					// may use a smarter logic here
+					double deltaY = GetTop() - top;
+					double deltaX = GetLeft() - left;
+
+					label->SetRect(label->GetLeft() - deltaX, label->GetTop() - deltaY, label->GetRight() - deltaX, label->GetBottom() - deltaY);
+				}
+			}
+		}
+	}
 }
 
 void CProMoEdgeView::Reposition()
@@ -747,14 +822,8 @@ void CProMoEdgeView::SetLeft(double left)
 
    ============================================================*/
 {
-
+	KeepElementsConnected(left, GetTop(), GetRight(), GetBottom());
 	CDiagramLine::SetLeft(left);
-	if (m_source && !m_propagating) {
-		CScopedUpdate guard(m_propagating);
-		if (!m_source->IsSelected()) {
-			m_source->SetRight(GetLeft());
-		}
-	}
 }
 
 void CProMoEdgeView::SetRight(double right)
@@ -773,14 +842,8 @@ void CProMoEdgeView::SetRight(double right)
 
    ============================================================*/
 {
-
+	KeepElementsConnected(GetLeft(), GetTop(), right, GetBottom());
 	CDiagramLine::SetRight(right);
-	if (m_dest && !m_propagating) {
-		CScopedUpdate guard(m_propagating);
-		if (!m_dest->IsSelected()) {
-			m_dest->SetLeft(GetRight());
-		}
-	}
 
 }
 
@@ -799,13 +862,9 @@ void CProMoEdgeView::SetTop(double top)
 
    ============================================================*/
 {
+	KeepElementsConnected(GetLeft(), top, GetRight(), GetBottom());
 	CDiagramLine::SetTop(top);
-	if (m_source && !m_propagating) {
-		CScopedUpdate guard(m_propagating);
-		if (!m_source->IsSelected()) {
-			m_source->SetBottom(GetTop());
-		}
-	}
+	
 }
 
 void CProMoEdgeView::SetBottom(double bottom)
@@ -824,14 +883,9 @@ void CProMoEdgeView::SetBottom(double bottom)
 
    ============================================================*/
 {
-
+	KeepElementsConnected(GetLeft(), GetTop(), GetRight(), bottom);
 	CDiagramLine::SetBottom(bottom);
-	if (m_dest && !m_propagating) {
-		CScopedUpdate guard(m_propagating);
-		if (!m_dest->IsSelected()) {
-			m_dest->SetTop(GetBottom());
-		}
-	}
+	
 }
 
 
@@ -1411,4 +1465,20 @@ CString CProMoEdgeView::GetNameFromString(const CString& str)
 		delete tok;
 	}
 	return name;
+}
+
+void CProMoEdgeView::LinkLabel(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoEdgeView::LinkView
+	Description :	Links a new label to this object.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoLabel* label - the label to link
+
+   ============================================================*/
+{
+	if (label) {
+		GetModel()->LinkLabel(label);
+	}
 }

@@ -10,7 +10,6 @@
 
 #include "../StdAfx.h"
 #include "../DiagramEditor/DiagramEntity.h"
-//#include "ProMoLabel.h"
 
 class AFX_EXT_CLASS CProMoLabel;
 
@@ -37,12 +36,18 @@ public:
 
 	BOOL			LoadFromString(CString& data);
 
-	// Properties
+	// Standard properties
 	CString			GetType() const;
 	void			SetType(CString type);
 
 	virtual CString	GetName() const;
 	virtual void	SetName(CString name);
+
+	// Custom properties
+	virtual void GetPropertyNames(CStringArray& array) const;
+	virtual unsigned int GetPropertyType(const CString& name) const;
+	virtual COleVariant& GetPropertyValue(const CString& name) const;
+	virtual BOOL SetPropertyValue(const CString& name, const COleVariant& value);
 
 	static CString GetNameFromString(const CString& str);
 
@@ -54,6 +59,7 @@ public:
 protected:
 	CObArray m_views;
 	CObArray m_labels;
+	CObArray m_properties;
 
 	virtual CString				GetDefaultGetString() const;
 	virtual CString				GetHeaderFromString(CString& str);
@@ -65,8 +71,9 @@ protected:
 	virtual void LinkLabel(CProMoLabel* label);
 	virtual void UnlinkLabel(CProMoLabel* label);
 	virtual void UnlinkAllLabels();
-
 	
+	virtual void CreateProperties();
+	virtual void ClearProperties();
 
 private:
 	CString m_type;

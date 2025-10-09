@@ -41,6 +41,8 @@ public:
     virtual BOOL IsFirstSegment() const;
     virtual BOOL IsLastSegment() const;
     virtual CProMoEdgeView* Split();
+
+    virtual void LinkLabel(CProMoLabel* label);
  
 protected:
     virtual void DrawLine(CDC* dc, CRect rect);
@@ -48,7 +50,8 @@ protected:
     virtual void DrawHead(CDC* dc, CRect rect, int size);
     virtual void DrawTail(CDC* dc, CRect rect, int size);
     virtual void Reposition();
-    
+    virtual void KeepElementsConnected(double left, double top, double right, double bottom);
+
     // Model-view links
     virtual void SetModel(CProMoEdgeModel* model);
     virtual void SetSourceEdge(CProMoEdgeView* source);

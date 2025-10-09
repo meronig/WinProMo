@@ -103,6 +103,9 @@ CDiagramEntity* CProMoControlFactory::CreateViewFromString(const CString& str, C
 	if (!obj)
 		obj = CProMoEdgeView::CreateFromString(str, model);
 
+	if (!obj)
+		obj = CProMoLabel::CreateFromString(str, model);
+
 	return obj;
 }
 
