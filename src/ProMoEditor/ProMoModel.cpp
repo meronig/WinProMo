@@ -25,7 +25,7 @@
 #include "ProMoNameFactory.h"
 #include "../FileUtils/FileParser.h"
 #include "ProMoLabel.h"
-#include "ProMoModelProperty.h"
+#include "ProMoProperty.h"
 
 
 CProMoModel::CProMoModel()
@@ -97,7 +97,7 @@ void CProMoModel::Copy(CProMoModel* obj)
    ============================================================*/
 {
 	for (int i = 0; i < m_properties.GetSize(); i++) {
-		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
 			if (prop->IsPersistent()) {
 				COleVariant value = obj->GetPropertyValue(prop->GetName());
@@ -170,7 +170,7 @@ void CProMoModel::LinkLabel(CProMoLabel* label)
 	if (label) {
 		if (label->m_model != this) {
 			for (int i = 0; i < m_properties.GetSize(); i++) {
-				CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+				CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 				if (prop) {
 					if (prop->GetName() == label->m_property && prop->IsLabelVisible()) {
 						// unlink existing label for this property (if any)
@@ -249,12 +249,21 @@ void CProMoModel::ClearProperties()
    ============================================================*/
 {
 	for (int i = static_cast<int>(m_properties.GetSize()) - 1; i >= 0; i--) {
-		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
 			delete prop;
 		}
 	}
 	m_properties.RemoveAll();
+}
+
+void CProMoModel::OnPropertyChanged(CProMoProperty* prop)
+{
+	CProMoLabel* label = GetLabel(prop->GetName());
+	if (label) {
+		label->SetTitle(prop->GetValue().bstrVal);
+	}
+
 }
 
 void CProMoModel::CreateProperties()
@@ -269,7 +278,7 @@ void CProMoModel::CreateProperties()
    ============================================================*/
 {
 	m_properties.RemoveAll();
-	m_properties.Add(new CProMoModelProperty(_T("Title"), TYPE_STRING, COleVariant(_T("Title")), FALSE, TRUE, TRUE));
+	m_properties.Add(new CProMoProperty(_T("Title"), TYPE_STRING, COleVariant(_T("Title")), FALSE, TRUE, TRUE, this));
 }
 
 CObArray* CProMoModel::GetViews()
@@ -375,7 +384,7 @@ BOOL CProMoModel::GetDefaultFromString(CString& str)
 		SetName(name);
 
 		for (int i = 0; i < m_properties.GetSize(); i++) {
-			CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+			CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 			if (prop) {
 				if (count < size) {
 					CString stringValue;
@@ -519,7 +528,7 @@ CString CProMoModel::GetDefaultGetString() const
 	str.Format(_T("%s:%s"), (LPCTSTR)GetType(), (LPCTSTR)name);
 
 	for (int i = 0; i < m_properties.GetSize(); i++) {
-		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
 			if (prop->IsPersistent()) {
 				CString value;
@@ -640,7 +649,7 @@ void CProMoModel::GetPropertyNames(CStringArray& array) const
    ============================================================*/
 {
 	for (int i = 0; i < m_properties.GetSize(); i++) {
-		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
 			array.Add(prop->GetName());
 		}
@@ -663,13 +672,9 @@ unsigned int CProMoModel::GetPropertyType(const CString& name) const
 
    ============================================================*/
 {
-	for (int i = 0; i < m_properties.GetSize(); i++) {
-		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
-		if (prop) {
-			if (prop->GetName() == name) {
-				return prop->GetType();
-			}
-		}
+	CProMoProperty* prop = FindProperty(name);
+	if (prop) {
+		return prop->GetType();
 	}
 	return TYPE_UNKNOWN;
 }
@@ -690,13 +695,9 @@ COleVariant& CProMoModel::GetPropertyValue(const CString& name) const
 	
    ============================================================*/
 {
-	for (int i = 0; i < m_properties.GetSize(); i++) {
-		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
-		if (prop) {
-			if (prop->GetName() == name) {
-				return prop->GetValue();
-			}
-		}
+	CProMoProperty* prop = FindProperty(name);
+	if (prop) {
+		return prop->GetValue();
 	}
 	return COleVariant();
 }
@@ -715,20 +716,46 @@ BOOL CProMoModel::SetPropertyValue(const CString& name, const COleVariant& value
 
    ============================================================*/
 {
+	CProMoProperty* prop = FindProperty(name);
+	if (prop) {
+		BOOL result = prop->SetValue(value);
+		// update linked label (if any)
+		if (result) {
+			OnPropertyChanged(prop);
+		}
+		return result;
+	}
+	
+	return FALSE;
+}
+
+unsigned int CProMoModel::GetPropertiesCount() const
+{
+	return m_properties.GetSize();
+}
+
+CProMoProperty* CProMoModel::GetProperty(const int& index) const
+{
+	if (index < m_properties.GetSize()) {
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(index));
+		if (prop) {
+			return prop;
+		}
+	}
+	return NULL;
+}
+
+CProMoProperty* CProMoModel::FindProperty(const CString& name) const
+{
 	for (int i = 0; i < m_properties.GetSize(); i++) {
-		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
 			if (prop->GetName() == name) {
-				BOOL result = prop->SetValue(value);
-				// update linked label (if any)
-				if (result) {
-					GetLabel(name)->SetTitle(value.bstrVal);
-				}
-				return result;
+				return prop;
 			}
 		}
 	}
-	return FALSE;
+	return NULL;
 }
 
 CString CProMoModel::Export(UINT /*format*/) const
@@ -830,7 +857,7 @@ CObArray* CProMoModel::RecreateLabels()
 	CObArray* arr = new CObArray;
 
 	for (int i = 0; i < m_properties.GetSize(); i++) {
-		CProMoModelProperty* prop = dynamic_cast<CProMoModelProperty*>(m_properties.GetAt(i));
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
 			if (prop->GetType() != TYPE_UNKNOWN) {
 				if (!GetLabel(prop->GetName()) && prop->IsLabelVisible()) {

@@ -126,7 +126,7 @@
     <ClCompile Include="ProMoEditor\ProMoLabel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ProMoEditor\ProMoModelProperty.cpp">
+    <ClCompile Include="ProMoEditor\ProMoProperty.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -265,7 +265,10 @@
     <ClInclude Include="ProMoEditor\ProMoLabel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ProMoEditor\ProMoModelProperty.h">
+    <ClInclude Include="ProMoEditor\ProMoProperty.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProMoEditor\ProMoPropertyOwner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

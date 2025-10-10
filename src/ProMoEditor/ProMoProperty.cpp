@@ -6,18 +6,18 @@
 
 	Author :		Giovanni Meroni
 
-	Purpose :		"CProMoModelProperty" is a class to keep track of custom
-					model properties and on how they should be displayed.
+	Purpose :		"CProMoProperty" is a class to keep track of custom
+					properties and on how they should be displayed.
 
    ========================================================================*/
 #include "stdafx.h"
-#include "ProMoModelProperty.h"
+#include "ProMoProperty.h"
 
-CProMoModelProperty::CProMoModelProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue, const BOOL& readOnly, 
-	const BOOL& showLabel, const BOOL& persistent, CProMoModel* model, 
-	ValidationFuction validationFct, ChangeFuction changeFct)
+CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue, const BOOL& readOnly, 
+	const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner, 
+	ValidationFuction valFct, ChangeFuction changeFct, EditFunction editFct)
 /* ============================================================
-	Function :		CProMoModelProperty::CProMoModelProperty
+	Function :		CProMoProperty::CProMoProperty
 	Description :	Constructor
 	Access :		Public
 
@@ -40,22 +40,87 @@ CProMoModelProperty::CProMoModelProperty(const CString& name, const unsigned int
 					BOOL& persistent			-	"TRUE" if the
 													property should
 													be serialized
-					CProMoModel* model			-	Pointer to the
-													model to which
+					IProMoPropertyOwner* owner	-	Pointer to the
+													object to which
 													the property
-													belongs	
-					ValidationFuction			-	Pointer to the
+													belongs
+					ValidationFuction valFct	-	Pointer to the
 													helper function
 													to validate
 													the property
 													value before
 													setting it
-					ChangeFuction				-	Pointer to the
+					ChangeFuction changeFct		-	Pointer to the
 													helper function
 													to perform
 													operations after
-													the property 
-													value has 
+													the property
+													value has
+													changed
+					EditFunction editFct		-	Pointer to the
+													helper function
+													to invoke when
+													the property
+													needs to be
+													edited	
+
+   ============================================================*/
+{
+	m_name = name;
+	m_type = type;
+	m_value = initialValue;
+	m_readOnly = readOnly;
+	m_labelVisible = showLabel;
+	m_validationFunction = valFct;
+	m_changeFunction = changeFct;
+	m_persistent = persistent;
+	m_owner = owner;
+	m_editFunction = editFct;
+}
+
+CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue, const BOOL& readOnly,
+	const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner,
+	ValidationFuction valFct, ChangeFuction changeFct)
+/* ============================================================
+	Function :		CProMoProperty::CProMoProperty
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	const CString& name			-	Name of the
+													property
+													to change
+					unsigned int& type			-	Type of the
+													property
+					COleVariant& initialValue	-	Initial value
+													of the
+													property
+					BOOL& readOnly				-	"TRUE" if the
+													property is
+													read-only
+					BOOL& showLabel				-	"TRUE" if the
+													property should
+													be shown as a
+													label
+					BOOL& persistent			-	"TRUE" if the
+													property should
+													be serialized
+					IProMoPropertyOwner* owner	-	Pointer to the
+													object to which
+													the property
+													belongs	
+					ValidationFuction valFct	-	Pointer to the
+													helper function
+													to validate
+													the property
+													value before
+													setting it
+					ChangeFuction changeFct		-	Pointer to the
+													helper function
+													to perform
+													operations after
+													the property
+													value has
 													changed
 
    ============================================================*/
@@ -65,15 +130,17 @@ CProMoModelProperty::CProMoModelProperty(const CString& name, const unsigned int
 	m_value = initialValue;
 	m_readOnly = readOnly;
 	m_labelVisible = showLabel;
-	m_validationFunction = validationFct;
+	m_validationFunction = valFct;
 	m_changeFunction = changeFct;	
 	m_persistent = persistent;
-	m_model = model;
+	m_owner = owner;
+	m_editFunction = NULL;
 }
 
-CProMoModelProperty::CProMoModelProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue, const BOOL& readOnly, const BOOL& showLabel, const BOOL& persistent)
+CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue, const BOOL& readOnly, 
+	const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner)
 /* ============================================================
-	Function :		CProMoModelProperty::CProMoModelProperty
+	Function :		CProMoProperty::CProMoProperty
 	Description :	Constructor
 	Access :		Public
 
@@ -96,6 +163,10 @@ CProMoModelProperty::CProMoModelProperty(const CString& name, const unsigned int
 					BOOL& persistent			-	"TRUE" if the
 													property should
 													be serialized
+					IProMoPropertyOwner* owner	-	Pointer to the
+													object to which
+													the property
+													belongs
 
    ============================================================*/
 {
@@ -107,12 +178,13 @@ CProMoModelProperty::CProMoModelProperty(const CString& name, const unsigned int
 	m_validationFunction = NULL;
 	m_changeFunction = NULL;
 	m_persistent = persistent;
-	m_model = NULL;
+	m_owner = owner;
+	m_editFunction = NULL;
 }
 
-BOOL CProMoModelProperty::SetValue(const COleVariant& val)
+BOOL CProMoProperty::SetValue(const COleVariant& val)
 /* ============================================================
-	Function :		CProMoModelProperty::SetValue
+	Function :		CProMoProperty::SetValue
 	Description :	Sets the property by invoking the helper
 					function
 	Access :		Public
@@ -127,20 +199,24 @@ BOOL CProMoModelProperty::SetValue(const COleVariant& val)
 {
 	if (m_readOnly)
 		return FALSE;
+	if (m_value == val)
+		return TRUE; // no change
 	if (m_validationFunction && !m_validationFunction(this, val))
 		return FALSE;
-
 	m_value = val;
 	if (m_changeFunction)
 		m_changeFunction(this, val);
+	
+	if (m_owner)
+		m_owner->OnPropertyChanged(this);
 
 	return TRUE;
 	
 }
 
-COleVariant& CProMoModelProperty::GetValue()
+COleVariant& CProMoProperty::GetValue()
 /* ============================================================
-	Function :		CProMoModelProperty::GetValue
+	Function :		CProMoProperty::GetValue
 	Description :	Gets the value currently associated
 					to the property
 	Access :		Public
@@ -154,9 +230,9 @@ COleVariant& CProMoModelProperty::GetValue()
 	return m_value;
 }
 
-const CString& CProMoModelProperty::GetName()
+const CString& CProMoProperty::GetName()
 /* ============================================================
-	Function :		CProMoModelProperty::GetName
+	Function :		CProMoProperty::GetName
 	Description :	Gets the name of the property
 	Access :		Public
 
@@ -168,9 +244,9 @@ const CString& CProMoModelProperty::GetName()
 	return m_name;
 }
 
-const unsigned int& CProMoModelProperty::GetType()
+const unsigned int& CProMoProperty::GetType()
 /* ============================================================
-	Function :		CProMoModelProperty::GetType
+	Function :		CProMoProperty::GetType
 	Description :	Gets the type of the property
 	Access :		Public
 
@@ -182,9 +258,9 @@ const unsigned int& CProMoModelProperty::GetType()
 	return m_type;
 }
 
-const BOOL& CProMoModelProperty::IsReadOnly()
+const BOOL& CProMoProperty::IsReadOnly()
 /* ============================================================
-	Function :		CProMoModelProperty::IsReadOnly
+	Function :		CProMoProperty::IsReadOnly
 	Description :	Returns "TRUE" if the property is
 					read-only
 	Access :		Public
@@ -198,9 +274,9 @@ const BOOL& CProMoModelProperty::IsReadOnly()
 	return m_readOnly;
 }
 
-const BOOL& CProMoModelProperty::IsLabelVisible()
+const BOOL& CProMoProperty::IsLabelVisible()
 /* ============================================================
-	Function :		CProMoModelProperty::IsLabelVisible
+	Function :		CProMoProperty::IsLabelVisible
 	Description :	Returns "TRUE" if no label should be
 					shown for the property
 	Access :		Public
@@ -214,9 +290,9 @@ const BOOL& CProMoModelProperty::IsLabelVisible()
 	return m_labelVisible;
 }
 
-const BOOL& CProMoModelProperty::IsPersistent()
+const BOOL& CProMoProperty::IsPersistent()
 /* ============================================================
-	Function :		CProMoModelProperty::IsPersistent
+	Function :		CProMoProperty::IsPersistent
 	Description :	Returns "TRUE" if the property should be
 					serialized
 	Access :		Public
@@ -230,9 +306,24 @@ const BOOL& CProMoModelProperty::IsPersistent()
 	return m_persistent;
 }
 
-void CProMoModelProperty::AddOption(const COleVariant& option)
+const BOOL& CProMoProperty::HasHandler()
+{
+	if (m_editFunction) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+BOOL CProMoProperty::InvokeHandler(CWnd* parent)
+{
+	if (m_editFunction)
+		return m_editFunction(this, parent);
+	return FALSE;
+}
+
+void CProMoProperty::AddOption(const COleVariant& option)
 /* ============================================================
-	Function :		CProMoModelProperty::AddOption
+	Function :		CProMoProperty::AddOption
 	Description :	Adds an option to the list of possible
 					values that the property can assume. Can be
 					used by the client application to build
@@ -250,9 +341,9 @@ void CProMoModelProperty::AddOption(const COleVariant& option)
 	m_options.Add(option);
 }
 
-int CProMoModelProperty::GetOptionsCount()
+int CProMoProperty::GetOptionsCount()
 /* ============================================================
-	Function :		CProMoModelProperty::GetValue
+	Function :		CProMoProperty::GetValue
 	Description :	Returns the number of options available for
 					the property
 	Access :		Public
@@ -266,9 +357,9 @@ int CProMoModelProperty::GetOptionsCount()
 	return m_options.GetSize();
 }
 
-const COleVariant& CProMoModelProperty::GetOption(const int& index)
+const COleVariant& CProMoProperty::GetOption(const int& index)
 /* ============================================================
-	Function :		CProMoModelProperty::GetOption
+	Function :		CProMoProperty::GetOption
 	Description :	Returns the option having the specified
 					index
 	Access :		Public

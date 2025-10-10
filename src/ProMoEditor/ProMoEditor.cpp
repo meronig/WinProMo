@@ -1208,60 +1208,6 @@ void CProMoEditor::AutoResizeAll()
 	RedrawWindow();
 }
 
-CObArray* CProMoEditor::GetProperties(CDiagramEntity* element)
-/* ============================================================
-	Function :		CProMoEditor::GetProperties
-	Description :	Returns changeable propertis for the 
-					object specified.
-	Access :		Protected
-
-	Return :		CObArray*				-	Properties for
-												the element
-	Parameters :	CDiagramEntity* element	-	Element whose
-												properties need
-												to be collected
-
-	Usage :			Override to change the properties.
-
-   ============================================================*/
-{
-	CObArray* pProps = new CObArray();
-
-	// Example: create property items with wrappers defined in this class
-	CString title;
-	CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(element);
-	if (block) {
-		title = block->GetModel()->GetPropertyValue(_T("Title"));
-	}
-	CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(element);
-	if (edge) {
-		title = edge->GetModel()->GetPropertyValue(_T("Title"));
-	}
-	CProMoLabel* label = dynamic_cast<CProMoLabel*>(element);
-	if (label) {
-		if (label->GetModel()) {
-			title = label->GetModel()->GetPropertyValue(_T("Title"));
-		}
-		else {
-			title = label->GetTitle();
-		}
-	}
-
-	if (block || edge || label) {
-		// Create a property item for "Title"
-		CTypedPropertyItem<CString>* pTitle = new CTypedPropertyItem<CString>(_T("Title"), element, this, &SetShapeTitle, title);
-		pProps->Add(pTitle);
-	}
-
-	CString name = element->GetName();
-
-	// Create a property item for "Name"
-	CTypedPropertyItem<CString>* pName = new CTypedPropertyItem<CString>(_T("Name"), element, this, &SetShapeName, name);
-	pProps->Add(pName);
-
-	return pProps;
-}
-
 void CProMoEditor::DrawPageBreaks(CDC* dc, CRect rect, double zoom) const
 /* ============================================================
 	Function :		CProMoEditor::DrawPageBreaks
@@ -1679,17 +1625,12 @@ void CProMoEditor::NotifySelectionChanged()
 
 	CObArray* pProps = NULL;
 
-	if (pSelectedEntity)
-	{
-		pProps = GetProperties(pSelectedEntity);
-	}
-
 	// Get main frame window
 	CWnd* pMainFrame = AfxGetMainWnd();
 	if (pMainFrame && ::IsWindow(pMainFrame->GetSafeHwnd()))
 	{
 		// Send message asynchronously to avoid blocking (optional)
-		pMainFrame->PostMessage(WM_SELECTION_CHANGED, 0, (LPARAM)pProps);
+		pMainFrame->PostMessage(WM_SELECTION_CHANGED, 0, (LPARAM)pSelectedEntity);
 	}
 }
 

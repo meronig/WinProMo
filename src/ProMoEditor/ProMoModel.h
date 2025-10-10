@@ -10,10 +10,13 @@
 
 #include "../StdAfx.h"
 #include "../DiagramEditor/DiagramEntity.h"
+#include "ProMoPropertyOwner.h"
 
 class AFX_EXT_CLASS CProMoLabel;
 
-class AFX_EXT_CLASS CProMoModel : public CObject
+class AFX_EXT_CLASS CProMoProperty;
+
+class AFX_EXT_CLASS CProMoModel : public CObject, public IProMoPropertyOwner
 {
 public:
 	friend class CProMoLabel;
@@ -48,6 +51,9 @@ public:
 	virtual unsigned int GetPropertyType(const CString& name) const;
 	virtual COleVariant& GetPropertyValue(const CString& name) const;
 	virtual BOOL SetPropertyValue(const CString& name, const COleVariant& value);
+	virtual unsigned int GetPropertiesCount() const;
+	virtual CProMoProperty* GetProperty(const int& index) const;
+	virtual CProMoProperty* FindProperty(const CString& name) const;
 
 	static CString GetNameFromString(const CString& str);
 
@@ -79,6 +85,9 @@ private:
 	CString m_type;
 	CString m_name;
 
+	// overrides
+public:
+	virtual void OnPropertyChanged(CProMoProperty* prop);
 
 };
 
