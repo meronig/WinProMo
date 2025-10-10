@@ -184,7 +184,8 @@ void CProMoModel::LinkLabel(CProMoLabel* label)
 						// link the label
 						label->m_model = this;
 						m_labels.Add(label);
-						label->SetTitle(GetPropertyValue(label->m_property).bstrVal);
+						CString value = GetPropertyValue(label->m_property);
+						label->SetTitle(value);
 					}
 				}
 			}
@@ -258,10 +259,24 @@ void CProMoModel::ClearProperties()
 }
 
 void CProMoModel::OnPropertyChanged(CProMoProperty* prop)
+/* ============================================================
+	Function :		CProMoModel::OnPropertyChanged
+	Description :	Notification that a property has changed.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoProperty* prop	-	Property that
+												changed.
+
+	Usage :			Can be called by a property to notify the
+					model that it changed, and to trigger UI
+					updates.
+
+   ============================================================*/
 {
 	CProMoLabel* label = GetLabel(prop->GetName());
 	if (label) {
-		label->SetTitle(prop->GetValue().bstrVal);
+		label->SetTitle(prop->GetValue());
 	}
 
 }
@@ -277,8 +292,23 @@ void CProMoModel::CreateProperties()
 
    ============================================================*/
 {
-	m_properties.RemoveAll();
-	m_properties.Add(new CProMoProperty(_T("Title"), TYPE_STRING, COleVariant(_T("Title")), FALSE, TRUE, TRUE, this));
+	ClearProperties();
+	AddProperty(new CProMoProperty(_T("Title"), TYPE_STRING, COleVariant(_T("Title")), FALSE, TRUE, TRUE, this));
+}
+
+void CProMoModel::AddProperty(CProMoProperty* prop)
+/* ============================================================
+	Function :		CProMoModel::AddProperty
+	Description :	Adds a property to this object.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoProperty* prop - the property to add
+   ============================================================*/
+{
+	if (prop) {
+		m_properties.Add(prop);
+	}
 }
 
 CObArray* CProMoModel::GetViews()
@@ -730,11 +760,33 @@ BOOL CProMoModel::SetPropertyValue(const CString& name, const COleVariant& value
 }
 
 unsigned int CProMoModel::GetPropertiesCount() const
+/* ============================================================
+	Function :		CProMoModel::GetPropertiesCount
+	Description :	Returns the number of properties
+	Access :		Public
+
+	Return :		unsigned int		-	The number of
+											properties.
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_properties.GetSize();
 }
 
 CProMoProperty* CProMoModel::GetProperty(const int& index) const
+/* ============================================================
+	Function :		CProMoModel::GetProperty
+	Description :	Gets the property at position "index"
+	Access :		Public
+
+	Return :		CProMoProperty&		-	The property, or
+											"NULL" if "index"
+											is out of range.
+	Parameters :	int& index			-	The position of
+											the property.
+
+   ============================================================*/
 {
 	if (index < m_properties.GetSize()) {
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(index));
@@ -746,6 +798,19 @@ CProMoProperty* CProMoModel::GetProperty(const int& index) const
 }
 
 CProMoProperty* CProMoModel::FindProperty(const CString& name) const
+/* ============================================================
+	Function :		CProMoModel::FindProperty
+	Description :	Gets the property with the specified
+					name.
+
+	Return :		CProMoProperty&		-	The property, or
+											"NULL" if no
+											such property
+											exists.
+	Parameters :	CString& name		-	The name of the
+											property.
+
+   ============================================================*/
 {
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));

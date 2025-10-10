@@ -79,6 +79,7 @@ protected:
 	virtual void UnlinkAllLabels();
 	
 	virtual void CreateProperties();
+	virtual void AddProperty(CProMoProperty* prop);
 	virtual void ClearProperties();
 
 private:

@@ -377,6 +377,11 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 						if (newOrder->GetAt(j) == sourceModel->GetMainView()) {
 							//add all edge views
 							newOrder->Append(*views);
+							//add all edge labels
+							CObArray* labels = edgeModel->GetLabels();
+							if (labels) {
+								newOrder->Append(*labels);
+							}
 						}
 					}
 				}
@@ -384,6 +389,11 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 				else {
 					//add all edge views
 					newOrder->Append(*views);
+					//add all edge labels
+					CObArray* labels = edgeModel->GetLabels();
+					if (labels) {
+						newOrder->Append(*labels);
+					}
 				}
 			}
 		}
@@ -405,6 +415,11 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 							if (newOrder->GetAt(j) == destModel->GetMainView()) {
 								//add all edge views
 								newOrder->Append(*views);
+								//add all edge labels
+								CObArray* labels = edgeModel->GetLabels();
+								if (labels) {
+									newOrder->Append(*labels);
+								}
 							}
 						}
 					}
@@ -413,6 +428,11 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 				else {
 					//add all edge views
 					newOrder->Append(*views);
+					//add all edge labels
+					CObArray* labels = edgeModel->GetLabels();
+					if (labels) {
+						newOrder->Append(*labels);
+					}
 				}
 			}
 		}
@@ -475,6 +495,13 @@ void CProMoEntityContainer::Reorder()
 				//edge is disconnected, so add it immediately
 				if (!(edgeView->GetModel()->GetSource() || edgeView->GetModel()->GetDestination())) {
 					newOrder.Add(edgeView);
+					if (edgeView->IsFirstSegment()) {
+						//add the labels
+						CObArray* labels = edgeView->GetModel()->GetLabels();
+						if (labels) {
+							newOrder.Append(*labels);
+						}
+					}
 				}
 			}
 			CProMoLabel* label = dynamic_cast<CProMoLabel*>(obj);

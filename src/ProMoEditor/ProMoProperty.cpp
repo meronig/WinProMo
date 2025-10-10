@@ -307,6 +307,18 @@ const BOOL& CProMoProperty::IsPersistent()
 }
 
 const BOOL& CProMoProperty::HasHandler()
+/* ============================================================
+	Function :		CProMoProperty::HasHandler
+	Description :	Returns "TRUE" if the property has an
+					associated handler function
+	Access :		Public
+
+	Return :		BOOL&	-	"TRUE" if the property has an
+								associated handler function,
+								"FALSE" otherwise
+	Parameters :	none
+
+   ============================================================*/
 {
 	if (m_editFunction) {
 		return TRUE;
@@ -315,6 +327,23 @@ const BOOL& CProMoProperty::HasHandler()
 }
 
 BOOL CProMoProperty::InvokeHandler(CWnd* parent)
+/* ============================================================
+	Function :		CProMoProperty::InvokeHandler
+	Description :	Invokes the handler function associated
+					to the property, which is used to determine
+					the value to be set for the property.
+	Access :		Public
+
+	Return :		BOOL			-	"TRUE" if the operation
+										succeeded, "FALSE"
+										otherwise
+	Parameters :	CWnd* parent	-	The parent window
+										for any dialog
+										that might be
+										created by the
+										handler function
+
+   ============================================================*/
 {
 	if (m_editFunction)
 		return m_editFunction(this, parent);
