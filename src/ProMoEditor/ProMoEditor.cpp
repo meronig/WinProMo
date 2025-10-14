@@ -43,9 +43,6 @@
 #include "ProMoEditor.h"
 #include "ProMoEntityContainer.h"
 #include "ProMoEdgeModel.h"
-#include "../PropertyItem/PropertyWrappers.h"
-#include "../PropertyItem/CustomPropertyItem.h"
-#include "../PropertyItem/TypedPropertyItem.h"
 #include <math.h>
 #include "ProMoLabel.h"
 

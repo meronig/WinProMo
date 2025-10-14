@@ -11,6 +11,8 @@
 #include "../StdAfx.h"
 #include "../DiagramEditor/DiagramEntity.h"
 #include "ProMoPropertyOwner.h"
+#include "../FileUtils/VariantWrapper.h"
+#include <afxdisp.h>
 
 class AFX_EXT_CLASS CProMoLabel;
 
@@ -49,8 +51,8 @@ public:
 	// Custom properties
 	virtual void GetPropertyNames(CStringArray& array) const;
 	virtual unsigned int GetPropertyType(const CString& name) const;
-	virtual COleVariant& GetPropertyValue(const CString& name) const;
-	virtual BOOL SetPropertyValue(const CString& name, const COleVariant& value);
+	virtual CVariantWrapper& GetPropertyValue(const CString& name) const;
+	virtual BOOL SetPropertyValue(const CString& name, const CVariantWrapper& value);
 	virtual unsigned int GetPropertiesCount() const;
 	virtual CProMoProperty* GetProperty(const int& index) const;
 	virtual CProMoProperty* FindProperty(const CString& name) const;

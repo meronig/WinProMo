@@ -7,57 +7,92 @@
    ========================================================================*/
 #ifndef _PROMOPROPERTY_H_
 #define _PROMOPROPERTY_H_
+
 #include "../StdAfx.h"
 #include "ProMoModel.h"
 #include "ProMoPropertyOwner.h"
+#include <afxtempl.h>
+#include "../FileUtils/VariantWrapper.h"
 
-#define TYPE_UNKNOWN   0
+#define TYPE_COMPOSITE     0
 #define TYPE_INT       1
 #define TYPE_DOUBLE    2
 #define TYPE_STRING    3
 #define TYPE_BOOL      4
+#define TYPE_UNKNOWN   999
 
 class AFX_EXT_CLASS CProMoProperty :
     public CObject
 {
 protected:
-	typedef BOOL(*ValidationFuction)(CProMoProperty*, const COleVariant& newVal);
-	typedef BOOL(*ChangeFuction)(CProMoProperty*, const COleVariant& newVal);
+	typedef BOOL(*ValidationFuction)(CProMoProperty*, const CVariantWrapper& newVal);
+	typedef BOOL(*ChangeFuction)(CProMoProperty*, const CVariantWrapper& newVal);
 	typedef BOOL(*EditFunction)(CProMoProperty*, CWnd*);
 	ValidationFuction m_validationFunction;
 	ChangeFuction m_changeFunction;
 	EditFunction m_editFunction;
-	CString        m_name;
-	unsigned int   m_type;
-	COleVariant    m_value;
-	BOOL		  m_readOnly;
-	BOOL		  m_labelVisible;
-	BOOL		  m_persistent;
-	IProMoPropertyOwner* m_owner;
-	CArray <COleVariant, COleVariant> m_options;
+	CString			m_name;
+	unsigned int	m_type;
+	CVariantWrapper		m_value;
+	BOOL			m_readOnly;
+	BOOL			m_labelVisible;
+	BOOL			m_persistent;
+	IProMoPropertyOwner*	m_owner;
+	CArray <CVariantWrapper, CVariantWrapper>	m_options;
+	BOOL			m_multivalue;
+	CProMoProperty* m_parentProperty;
+	CProMoProperty* m_template;
+	CObArray		m_childProperties;
 
 public:
-	CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue,
+	CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue,
 		const BOOL& readOnly, const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner,
-		ValidationFuction valFct, ChangeFuction changeFct, EditFunction editFct);
-	CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue,
+		ValidationFuction valFct, ChangeFuction changeFct, EditFunction editFct,
+		const BOOL& multivalue, CProMoProperty* parent, CProMoProperty* templ);
+	CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue,
 		const BOOL& readOnly, const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner,
 		ValidationFuction valFct, ChangeFuction changeFct);
-	CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue,
+	CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue,
 		const BOOL& readOnly, const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner);
-	virtual BOOL SetValue(const COleVariant& val);
-	virtual COleVariant& GetValue();
-	virtual void AddOption(const COleVariant& option);
-	virtual int GetOptionsCount();
-	virtual const COleVariant& GetOption(const int& index);
+	virtual ~CProMoProperty();
+	virtual BOOL SetValue(const CVariantWrapper& val);
+	virtual CVariantWrapper& GetValue();
+	virtual void AddOption(const CVariantWrapper& option);
+	virtual int GetOptionsCount() const;
+	virtual const CVariantWrapper& GetOption(const int& index);
 	virtual const CString& GetName();
 	virtual const unsigned int& GetType();
 	virtual const BOOL& IsReadOnly();
 	virtual const BOOL& IsLabelVisible();
 	virtual const BOOL& IsPersistent();
 	virtual const BOOL& HasHandler();
+	virtual const BOOL& IsMultiValue();
 	virtual BOOL InvokeHandler(CWnd* parent);
-    
+
+	virtual CProMoProperty* Clone();
+	
+	virtual CProMoProperty* AddChild();
+	virtual void ClearChildren();
+	virtual int GetChildrenCount() const;
+	virtual CProMoProperty* GetChild(const int& index) const;
+	
+	virtual CString GetFullName() const;
+	
+	static CString GetNameFromString(const CString& str);
+	virtual BOOL	FromString(const CString& str);
+	virtual CString	GetString() const;
+	static	CProMoProperty* CreateFromString(const CString& str);
+
+	BOOL			LoadFromString(CString& data);
+
+
+protected:
+	CProMoProperty();
+	virtual CString				GetDefaultGetString() const;
+	virtual CString				GetHeaderFromString(CString& str);
+	virtual BOOL				GetDefaultFromString(CString& str);
+	
+	virtual CProMoProperty* HandleChild(const CString& str);
 };
 
 #endif //_PROMOPROPERTY_H_

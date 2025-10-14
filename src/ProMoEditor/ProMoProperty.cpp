@@ -12,10 +12,12 @@
    ========================================================================*/
 #include "stdafx.h"
 #include "ProMoProperty.h"
+#include "../FileUtils/FileParser.h"
 
-CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue, const BOOL& readOnly, 
+CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue, const BOOL& readOnly, 
 	const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner, 
-	ValidationFuction valFct, ChangeFuction changeFct, EditFunction editFct)
+	ValidationFuction valFct, ChangeFuction changeFct, EditFunction editFct,
+	const BOOL& multivalue, CProMoProperty* parent, CProMoProperty* templ)
 /* ============================================================
 	Function :		CProMoProperty::CProMoProperty
 	Description :	Constructor
@@ -27,7 +29,7 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 													to change
 					unsigned int& type			-	Type of the
 													property
-					COleVariant& initialValue	-	Initial value
+					CVariantWrapper& initValue	-	Initial value
 													of the
 													property
 					BOOL& readOnly				-	"TRUE" if the
@@ -63,12 +65,22 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 													the property
 													needs to be
 													edited	
+					BOOL& multivalue			-	"TRUE" if the
+													property can
+													hold multiple
+													values	
+					CProMoProperty* parent		-	Pointer to the
+													parent property
+													(if any)
+					CProMoProperty* templ		-	Pointer to the
+													template property
+													(if any)
 
    ============================================================*/
 {
 	m_name = name;
 	m_type = type;
-	m_value = initialValue;
+	m_value = initValue;
 	m_readOnly = readOnly;
 	m_labelVisible = showLabel;
 	m_validationFunction = valFct;
@@ -76,9 +88,24 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_persistent = persistent;
 	m_owner = owner;
 	m_editFunction = editFct;
+	m_multivalue = multivalue;
+	if (m_multivalue) {
+		m_template = templ;
+	}
+	else {
+		m_template = NULL;
+	}
+	if (parent) {
+		if (parent->m_type == TYPE_COMPOSITE || (parent->m_multivalue && parent->m_type == type && !multivalue)) {
+			m_parentProperty = parent;
+			parent->m_childProperties.Add(this);
+			return;
+		}
+	}
+	m_parentProperty = NULL;
 }
 
-CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue, const BOOL& readOnly,
+CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue, const BOOL& readOnly,
 	const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner,
 	ValidationFuction valFct, ChangeFuction changeFct)
 /* ============================================================
@@ -92,7 +119,7 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 													to change
 					unsigned int& type			-	Type of the
 													property
-					COleVariant& initialValue	-	Initial value
+					CVariantWrapper& initValue	-	Initial value
 													of the
 													property
 					BOOL& readOnly				-	"TRUE" if the
@@ -127,7 +154,7 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 {
 	m_name = name;
 	m_type = type;
-	m_value = initialValue;
+	m_value = initValue;
 	m_readOnly = readOnly;
 	m_labelVisible = showLabel;
 	m_validationFunction = valFct;
@@ -135,9 +162,12 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_persistent = persistent;
 	m_owner = owner;
 	m_editFunction = NULL;
+	m_multivalue = FALSE;
+	m_parentProperty = NULL;
+	m_template = NULL;
 }
 
-CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const COleVariant& initialValue, const BOOL& readOnly, 
+CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue, const BOOL& readOnly, 
 	const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner)
 /* ============================================================
 	Function :		CProMoProperty::CProMoProperty
@@ -150,7 +180,7 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 													to change
 					unsigned int& type			-	Type of the
 													property
-					COleVariant& initialValue	-	Initial value
+					CVariantWrapper& initValue	-	Initial value
 													of the
 													property
 					BOOL& readOnly				-	"TRUE" if the
@@ -172,7 +202,7 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 {
 	m_name = name;
 	m_type = type;
-	m_value = initialValue;
+	m_value = initValue;
 	m_readOnly = readOnly;
 	m_labelVisible = showLabel;
 	m_validationFunction = NULL;
@@ -180,9 +210,21 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_persistent = persistent;
 	m_owner = owner;
 	m_editFunction = NULL;
+	m_multivalue = FALSE;
+	m_parentProperty = NULL;
+	m_template = NULL;
 }
 
-BOOL CProMoProperty::SetValue(const COleVariant& val)
+CProMoProperty::~CProMoProperty()
+{
+	ClearChildren();
+	if (m_template) {
+		delete m_template;
+		m_template = NULL;
+	}
+}
+
+BOOL CProMoProperty::SetValue(const CVariantWrapper& val)
 /* ============================================================
 	Function :		CProMoProperty::SetValue
 	Description :	Sets the property by invoking the helper
@@ -192,15 +234,17 @@ BOOL CProMoProperty::SetValue(const COleVariant& val)
 	Return :		BOOL				-	"TRUE" if the 
 											operation succeeded,
 											"FALSE" otherwise
-	Parameters :	COleVariant& val	-	The value to set for
+	Parameters :	CVariantWrapper& val	-	The value to set for
 											the property
 
    ============================================================*/
 {
+	if (m_type == TYPE_COMPOSITE)
+		return FALSE; // cannot set value for composite properties
+	if (m_multivalue)
+		return FALSE; // cannot set value for multivalue properties
 	if (m_readOnly)
 		return FALSE;
-	if (m_value == val)
-		return TRUE; // no change
 	if (m_validationFunction && !m_validationFunction(this, val))
 		return FALSE;
 	m_value = val;
@@ -214,14 +258,14 @@ BOOL CProMoProperty::SetValue(const COleVariant& val)
 	
 }
 
-COleVariant& CProMoProperty::GetValue()
+CVariantWrapper& CProMoProperty::GetValue()
 /* ============================================================
 	Function :		CProMoProperty::GetValue
 	Description :	Gets the value currently associated
 					to the property
 	Access :		Public
 
-	Return :		COleVariant&	-	the current value for
+	Return :		CVariantWrapper&	-	the current value for
 										the property
 	Parameters :	none
 
@@ -326,6 +370,22 @@ const BOOL& CProMoProperty::HasHandler()
 	return FALSE;
 }
 
+const BOOL& CProMoProperty::IsMultiValue()
+/* ============================================================
+	Function :		CProMoProperty::IsMultivalue
+	Description :	Returns "TRUE" if the property accepts
+					multiple values
+	Access :		Public
+
+	Return :		BOOL&	-	"TRUE" if the property is 
+								multi-value, "FALSE" otherwise
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_multivalue;
+}
+
 BOOL CProMoProperty::InvokeHandler(CWnd* parent)
 /* ============================================================
 	Function :		CProMoProperty::InvokeHandler
@@ -350,31 +410,148 @@ BOOL CProMoProperty::InvokeHandler(CWnd* parent)
 	return FALSE;
 }
 
-void CProMoProperty::AddOption(const COleVariant& option)
+CProMoProperty* CProMoProperty::Clone()
+/* ============================================================
+	Function :		CProMoProperty::Clone
+	Description :	Clone this object to a new object.
+	Access :		Public
+
+	Return :		CProMoProperty*	-	The new object.
+	Parameters :	none
+
+	Usage :			Call to create a clone of the object. The
+					caller will have to delete the object.
+
+   ============================================================*/
+{
+	CProMoProperty* obj = new CProMoProperty;
+	obj->m_name = m_name;
+	obj->m_type = m_type;
+	obj->m_value = m_value;
+	obj->m_changeFunction = m_changeFunction;
+	obj->m_editFunction = m_editFunction;
+	obj->m_owner = m_owner;
+	obj->m_readOnly = m_readOnly;
+	obj->m_labelVisible = m_labelVisible;
+	obj->m_validationFunction = m_validationFunction;
+	obj->m_persistent = m_persistent;
+	obj->m_multivalue = m_multivalue;
+	
+	// Clone options
+	for (int i = 0; i < m_options.GetSize(); ++i) {
+		obj->m_options.Add(m_options[i]);
+	}
+
+	// Recursively clone children
+	for (int i = 0; i < m_childProperties.GetSize(); ++i)
+	{
+		CProMoProperty* child = (CProMoProperty*)m_childProperties.GetAt(i);
+		if (child)
+		{
+			CProMoProperty* clonedChild = child->Clone();
+			obj->m_childProperties.Add(clonedChild);
+			clonedChild->m_parentProperty = obj;
+		}
+	}
+
+	// Clone template if any
+	if (m_template) {
+		obj->m_template = m_template->Clone();
+	}
+	else {
+		obj->m_template = NULL;
+	}
+
+	return obj;
+}
+
+CProMoProperty* CProMoProperty::AddChild()
+{
+	if (m_readOnly || !m_template || !m_multivalue) {
+		return NULL; // cannot add child properties to read-only properties
+	}
+	
+	CProMoProperty* newChild = m_template->Clone();
+
+	// Determine next numeric index
+	int nextIndex = m_childProperties.GetSize();
+	CString numberedName;
+	numberedName.Format(_T("%d"), nextIndex);
+	newChild->m_name = numberedName;
+		
+	newChild->m_parentProperty = this;
+	m_childProperties.Add(newChild);
+	return newChild;
+}
+
+void CProMoProperty::ClearChildren()
+{
+	for (int i = 0; i < m_childProperties.GetSize(); i++) {
+		CProMoProperty* prop = (CProMoProperty*)m_childProperties.GetAt(i);
+		if (prop) {
+			delete prop;
+		}
+	}
+	m_childProperties.RemoveAll();
+}
+
+int CProMoProperty::GetChildrenCount() const
+{
+	return m_childProperties.GetSize();
+}
+
+CProMoProperty* CProMoProperty::GetChild(const int& index) const
+{
+	if (index < m_childProperties.GetSize()) {
+		return (CProMoProperty*)m_childProperties.GetAt(index);
+	}
+	return NULL;
+}
+
+CString CProMoProperty::GetFullName() const
+{
+	CString result = m_name;
+	const CProMoProperty* parent = m_parentProperty;
+
+	while (parent)
+	{
+		// Prepend parent's name
+		result = parent->m_name + _T(".") + result;
+		parent = parent->m_parentProperty;
+	}
+
+	return result;
+}
+
+void CProMoProperty::AddOption(const CVariantWrapper& option)
 /* ============================================================
 	Function :		CProMoProperty::AddOption
 	Description :	Adds an option to the list of possible
 					values that the property can assume. Can be
 					used by the client application to build
 					list and combo box controls to set the
-					property
+					property. Only applicable to non-composite
 	Access :		Public
 
 	Return :		none
-	Parameters :	COleVariant& val	-	The value to be 
+	Parameters :	CVariantWrapper& val	-	The value to be 
 											added to the list 
 											of possible options
 
    ============================================================*/
 {
+	if (m_type == TYPE_COMPOSITE) {
+		return; // cannot add options to composite properties
+	}
 	m_options.Add(option);
 }
 
-int CProMoProperty::GetOptionsCount()
+int CProMoProperty::GetOptionsCount() const
 /* ============================================================
-	Function :		CProMoProperty::GetValue
+	Function :		CProMoProperty::GetOptionsCount
 	Description :	Returns the number of options available for
-					the property
+					the property. Only applicable to 
+					non-composite
 	Access :		Public
 
 	Return :		int		-	the number of available options
@@ -383,24 +560,358 @@ int CProMoProperty::GetOptionsCount()
 
    ============================================================*/
 {
+	if (m_type == TYPE_COMPOSITE) {
+		return -1; // composite properties do not have options
+	}
 	return m_options.GetSize();
 }
 
-const COleVariant& CProMoProperty::GetOption(const int& index)
+const CVariantWrapper& CProMoProperty::GetOption(const int& index)
 /* ============================================================
 	Function :		CProMoProperty::GetOption
 	Description :	Returns the option having the specified
-					index
+					index. Only applicable to non-composite
 	Access :		Public
 
-	Return :		COleVariant&	-	the option having the
+	Return :		CVariantWrapper&	-	the option having the
 										specified index
 	Parameters :	int index		-	the index for the option
 										to be returned
 
    ============================================================*/
 {
-	if (index < m_options.GetSize() - 1)
+	if (m_type == TYPE_COMPOSITE) {
+		return m_value; // composite properties do not have options
+	}
+	if (index < m_options.GetSize())
 		return m_options.GetAt(index);
 	return m_value;
+}
+
+
+CString CProMoProperty::GetHeaderFromString(CString& str)
+/* ============================================================
+	Function :		CProMoProperty::GetHeaderFromString
+	Description :	Gets the header from "str".
+	Access :		Protected
+
+	Return :		CString			-	The type of "str".
+	Parameters :	CString& str	-	"CString" to get type from.
+
+	Usage :			Call as a part of loading the object. "str"
+					will have the type removed after the call.
+
+   ============================================================*/
+{
+	CString header;
+
+	CFileParser::GetHeaderFromString(str, header);
+
+	return header;
+}
+
+BOOL CProMoProperty::GetDefaultFromString(CString& str)
+/* ============================================================
+	Function :		CProMoProperty::GetDefaultFromString
+	Description :	Gets the default properties from "str"
+	Access :		Protected
+
+	Return :		BOOL			-	"TRUE" if the default
+										properties could be loaded ok.
+	Parameters :	CString& str	-	"CString" to get the
+										default properties from.
+
+	Usage :			Call as a part of loading the object from
+					disk. The default object properties will
+					be stripped from "str" and the object
+					properties set from the data.
+
+   ============================================================*/
+{
+	BOOL result = FALSE;
+
+	CTokenizer* tok = CFileParser::Tokenize(str);
+
+	int size = tok->GetSize();
+	if (size >= 2)
+	{
+		CString fullProp;
+		int type;
+		int count = 0;
+
+		tok->GetAt(count++, fullProp);
+
+		CFileParser::DecodeString(fullProp);
+
+		if (fullProp.Find(GetFullName()) == 0) {
+			// the string is in the path of the current property
+			CString relProp = fullProp.Mid(GetFullName().GetLength());
+			
+			if (relProp.IsEmpty()) {
+				//this is a leaf node
+				
+				tok->GetAt(count++, type);
+				m_type = type;
+
+				CString stringValue;
+				int intValue;
+				double doubleValue;
+				CVariantWrapper wrapper;
+
+				switch (type) {
+				case TYPE_STRING:
+					tok->GetAt(count++, stringValue);
+					CFileParser::DecodeString(stringValue);
+					wrapper.SetString(stringValue);
+					break;
+				case TYPE_INT:
+					tok->GetAt(count++, intValue);
+					wrapper.SetInt(intValue);
+					break;
+				case TYPE_BOOL: // BOOLs are stored as ints (0/1)
+					tok->GetAt(count++, intValue);
+					wrapper.SetBool(intValue);
+					break;
+				case TYPE_DOUBLE:
+					tok->GetAt(count++, doubleValue);
+					wrapper.SetDouble(doubleValue);
+					break;
+				default:
+					break;
+				}
+				SetValue(wrapper);
+
+				result = TRUE;
+			}
+			else {
+				// this is not a leaf node, check if it is a child property
+				if (relProp[0] == _T('.')) {
+					relProp = relProp.Mid(1); // remove leading dot
+					CTokenizer childTok(relProp, '.');
+					if (childTok.GetSize() > 0) {
+						CString childName;
+						childTok.GetAt(0, childName);
+						// Just ensure the child exists (find or create)
+						CProMoProperty* prop = HandleChild(childName);
+						if (prop) {
+							result = prop->GetDefaultFromString(str);
+						}
+					}
+				}
+			}
+			
+		}
+		
+	}
+
+	delete tok;
+
+	return result;
+
+}
+
+CProMoProperty* CProMoProperty::HandleChild(const CString& str)
+{
+	CProMoProperty* prop = NULL;
+	// Try to find an existing child first
+	for (int i = 0; i < m_childProperties.GetSize(); ++i)
+	{
+		prop = (CProMoProperty*)m_childProperties.GetAt(i);
+		if (prop && prop->m_name == str)
+			return prop;
+	}
+
+	// If not found — can we create a new one?
+	if (m_multivalue && m_template)
+	{
+		// Only create if the next expected index matches the requested name
+		int nextIndex = m_childProperties.GetSize();
+		CString expectedName;
+		expectedName.Format(_T("%d"), nextIndex);
+
+		if (str == expectedName) {
+			return AddChild();
+		}
+	}
+	
+	return NULL;
+}
+
+BOOL CProMoProperty::FromString(const CString& str)
+/* ============================================================
+	Function :		CProMoProperty::FromString
+	Description :	Sets the values for an object from "str".
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if "str"
+											represents an
+											object of this
+											type.
+	Parameters :	const CString& str	-	Possible text
+											format
+											representation.
+
+	Usage :			Can be called to fill an existing object
+					with information from a string created with
+					"GetString".
+
+   ============================================================*/
+{
+
+	BOOL result = FALSE;
+	CString data(str);
+	CString header = GetHeaderFromString(data);
+	if (header == CString("property"))
+		if (GetDefaultFromString(data))
+			result = TRUE;
+
+	return result;
+
+}
+
+BOOL CProMoProperty::LoadFromString(CString& data)
+/* ============================================================
+	Function :		CProMoProperty::LoadFromString
+	Description :	Loads the object from "data".
+	Access :		Public
+
+	Return :		BOOL			-	"TRUE" if "str" is a
+										well-formed object prefix.
+	Parameters :	CString& data	-	String to load from
+
+	Usage :			Call to load the first part of an object
+					from string.
+
+   ============================================================*/
+{
+
+	BOOL result = FALSE;
+	CString header = GetHeaderFromString(data);
+	if (header == CString("property"))
+		if (GetDefaultFromString(data))
+			result = TRUE;
+
+	return result;
+
+}
+
+CProMoProperty* CProMoProperty::CreateFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoProperty::CreateFromString
+	Description :	Static factory function that creates and
+					returns an instance of this class if "str"
+					is a valid representation.
+	Access :		Public
+
+	Return :		CProMoProperty*		-	The object, or "NULL"
+											if "str" is not a
+											representation of
+											this type.
+	Parameters :	const CString& str	-	The string to create
+											from.
+
+	Usage :			Can be used as a factory for text file loads.
+					Each object type should have its own
+					version - the default one is a model
+					implementation.
+
+   ============================================================*/
+{
+
+	CProMoProperty* obj = new CProMoProperty;
+	if (!obj->FromString(str))
+	{
+		delete obj;
+		obj = NULL;
+	}
+
+	return obj;
+
+}
+
+CString CProMoProperty::GetString() const
+/* ============================================================
+	Function :		CProMoProperty::GetString
+	Description :	Creates a string representing the object.
+	Access :		Public
+
+	Return :		CString	-	The resulting string
+	Parameters :	none
+
+	Usage :			Used to save this object to a text file.
+
+   ============================================================*/
+{
+
+	CString str = GetDefaultGetString();
+
+	str += _T(";");
+
+	return str;
+
+}
+
+CProMoProperty::CProMoProperty()
+{
+	m_type = TYPE_UNKNOWN;
+	m_value = CVariantWrapper();
+	m_readOnly = FALSE;
+	m_labelVisible = TRUE;
+	m_validationFunction = NULL;
+	m_changeFunction = NULL;
+	m_persistent = TRUE;
+	m_owner = NULL;
+	m_editFunction = NULL;
+	m_multivalue = FALSE;
+	m_parentProperty = NULL;
+	m_template = NULL;
+}
+
+CString CProMoProperty::GetDefaultGetString() const
+/* ============================================================
+	Function :		CProMoProperty::GetDefaultString
+	Description :	Gets the default properties of the object
+					as a string.
+	Access :		Protected
+
+	Return :		CString	-	Resulting string
+	Parameters :	none
+
+	Usage :			Call as a part of the saving of objects
+					to disk.
+
+   ============================================================*/
+{
+	CString str;
+
+	CString name = GetFullName();
+
+	CFileParser::EncodeString(name);
+
+	str.Format(_T("property:%s,%d"), (LPCTSTR)name, m_type);
+
+	CString value;
+	CString ownerRef;
+
+	if (m_persistent) {
+
+		value = m_value.GetString();
+		if (m_type == TYPE_STRING) {
+			CFileParser::EncodeString(value);
+		}
+	}
+	if (m_owner) {
+		CDiagramEntity* view = dynamic_cast<CDiagramEntity*>(m_owner);
+		if (view) {
+			ownerRef = view->GetName();
+		}
+		CProMoModel* model = dynamic_cast<CProMoModel*>(m_owner);
+		if (model) {
+			ownerRef = model->GetName();
+		}
+	}
+
+	str.AppendFormat(_T(",%s,%s"), (LPCTSTR)value, (LPCTSTR)ownerRef);
+
+	return str;
 }

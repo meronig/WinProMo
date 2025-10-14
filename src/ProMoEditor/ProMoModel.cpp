@@ -100,7 +100,7 @@ void CProMoModel::Copy(CProMoModel* obj)
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
 			if (prop->IsPersistent()) {
-				COleVariant value = obj->GetPropertyValue(prop->GetName());
+				CVariantWrapper value = obj->GetPropertyValue(prop->GetName());
 				prop->SetValue(value);
 			}
 		}
@@ -184,7 +184,7 @@ void CProMoModel::LinkLabel(CProMoLabel* label)
 						// link the label
 						label->m_model = this;
 						m_labels.Add(label);
-						CString value = GetPropertyValue(label->m_property);
+						CString value = GetPropertyValue(label->m_property).GetString();
 						label->SetTitle(value);
 					}
 				}
@@ -276,7 +276,7 @@ void CProMoModel::OnPropertyChanged(CProMoProperty* prop)
 {
 	CProMoLabel* label = GetLabel(prop->GetName());
 	if (label) {
-		label->SetTitle(prop->GetValue());
+		label->SetTitle(prop->GetValue().GetString());
 	}
 
 }
@@ -293,7 +293,9 @@ void CProMoModel::CreateProperties()
    ============================================================*/
 {
 	ClearProperties();
-	AddProperty(new CProMoProperty(_T("Title"), TYPE_STRING, COleVariant(_T("Title")), FALSE, TRUE, TRUE, this));
+	CVariantWrapper wrapper;
+	wrapper.SetString(_T("Title"));
+	AddProperty(new CProMoProperty(_T("Title"), TYPE_STRING, wrapper, FALSE, TRUE, TRUE, this));
 }
 
 void CProMoModel::AddProperty(CProMoProperty* prop)
@@ -402,7 +404,7 @@ BOOL CProMoModel::GetDefaultFromString(CString& str)
 	CTokenizer* tok = CFileParser::Tokenize(str);
 	
 	int size = tok->GetSize();
-	if (size >= 1 + m_properties.GetSize())
+	if (size >= 1)
 	{
 		CString name;
 		int count = 0;
@@ -413,35 +415,6 @@ BOOL CProMoModel::GetDefaultFromString(CString& str)
 
 		SetName(name);
 
-		for (int i = 0; i < m_properties.GetSize(); i++) {
-			CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
-			if (prop) {
-				if (count < size) {
-					CString stringValue;
-					int intValue;
-					double doubleValue;
-					switch (prop->GetType()) {
-					case TYPE_STRING:
-						tok->GetAt(count++, stringValue);
-						CFileParser::DecodeString(stringValue);
-						prop->SetValue(COleVariant(stringValue));
-						break;
-					case TYPE_INT:
-					case TYPE_BOOL: // BOOLs are stored as ints (0/1)
-						tok->GetAt(count++, intValue);
-						prop->SetValue(COleVariant((long)intValue));
-						break;
-					case TYPE_DOUBLE:
-						tok->GetAt(count++, doubleValue);
-						prop->SetValue(COleVariant(doubleValue));
-						break;
-					default:
-						break;
-					}
-				}
-			}
-		}
-		
 		result = TRUE;
 
 	}
@@ -556,33 +529,6 @@ CString CProMoModel::GetDefaultGetString() const
 	CFileParser::EncodeString(name);
 
 	str.Format(_T("%s:%s"), (LPCTSTR)GetType(), (LPCTSTR)name);
-
-	for (int i = 0; i < m_properties.GetSize(); i++) {
-		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
-		if (prop) {
-			if (prop->IsPersistent()) {
-				CString value;
-				switch (prop->GetType()) {
-				case TYPE_STRING:
-					value = prop->GetValue().bstrVal;
-					CFileParser::EncodeString(value);
-					break;
-				case TYPE_INT:
-					value.Format(_T("%d"), prop->GetValue().intVal);
-					break;
-				case TYPE_DOUBLE:
-					value.Format(_T("%f"), prop->GetValue().dblVal);
-					break;
-				case TYPE_BOOL:
-					value = prop->GetValue().boolVal ? _T("1") : _T("0");
-					break;
-				default:
-					break;
-				}
-				str.AppendFormat(_T(",%s"), (LPCTSTR)value);
-			}
-		}
-	}
 
 	return str;
 }
@@ -709,13 +655,13 @@ unsigned int CProMoModel::GetPropertyType(const CString& name) const
 	return TYPE_UNKNOWN;
 }
 
-COleVariant& CProMoModel::GetPropertyValue(const CString& name) const
+CVariantWrapper& CProMoModel::GetPropertyValue(const CString& name) const
 /* ============================================================
 	Function :		CProMoModel::GetPropertyValue
 	Description :	Gets the value of the specified property
 	Access :		Public
 
-	Return :		COleVariant&		-	The value of the
+	Return :		CVariantWrapper&		-	The value of the
 											property, or an
 											empty variant if
 											the property
@@ -729,10 +675,10 @@ COleVariant& CProMoModel::GetPropertyValue(const CString& name) const
 	if (prop) {
 		return prop->GetValue();
 	}
-	return COleVariant();
+	return CVariantWrapper();
 }
 
-BOOL CProMoModel::SetPropertyValue(const CString& name, const COleVariant& value)
+BOOL CProMoModel::SetPropertyValue(const CString& name, const CVariantWrapper& value)
 /* ============================================================
 	Function :		CProMoModel::SetPropertyValue
 	Description :	Sets the value of the specified property
@@ -742,7 +688,7 @@ BOOL CProMoModel::SetPropertyValue(const CString& name, const COleVariant& value
 											operation succeded.
 	Parameters :	CString& name		-	The name of the
 											property to set.
-					COleVariant& value	-	The new value.
+					CVariantWrapper& value	-	The new value.
 
    ============================================================*/
 {

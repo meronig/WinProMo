@@ -5,7 +5,6 @@
 	Author :		Giovanni Meroni
 
    ========================================================================*/
-#include "../DiagramEditor/DiagramEntityContainer.h"
 #ifndef _FILESERIALIZER_H_
 #define _FILESERIALIZER_H_
 
