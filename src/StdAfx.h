@@ -23,6 +23,7 @@ typedef int INT_PTR;
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
+#include <afxdisp.h>		// MFC OLE and automation support
 
 #if _MSC_VER >= 1200 // MFC support for Internet Explorer 4 Common Controls introduced with MSVC 6.0
 #include <afxdtctl.h>		

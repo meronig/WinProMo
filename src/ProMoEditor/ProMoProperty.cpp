@@ -464,6 +464,7 @@ CProMoProperty* CProMoProperty::Clone()
 
    ============================================================*/
 {
+	int i;
 	CProMoProperty* obj = new CProMoProperty;
 	obj->m_name = m_name;
 	obj->m_type = m_type;
@@ -477,12 +478,12 @@ CProMoProperty* CProMoProperty::Clone()
 	obj->m_persistent = m_persistent;
 	
 	// Clone options
-	for (int i = 0; i < m_options.GetSize(); ++i) {
+	for (i = 0; i < m_options.GetSize(); ++i) {
 		obj->m_options.Add(m_options[i]);
 	}
 
 	// Recursively clone children
-	for (int i = 0; i < m_childProperties.GetSize(); ++i)
+	for (i = 0; i < m_childProperties.GetSize(); ++i)
 	{
 		CProMoProperty* child = (CProMoProperty*)m_childProperties.GetAt(i);
 		if (child)
@@ -1016,8 +1017,7 @@ CString CProMoProperty::GetDefaultGetString() const
 
 	CFileParser::EncodeString(name);
 
-	str.Format(_T("property:%s,%d"), (LPCTSTR)name, m_type);
-
+	
 	CString value;
 	CString ownerRef;
 
@@ -1039,7 +1039,7 @@ CString CProMoProperty::GetDefaultGetString() const
 		}
 	}
 
-	str.AppendFormat(_T(",%s,%s"), (LPCTSTR)value, (LPCTSTR)ownerRef);
+	str.Format(_T("property:%s,%d,%s,%s"), (LPCTSTR)name, m_type, (LPCTSTR)value, (LPCTSTR)ownerRef);
 
 	return str;
 }

@@ -16,6 +16,18 @@
 #include "FileSerializer.h"
 
 void CFileSerializer::Save(CArchive& ar, const CStringArray& data)
+/* ============================================================
+	Function :		CFileSerializer::Save
+	Description :	Saves the content of a "CStringArray" to
+					a file using ANSI or UTF8 encoding, depending
+					on the compilation settings.
+	Access :		Public
+
+	Return :		none
+	Parameters :	CArchive& ar		-	Archive to save to.
+					CStringArray& data	-	Data to save.
+
+   ============================================================*/
 {
 #ifndef _UNICODE 
 
@@ -43,6 +55,17 @@ void CFileSerializer::Save(CArchive& ar, const CStringArray& data)
 }
 
 void CFileSerializer::Load(CArchive& ar, CStringArray& data)
+/* ============================================================
+	Function :		CFileSerializer::Load
+	Description :	Loads the content of a text file into
+					a "CStringArray", handling ANSI or UTF8
+					encoding.
+	Access :		Public
+
+	Parameters :	CArchive& ar		-	Archive to load from.
+					CStringArray& data	-	Data to load.
+
+   ============================================================*/
 {
 	// Loading can handle ANSI or UTF8 encoding only
 	CFile* pFile = ar.GetFile();
