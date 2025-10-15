@@ -308,7 +308,7 @@ namespace CProMoEditorTests
 
             m_editor.Save(result);
             
-            Assert::AreEqual((INT_PTR)18, result.GetSize());
+            Assert::AreEqual((INT_PTR)26, result.GetSize());
 
         }
 
@@ -471,6 +471,7 @@ namespace CProMoEditorTests
 
         TEST_METHOD(GetTargetBlock_WhenMovingBlock_ReturnTopmostBlock) {
 
+			m_b->Select(TRUE);
             m_editor.SetInteractMode(MODE_MOVING, NULL);
             
             CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400,140));

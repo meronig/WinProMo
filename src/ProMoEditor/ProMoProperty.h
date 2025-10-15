@@ -39,7 +39,6 @@ protected:
 	BOOL			m_persistent;
 	IProMoPropertyOwner*	m_owner;
 	CArray <CVariantWrapper, CVariantWrapper>	m_options;
-	BOOL			m_multivalue;
 	CProMoProperty* m_parentProperty;
 	CProMoProperty* m_template;
 	CObArray		m_childProperties;
@@ -48,7 +47,7 @@ public:
 	CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue,
 		const BOOL& readOnly, const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner,
 		ValidationFuction valFct, ChangeFuction changeFct, EditFunction editFct,
-		const BOOL& multivalue, CProMoProperty* parent, CProMoProperty* templ);
+		CProMoProperty* parent, CProMoProperty* templ);
 	CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue,
 		const BOOL& readOnly, const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner,
 		ValidationFuction valFct, ChangeFuction changeFct);
@@ -78,7 +77,7 @@ public:
 	
 	virtual CString GetFullName() const;
 	
-	static CString GetNameFromString(const CString& str);
+	static CString GetElementFromString(const CString& str);
 	virtual BOOL	FromString(const CString& str);
 	virtual CString	GetString() const;
 	static	CProMoProperty* CreateFromString(const CString& str);

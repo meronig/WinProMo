@@ -257,9 +257,11 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory&
 
 	LoadModels(stra, fact, models);
 	LoadViews(stra, fact, models);
-	
+	LoadProperties(stra, &models);
+
 	LinkViews(stra, models);
 	LinkModels(stra, models);
+	LoadLabels(stra, fact, models);
 	
 	SetModified(FALSE);
 }
@@ -285,7 +287,7 @@ void CProMoEntityContainer::Save(CStringArray& stra)
 	stra.Add(GetString());
 	
 	SaveObjects(stra);
-
+	
 	SetModified(FALSE);
 }
 
@@ -338,6 +340,10 @@ void CProMoEntityContainer::SaveObjects(CStringArray& stra)
 		}
 		if (!found) {
 			stra.Add(currModel->GetString());
+			for (int j = 0; j < currModel->GetPropertiesCount(); j++) {
+				CProMoProperty* prop = currModel->GetProperty(j);
+				SaveProperties(stra, prop);
+			}
 		}
 	}
 }
@@ -876,6 +882,108 @@ void CProMoEntityContainer::LoadViews(const CStringArray& stra, CProMoControlFac
 
 }
 
+void CProMoEntityContainer::LoadLabels(const CStringArray& stra, CProMoControlFactory& fact, const CObArray& models)
+/* ============================================================
+	Function :		CProMoEntityContainer::LoadLabels
+	Description :	Creates label objects from their string
+					representation in "stra", and links them
+					to the corresponding model.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CStringArray& stra			-	The array
+													to read
+					CProMoControlFactory& fact	-	The factory
+													object to
+													create
+													objects
+					CObArray& models			-	The array
+													that will
+													contain
+													model
+													objects
+													to be linked
+													to the label
+													objects
+
+   ============================================================*/
+{
+	int max = static_cast<int>(stra.GetSize());
+	int t = 0;
+
+	//create labels and link them to corresponding model
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (!FromString(str))
+		{
+			CDiagramEntity* obj = NULL;
+
+			CString nodeName = CProMoBlockView::GetNameFromString(str);
+			CString modelName = CProMoBlockView::GetModelFromString(str);
+
+			if (!GetNamedView(nodeName)) {
+				CProMoModel* blockModel = GetNamedModel(models, modelName);
+				if (blockModel) {
+					obj = fact.CreateLabelFromString(str, blockModel);
+				}
+			}
+
+			//If no model exists for that label, create the label as unlinked
+			if (!obj) {
+				obj = fact.CreateLabelFromString(str);
+			}
+			if (obj) {
+				Add(obj);
+			}
+		}
+	}
+}
+
+void CProMoEntityContainer::LoadProperties(const CStringArray& stra, const CObArray* models)
+/* ============================================================
+	Function :		CProMoEntityContainer::LoadProperties
+	Description :	Loads properties for model objects
+					from their string representation in
+					"stra".
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CStringArray& stra			-	The array
+													to read
+					CObArray& models			-	The array
+													that will
+													contain
+													model
+													objects
+													whose 
+													properties
+													must be set
+													from "stra"
+
+   ============================================================*/
+{
+	for (int i = 0; i < models->GetSize(); i++) {
+		CProMoModel* model = dynamic_cast<CProMoModel*>(models->GetAt(i));
+		if (model) {
+			for (int j = 0; j < stra.GetSize(); j++) {
+				CString str = stra.GetAt(j);
+				CString header;
+				CFileParser::GetHeaderFromString(str,header);
+				if (header == _T("property")) {
+					if (model->GetName() == CProMoProperty::GetElementFromString(str)) {
+						for (int k = 0; k < model->GetPropertiesCount(); k++) {
+							CProMoProperty* prop = model->GetProperty(k);
+							prop->FromString(str);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
 void CProMoEntityContainer::LinkModels(const CStringArray& stra, const CObArray& models)
 /* ============================================================
 	Function :		CProMoEntityContainer::LinkModels
@@ -992,6 +1100,39 @@ void CProMoEntityContainer::LinkViews(const CStringArray& stra, const CObArray& 
 		}
 	}
 
+}
+
+void CProMoEntityContainer::SaveProperties(CStringArray& stra, CProMoProperty* prop)
+/* ============================================================
+	Function :		CProMoEntityContainer::SaveProperty
+	Description :	Saves a string representation of leaf-level
+					properties (i.e., simple properties,
+					components of a composite property, and
+					values for a multi-value property) to 
+					"stra", starting from the top-level property
+					"prop".
+	Access :		Public
+
+	Return :		void
+	Parameters :	CStringArray& stra		-	The array to 
+												fill
+					CProMoProperty* prop	-	The property
+												to save	
+
+   ============================================================*/
+{
+	if (prop) {
+		if (prop->IsPersistent()) {
+			if (!(prop->IsMultiValue() || prop->GetType() == TYPE_COMPOSITE)) {
+				stra.Add(prop->GetString());
+			}
+			else {
+				for (int i = 0; i < prop->GetChildrenCount(); i++) {
+					SaveProperties(stra, prop->GetChild(i));
+				}
+			}
+		}
+	}
 }
 
 CString CProMoEntityContainer::GetString() const

@@ -576,11 +576,21 @@ namespace CProMoEntityContainerTests
             diagram.AddTail(CString("promo_edge_model:391,4,49;"));
             diagram.AddTail(CString("promo_block_model:119,15;"));
 
+            diagram.AddTail(CString("property:Title,3,Title,4;"));
+            diagram.AddTail(CString("property:Title,3,Title,30;"));
+            diagram.AddTail(CString("property:Title,3,Title,72;"));
+            diagram.AddTail(CString("property:Title,3,Title,15;"));
+            diagram.AddTail(CString("property:Title,3,Title,522;"));
+            diagram.AddTail(CString("property:Title,3,Title,49;"));
+            diagram.AddTail(CString("property:Title,3,Title,391;"));
+            diagram.AddTail(CString("property:Title,3,Title,119;"));
+
+
             CStringArray result;
 
             c.Save(result);
 
-            Assert::AreEqual((INT_PTR)18, result.GetSize());
+            Assert::AreEqual((INT_PTR)26, result.GetSize());
 
             for (unsigned int i = 0; i < result.GetSize(); i++) {
                 CString value = result.GetAt(i);

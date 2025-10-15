@@ -44,7 +44,7 @@ namespace ProMoPropertyTests
             MockOwner owner;
             CVariantWrapper initial;
 			initial.SetString(_T("default"));
-            CProMoProperty prop(_T("name"), TYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, MockValidation, MockChange, MockEdit, FALSE, NULL, NULL);
+            CProMoProperty prop(_T("name"), TYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, MockValidation, MockChange, MockEdit, NULL, NULL);
 
             // precondition: initial value
             Assert::AreEqual(CString("default"), prop.GetValue().GetString());
@@ -71,7 +71,7 @@ namespace ProMoPropertyTests
 			CVariantWrapper initial;
 			initial.SetInt(0);
             CProMoProperty* templateChild = new CProMoProperty(_T("child"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, TRUE, NULL, templateChild);
+            CProMoProperty parent(_T("parent"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templateChild);
 
             // action: add multiple children
             for (int i = 0; i < 10; ++i) {
@@ -92,18 +92,18 @@ namespace ProMoPropertyTests
 
             CProMoProperty root(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
 
-            CProMoProperty* c1 = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, FALSE, &root, NULL);
+            CProMoProperty* c1 = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &root, NULL);
             
-            CProMoProperty* leaf = new CProMoProperty(_T("leaf"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, FALSE, c1, NULL);
+            CProMoProperty* leaf = new CProMoProperty(_T("leaf"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1, NULL);
             
             CVariantWrapper strValEmpty;
 			strValEmpty.SetString(_T(""));
 
             CProMoProperty rootCopy(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
 
-            CProMoProperty* c1Copy = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, FALSE, &rootCopy, NULL);
+            CProMoProperty* c1Copy = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &rootCopy, NULL);
 
-            CProMoProperty* leafCopy = new CProMoProperty(_T("leaf"), TYPE_STRING, strValEmpty, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, FALSE, c1Copy, NULL);
+            CProMoProperty* leafCopy = new CProMoProperty(_T("leaf"), TYPE_STRING, strValEmpty, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1Copy, NULL);
 
 
             // action: serialize
@@ -123,7 +123,7 @@ namespace ProMoPropertyTests
             strVal.SetString(_T("val"));
 
             CProMoProperty* templateChild = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, TRUE, NULL, templateChild);
+            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templateChild);
 
             for (int i = 0; i < 5; ++i)
                 parent.AddChild();
@@ -153,13 +153,13 @@ namespace ProMoPropertyTests
             strVal.SetString(_T("val"));
             
             CProMoProperty* templateChild = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, TRUE, NULL, templateChild);
+            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templateChild);
 
             parent.AddChild();
             parent.AddChild();
 
             CProMoProperty* templateChildCopy = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parentCopy(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, TRUE, NULL, templateChildCopy);
+            CProMoProperty parentCopy(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templateChildCopy);
 
 
             // action: serialize and deserialize each leaf

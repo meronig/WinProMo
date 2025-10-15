@@ -17,7 +17,7 @@ void CFileParser::GetHeaderFromString(const CString& str, CString& header)
 /* ============================================================
 	Function :		CFileParser::GetHeaderFromString
 	Description :	Gets the header from "str".
-	Access :		Protected
+	Access :		Public
 
 	Return :		none	
 	Parameters :	CString& str	-	"CString" to get type from.
@@ -38,7 +38,7 @@ void CFileParser::GetDataFromString(const CString& str, CString& data)
 /* ============================================================
 	Function :		CFileParser::GetDataFromString
 	Description :	Gets the default properties from "str"
-	Access :		Protected
+	Access :		Public
 
 	Return :		none
 	Parameters :	CString& str	-	"CString" to get the
@@ -100,7 +100,7 @@ CTokenizer* CFileParser::Tokenize(const CString& str)
 /* ============================================================
 	Function :		CFileParser::Tokenize
 	Description :	Tokenizes the default properties from "str"
-	Access :		Protected
+	Access :		Public
 
 	Return :		CTokenizer*		-	Pointer to a CTokenizer
 										object containing the

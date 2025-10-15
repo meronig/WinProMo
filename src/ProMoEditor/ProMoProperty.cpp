@@ -8,16 +8,57 @@
 
 	Purpose :		"CProMoProperty" is a class to keep track of custom
 					properties and on how they should be displayed.
+					Properties are hierarchical, i.e. a property can have
+					multiple child properties. Child properties represent
+					either sub-properties of a composite property, or values
+					of a multi-value property. 
+					For multi-value properties, child properties must be of
+					the same type as the parent, and their name must be an 
+					incremental number (0, 1, 2, ...). The structure of a 
+					value a multi-value property is determined by a 
+					template property, which is cloned when a new value is 
+					added.
+					Properties can have a validation function, which is called
+					before the value is changed, and a change function, 
+					which is called after the value has changed. Properties
+					can also have an edit function, which is called to
+					set the property value through custom code.
 
    ========================================================================*/
 #include "stdafx.h"
 #include "ProMoProperty.h"
 #include "../FileUtils/FileParser.h"
 
+CProMoProperty::CProMoProperty()
+/* ============================================================
+	Function :		CProMoProperty::CProMoProperty
+	Description :	Constructor
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+	m_type = TYPE_UNKNOWN;
+	m_value = CVariantWrapper();
+	m_readOnly = FALSE;
+	m_labelVisible = TRUE;
+	m_validationFunction = NULL;
+	m_changeFunction = NULL;
+	m_persistent = TRUE;
+	m_owner = NULL;
+	m_editFunction = NULL;
+	m_parentProperty = NULL;
+	m_template = NULL;
+}
+
+
+
 CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue, const BOOL& readOnly, 
 	const BOOL& showLabel, const BOOL& persistent, IProMoPropertyOwner* owner, 
 	ValidationFuction valFct, ChangeFuction changeFct, EditFunction editFct,
-	const BOOL& multivalue, CProMoProperty* parent, CProMoProperty* templ)
+	CProMoProperty* parent, CProMoProperty* templ)
 /* ============================================================
 	Function :		CProMoProperty::CProMoProperty
 	Description :	Constructor
@@ -65,10 +106,6 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 													the property
 													needs to be
 													edited	
-					BOOL& multivalue			-	"TRUE" if the
-													property can
-													hold multiple
-													values	
 					CProMoProperty* parent		-	Pointer to the
 													parent property
 													(if any)
@@ -88,15 +125,9 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_persistent = persistent;
 	m_owner = owner;
 	m_editFunction = editFct;
-	m_multivalue = multivalue;
-	if (m_multivalue) {
-		m_template = templ;
-	}
-	else {
-		m_template = NULL;
-	}
+	m_template = templ;
 	if (parent) {
-		if (parent->m_type == TYPE_COMPOSITE || (parent->m_multivalue && parent->m_type == type && !multivalue)) {
+		if (parent->m_type == TYPE_COMPOSITE || (parent->IsMultiValue() && parent->m_type == type && !IsMultiValue())) {
 			m_parentProperty = parent;
 			parent->m_childProperties.Add(this);
 			return;
@@ -162,7 +193,6 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_persistent = persistent;
 	m_owner = owner;
 	m_editFunction = NULL;
-	m_multivalue = FALSE;
 	m_parentProperty = NULL;
 	m_template = NULL;
 }
@@ -210,12 +240,19 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_persistent = persistent;
 	m_owner = owner;
 	m_editFunction = NULL;
-	m_multivalue = FALSE;
 	m_parentProperty = NULL;
 	m_template = NULL;
 }
 
 CProMoProperty::~CProMoProperty()
+/* ============================================================
+	Function :		CProMoProperty::~CProMoProperty
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+
+   ============================================================*/
 {
 	ClearChildren();
 	if (m_template) {
@@ -241,7 +278,7 @@ BOOL CProMoProperty::SetValue(const CVariantWrapper& val)
 {
 	if (m_type == TYPE_COMPOSITE)
 		return FALSE; // cannot set value for composite properties
-	if (m_multivalue)
+	if (IsMultiValue())
 		return FALSE; // cannot set value for multivalue properties
 	if (m_readOnly)
 		return FALSE;
@@ -383,7 +420,10 @@ const BOOL& CProMoProperty::IsMultiValue()
 
    ============================================================*/
 {
-	return m_multivalue;
+	if (m_template && m_type == m_template->m_type) {
+		return TRUE;
+	}
+	return FALSE;
 }
 
 BOOL CProMoProperty::InvokeHandler(CWnd* parent)
@@ -435,7 +475,6 @@ CProMoProperty* CProMoProperty::Clone()
 	obj->m_labelVisible = m_labelVisible;
 	obj->m_validationFunction = m_validationFunction;
 	obj->m_persistent = m_persistent;
-	obj->m_multivalue = m_multivalue;
 	
 	// Clone options
 	for (int i = 0; i < m_options.GetSize(); ++i) {
@@ -466,8 +505,23 @@ CProMoProperty* CProMoProperty::Clone()
 }
 
 CProMoProperty* CProMoProperty::AddChild()
+/* ============================================================
+	Function :		CProMoProperty::AddChild
+	Description :	Adds a new child property to the
+					current property. The new property is a
+					clone of the template property. Valid only
+					for multi-value properties.
+	Access :		Public
+
+	Return :		CProMoProperty*	-	The new child property.
+	Parameters :	none
+
+	Usage :			Call to add a new value to multi-value 
+					properties.
+
+   ============================================================*/
 {
-	if (m_readOnly || !m_template || !m_multivalue) {
+	if (m_readOnly || !m_template) {
 		return NULL; // cannot add child properties to read-only properties
 	}
 	
@@ -485,7 +539,24 @@ CProMoProperty* CProMoProperty::AddChild()
 }
 
 void CProMoProperty::ClearChildren()
+/* ============================================================
+	Function :		CProMoProperty::ClearChildren
+	Description :	Removes all child properties of the
+					current property. Has effect only
+					for multi-value properties.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage :			Call to remove all values for multi-value
+					properties.
+
+   ============================================================*/
 {
+	if (!IsMultiValue()) {
+		return; // cannot clear children of non-multivalue properties
+	}
 	for (int i = 0; i < m_childProperties.GetSize(); i++) {
 		CProMoProperty* prop = (CProMoProperty*)m_childProperties.GetAt(i);
 		if (prop) {
@@ -496,11 +567,37 @@ void CProMoProperty::ClearChildren()
 }
 
 int CProMoProperty::GetChildrenCount() const
+/* ============================================================
+	Function :		CProMoProperty::GetChildrenCount
+	Description :	Returns the number of children available for
+					the property. Only applicable to composite
+					and multi-value properties
+					
+	Access :		Public
+
+	Return :		int		-	the number of available children
+								for the property
+	Parameters :	none
+
+   ============================================================*/
 {
 	return m_childProperties.GetSize();
 }
 
 CProMoProperty* CProMoProperty::GetChild(const int& index) const
+/* ============================================================
+	Function :		CProMoProperty::GetChild
+	Description :	Returns the children having the specified
+					index. Only applicable to composite and
+					multi-value properties
+	Access :		Public
+
+	Return :		CProMoProperty*	-	the child having the
+										specified index
+	Parameters :	int index		-	the index for the child
+										to be returned
+
+   ============================================================*/
 {
 	if (index < m_childProperties.GetSize()) {
 		return (CProMoProperty*)m_childProperties.GetAt(index);
@@ -509,6 +606,17 @@ CProMoProperty* CProMoProperty::GetChild(const int& index) const
 }
 
 CString CProMoProperty::GetFullName() const
+/* ============================================================
+	Function :		CProMoProperty::GetFullName
+	Description :	Gets the full name of the property, 
+					including the path representing parent 
+					properties (e.g., "ParentProperty.0.Property").
+	Access :		Public
+
+	Return :		CString&	-	the full name of the property
+	Parameters :	none
+
+   ============================================================*/
 {
 	CString result = m_name;
 	const CProMoProperty* parent = m_parentProperty;
@@ -711,6 +819,20 @@ BOOL CProMoProperty::GetDefaultFromString(CString& str)
 }
 
 CProMoProperty* CProMoProperty::HandleChild(const CString& str)
+/* ============================================================
+	Function :		CProMoProperty::HandleChild
+	Description :	Returns the child property having the
+					specified name, or creates a new one if
+					the property is multi-value and the name
+					matches the next expected index.
+	Access :		Protected
+
+	Return :		CProMoProperty*	-	The new child property.
+	Parameters :	none
+
+	Usage :			Call when de-serializing properties.
+
+   ============================================================*/
 {
 	CProMoProperty* prop = NULL;
 	// Try to find an existing child first
@@ -722,7 +844,7 @@ CProMoProperty* CProMoProperty::HandleChild(const CString& str)
 	}
 
 	// If not found — can we create a new one?
-	if (m_multivalue && m_template)
+	if (m_template)
 	{
 		// Only create if the next expected index matches the requested name
 		int nextIndex = m_childProperties.GetSize();
@@ -735,6 +857,28 @@ CProMoProperty* CProMoProperty::HandleChild(const CString& str)
 	}
 	
 	return NULL;
+}
+
+CString CProMoProperty::GetElementFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoModel::GetElementFromString
+	Description :	Static factory function that
+					parses a formatted string and extracts the
+					name of the associated object
+	Access :		Public
+
+	Return :		CString			-	The name of the object
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	CString name;
+	if (tok) {
+		tok->GetAt(3, name);
+		delete tok;
+	}
+	return name;
 }
 
 BOOL CProMoProperty::FromString(const CString& str)
@@ -849,22 +993,6 @@ CString CProMoProperty::GetString() const
 
 	return str;
 
-}
-
-CProMoProperty::CProMoProperty()
-{
-	m_type = TYPE_UNKNOWN;
-	m_value = CVariantWrapper();
-	m_readOnly = FALSE;
-	m_labelVisible = TRUE;
-	m_validationFunction = NULL;
-	m_changeFunction = NULL;
-	m_persistent = TRUE;
-	m_owner = NULL;
-	m_editFunction = NULL;
-	m_multivalue = FALSE;
-	m_parentProperty = NULL;
-	m_template = NULL;
 }
 
 CString CProMoProperty::GetDefaultGetString() const

@@ -39,34 +39,31 @@ static char THIS_FILE[] = __FILE__;
 /////////////////////////////////////////////////////////////////////////////
 // CProMoControlFactory
 
-CDiagramEntity* CProMoControlFactory::CreateViewFromString( const CString& str )
+CDiagramEntity* CProMoControlFactory::CreateViewFromString(const CString& str)
 /* ============================================================
 	Function :		CProMoControlFactory::CreateViewFromString
-	Description :	The function returns an object from the 
+	Description :	The function returns an object from the
 					parameter str.
-					
-	Return :		CDiagramEntity*		-	The new object, or 
-											NULL is str is not a 
+
+	Return :		CDiagramEntity*		-	The new object, or
+											NULL is str is not a
 											valid representation.
-	Parameters :	const CString& str	-	The string to create 
+	Parameters :	const CString& str	-	The string to create
 											a new object from
-					
-	Usage :			Call this static function while reading 
-					string representations of objects from a 
-					text file. Note that the caller is 
+
+	Usage :			Call this static function while reading
+					string representations of objects from a
+					text file. Note that the caller is
 					responsible for the allocated memory.
 
    ============================================================*/
 {
 	CDiagramEntity* obj;
 
-	obj = CProMoBlockView::CreateFromString( str );
-	
-	if( !obj )
-		obj = CProMoEdgeView::CreateFromString( str );
-	
+	obj = CProMoBlockView::CreateFromString(str);
+
 	if (!obj)
-		obj = CProMoLabel::CreateFromString(str);
+		obj = CProMoEdgeView::CreateFromString(str);
 
 	return obj;
 }
@@ -91,7 +88,7 @@ CDiagramEntity* CProMoControlFactory::CreateViewFromString(const CString& str, C
 					text file. Note that the caller is
 					responsible for the allocated memory of
 					the created object only. The created object
-					will take ownership of the model being 
+					will take ownership of the model being
 					passed, which should be created on the heap.
 
    ============================================================*/
@@ -103,8 +100,63 @@ CDiagramEntity* CProMoControlFactory::CreateViewFromString(const CString& str, C
 	if (!obj)
 		obj = CProMoEdgeView::CreateFromString(str, model);
 
-	if (!obj)
-		obj = CProMoLabel::CreateFromString(str, model);
+	return obj;
+}
+
+CDiagramEntity* CProMoControlFactory::CreateLabelFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoControlFactory::CreateLabelFromString
+	Description :	The function returns an object from the
+					parameter str.
+
+	Return :		CDiagramEntity*		-	The new object, or
+											NULL is str is not a
+											valid representation.
+	Parameters :	const CString& str	-	The string to create
+											a new object from
+
+	Usage :			Call this static function while reading
+					string representations of objects from a
+					text file. Note that the caller is
+					responsible for the allocated memory.
+
+   ============================================================*/
+{
+	CDiagramEntity* obj;
+
+	obj = CProMoLabel::CreateFromString(str);
+
+	return obj;
+}
+
+CDiagramEntity* CProMoControlFactory::CreateLabelFromString(const CString& str, CProMoModel* model)
+/* ============================================================
+	Function :		CProMoControlFactory::CreateLabelFromString
+	Description :	The function returns an object from the
+					parameter str.
+
+	Return :		CDiagramEntity*		-	The new object, or
+											NULL is str is not a
+											valid representation.
+	Parameters :	const CString& str	-	The string to create
+											a new object from
+					CProMoModel* model	-	The model that will
+											be linked to the
+											created object
+
+	Usage :			Call this static function while reading
+					string representations of objects from a
+					text file. Note that the caller is
+					responsible for the allocated memory of
+					the created object only. The created object
+					will take ownership of the model being
+					passed, which should be created on the heap.
+
+   ============================================================*/
+{
+	CDiagramEntity* obj;
+
+	obj = CProMoLabel::CreateFromString(str, model);
 
 	return obj;
 }
