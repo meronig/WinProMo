@@ -38,7 +38,7 @@ protected:
 	BOOL			m_labelVisible;
 	BOOL			m_persistent;
 	IProMoPropertyOwner*	m_owner;
-	CArray <CVariantWrapper, CVariantWrapper>	m_options;
+	CObArray		m_options;
 	CProMoProperty* m_parentProperty;
 	CProMoProperty* m_template;
 	CObArray		m_childProperties;
@@ -56,9 +56,6 @@ public:
 	virtual ~CProMoProperty();
 	virtual BOOL SetValue(const CVariantWrapper& val);
 	virtual CVariantWrapper& GetValue();
-	virtual void AddOption(const CVariantWrapper& option);
-	virtual int GetOptionsCount() const;
-	virtual const CVariantWrapper& GetOption(const int& index);
 	virtual const CString& GetName();
 	virtual const unsigned int& GetType();
 	virtual const BOOL& IsReadOnly();
@@ -74,6 +71,11 @@ public:
 	virtual void ClearChildren();
 	virtual int GetChildrenCount() const;
 	virtual CProMoProperty* GetChild(const int& index) const;
+
+	virtual CProMoProperty* AddOption();
+	virtual int GetOptionsCount() const;
+	virtual CProMoProperty* GetOption(const int& index);
+
 	
 	virtual CString GetFullName() const;
 	

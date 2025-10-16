@@ -136,8 +136,8 @@ namespace ProMoPropertyTests
         {
 			CVariantWrapper initial;
 			initial.SetInt(0);
-            CProMoProperty* templateChild = new CProMoProperty(_T("child"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templateChild);
+            CProMoProperty templateChild(_T("child"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("parent"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
 
             // action: add multiple children
             for (int i = 0; i < 10; ++i) {
@@ -158,18 +158,18 @@ namespace ProMoPropertyTests
 
             CProMoProperty root(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
 
-            CProMoProperty* c1 = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &root, NULL);
+            CProMoProperty c1(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &root, NULL);
             
-            CProMoProperty* leaf = new CProMoProperty(_T("leaf"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1, NULL);
+            CProMoProperty leaf(_T("leaf"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &c1, NULL);
             
             CVariantWrapper strValEmpty;
 			strValEmpty.SetString(_T(""));
 
             CProMoProperty rootCopy(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
 
-            CProMoProperty* c1Copy = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &rootCopy, NULL);
+            CProMoProperty c1Copy(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &rootCopy, NULL);
 
-            CProMoProperty* leafCopy = new CProMoProperty(_T("leaf"), TYPE_STRING, strValEmpty, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1Copy, NULL);
+            CProMoProperty leafCopy(_T("leaf"), TYPE_STRING, strValEmpty, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &c1Copy, NULL);
 
 
             // action: serialize
@@ -188,8 +188,8 @@ namespace ProMoPropertyTests
             CVariantWrapper strVal;
             strVal.SetString(_T("val"));
 
-            CProMoProperty* templateChild = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templateChild);
+            CProMoProperty templateChild(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
 
             for (int i = 0; i < 5; ++i)
                 parent.AddChild();
@@ -218,14 +218,13 @@ namespace ProMoPropertyTests
             CVariantWrapper strVal;
             strVal.SetString(_T("val"));
             
-            CProMoProperty* templateChild = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templateChild);
+            CProMoProperty templateChild(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
 
             parent.AddChild();
             parent.AddChild();
 
-            CProMoProperty* templateChildCopy = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parentCopy(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templateChildCopy);
+            CProMoProperty parentCopy(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
 
 
             // action: serialize and deserialize each leaf
@@ -261,13 +260,15 @@ namespace ProMoPropertyTests
             CVariantWrapper opt;
             opt.SetInt(42);
 
-            CProMoProperty prop(_T("optProp"), TYPE_INT, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty templ(_T("optProp"), TYPE_INT, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("optProp"), TYPE_INT, nullVal, FALSE, TRUE, TRUE, NULL,NULL,NULL,NULL,NULL, &templ);
 
             Assert::AreEqual(0, prop.GetOptionsCount());
 
-            prop.AddOption(opt);
+            prop.AddOption();
             Assert::AreEqual(1, prop.GetOptionsCount());
-            Assert::AreEqual(opt.GetInt(), prop.GetOption(0).GetInt());
+            prop.GetOption(0)->SetValue(opt);
+            Assert::AreEqual(opt.GetInt(), prop.GetOption(0)->GetValue().GetInt());
         }
 
         TEST_METHOD(SetValue_ReadOnly_DoesNotChangeValue)
@@ -310,8 +311,8 @@ namespace ProMoPropertyTests
             CVariantWrapper strVal;
             strVal.SetString(_T("v"));
 
-            CProMoProperty* templ = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("p"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templ);
+            CProMoProperty templ(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("p"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templ);
 
             parent.AddChild();
             parent.AddChild();
@@ -328,9 +329,9 @@ namespace ProMoPropertyTests
             strVal.SetString(_T("v"));
 
             CProMoProperty root(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty* child = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &root, NULL);
+            CProMoProperty child(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &root, NULL);
 
-            CString fullName = child->GetFullName();
+            CString fullName = child.GetFullName();
             Assert::IsTrue(fullName.Find(_T("root")) != -1);
             Assert::IsTrue(fullName.Find(_T("child")) != -1);
         }

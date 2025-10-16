@@ -125,7 +125,12 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_persistent = persistent;
 	m_owner = owner;
 	m_editFunction = editFct;
-	m_template = templ;
+	if (templ) {
+		m_template = templ->Clone();
+	}
+	else {
+		m_template = NULL;
+	}
 	if (parent) {
 		if (parent->m_type == TYPE_COMPOSITE || (parent->IsMultiValue() && parent->m_type == type && !IsMultiValue())) {
 			m_parentProperty = parent;
@@ -479,7 +484,10 @@ CProMoProperty* CProMoProperty::Clone()
 	
 	// Clone options
 	for (i = 0; i < m_options.GetSize(); ++i) {
-		obj->m_options.Add(m_options[i]);
+		CProMoProperty* option = GetOption(i);
+		if (option) {
+			obj->m_options.Add(option->Clone());
+		}
 	}
 
 	// Recursively clone children
@@ -632,35 +640,47 @@ CString CProMoProperty::GetFullName() const
 	return result;
 }
 
-void CProMoProperty::AddOption(const CVariantWrapper& option)
+CProMoProperty* CProMoProperty::AddOption()
 /* ============================================================
 	Function :		CProMoProperty::AddOption
 	Description :	Adds an option to the list of possible
 					values that the property can assume. Can be
 					used by the client application to build
 					list and combo box controls to set the
-					property. Only applicable to non-composite
+					property.
 	Access :		Public
 
-	Return :		none
-	Parameters :	CVariantWrapper& val	-	The value to be 
-											added to the list 
-											of possible options
+	Return :		CProMoProperty*		-	The new option being
+											added
+	Parameters :	none
 
    ============================================================*/
 {
-	if (m_type == TYPE_COMPOSITE) {
-		return; // cannot add options to composite properties
+	CProMoProperty* option = NULL;
+	if (IsMultiValue()) {
+		if (!m_template) {
+			return NULL;
+		}
+		//An option has the same structure as a template
+		option = m_template->Clone();
 	}
-	m_options.Add(option);
+	else {
+		//An option has the same structure as the property itself
+		option = this->Clone();
+	}
+	if (option) {
+		option->m_parentProperty = this;
+		option->m_persistent = FALSE;
+		m_options.Add(option);
+	}
+	return option;
 }
 
 int CProMoProperty::GetOptionsCount() const
 /* ============================================================
 	Function :		CProMoProperty::GetOptionsCount
 	Description :	Returns the number of options available for
-					the property. Only applicable to 
-					non-composite
+					the property.
 	Access :		Public
 
 	Return :		int		-	the number of available options
@@ -669,32 +689,28 @@ int CProMoProperty::GetOptionsCount() const
 
    ============================================================*/
 {
-	if (m_type == TYPE_COMPOSITE) {
-		return -1; // composite properties do not have options
-	}
 	return m_options.GetSize();
 }
 
-const CVariantWrapper& CProMoProperty::GetOption(const int& index)
+CProMoProperty* CProMoProperty::GetOption(const int& index)
 /* ============================================================
 	Function :		CProMoProperty::GetOption
 	Description :	Returns the option having the specified
-					index. Only applicable to non-composite
+					index.
 	Access :		Public
 
-	Return :		CVariantWrapper&	-	the option having the
+	Return :		CProMoProperty*	-	the option having the
 										specified index
 	Parameters :	int index		-	the index for the option
 										to be returned
 
    ============================================================*/
 {
-	if (m_type == TYPE_COMPOSITE) {
-		return m_value; // composite properties do not have options
+	if (index < m_options.GetSize()) {
+		CProMoProperty* option = dynamic_cast<CProMoProperty*>(m_options.GetAt(index));
+		return option;
 	}
-	if (index < m_options.GetSize())
-		return m_options.GetAt(index);
-	return m_value;
+	return NULL;
 }
 
 
