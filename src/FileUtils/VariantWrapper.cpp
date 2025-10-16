@@ -182,36 +182,42 @@ BOOL CVariantWrapper::SetFromString(const CString& val, const VARTYPE& type)
    ============================================================*/
 {
 	Clear();
+	BOOL result = FALSE;
+	int intVal = 0;
+	double dblVal = 0;
 	switch (type)
 	{
 	case VT_BSTR:
+		result = TRUE;
 		SetString(val);
 		break;
 	case VT_I4:
-#ifdef _UNICODE
-		SetInt(_wtoi(val));
-#else
-		SetInt(atoi((LPCTSTR)val));
-#endif
+		result = ParseInt(val, intVal);
+		if (result) {
+			SetInt(intVal);
+		}
 		break;
 	case VT_R8:
-#ifdef _UNICODE
-		SetInt(_wtof(val));
-#else
-		SetInt(atof((LPCTSTR)val));
-#endif
+		result = ParseDouble(val, dblVal);
+		if (result) {
+			SetDouble(dblVal);
+		}
 		break;
 	case VT_BOOL:
-#ifdef _UNICODE
-		SetBool(_wtoi(val) != 0);
-#else
-		SetBool(atoi((LPCTSTR)val) != 0);
-#endif
+		result = ParseInt(val, intVal);
+		if (result) {
+			if (intVal == 0) {
+				SetBool(FALSE);
+			}
+			else {
+				SetBool(TRUE);
+			}
+		}
 		break;
 	default:
 		return FALSE;
 	}
-	return TRUE;
+	return result;
 }
 
 BOOL CVariantWrapper::GetBool() const
@@ -254,8 +260,11 @@ int CVariantWrapper::GetInt() const
 {
 	switch (m_var.vt)
 	{
+		
 		case VT_I4:
 			return m_var.lVal;
+		case VT_R8:
+			return GetDouble();
 		case VT_BOOL:
 			return GetBool();
 		case VT_EMPTY:
@@ -357,4 +366,42 @@ const VARIANT* CVariantWrapper::GetVARIANT() const
    ============================================================*/
 {
 	return &m_var;
+}
+
+BOOL CVariantWrapper::ParseInt(const CString& str, int& outValue)
+{
+	if (str.IsEmpty())
+		return FALSE;
+#ifdef _UNICODE
+	const wchar_t* start = str;
+	wchar_t* end = NULL;
+	long val = wcstol(start, &end, 10);
+#else
+	const char* start = str;
+	char* end = NULL;
+	long val = strtol(start, &end, 10);
+#endif
+	if (end == start)
+		return FALSE;
+	outValue = static_cast<int>(val);
+	return TRUE;
+}
+
+BOOL CVariantWrapper::ParseDouble(const CString& str, double& outValue)
+{
+	if (str.IsEmpty())
+		return FALSE;
+#ifdef _UNICODE
+	const wchar_t* start = str;
+	wchar_t* end = NULL;
+	double val = wcstod(start, &end);
+#else
+	const char* start = str;
+	char* end = NULL;
+	double val = strtod(start, &end);
+#endif
+	if (end == start)
+		return FALSE;
+	outValue = val;
+	return TRUE;
 }

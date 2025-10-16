@@ -940,40 +940,6 @@ BOOL CProMoProperty::LoadFromString(CString& data)
 
 }
 
-CProMoProperty* CProMoProperty::CreateFromString(const CString& str)
-/* ============================================================
-	Function :		CProMoProperty::CreateFromString
-	Description :	Static factory function that creates and
-					returns an instance of this class if "str"
-					is a valid representation.
-	Access :		Public
-
-	Return :		CProMoProperty*		-	The object, or "NULL"
-											if "str" is not a
-											representation of
-											this type.
-	Parameters :	const CString& str	-	The string to create
-											from.
-
-	Usage :			Can be used as a factory for text file loads.
-					Each object type should have its own
-					version - the default one is a model
-					implementation.
-
-   ============================================================*/
-{
-
-	CProMoProperty* obj = new CProMoProperty;
-	if (!obj->FromString(str))
-	{
-		delete obj;
-		obj = NULL;
-	}
-
-	return obj;
-
-}
-
 CString CProMoProperty::GetString() const
 /* ============================================================
 	Function :		CProMoProperty::GetString
@@ -998,7 +964,7 @@ CString CProMoProperty::GetString() const
 
 CString CProMoProperty::GetDefaultGetString() const
 /* ============================================================
-	Function :		CProMoProperty::GetDefaultString
+	Function :		CProMoProperty::GetDefaultGetString
 	Description :	Gets the default properties of the object
 					as a string.
 	Access :		Protected

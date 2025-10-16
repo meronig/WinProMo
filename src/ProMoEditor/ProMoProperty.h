@@ -80,8 +80,7 @@ public:
 	static CString GetElementFromString(const CString& str);
 	virtual BOOL	FromString(const CString& str);
 	virtual CString	GetString() const;
-	static	CProMoProperty* CreateFromString(const CString& str);
-
+	
 	BOOL			LoadFromString(CString& data);
 
 

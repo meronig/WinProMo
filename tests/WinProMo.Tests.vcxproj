@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClCompile Include="FileUtils\FileParserTests.cpp" />
     <ClCompile Include="FileUtils\FileSerializerTests.cpp" />
+    <ClCompile Include="FileUtils\VariantWrapperTests.cpp" />
     <ClCompile Include="GeometryUtils\DoublePointTests.cpp" />
     <ClCompile Include="GeometryUtils\DoubleRectTests.cpp" />
     <ClCompile Include="GeometryUtils\GeometryHelperTests.cpp" />

@@ -100,7 +100,7 @@ void CProMoModel::Copy(CProMoModel* obj)
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
 			if (prop->IsPersistent()) {
-				CVariantWrapper value = obj->GetPropertyValue(prop->GetName());
+				CVariantWrapper value = obj->GetPropertyValue(prop->GetFullName());
 				prop->SetValue(value);
 			}
 		}
@@ -172,7 +172,7 @@ void CProMoModel::LinkLabel(CProMoLabel* label)
 			for (int i = 0; i < m_properties.GetSize(); i++) {
 				CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 				if (prop) {
-					if (prop->GetName() == label->m_property && prop->IsLabelVisible()) {
+					if (prop->GetFullName() == label->m_property && prop->IsLabelVisible()) {
 						// unlink existing label for this property (if any)
 						UnlinkLabel(GetLabel(label->m_property));
 
@@ -258,6 +258,86 @@ void CProMoModel::ClearProperties()
 	m_properties.RemoveAll();
 }
 
+CProMoProperty* CProMoModel::FindPropertyR(const CString& name, CProMoProperty* prop) const
+/* ============================================================
+	Function :		CProMoModel::FindPropertyR
+	Description :	Gets the property with the specified
+					name.
+
+	Return :		CProMoProperty&			-	The property, or
+												"NULL" if no
+												such property
+												exists.
+	Parameters :	CString& name			-	The full name of
+												the property
+												(e.g., parent.0.child).
+					CProMoProperty* prop	-	The root node
+												to start the
+												search from.
+
+   ============================================================*/
+{
+	if (prop) {
+		if (prop->GetFullName() == name) {
+			return prop;
+		}
+		else {
+			for (int i = 0; i < prop->GetChildrenCount(); i++) {
+				FindPropertyR(name, prop->GetChild(i));
+			}
+		}
+	}
+	return NULL;
+}
+
+void CProMoModel::RecreateLabelsR(CObArray& list, CProMoProperty* prop)
+/* ============================================================
+	Function :		CProMoModel::RecreateLabelsR
+	Description :	Recreates labels for all the properties
+					that need to be displayed, if some of them
+					are not present.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CObArray* list			-	A pointer to
+												the labels
+												being created
+												(if any)
+					CProMoProperty* prop	-	Property to
+												start from.
+					
+
+   ============================================================*/
+{
+	if (prop) {
+		if (!GetLabel(prop->GetName()) && prop->IsLabelVisible()) {
+			CProMoLabel* label = new CProMoLabel();
+			label->SetProperty(prop->GetFullName());
+			LinkLabel(label);
+			list.Add(label);
+		}
+		if (prop->GetType() == TYPE_COMPOSITE || prop->IsMultiValue()) {
+			for (int i = 0; i < prop->GetChildrenCount(); i++) {
+				CProMoProperty* child = prop->GetChild(i);
+				RecreateLabelsR(list, child);
+			}
+		} 
+	}
+}
+
+void CProMoModel::GetPropertyNamesR(CStringArray& array, CProMoProperty* prop) const
+{
+	if (prop) {
+		array.Add(prop->GetFullName());
+		if (prop->GetType() == TYPE_COMPOSITE || prop->IsMultiValue()) {
+			for (int i = 0; i < prop->GetChildrenCount(); i++) {
+				CProMoProperty* child = prop->GetChild(i);
+				GetPropertyNamesR(array, child);
+			}
+		}
+	}
+}
+
 void CProMoModel::OnPropertyChanged(CProMoProperty* prop)
 /* ============================================================
 	Function :		CProMoModel::OnPropertyChanged
@@ -274,7 +354,7 @@ void CProMoModel::OnPropertyChanged(CProMoProperty* prop)
 
    ============================================================*/
 {
-	CProMoLabel* label = GetLabel(prop->GetName());
+	CProMoLabel* label = GetLabel(prop->GetFullName());
 	if (label) {
 		label->SetTitle(prop->GetValue().GetString());
 	}
@@ -611,7 +691,7 @@ void CProMoModel::SetName(CString name)
 
 }
 
-void CProMoModel::GetPropertyNames(CStringArray& array) const
+void CProMoModel::GetPropertyNames(CStringArray& array, const BOOL& recursive) const
 /* ============================================================
 	Function :		CProMoModel::GetPropertyNames
 	Description :	Gets the names of all properties for the
@@ -621,13 +701,22 @@ void CProMoModel::GetPropertyNames(CStringArray& array) const
 	Return :		void
 	Parameters :	CStringArray& array	-	The names of all
 											properties.
+					BOOL& recursive		-	"TRUE" if the full
+											name of child
+											properties should
+											also be returned.
 
    ============================================================*/
 {
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
-		if (prop) {
-			array.Add(prop->GetName());
+		if (recursive) {
+			GetPropertyNamesR(array, prop);
+		}
+		else {
+			if (prop) {
+				array.Add(prop->GetFullName());
+			}
 		}
 	}
 }
@@ -753,16 +842,19 @@ CProMoProperty* CProMoModel::FindProperty(const CString& name) const
 											"NULL" if no
 											such property
 											exists.
-	Parameters :	CString& name		-	The name of the
-											property.
+	Parameters :	CString& name		-	The full name of 
+											the property
+											(e.g., parent.0.child).
 
    ============================================================*/
 {
+	CProMoProperty* result = NULL;
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
 		if (prop) {
-			if (prop->GetName() == name) {
-				return prop;
+			result = FindPropertyR(name, prop);
+			if (result) {
+				return result;
 			}
 		}
 	}
@@ -835,7 +927,7 @@ CProMoLabel* CProMoModel::GetLabel(CString property)
 
 	Return :		CProMoLabel*		-	A pointer to the 
 											label
-	Parameters :	CString property	-	The name of the
+	Parameters :	CString property	-	The full name of the
 											property
 
    ============================================================*/
@@ -869,16 +961,7 @@ CObArray* CProMoModel::RecreateLabels()
 
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
-		if (prop) {
-			if (prop->GetType() != TYPE_UNKNOWN) {
-				if (!GetLabel(prop->GetName()) && prop->IsLabelVisible()) {
-					CProMoLabel* label = new CProMoLabel();
-					label->SetProperty(prop->GetName());
-					LinkLabel(label);
-					arr->Add(label);
-				}
-			}
-		}
+		RecreateLabelsR(*arr, prop);
 	}
 
 	return arr;

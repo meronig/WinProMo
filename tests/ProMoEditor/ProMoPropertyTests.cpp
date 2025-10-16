@@ -43,8 +43,8 @@ namespace ProMoPropertyTests
         {
             MockOwner owner;
             CVariantWrapper initial;
-			initial.SetString(_T("default"));
-            CProMoProperty prop(_T("name"), TYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, MockValidation, MockChange, MockEdit, NULL, NULL);
+            initial.SetString(_T("default"));
+            CProMoProperty prop(_T("name"), TYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, MockValidation, MockChange);
 
             // precondition: initial value
             Assert::AreEqual(CString("default"), prop.GetValue().GetString());
@@ -60,6 +60,72 @@ namespace ProMoPropertyTests
             Assert::IsTrue(prop.SetValue(newVal));
             Assert::AreEqual(newVal.GetString(), prop.GetValue().GetString());
             Assert::AreEqual(1, owner.changeCount);
+
+        }
+
+        TEST_METHOD(SetValue_IntType_AssignsAndValidatesProperly)
+        {
+            CVariantWrapper initial;
+            initial.SetInt(1);
+            CProMoProperty prop(_T("intProp"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL, MockValidation, MockChange);
+
+            // precondition: initial value
+            Assert::AreEqual(1, prop.GetValue().GetInt());
+
+            // action: valid positive int
+            CVariantWrapper val;
+            val.SetInt(10);
+            Assert::IsTrue(prop.SetValue(val));
+            Assert::AreEqual(10, prop.GetValue().GetInt());
+
+            // action: invalid negative int (validation should fail)
+            val.SetInt(-5);
+            Assert::IsFalse(prop.SetValue(val));
+            Assert::AreEqual(10, prop.GetValue().GetInt());
+        }
+
+        TEST_METHOD(SetValue_DoubleType_AssignsAndFormatsCorrectly)
+        {
+            CVariantWrapper initial;
+            initial.SetDouble(1.5);
+            CProMoProperty prop(_T("dblProp"), TYPE_DOUBLE, initial, FALSE, TRUE, TRUE, NULL);
+
+            // action: set new value
+            CVariantWrapper newVal;
+            newVal.SetDouble(3.14);
+            Assert::IsTrue(prop.SetValue(newVal));
+
+            // verify both numeric and string access
+            Assert::AreEqual(3.14, prop.GetValue().GetDouble());
+            Assert::IsTrue(prop.GetValue().GetString().Find(_T("3.14")) != -1);
+        }
+
+        TEST_METHOD(SetValue_BoolType_AssignsAndSerializes)
+        {
+            CVariantWrapper initial;
+            initial.SetBool(TRUE);
+            CProMoProperty prop(_T("boolProp"), TYPE_BOOL, initial, FALSE, TRUE, TRUE, NULL);
+
+            // action: toggle value
+            CVariantWrapper newVal;
+            newVal.SetBool(FALSE);
+            Assert::IsTrue(prop.SetValue(newVal));
+
+            // verify numeric and textual forms
+            Assert::IsFalse(prop.GetValue().GetBool());
+            CString serialized = prop.GetString();
+            Assert::IsTrue(serialized.Find(_T("FALSE")) != -1 || serialized.Find(_T("0")) != -1);
+        }
+
+        TEST_METHOD(InvokeHandler_WhenInvoked_ChangesTracked)
+        {
+            MockOwner owner;
+            CVariantWrapper initial;
+			initial.SetString(_T("default"));
+            CProMoProperty prop(_T("name"), TYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, NULL, NULL, MockEdit, NULL, NULL);
+
+            // precondition: initial value
+            Assert::AreEqual(CString("default"), prop.GetValue().GetString());
 
             // action: invoke edit handler
             Assert::IsTrue(prop.InvokeHandler(NULL));
@@ -174,6 +240,150 @@ namespace ProMoPropertyTests
 				Assert::AreEqual(child->GetName(), childCopy->GetName());
                 Assert::AreEqual(child->GetValue().GetString(), childCopy->GetValue().GetString());
             }
+        }
+
+        TEST_METHOD(Getters_DefaultProperty_ReturnsCorrectMetadata)
+        {
+            CVariantWrapper nullVal;
+            CProMoProperty prop(_T("testProp"), TYPE_INT, nullVal, TRUE, FALSE, TRUE, NULL);
+
+            Assert::AreEqual(CString("testProp"), prop.GetName());
+            Assert::AreEqual((unsigned int)TYPE_INT, prop.GetType());
+            Assert::IsTrue(prop.IsReadOnly());
+            Assert::IsFalse(prop.IsLabelVisible());
+            Assert::IsTrue(prop.IsPersistent());
+            Assert::IsFalse(prop.HasHandler());
+        }
+
+        TEST_METHOD(AddOption_SequentialAdds_CountIncreases)
+        {
+            CVariantWrapper nullVal;
+            CVariantWrapper opt;
+            opt.SetInt(42);
+
+            CProMoProperty prop(_T("optProp"), TYPE_INT, nullVal, FALSE, TRUE, TRUE, NULL);
+
+            Assert::AreEqual(0, prop.GetOptionsCount());
+
+            prop.AddOption(opt);
+            Assert::AreEqual(1, prop.GetOptionsCount());
+            Assert::AreEqual(opt.GetInt(), prop.GetOption(0).GetInt());
+        }
+
+        TEST_METHOD(SetValue_ReadOnly_DoesNotChangeValue)
+        {
+            CVariantWrapper val;
+            val.SetInt(10);
+            CProMoProperty prop(_T("readonly"), TYPE_INT, val, TRUE, TRUE, TRUE, NULL);
+
+            CVariantWrapper newVal;
+            newVal.SetInt(20);
+
+            Assert::IsFalse(prop.SetValue(newVal));
+            Assert::AreEqual(10, prop.GetValue().GetInt());
+        }
+
+        TEST_METHOD(SetValue_NoValidation_SuccessfulAssignment)
+        {
+            CVariantWrapper val;
+            val.SetInt(5);
+            CProMoProperty prop(_T("simple"), TYPE_INT, val, FALSE, TRUE, TRUE, NULL);
+
+            CVariantWrapper newVal;
+            newVal.SetInt(15);
+
+            Assert::IsTrue(prop.SetValue(newVal));
+            Assert::AreEqual(15, prop.GetValue().GetInt());
+        }
+
+        TEST_METHOD(InvokeHandler_NoEditFunction_ReturnsFalse)
+        {
+            CVariantWrapper val;
+            val.SetString(_T("none"));
+            CProMoProperty prop(_T("editless"), TYPE_STRING, val, FALSE, TRUE, TRUE, NULL);
+            Assert::IsFalse(prop.InvokeHandler(NULL));
+        }
+
+        TEST_METHOD(HandleChildren_ClearAndReAdd_CollectionResets)
+        {
+            CVariantWrapper nullVal;
+            CVariantWrapper strVal;
+            strVal.SetString(_T("v"));
+
+            CProMoProperty* templ = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("p"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, templ);
+
+            parent.AddChild();
+            parent.AddChild();
+            Assert::AreEqual(2, parent.GetChildrenCount());
+
+            parent.ClearChildren();
+            Assert::AreEqual(0, parent.GetChildrenCount());
+        }
+
+        TEST_METHOD(GetFullName_NestedChild_ReturnsCompositePath)
+        {
+            CVariantWrapper nullVal;
+            CVariantWrapper strVal;
+            strVal.SetString(_T("v"));
+
+            CProMoProperty root(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty* child = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &root, NULL);
+
+            CString fullName = child->GetFullName();
+            Assert::IsTrue(fullName.Find(_T("root")) != -1);
+            Assert::IsTrue(fullName.Find(_T("child")) != -1);
+        }
+
+        TEST_METHOD(FromString_InvalidInput_ReturnsFalse)
+        {
+            CString badData = _T("property:foobar,3,Test,10");
+            CVariantWrapper nullVal;
+            CProMoProperty prop(_T("broken"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL);
+            Assert::IsFalse(prop.FromString(badData));
+        }
+
+        TEST_METHOD(FromString_IntRoundTrip_CorrectConversion)
+        {
+            // Integer property
+            CString goodData = _T("property:intProp,1,42,10");
+            CVariantWrapper val; 
+            CProMoProperty prop(_T("intProp"), TYPE_INT, val, FALSE, TRUE, TRUE, NULL);
+            Assert::IsTrue(prop.FromString(goodData));
+            Assert::AreEqual(42, prop.GetValue().GetInt());
+        }
+
+        TEST_METHOD(FromString_DoubleRoundTrip_CorrectConversion)
+        {
+            // Integer property
+            CString goodData = _T("property:dblProp,2,2.5,10");
+            CVariantWrapper val;
+            CProMoProperty prop(_T("dblProp"), TYPE_INT, val, FALSE, TRUE, TRUE, NULL);
+            Assert::IsTrue(prop.FromString(goodData));
+            Assert::AreEqual(2.5, prop.GetValue().GetDouble());
+        }
+
+        TEST_METHOD(FromString_BoolRoundTrip_CorrectConversion)
+        {
+            // Integer property
+            CString goodData = _T("property:boolProp,4,1,10");
+            CVariantWrapper val;
+            CProMoProperty prop(_T("boolProp"), TYPE_INT, val, FALSE, TRUE, TRUE, NULL);
+            Assert::IsTrue(prop.FromString(goodData));
+            Assert::AreEqual(TRUE, prop.GetValue().GetBool());
+        }
+
+        TEST_METHOD(LoadFromString_CorrectProperty_ReturnsTrue)
+        {
+            CString goodData = _T("property:foobar,3,Test,10");
+            CVariantWrapper nullVal;
+            CProMoProperty prop(_T("foobar"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL);
+            Assert::IsTrue(prop.LoadFromString(goodData));
+        }
+
+        TEST_METHOD(GetNameFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            CString str1 = CProMoProperty::GetElementFromString(CString("property:foobar,3,Test,10"));
+            Assert::AreEqual(CString("10"), str1);
         }
 
     };

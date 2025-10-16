@@ -49,7 +49,7 @@ public:
 	virtual void	SetName(CString name);
 
 	// Custom properties
-	virtual void GetPropertyNames(CStringArray& array) const;
+	virtual void GetPropertyNames(CStringArray& array, const BOOL& recursive) const;
 	virtual unsigned int GetPropertyType(const CString& name) const;
 	virtual CVariantWrapper& GetPropertyValue(const CString& name) const;
 	virtual BOOL SetPropertyValue(const CString& name, const CVariantWrapper& value);
@@ -83,6 +83,10 @@ protected:
 	virtual void CreateProperties();
 	virtual void AddProperty(CProMoProperty* prop);
 	virtual void ClearProperties();
+	
+	virtual CProMoProperty* FindPropertyR(const CString& name, CProMoProperty* parent) const;
+	virtual void RecreateLabelsR(CObArray& list, CProMoProperty* parent);
+	virtual void GetPropertyNamesR(CStringArray& array, CProMoProperty* parent) const;
 
 private:
 	CString m_type;

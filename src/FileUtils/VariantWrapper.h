@@ -19,23 +19,26 @@ public:
 	
 	CVariantWrapper& operator=(const CVariantWrapper& var);
 	virtual ~CVariantWrapper();
-	void Clear();
-	void SetBool(const BOOL& val);
-	void SetInt(const int& val);
-	void SetDouble(const double& val);
-	void SetString(const CString& val);
-	BOOL SetFromString(const CString& val, const VARTYPE& type);
+	virtual void Clear();
+	virtual void SetBool(const BOOL& val);
+	virtual void SetInt(const int& val);
+	virtual void SetDouble(const double& val);
+	virtual void SetString(const CString& val);
+	virtual BOOL SetFromString(const CString& val, const VARTYPE& type);
 
-	BOOL GetBool() const;
-	int GetInt() const;
-	double GetDouble() const;
-	CString GetString() const;
+	virtual BOOL GetBool() const;
+	virtual int GetInt() const;
+	virtual double GetDouble() const;
+	virtual CString GetString() const;
 
-	VARTYPE GetType() const;
-	VARIANT* GetVARIANT();
-	const VARIANT* GetVARIANT() const;
+	virtual VARTYPE GetType() const;
+	virtual VARIANT* GetVARIANT();
+	virtual const VARIANT* GetVARIANT() const;
 
 private:
 	VARIANT m_var;
+	
+	virtual BOOL ParseInt(const CString& str, int& outValue);
+	virtual BOOL ParseDouble(const CString& str, double& outValue);
 };
 #endif //_VARIANTWRAPPER_H_
