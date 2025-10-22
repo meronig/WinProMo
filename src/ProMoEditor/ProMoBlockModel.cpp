@@ -26,6 +26,7 @@
 #include "ProMoNameFactory.h"
 #include "../DiagramEditor/Tokenizer.h"
 #include "../FileUtils/FileParser.h"
+#include "ProMoLabel.h"
 
 CProMoBlockModel::CProMoBlockModel()
 	/* ============================================================
@@ -128,6 +129,7 @@ void CProMoBlockModel::LinkSubBlock(CProMoBlockModel* block)
 	}
 
 	m_subblocks.Add(block);
+	CustomizeLabels();
 
 	if (block->m_parentBlock != NULL) {
 		block->m_parentBlock->UnlinkSubBlock(block);
@@ -155,6 +157,8 @@ void CProMoBlockModel::UnlinkSubBlock(CProMoBlockModel* subblock)
 			subblock->m_parentBlock = NULL;
 		}
 	}
+	CustomizeLabels();
+
 }
 
 void CProMoBlockModel::UnlinkAllSubBlocks()
@@ -175,6 +179,8 @@ void CProMoBlockModel::UnlinkAllSubBlocks()
 		}
 	}
 	this->m_subblocks.RemoveAll();
+	CustomizeLabels();
+
 }
 
 CObArray* CProMoBlockModel::GetSubBlocks()
@@ -215,6 +221,8 @@ void CProMoBlockModel::SetParentBlock(CProMoBlockModel* parent)
 		}
 		this->m_parentBlock = NULL;
 	}
+	CustomizeLabels();
+
 }
 
 CProMoBlockModel* CProMoBlockModel::GetParentBlock() const
@@ -311,6 +319,8 @@ void CProMoBlockModel::LinkOutgoingEdge(CProMoEdgeModel* edge)
    ============================================================*/
 {
 	edge->SetSource(this);
+	CustomizeLabels();
+
 }
 
 void CProMoBlockModel::UnlinkOutgoingEdge(CProMoEdgeModel* edge)
@@ -332,6 +342,8 @@ void CProMoBlockModel::UnlinkOutgoingEdge(CProMoEdgeModel* edge)
 	if (edge->GetSource() == this) {
 		edge->SetSource(NULL);
 	}
+	CustomizeLabels();
+
 }
 
 void CProMoBlockModel::UnlinkAllOutgoingEdges()
@@ -351,6 +363,7 @@ void CProMoBlockModel::UnlinkAllOutgoingEdges()
 			edge->SetSource(NULL);
 		}
 	}
+	CustomizeLabels();
 
 }
 
@@ -386,6 +399,8 @@ void CProMoBlockModel::LinkIncomingEdge(CProMoEdgeModel* edge)
    ============================================================*/
 {
 	edge->SetDestination(this);
+	CustomizeLabels();
+
 }
 
 void CProMoBlockModel::UnlinkIncomingEdge(CProMoEdgeModel* edge)
@@ -407,6 +422,8 @@ void CProMoBlockModel::UnlinkIncomingEdge(CProMoEdgeModel* edge)
 	if (edge->GetDestination() == this) {
 		edge->SetDestination(NULL);
 	}
+	CustomizeLabels();
+
 }
 
 void CProMoBlockModel::UnlinkAllIncomingEdges()
@@ -426,6 +443,8 @@ void CProMoBlockModel::UnlinkAllIncomingEdges()
 			edge->SetDestination(NULL);
 		}
 	}
+	CustomizeLabels();
+
 }
 
 CObArray* CProMoBlockModel::GetIncomingEdges()
@@ -537,4 +556,36 @@ CString CProMoBlockModel::GetDefaultGetString() const
 
 	return result + str;
 
+}
+
+void CProMoBlockModel::CustomizeLabel(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoBlockModel::CustomizeLabel
+	Description :	Customizes the input label. Overridden to
+					reposition the title label depending on
+					whether the block is a leaf or intermediate
+					node.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoLabel*		-	A pointer to the
+											label to customize
+
+   ============================================================*/
+{
+	if (label) {
+		if (label->GetProperty() == CString("Title") && label->GetModel()) {
+			label->SetLock(PROMO_LOCK_REPOSITIONING);
+			if (GetSubBlocks()->GetSize() > 0) {
+				label->SetViewAnchorPoint(DEHT_TOPMIDDLE);
+				label->SetLabelAnchorPoint(DEHT_TOPMIDDLE);
+			}
+			else {
+				label->SetViewAnchorPoint(DEHT_CENTER);
+				label->SetLabelAnchorPoint(DEHT_CENTER);
+			}
+		}
+	}
+
+	CProMoModel::CustomizeLabel(label);
 }

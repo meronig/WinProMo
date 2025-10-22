@@ -1040,10 +1040,6 @@ void CProMoEditor::CreateLabels()
 				for (int i = 0; i < labels->GetSize(); i++) {
 					CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
 					if (label) {
-						//TODO: change how to position label based on anchoring type
-						CRect blockRect = selObj->GetRect();
-						CRect labelRect = label->GetRect();
-						label->SetRect(blockRect.left, blockRect.top - 30, blockRect.left + labelRect.right - labelRect.left, blockRect.top - 30 + labelRect.bottom - labelRect.top);
 						GetDiagramEntityContainer()->Add(label);
 					}
 				}
@@ -1059,10 +1055,6 @@ void CProMoEditor::CreateLabels()
 				for (int i = 0; i < labels->GetSize(); i++) {
 					CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
 					if (label) {
-						//TODO: change how to position label based on anchoring type
-						CRect edgeRect = selEdge->GetRect();
-						CRect labelRect = label->GetRect();
-						label->SetRect(edgeRect.left, edgeRect.top - 30, edgeRect.left + labelRect.right - labelRect.left, edgeRect.top - 30 + labelRect.bottom - labelRect.top);
 						GetDiagramEntityContainer()->Add(label);
 					}
 				}

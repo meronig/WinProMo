@@ -186,6 +186,7 @@ void CProMoModel::LinkLabel(CProMoLabel* label)
 						m_labels.Add(label);
 						CString value = GetPropertyValue(label->m_property).GetString();
 						label->SetTitle(value);
+						CustomizeLabel(label);
 					}
 				}
 			}
@@ -207,11 +208,12 @@ void CProMoModel::UnlinkLabel(CProMoLabel* label)
 {
 	if (label) {
 		for (int i = static_cast<int>(m_labels.GetSize()) - 1; i >= 0; i--) {
-			CProMoLabel* tempView = dynamic_cast<CProMoLabel*>(m_labels.GetAt(i));
-			if (tempView) {
-				if (tempView == label) {
-					tempView->m_model = NULL;
+			CProMoLabel* tempLabel = dynamic_cast<CProMoLabel*>(m_labels.GetAt(i));
+			if (tempLabel) {
+				if (tempLabel == label) {
+					tempLabel->m_model = NULL;
 					m_labels.RemoveAt(i);
+					CustomizeLabel(label);
 				}
 			}
 		}
@@ -230,12 +232,31 @@ void CProMoModel::UnlinkAllLabels()
    ============================================================*/
 {
 	for (int i = static_cast<int>(m_labels.GetSize()) - 1; i >= 0; i--) {
-		CProMoLabel* tempView = dynamic_cast<CProMoLabel*>(m_labels.GetAt(i));
-		if (tempView) {
-			tempView->m_model = NULL;
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(m_labels.GetAt(i));
+		if (label) {
+			label->m_model = NULL;
+			CustomizeLabel(label);
 		}
 	}
 	m_labels.RemoveAll();
+}
+
+void CProMoModel::CustomizeLabels()
+/* ============================================================
+	Function :		CProMoModel::CustomizeLabels
+	Description :	Customizes all the labels linked to the
+					model
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+	for (int i = 0; i < m_labels.GetSize(); i++)
+	{
+		CustomizeLabel((CProMoLabel*)(m_labels.GetAt(i)));
+	}
 }
 
 void CProMoModel::ClearProperties() 
@@ -967,3 +988,25 @@ CObArray* CProMoModel::RecreateLabels()
 	return arr;
 }
 
+void CProMoModel::CustomizeLabel(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoModel::CustomizeLabel
+	Description :	Customizes the input label.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoLabel*			-	A pointer to the 
+												label to customize
+
+   ============================================================*/
+{
+	if (label) {
+
+		if (!label->GetModel()) {
+			//unlock all options
+			label->SetLock(0);
+		}
+
+		label->Reposition();
+	}
+}

@@ -120,6 +120,8 @@ void CProMoEdgeModel::SetSource(CProMoBlockModel* source)
 		if (source) {
 			source->m_outgoingEdges.Add(this);
 		}
+		CustomizeLabels();
+
 	}
 }
 
@@ -160,6 +162,8 @@ void CProMoEdgeModel::SetDestination(CProMoBlockModel* destination)
 			destination->m_incomingEdges.Add(this);
 		}
 	}
+	CustomizeLabels();
+
 }
 
 CProMoBlockModel* CProMoEdgeModel::GetSource() const

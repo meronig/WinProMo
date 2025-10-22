@@ -64,6 +64,7 @@ protected:
 	virtual void UnlinkIncomingEdge(CProMoEdgeModel* edge);
 	virtual void UnlinkAllIncomingEdges();
 	
+	virtual void CustomizeLabel(CProMoLabel* label);
 
 	//Overrides
 public:

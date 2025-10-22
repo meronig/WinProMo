@@ -76,9 +76,12 @@ protected:
 	virtual void LinkView(CDiagramEntity* view);
 	virtual void UnlinkView(CDiagramEntity* view);
 	virtual void UnlinkAllViews();
+	
 	virtual void LinkLabel(CProMoLabel* label);
 	virtual void UnlinkLabel(CProMoLabel* label);
 	virtual void UnlinkAllLabels();
+	virtual void CustomizeLabels();
+	virtual void CustomizeLabel(CProMoLabel* label);
 	
 	virtual void CreateProperties();
 	virtual void AddProperty(CProMoProperty* prop);

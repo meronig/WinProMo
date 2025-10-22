@@ -336,22 +336,17 @@ void CProMoEdgeView::KeepElementsConnected(double left, double top, double right
 		}
 	}
 
-	//move labels only if this is the first segment
-	if (model->GetFirstSegment() == this) {
-		for (int i = 0; i < model->GetLabels()->GetSize(); i++) {
-			CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
-			if (label) {
-				//move labels that are not selected (otherwise they will be moved twice)
-				if (!label->IsSelected()) {
-					// may use a smarter logic here
-					double deltaY = GetTop() - top;
-					double deltaX = GetLeft() - left;
-
-					label->SetRect(label->GetLeft() - deltaX, label->GetTop() - deltaY, label->GetRight() - deltaX, label->GetBottom() - deltaY);
-				}
+	
+	for (int i = 0; i < model->GetLabels()->GetSize(); i++) {
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
+		if (label) {
+			//reposition labels that are not selected (otherwise they will be moved twice)
+			if (!label->IsSelected()) {
+				label->Reposition();
 			}
 		}
 	}
+	
 }
 
 void CProMoEdgeView::Reposition()

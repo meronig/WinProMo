@@ -591,14 +591,14 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 				}
 			}
 		}
+	}
 
-		for (i = 0; i < model->GetLabels()->GetSize(); i++){
-			CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
-			if (label) {
-				//move labels that are not selected (otherwise they will be moved twice)
-				if (!label->IsSelected()) {
-					label->SetRect(label->GetLeft() - deltaX, label->GetTop() - deltaY, label->GetRight() - deltaX, label->GetBottom() - deltaY);
-				}
+	for (i = 0; i < model->GetLabels()->GetSize(); i++){
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
+		if (label) {
+			//reposition labels
+			if (!label->IsSelected()) {
+				label->Reposition();
 			}
 		}
 	}
