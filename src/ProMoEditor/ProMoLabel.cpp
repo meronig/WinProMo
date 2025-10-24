@@ -38,8 +38,15 @@ CProMoLabel::CProMoLabel()
 
 	m_offset = CPoint(0, 0);
 	m_fitTitle = TRUE;
+	m_fitView = FALSE;
 	m_titleRect = CRect(0, 0, 0, 0); 
-	
+
+	m_rotation = 0;
+	m_topMargin = 0;
+	m_leftMargin = 0;
+	m_bottomMargin = 0;
+	m_rightMargin = 0;
+
 	SetConstraints(CSize(5, 5), CSize(-1, -1));
 	SetType(_T("promo_label"));
 
@@ -127,7 +134,14 @@ void CProMoLabel::Copy(CDiagramEntity* obj)
 		m_anchorView = objView->m_anchorView;
 		m_offset = objView->m_offset;
 
-		m_lockFlags = objView->m_lockFlags;
+		m_rotation = objView->m_rotation;
+		m_topMargin = objView->m_topMargin;
+		m_leftMargin = objView->m_leftMargin;
+		m_bottomMargin = objView->m_bottomMargin;
+		m_rightMargin = objView->m_rightMargin;
+
+		/*Lock flags are deliberately not copied, as they depend
+		on the attached model*/
 
 		m_fitTitle = objView->m_fitTitle;
 		m_titleRect = objView->m_titleRect;
@@ -256,6 +270,38 @@ BOOL CProMoLabel::HasFitTitle()
 	return m_fitTitle;
 }
 
+void CProMoLabel::SetFitView(BOOL hasFitView)
+/* ============================================================
+	Function :		CProMoLabel::SetFitView
+	Description :	Sets whether the view for the object 
+					associated with the label must fit the 
+					title
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL hasFitView	-	"TRUE" if the view
+										must fit the title
+
+   ============================================================*/
+{
+	m_fitView = hasFitView;
+}
+
+BOOL CProMoLabel::HasFitView()
+/* ============================================================
+	Function :		CProMoLabel::SetFitView
+	Description :	Returns if the view for the object 
+					associated with the label must fit the 
+					title
+
+	Return :		BOOL	-	"TRUE" if the label must fit the
+								view
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_fitView;
+}
 
 BOOL CProMoLabel::IsLocked(const unsigned int& flag) const
 /* ============================================================
@@ -721,7 +767,7 @@ void CProMoLabel::SetTitle(CString title)
 	
 	CDiagramEntity::SetTitle(title);
 
-	Reposition();
+	AutoResize();
 }
 
 void CProMoLabel::ComputeTextRect()
@@ -741,35 +787,34 @@ void CProMoLabel::ComputeTextRect()
 
    ============================================================*/
 {
-	if (m_fitTitle) {
-		CFont font;
-		CDC dc;
-		double zoom = GetZoom();
-		if (zoom == 0) {
-			zoom = 1.0;
-		}
-		font.CreateFont(-round(m_fontSize * GetZoom()), 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, 0, 0, 0, 0, 0, 0, m_fontName);
-
-		dc.CreateCompatibleDC(NULL);
-		dc.SelectObject(font);
-		int mode = dc.SetBkMode(TRANSPARENT);
-
-		CRect textBounds(0, 0, 0, 0);
-		dc.DrawText(GetTitle(), &textBounds, m_textAlignment | DT_CALCRECT);
-
-		if (m_fontUnderline)
-		{
-			//textBounds.bottom += textBounds.Height() * 1.1 * GetZoom();
-		}
-		if (m_fontItalic) {
-			//textBounds.right += textBounds.Width() * 0.05 * GetZoom();
-		}
-
-		textBounds.right = textBounds.right + (4 * GetZoom());
-		textBounds.bottom = textBounds.bottom + (4 * GetZoom());
-
-		m_titleRect = textBounds;
+	CFont font;
+	CDC dc;
+	double zoom = GetZoom();
+	if (zoom == 0) {
+		zoom = 1.0;
 	}
+	font.CreateFont(-round(m_fontSize * GetZoom()), 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, 0, 0, 0, 0, 0, 0, m_fontName);
+
+	dc.CreateCompatibleDC(NULL);
+	dc.SelectObject(font);
+	int mode = dc.SetBkMode(TRANSPARENT);
+
+	CRect textBounds(0, 0, 0, 0);
+	dc.DrawText(GetTitle(), &textBounds, m_textAlignment | DT_CALCRECT);
+
+	if (m_fontUnderline)
+	{
+		//textBounds.bottom += textBounds.Height() * 1.1 * GetZoom();
+	}
+	if (m_fontItalic) {
+		//textBounds.right += textBounds.Width() * 0.05 * GetZoom();
+	}
+
+	textBounds.right = textBounds.right + (4 * GetZoom());
+	textBounds.bottom = textBounds.bottom + (4 * GetZoom());
+
+	m_titleRect = textBounds;
+	
 }
 
 CString CProMoLabel::GetFontName() const
@@ -982,7 +1027,7 @@ BOOL CProMoLabel::SetFontName(const CString& name)
 	if (IsLocked(PROMO_LOCK_FONTNAME)) 
 		return FALSE;
 	m_fontName = name;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1006,7 +1051,7 @@ BOOL CProMoLabel::SetFontSize(const unsigned int& size)
 	if (size == 0)
 		return FALSE;
 	m_fontSize = size;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1028,7 +1073,7 @@ BOOL CProMoLabel::SetFontWeight(const unsigned int& weight)
 	if (IsLocked(PROMO_LOCK_FONTWEIGHT))
 		return FALSE;
 	m_fontWeight = weight;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1051,7 +1096,7 @@ BOOL CProMoLabel::SetFontItalic(const BOOL& italic)
 	if (IsLocked(PROMO_LOCK_FONTITALIC))
 		return FALSE;
 	m_fontItalic = italic;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1074,7 +1119,7 @@ BOOL CProMoLabel::SetFontUnderline(const BOOL& underline)
 	if (IsLocked(PROMO_LOCK_FONTUNDERLINE))
 		return FALSE;
 	m_fontUnderline = underline;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1138,7 +1183,7 @@ BOOL CProMoLabel::SetTextAlignment(const unsigned int& alignment)
 	if (IsLocked(PROMO_LOCK_ALIGNMENT))
 		return FALSE;
 	m_textAlignment = alignment;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1159,7 +1204,7 @@ BOOL CProMoLabel::SetLabelAnchorPoint(const unsigned int& position)
 	if (IsLocked(PROMO_LOCK_ANCHORING))
 		return FALSE;
 	m_labelAnchorPoint = position;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1180,7 +1225,7 @@ BOOL CProMoLabel::SetViewAnchorPoint(const unsigned int& position)
 	if (IsLocked(PROMO_LOCK_ANCHORING))
 		return FALSE;
 	m_viewAnchorPoint = position;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1202,7 +1247,7 @@ BOOL CProMoLabel::SetAnchorView(const unsigned int& position)
 	if (IsLocked(PROMO_LOCK_ANCHORING))
 		return FALSE;
 	m_anchorView = position;
-	ComputeTextRect();
+	AutoResize();
 	return TRUE;
 }
 
@@ -1321,7 +1366,15 @@ CDoublePoint CProMoLabel::ComputeAnchoredPosition() const
 		CDoubleRect viewRect = view->GetRect();
 
 		CDoublePoint viewAnchorPt = GetSelectionMarkerPoint(m_viewAnchorPoint, viewRect);
-		CDoublePoint labelAnchorPt = GetSelectionMarkerPoint(m_labelAnchorPoint, CDoubleRect(0,0,GetRight()-GetLeft(),GetBottom()-GetTop()));
+
+		CDoublePoint labelAnchorPt;
+
+		if (m_fitTitle) {
+			labelAnchorPt = GetSelectionMarkerPoint(m_labelAnchorPoint, m_titleRect);
+		}
+		else {
+			labelAnchorPt = GetSelectionMarkerPoint(m_labelAnchorPoint, CDoubleRect(0,0,GetRight()-GetLeft(),GetBottom()-GetTop()));
+		}
 		topLeft.SetPoint(
 			viewAnchorPt.x - labelAnchorPt.x + m_offset.x,
 			viewAnchorPt.y - labelAnchorPt.y + m_offset.y
@@ -1343,15 +1396,18 @@ void CProMoLabel::Reposition()
 
    ============================================================*/
 {
+	CScopedUpdate offsetGuard(m_noOffset);
 	
-	ComputeTextRect();
-
-	CScopedUpdate guard(m_noOffset);
-	CDiagramEntity::SetRect(GetRect());
+	CRect labelRect;
 	
 	CDoublePoint newTopLeft = ComputeAnchoredPosition();
 	if (!(newTopLeft.x == -1 && newTopLeft.y == -1)) {
-		CRect labelRect = GetRect();
+		if (m_fitTitle) {
+			labelRect = m_titleRect.ToCRect();
+		}
+		else {
+			labelRect = GetRect();
+		}
 		CSize size = labelRect.Size();
 
 		SetRect(
@@ -1361,6 +1417,7 @@ void CProMoLabel::Reposition()
 			newTopLeft.y + size.cy
 		);
 	}
+
 }
 
 void CProMoLabel::UpdateOffset()
@@ -1456,3 +1513,31 @@ int CProMoLabel::GetHitCode(const CPoint& point, const CRect& rect) const
 	return CDiagramEntity::GetHitCode(point, rect);
 	
 }
+
+void CProMoLabel::AutoResize() 
+/* ============================================================
+	Function :		CProMoLabel::AutoResize
+	Description :	Automatically resizes the label to fit the 
+					text, and notify the corresponding block 
+					view (if it exists) so that it can react.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+	
+	ComputeTextRect();
+
+	Reposition();
+
+	CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(m_model);
+	if (blockModel) {
+		CProMoBlockView* blockView = blockModel->GetMainView();
+		if (blockView) {
+			blockView->OnLabelChanged(this);
+		}
+	}
+}
+

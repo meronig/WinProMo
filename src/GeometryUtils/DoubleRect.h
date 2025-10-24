@@ -21,6 +21,11 @@ public:
 
 	void SetRect(const CRect& rect);
 	void SetRect(const double& left, const double& top, const double& right, const double& bottom);
+	void SetRect(const CDoubleRect& rect);
+
+	BOOL IsRectEmpty() const;
+	BOOL IsRectNull() const;
+	void UnionRect(const CDoubleRect& rect1, const CDoubleRect& rect2);
 
 	//member variables are public to ensure efficiency and compatibility with CRect
 	double top;

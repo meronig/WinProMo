@@ -11,6 +11,7 @@
 #include "../DiagramEditor/DiagramEntity.h"
 #include "ProMoBlockModel.h"
 #include "../GeometryUtils/DoublePoint.h"
+#include "../GeometryUtils/DoubleRect.h"
 
 #define SHAPE_CUSTOM 0
 #define SHAPE_RECTANGLE 1
@@ -56,7 +57,8 @@ public:
 	virtual CPoint GetIntersection(CPoint innerPoint, CPoint outerPoint);
 
 	virtual void LinkLabel(CProMoLabel* label);
-
+	virtual void OnLabelChanged(CProMoLabel* label);
+	
 protected:
 	BOOL m_target;
 	CProMoBlockModel* m_blockmodel;
@@ -78,16 +80,20 @@ protected:
 	virtual void DrawTitle(CDC* dc, CRect& rect);
 	virtual void DrawShape(CDC* dc, CRect& rect);
 	virtual void Highlight(CDC* dc, CRect rect);
+	
+	virtual BOOL IsFitCompatible(UINT shapeAnchor, UINT labelAnchor);
+	virtual void AdjustToLabel(CProMoLabel* label);
+	virtual void RepositionLabels();
 
 
 private:
 	BOOL			m_moved;
 	BOOL			m_lockProportions;
 	BOOL			m_fitTitle;
-	CRect			m_titleRect;
+	CDoubleRect		m_titleRect;
 	int				m_shape;
 	CObArray		m_vertices;
-		
+	
 // Overrides
 public:
 	virtual void	SetLeft(double left);

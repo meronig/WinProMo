@@ -58,7 +58,7 @@ CProMoBlockView::CProMoBlockView()
 	m_shape = SHAPE_CUSTOM;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
-	m_titleRect = CRect(0,0,0,0);
+	m_titleRect = CDoubleRect(0,0,0,0);
 	SetType(_T("promo_block_view"));
 
 	SetZoom(1.0);
@@ -70,7 +70,7 @@ CProMoBlockView::CProMoBlockView()
 	if (result) {
 		SetTitle(title);
 	}*/
-	this->m_target = FALSE;
+	m_target = FALSE;
 
 	SetName(CProMoNameFactory::GetID());
 
@@ -411,7 +411,7 @@ void CProMoBlockView::SetLeft(double left)
 
 	KeepElementsConnected(left, GetTop(), GetRight(), GetBottom()); 
 	CDiagramEntity::SetLeft(left);
-	
+	RepositionLabels();
 
 }
 
@@ -436,7 +436,7 @@ void CProMoBlockView::SetRight(double right)
 
 	KeepElementsConnected(GetLeft(), GetTop(), right, GetBottom());
 	CDiagramEntity::SetRight(right);
-
+	RepositionLabels();
 }
 
 void CProMoBlockView::SetTop(double top)
@@ -458,7 +458,7 @@ void CProMoBlockView::SetTop(double top)
 {
 	KeepElementsConnected(GetLeft(), top, GetRight(), GetBottom());
 	CDiagramEntity::SetTop(top);
-
+	RepositionLabels();
 
 }
 
@@ -483,6 +483,7 @@ void CProMoBlockView::SetBottom(double bottom)
 
 	KeepElementsConnected(GetLeft(), GetTop(), GetRight(), bottom);
 	CDiagramEntity::SetBottom(bottom);
+	RepositionLabels();
 }
 
 void CProMoBlockView::SetTitle(CString title)
@@ -500,7 +501,7 @@ void CProMoBlockView::SetTitle(CString title)
 
    ============================================================*/
 {
-	if (m_fitTitle) {
+	/*if (m_fitTitle) {
 		CFont font;
 		double zoom = GetZoom();
 		if (zoom == 0) {
@@ -509,7 +510,7 @@ void CProMoBlockView::SetTitle(CString title)
 		font.CreateFont(-round(12.0 * zoom), 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, _T("Courier New"));
 		m_titleRect = ComputeTextRect(title, font);
 
-	}
+	}*/
 
 	CDiagramEntity::SetTitle(title);
 
@@ -593,15 +594,7 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 		}
 	}
 
-	for (i = 0; i < model->GetLabels()->GetSize(); i++){
-		CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
-		if (label) {
-			//reposition labels
-			if (!label->IsSelected()) {
-				label->Reposition();
-			}
-		}
-	}
+	
 
 }
 
@@ -1180,7 +1173,8 @@ void CProMoBlockView::SetRect(double left, double top, double right, double bott
 
    ============================================================*/
 {
-	if (m_fitTitle) {
+	
+	if (!m_titleRect.IsRectNull()) {
 
 		if (m_titleRect.Width() > right - left) {
 			if (GetLeft() - left != 0) {
@@ -1392,5 +1386,200 @@ void CProMoBlockView::LinkLabel(CProMoLabel* label)
 {
 	if (label) {
 		GetModel()->LinkLabel(label);
+	}
+}
+
+void CProMoBlockView::OnLabelChanged(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoBlockView::OnLabelChanged
+	Description :	Notification that a label has changed.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoLabel* label	-	Label that changed.
+
+	Usage :			Can be called by a label to notify the
+					view that it changed, and to trigger UI
+					updates.
+
+   ============================================================*/
+{
+	if (label) {
+		AdjustToLabel(label);
+	}
+}
+
+BOOL CProMoBlockView::IsFitCompatible(UINT shapeAnchor, UINT labelAnchor)
+/* ============================================================
+	Function :		CProMoBlockView::IsFitCompatible
+	Description :	Checks if the anchoring point of the view
+					and label allow the label to fit the block
+	Access :		Protected
+
+	Return :		BOOL				-	"TRUE" if the view
+											can fit the label
+	Parameters :	UINT shapeAnchor	-	The anchoring point
+											of the view.
+					UINT labelAnchor	-	The anchoring point
+											of the label.
+
+   ============================================================*/
+{
+	return (shapeAnchor == labelAnchor) ||
+		(shapeAnchor == DEHT_CENTER && labelAnchor == DEHT_CENTER);
+}
+
+void CProMoBlockView::AdjustToLabel(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoBlockView::AdjustToLabel
+	Description :	Recomputes the bounding rect such that
+					labels fit the view rectangle (if applicable), 
+					and the	view cannot be shrunk.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoLabel* label	-	Label that changed.
+
+   ============================================================*/
+{
+	CDoubleRect rect(GetLeft(), GetTop(), GetRight(), GetBottom());
+
+	//TODO: also exclude labels whose offset is not 0
+	
+	if (label && label->HasFitView() && IsFitCompatible(label->GetViewAnchorPoint(), label->GetLabelAnchorPoint())) {
+
+		CDoubleRect labelRect;
+
+		CObArray* labels = GetModel()->GetLabels();
+		for (int i = 0; i < labels->GetSize(); i++) {
+			CProMoLabel* otherLabel = (CProMoLabel*)labels->GetAt(i);
+			if (!otherLabel || !otherLabel->HasFitView() || !IsFitCompatible(otherLabel->GetViewAnchorPoint(), otherLabel->GetLabelAnchorPoint()))
+				continue;
+			labelRect.UnionRect(labelRect, otherLabel->GetRect());
+		}
+
+		// Get current rect
+		double curW = rect.Width();
+		double curH = rect.Height();
+		double reqW = labelRect.Width();
+		double reqH = labelRect.Height();
+
+		const double EPS = 1e-6;
+
+		// If proportions are locked, scale uniformly to satisfy both dims
+		if (m_lockProportions && curW > EPS && curH > EPS) {
+			double scaleW = reqW / curW;
+			double scaleH = reqH / curH;
+			double scale = max(scaleW, scaleH);
+			reqW = curW * scale;
+			reqH = curH * scale;
+		}
+		
+		// Adjust based on anchor combination
+		CDoubleRect newRect = rect; // copy
+
+		double dw = reqW - curW;
+		double dh = reqH - curH;
+
+		switch (label->GetViewAnchorPoint())
+		{
+		case DEHT_TOPLEFT:
+			newRect.right = newRect.left + reqW;
+			newRect.bottom = newRect.top + reqH;
+			break;
+
+		case DEHT_TOPMIDDLE:
+			newRect.left -= dw / 2.0;
+			newRect.right += dw / 2.0;
+			newRect.bottom = newRect.top + reqH;
+			break;
+
+		case DEHT_TOPRIGHT:
+			newRect.left = newRect.right - reqW;
+			newRect.bottom = newRect.top + reqH;
+			break;
+
+		case DEHT_BOTTOMLEFT:
+			newRect.right = newRect.left + reqW;
+			newRect.top = newRect.bottom - reqH;
+			break;
+
+		case DEHT_BOTTOMMIDDLE:
+			newRect.left -= dw / 2.0;
+			newRect.right += dw / 2.0;
+			newRect.top = newRect.bottom - reqH;
+			break;
+
+		case DEHT_BOTTOMRIGHT:
+			newRect.left = newRect.right - reqW;
+			newRect.top = newRect.bottom - reqH;
+			break;
+
+		case DEHT_LEFTMIDDLE:
+			newRect.right = newRect.left + reqW;
+			newRect.top -= dh / 2.0;
+			newRect.bottom += dh / 2.0;
+			break;
+
+		case DEHT_CENTER:
+			newRect.left -= dw / 2.0;
+			newRect.top -= dh / 2.0;
+			newRect.right += dw / 2.0;
+			newRect.bottom += dh / 2.0;
+			break;
+
+		case DEHT_RIGHTMIDDLE:
+			newRect.left = newRect.right - reqW;
+			newRect.top -= dh / 2.0;
+			newRect.bottom += dh / 2.0;
+			break;
+
+		default:
+			// unsupported anchor for fitting
+			return;
+		}
+
+		m_titleRect = newRect;
+
+		BOOL needUpdate = newRect.Width() > curW + EPS || newRect.Height() > curH + EPS;
+		
+		if (needUpdate) {
+			if (rect.left > newRect.left)
+				rect.left = newRect.left;
+			if (rect.right < newRect.right)
+				rect.right = newRect.right;
+			if (rect.top > newRect.top)
+				rect.top = newRect.top;
+			if (rect.bottom < newRect.bottom)
+				rect.bottom = newRect.bottom;
+		}
+	}
+	
+	SetRect(rect.left, rect.top, rect.right, rect.bottom);
+}
+
+void CProMoBlockView::RepositionLabels()
+/* ============================================================
+	Function :		CProMoBlockView::RepositionLabels
+	Description :	Repositions all the labels attached to the
+					block, such that the anchoring is preserved.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoLabel* label - the label to link
+
+   ============================================================*/
+{
+	ASSERT_VALID(this->GetModel());
+	CProMoBlockModel* model = this->GetModel();
+
+	for (int i = 0; i < model->GetLabels()->GetSize(); i++) {
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
+		if (label) {
+			//reposition labels
+			if (!label->IsSelected()) {
+				label->Reposition();
+			}
+		}
 	}
 }

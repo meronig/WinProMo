@@ -24,9 +24,11 @@
 #define PROMO_LOCK_BKCOLOR			0x0040
 #define PROMO_LOCK_BKMODE			0x0080
 #define PROMO_LOCK_ALIGNMENT		0x0100
-#define PROMO_LOCK_ANCHORING		0x0200
-#define PROMO_LOCK_REPOSITIONING	0x0400
-#define PROMO_LOCK_SELECTION		0x0800
+#define PROMO_LOCK_ROTATION			0x0200
+#define PROMO_LOCK_MARGINS			0x0400
+#define PROMO_LOCK_ANCHORING		0x0800
+#define PROMO_LOCK_REPOSITIONING	0x1000
+#define PROMO_LOCK_SELECTION		0x2000
 
 #define PROMO_VIEW_FIRST			0
 #define PROMO_VIEW_LAST				1
@@ -54,6 +56,9 @@ public:
 	
 	virtual void SetFitTitle(BOOL hasFitTitle);
 	virtual BOOL HasFitTitle();
+
+	virtual void SetFitView(BOOL hasFitView);
+	virtual BOOL HasFitView();
 
 	virtual BOOL IsLocked(const unsigned int& flag) const;
 	virtual void SetLock(const unsigned int& flag);
@@ -95,7 +100,8 @@ protected:
 
 	BOOL			m_fitTitle;
 	CDoubleRect		m_titleRect;
-	
+	BOOL			m_fitView;
+
 	CString m_fontName;
 	unsigned int m_fontSize;
 	unsigned int m_fontWeight;
@@ -105,6 +111,11 @@ protected:
 	COLORREF m_bkColor;
 	unsigned int m_bkMode;
 	unsigned int m_textAlignment;
+	unsigned int m_rotation;
+	double m_topMargin;
+	double m_leftMargin;
+	double m_bottomMargin;
+	double m_rightMargin;
 	unsigned int m_labelAnchorPoint;
 	unsigned int m_viewAnchorPoint;
 	unsigned int m_anchorView;
@@ -127,6 +138,7 @@ protected:
 	virtual void SetProperty(const CString& property);
 	virtual void ComputeTextRect();
 	virtual CDiagramEntity* GetView() const;
+	virtual void AutoResize();
 
 // Overrides
 
