@@ -165,16 +165,104 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 
    ============================================================*/
 {
+	BOOL rasterizeText = FALSE;
+
+	if (dc)
+	{
+		if (!dc->IsPrinting())  // printers always use vector fonts
+		{
+			int tech = dc->GetDeviceCaps(TECHNOLOGY);
+			if (tech == DT_RASDISPLAY && GetZoom() != 1.0)
+				rasterizeText = TRUE;  
+		}
+	}
+
+	int fontHeight = -round(m_fontSize * GetZoom());
+	
 	CFont font;
-	font.CreateFont(-round(m_fontSize * GetZoom()), 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, 0, 0, 0, 0, 0, 0, m_fontName);
+	font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, 0, 0, 0, 0, 0, 0, m_fontName);
 	
 	CFont* pOldFont = dc->SelectObject(&font);
 	COLORREF oldTextColor = dc->SetTextColor(m_textColor);
 	COLORREF oldBkColor = dc->SetBkColor(m_bkColor);
 	int oldBkMode = dc->SetBkMode(m_bkMode);
 
-	dc->DrawText(GetTitle(), rect, m_textAlignment);
+	CDoubleRect actualRect = rect;
+	actualRect.top += m_topMargin * GetZoom();
+	actualRect.left += m_leftMargin * GetZoom();
+	actualRect.bottom -= m_bottomMargin * GetZoom();
+	actualRect.right -= m_rightMargin * GetZoom();
 
+	if (!rasterizeText)
+	{
+		dc->DrawText(GetTitle(), actualRect.ToCRect(), m_textAlignment | DT_NOCLIP);
+	}
+	else {
+		CDC memDC, maskDC, nullDC;
+		memDC.CreateCompatibleDC(dc);
+		maskDC.CreateCompatibleDC(dc);
+		nullDC.CreateCompatibleDC(NULL);
+
+		CDoubleRect textBounds(0, 0, 0, 0);
+		textBounds = ComputeTextRect(&nullDC, GetZoom());
+
+		CRect bmpRect = rect;
+		bmpRect.MoveToXY(0, 0);
+
+		if (rect.Width() < textBounds.Width()) {
+			bmpRect.right = bmpRect.left + textBounds.Width();
+		}
+		if (rect.Height() < textBounds.Height()) {
+			bmpRect.bottom = bmpRect.top + textBounds.Height();
+		}
+
+		CRect fontRect = bmpRect;
+		fontRect.top += m_topMargin * GetZoom();
+		fontRect.left += m_leftMargin * GetZoom();
+		fontRect.bottom -= m_bottomMargin * GetZoom();
+		fontRect.right -= m_rightMargin * GetZoom();
+
+		//prepare maskDC
+		CBitmap maskBmp;
+		maskBmp.CreateCompatibleBitmap(dc, bmpRect.Width(), bmpRect.Height());
+		CBitmap* pOldMaskBmp = maskDC.SelectObject(&maskBmp);
+
+		// Fill background
+		CBrush bgBrush(RGB(255, 255, 255));
+		maskDC.SetBkMode(OPAQUE);
+		if (m_bkMode & TRANSPARENT) {
+			maskDC.SetBkColor(RGB(255, 255, 255));
+		}
+		else {
+			maskDC.SetBkColor(RGB(0,0,0));
+		}
+		maskDC.FillRect(&CRect(0, 0, bmpRect.Width(), bmpRect.Height()), &bgBrush);
+		maskDC.SetTextColor(RGB(0, 0, 0));
+		maskDC.SelectObject(&font);
+		maskDC.DrawText(GetTitle(), &fontRect, m_textAlignment);
+
+		// Copy bitmap to screen
+		dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
+			&maskDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCAND);
+
+		//prepare memDC
+		CBitmap bmp;
+		bmp.CreateCompatibleBitmap(dc, bmpRect.Width(), bmpRect.Height());
+		CBitmap* pOldBmp = memDC.SelectObject(&bmp);
+
+		memDC.SetBkMode(m_bkMode);
+		memDC.SetBkColor(m_bkColor);
+		memDC.SetTextColor(m_textColor);
+		memDC.SelectObject(&font);
+		memDC.DrawText(GetTitle(), &fontRect, m_textAlignment);
+
+		dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
+			&memDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCPAINT);
+
+		memDC.SelectObject(pOldBmp);
+		maskDC.SelectObject(pOldMaskBmp);
+	}
+	
 	dc->SetTextColor(oldTextColor);
 	dc->SetBkColor(oldBkColor);
 	dc->SetBkMode(oldBkMode);
@@ -527,10 +615,10 @@ CString CProMoLabel::GetDefaultGetString() const
 	CString name = GetName();
 	CFileParser::EncodeString(name);
 
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f"), 
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f"), 
 		(LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)property, m_lockFlags,
 		(LPCTSTR)m_fontName,	m_fontSize,	m_fontWeight, m_fontItalic, m_fontUnderline, m_textColor, m_bkColor, m_bkMode, m_textAlignment, m_labelAnchorPoint, m_viewAnchorPoint,
-		m_anchorView, m_offset.x, m_offset.y);
+		m_anchorView, m_offset.x, m_offset.y, m_topMargin, m_leftMargin, m_bottomMargin, m_rightMargin);
 
 	return str;
 
@@ -617,7 +705,7 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 			SetProperty(property);
 
 			// missing style attributes should not prevent the label from loading
-			if (size >= 23) {
+			if (size >= 27) {
 				CString fontName;
 				int fontSize;
 				int fontWeight;
@@ -632,6 +720,10 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				int view;
 				double offsetX;
 				double offsetY;
+				double topMargin;
+				double leftMargin;
+				double bottomMargin;
+				double rightMargin;
 
 				BOOL lockFlags;
 				
@@ -650,6 +742,10 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				tok->GetAt(count++, view);
 				tok->GetAt(count++, offsetX);
 				tok->GetAt(count++, offsetY);
+				tok->GetAt(count++, topMargin);
+				tok->GetAt(count++, leftMargin);
+				tok->GetAt(count++, bottomMargin);
+				tok->GetAt(count++, rightMargin);
 
 				m_fontName = fontName;
 				m_fontSize = fontSize;
@@ -664,6 +760,10 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				m_viewAnchorPoint = viewPosition;
 				m_anchorView = view;
 				m_offset = CDoublePoint(offsetX, offsetY);
+				m_topMargin = topMargin;
+				m_leftMargin = leftMargin;
+				m_bottomMargin = bottomMargin;
+				m_rightMargin = rightMargin;
 
 				m_lockFlags = lockFlags;
 			}
@@ -770,15 +870,17 @@ void CProMoLabel::SetTitle(CString title)
 	AutoResize();
 }
 
-void CProMoLabel::ComputeTextRect()
+CDoubleRect CProMoLabel::ComputeTextRect(CDC* dc, double zoom)
 /* ============================================================
 	Function :		CProMoLabel::ComputeTextRect
 	Description :	Computes a CRect that fully contains the
-					input string, using the default font.
+					input string.
 	Access :		Protected
 
-	Return :		void
-	Parameters :	none
+	Return :		CDoubleRect	-	CRect that fully contains the
+									input string
+					double zoom	-	The zoom factor to be applied
+	Parameters :	CDC* dc		-	The CDC to compute the rect.
 	Usage :			Call to determine (without drawing on
 					display) the size of the input text. Can be
 					used to resize the block and/or to set the
@@ -788,33 +890,44 @@ void CProMoLabel::ComputeTextRect()
    ============================================================*/
 {
 	CFont font;
-	CDC dc;
-	double zoom = GetZoom();
-	if (zoom == 0) {
-		zoom = 1.0;
-	}
-	font.CreateFont(-round(m_fontSize * GetZoom()), 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, 0, 0, 0, 0, 0, 0, m_fontName);
+	
+	int fontHeight = -round(m_fontSize * zoom);
+	
+	font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, 0, 0, 0, 0, 0, 0, m_fontName);
 
-	dc.CreateCompatibleDC(NULL);
-	dc.SelectObject(font);
-	int mode = dc.SetBkMode(TRANSPARENT);
+	CFont* pOldFont = dc->SelectObject(&font);
+	int oldBk = dc->SetBkMode(TRANSPARENT);
 
 	CRect textBounds(0, 0, 0, 0);
-	dc.DrawText(GetTitle(), &textBounds, m_textAlignment | DT_CALCRECT);
+	CSize textSize(0, 0);
 
-	if (m_fontUnderline)
+	int hPadding = 0;
+	int vPadding = 0;
+
+	bool isMultiline = (m_textAlignment & DT_WORDBREAK);
+
+	if (!isMultiline)
 	{
-		//textBounds.bottom += textBounds.Height() * 1.1 * GetZoom();
+		textSize = dc->GetTextExtent(GetTitle());
+		textBounds.right = textSize.cx;
+		textBounds.bottom = textSize.cy;
 	}
-	if (m_fontItalic) {
-		//textBounds.right += textBounds.Width() * 0.05 * GetZoom();
+	else
+	{
+		UINT format = m_textAlignment;
+		format &= (DT_VCENTER | DT_BOTTOM | DT_WORDBREAK | DT_CENTER | DT_RIGHT | DT_LEFT);
+		format |= DT_CALCRECT | DT_TOP;
+
+		dc->DrawText(GetTitle(), &textBounds, format);
 	}
 
-	textBounds.right = textBounds.right + (4 * GetZoom());
-	textBounds.bottom = textBounds.bottom + (4 * GetZoom());
+	textBounds.right += ((m_leftMargin + m_rightMargin + hPadding) * zoom);
+	textBounds.bottom += ((m_topMargin + m_bottomMargin + vPadding) * zoom);
 
-	m_titleRect = textBounds;
-	
+	dc->SetBkMode(oldBk);
+	dc->SelectObject(pOldFont);
+
+	return textBounds;
 }
 
 CString CProMoLabel::GetFontName() const
@@ -1527,8 +1640,12 @@ void CProMoLabel::AutoResize()
 
    ============================================================*/
 {
-	
-	ComputeTextRect();
+	CDC dc;
+	dc.CreateCompatibleDC(NULL);
+
+	// Compute the title rect always at 100% zoom factor
+	CDoubleRect textRect = ComputeTextRect(&dc, 1.0);
+	m_titleRect = textRect;
 
 	Reposition();
 

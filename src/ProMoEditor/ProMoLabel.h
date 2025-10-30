@@ -136,7 +136,7 @@ protected:
 	virtual void UpdateOffset();
 	
 	virtual void SetProperty(const CString& property);
-	virtual void ComputeTextRect();
+	virtual CDoubleRect ComputeTextRect(CDC* dc, double zoom);
 	virtual CDiagramEntity* GetView() const;
 	virtual void AutoResize();
 
