@@ -207,7 +207,7 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 		textBounds = ComputeTextRect(&nullDC, GetZoom());
 
 		CRect bmpRect = rect;
-		bmpRect.MoveToXY(0, 0);
+		bmpRect.OffsetRect(-rect.left, -rect.top);
 
 		if (rect.Width() < textBounds.Width()) {
 			bmpRect.right = bmpRect.left + textBounds.Width();
@@ -904,7 +904,7 @@ CDoubleRect CProMoLabel::ComputeTextRect(CDC* dc, double zoom)
 	int hPadding = 0;
 	int vPadding = 0;
 
-	bool isMultiline = (m_textAlignment & DT_WORDBREAK);
+	BOOL isMultiline = (m_textAlignment & DT_WORDBREAK);
 
 	if (!isMultiline)
 	{
