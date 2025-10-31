@@ -303,8 +303,12 @@ CProMoProperty* CProMoModel::FindPropertyR(const CString& name, CProMoProperty* 
 			return prop;
 		}
 		else {
+			CProMoProperty* temp = NULL;
 			for (int i = 0; i < prop->GetChildrenCount(); i++) {
-				FindPropertyR(name, prop->GetChild(i));
+				temp = FindPropertyR(name, prop->GetChild(i));
+				if (temp) {
+					return temp;
+				}
 			}
 		}
 	}

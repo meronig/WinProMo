@@ -79,6 +79,16 @@ namespace CDoubleRectTests
             Assert::AreEqual(2.0, rect.Ratio());
 
         }
+        TEST_METHOD(IsRectEmpty_WhenAreaIs0_ReturnTrue)
+        {
+            CDoubleRect rect(10, 20, 10, 40);
+            Assert::IsTrue(rect.IsRectEmpty());
+        }
+        TEST_METHOD(IsRectNull_WhenAllMeasuresAre0_ReturnTrue)
+        {
+            CDoubleRect rect(0, 0, 0, 0);
+            Assert::IsTrue(rect.IsRectNull());
+        }
 
 #pragma endregion
 
@@ -123,6 +133,36 @@ namespace CDoubleRectTests
             Assert::AreEqual(40.4, rect2.bottom);
             Assert::AreEqual(30.3, rect2.right);
         }
+
+        TEST_METHOD(UnionRect_WhenPerformed_MergeRect)
+        {
+            CDoubleRect rect(10.1, 20.2, 30.3, 40.4);
+            CDoubleRect rect2(50.5, 60.6, 70.7, 80.8);
+            CDoubleRect emptyRect(10.0, 20.0, 10.0, 40.0);
+
+            CDoubleRect mergeRect;
+            mergeRect.UnionRect(rect, rect2);
+            
+            Assert::AreEqual(20.2, mergeRect.top);
+            Assert::AreEqual(10.1, mergeRect.left);
+            Assert::AreEqual(80.8, mergeRect.bottom);
+            Assert::AreEqual(70.7, mergeRect.right);
+
+            mergeRect.UnionRect(rect, emptyRect);
+            Assert::AreEqual(rect.top, mergeRect.top);
+            Assert::AreEqual(rect.left, mergeRect.left);
+            Assert::AreEqual(rect.bottom, mergeRect.bottom);
+            Assert::AreEqual(rect.right, mergeRect.right);
+            
+            mergeRect.UnionRect(emptyRect, rect2);
+            Assert::AreEqual(rect2.top, mergeRect.top);
+            Assert::AreEqual(rect2.left, mergeRect.left);
+            Assert::AreEqual(rect2.bottom, mergeRect.bottom);
+            Assert::AreEqual(rect2.right, mergeRect.right);
+
+        }
+        
+
 #pragma endregion
 
     };
