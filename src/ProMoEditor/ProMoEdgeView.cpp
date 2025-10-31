@@ -49,7 +49,6 @@ CProMoEdgeView::CProMoEdgeView()
 	
 	SetMinimumSize(CSize(-1, -1));
 	SetType(_T("promo_edge_view"));
-	//SetTitle(_T(""));
 
 	SetName(CProMoNameFactory::GetID());
 
@@ -431,52 +430,7 @@ void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 {
 
 	DrawLine(dc, rect);
-	DrawTitle(dc, rect);
 
-}
-
-void CProMoEdgeView::DrawTitle(CDC* dc, CRect& rect)
-/* ============================================================
-	Function :		CProMoEdgeView::DrawTitle
-	Description :	Draws the title of the edge.
-
-	Return :		void
-	Parameters :	CDC* dc		-	The CDC to draw to.
-					CRect rect	-	The real rectangle of the
-									object.
-
-   ============================================================*/
-{
-	CString str = GetTitle();
-	if (str.GetLength())
-	{
-		CFont font;
-		font.CreateFont(-round(12.0 * GetZoom()), 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, _T("Courier New"));
-		dc->SelectObject(&font);
-		int mode = dc->SetBkMode(TRANSPARENT);
-
-		CRect rectTemp(rect);
-		rectTemp.NormalizeRect();
-		int cy = round(14.0 * GetZoom());
-		int cut = round((double)GetMarkerSize().cx * GetZoom() / 2);
-		CRect r(rect.right - cut, rect.top, rect.right - (rectTemp.Width() + cut), rect.bottom);
-		if (rect.top == rect.bottom)
-		{
-			CRect r(rect.left, rect.top - (cy + cut), rect.right, rect.bottom);
-			r.NormalizeRect();
-			dc->DrawText(str, r, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER);
-		}
-		else
-		{
-			CRect r(rect.right - cut, rect.top, rect.right - (cy * str.GetLength() + cut), rect.bottom);
-			r.NormalizeRect();
-			dc->DrawText(str, r, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_RIGHT);
-		}
-
-		dc->SelectStockObject(DEFAULT_GUI_FONT);
-		dc->SetBkMode(mode);
-
-	}
 }
 
 int CProMoEdgeView::GetHitCode(const CPoint& point, const CRect& rect) const

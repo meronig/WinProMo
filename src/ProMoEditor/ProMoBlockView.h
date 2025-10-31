@@ -46,9 +46,6 @@ public:
 	virtual void SetLockedProportions(BOOL hasLockedProportions);
 	virtual BOOL HasLockedProportions();
 
-	virtual void SetFitTitle(BOOL hasFitTitle);
-	virtual BOOL HasFitTitle();
-
 	// Parent-child block links
 	virtual void SetParentBlock(CProMoBlockView* parent);
 	virtual CProMoBlockView* GetParentBlock() const;
@@ -77,7 +74,6 @@ protected:
 	virtual CObArray* GetVertices();
 	virtual void ClearVertices();
 
-	virtual void DrawTitle(CDC* dc, CRect& rect);
 	virtual void DrawShape(CDC* dc, CRect& rect);
 	virtual void Highlight(CDC* dc, CRect rect);
 	
@@ -89,7 +85,6 @@ protected:
 private:
 	BOOL			m_moved;
 	BOOL			m_lockProportions;
-	BOOL			m_fitTitle;
 	CDoubleRect		m_titleRect;
 	int				m_shape;
 	CObArray		m_vertices;

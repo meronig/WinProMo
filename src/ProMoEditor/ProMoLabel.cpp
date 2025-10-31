@@ -47,6 +47,8 @@ CProMoLabel::CProMoLabel()
 	m_leftMargin = 0;
 	m_bottomMargin = 0;
 	m_rightMargin = 0;
+	
+	m_visible = TRUE;
 
 	SetConstraints(CSize(5, 5), CSize(-1, -1));
 	SetType(_T("promo_label"));
@@ -166,108 +168,111 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 
    ============================================================*/
 {
-	BOOL rasterizeText = FALSE;
+	if (m_visible) {
 
-	if (dc)
-	{
-		if (!dc->IsPrinting())  // printers always use vector fonts
+		BOOL rasterizeText = FALSE;
+
+		if (dc)
 		{
-			int tech = dc->GetDeviceCaps(TECHNOLOGY);
-			if (tech == DT_RASDISPLAY && GetZoom() != 1.0)
-				rasterizeText = TRUE;  
-		}
-	}
-
-	int fontHeight = -round(m_fontSize * GetZoom());
-	
-	CFont font;
-	font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, m_fontStrikeOut, 0, 0, 0, 0, 0, m_fontName);
-	
-	CFont* pOldFont = dc->SelectObject(&font);
-	COLORREF oldTextColor = dc->SetTextColor(m_textColor);
-	COLORREF oldBkColor = dc->SetBkColor(m_bkColor);
-	int oldBkMode = dc->SetBkMode(m_bkMode);
-
-	CDoubleRect actualRect = rect;
-	actualRect.top += m_topMargin * GetZoom();
-	actualRect.left += m_leftMargin * GetZoom();
-	actualRect.bottom -= m_bottomMargin * GetZoom();
-	actualRect.right -= m_rightMargin * GetZoom();
-
-	if (!rasterizeText)
-	{
-		dc->DrawText(GetTitle(), actualRect.ToCRect(), m_textAlignment | DT_NOCLIP);
-	}
-	else {
-		CDC memDC, maskDC, nullDC;
-		memDC.CreateCompatibleDC(dc);
-		maskDC.CreateCompatibleDC(dc);
-		nullDC.CreateCompatibleDC(NULL);
-
-		CDoubleRect textBounds(0, 0, 0, 0);
-		textBounds = ComputeTextRect(&nullDC, GetZoom());
-
-		CRect bmpRect = rect;
-		bmpRect.OffsetRect(-rect.left, -rect.top);
-
-		if (rect.Width() < textBounds.Width()) {
-			bmpRect.right = bmpRect.left + textBounds.Width();
-		}
-		if (rect.Height() < textBounds.Height()) {
-			bmpRect.bottom = bmpRect.top + textBounds.Height();
+			if (!dc->IsPrinting())  // printers always use vector fonts
+			{
+				int tech = dc->GetDeviceCaps(TECHNOLOGY);
+				if (tech == DT_RASDISPLAY && GetZoom() != 1.0)
+					rasterizeText = TRUE;
+			}
 		}
 
-		CRect fontRect = bmpRect;
-		fontRect.top += m_topMargin * GetZoom();
-		fontRect.left += m_leftMargin * GetZoom();
-		fontRect.bottom -= m_bottomMargin * GetZoom();
-		fontRect.right -= m_rightMargin * GetZoom();
+		int fontHeight = -round(m_fontSize * GetZoom());
 
-		//prepare maskDC
-		CBitmap maskBmp;
-		maskBmp.CreateCompatibleBitmap(dc, bmpRect.Width(), bmpRect.Height());
-		CBitmap* pOldMaskBmp = maskDC.SelectObject(&maskBmp);
+		CFont font;
+		font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, m_fontStrikeOut, 0, 0, 0, 0, 0, m_fontName);
 
-		// Fill background
-		CBrush bgBrush(RGB(255, 255, 255));
-		maskDC.SetBkMode(OPAQUE);
-		if (m_bkMode & TRANSPARENT) {
-			maskDC.SetBkColor(RGB(255, 255, 255));
+		CFont* pOldFont = dc->SelectObject(&font);
+		COLORREF oldTextColor = dc->SetTextColor(m_textColor);
+		COLORREF oldBkColor = dc->SetBkColor(m_bkColor);
+		int oldBkMode = dc->SetBkMode(m_bkMode);
+
+		CDoubleRect actualRect = rect;
+		actualRect.top += m_topMargin * GetZoom();
+		actualRect.left += m_leftMargin * GetZoom();
+		actualRect.bottom -= m_bottomMargin * GetZoom();
+		actualRect.right -= m_rightMargin * GetZoom();
+
+		if (!rasterizeText)
+		{
+			dc->DrawText(GetTitle(), actualRect.ToCRect(), m_textAlignment | DT_NOCLIP);
 		}
 		else {
-			maskDC.SetBkColor(RGB(0,0,0));
+			CDC memDC, maskDC, nullDC;
+			memDC.CreateCompatibleDC(dc);
+			maskDC.CreateCompatibleDC(dc);
+			nullDC.CreateCompatibleDC(NULL);
+
+			CDoubleRect textBounds(0, 0, 0, 0);
+			textBounds = ComputeTextRect(&nullDC, GetZoom());
+
+			CRect bmpRect = rect;
+			bmpRect.OffsetRect(-rect.left, -rect.top);
+
+			if (rect.Width() < textBounds.Width()) {
+				bmpRect.right = bmpRect.left + textBounds.Width();
+			}
+			if (rect.Height() < textBounds.Height()) {
+				bmpRect.bottom = bmpRect.top + textBounds.Height();
+			}
+
+			CRect fontRect = bmpRect;
+			fontRect.top += m_topMargin * GetZoom();
+			fontRect.left += m_leftMargin * GetZoom();
+			fontRect.bottom -= m_bottomMargin * GetZoom();
+			fontRect.right -= m_rightMargin * GetZoom();
+
+			//prepare maskDC
+			CBitmap maskBmp;
+			maskBmp.CreateCompatibleBitmap(dc, bmpRect.Width(), bmpRect.Height());
+			CBitmap* pOldMaskBmp = maskDC.SelectObject(&maskBmp);
+
+			// Fill background
+			CBrush bgBrush(RGB(255, 255, 255));
+			maskDC.SetBkMode(OPAQUE);
+			if (m_bkMode & TRANSPARENT) {
+				maskDC.SetBkColor(RGB(255, 255, 255));
+			}
+			else {
+				maskDC.SetBkColor(RGB(0, 0, 0));
+			}
+			maskDC.FillRect(&CRect(0, 0, bmpRect.Width(), bmpRect.Height()), &bgBrush);
+			maskDC.SetTextColor(RGB(0, 0, 0));
+			maskDC.SelectObject(&font);
+			maskDC.DrawText(GetTitle(), &fontRect, m_textAlignment);
+
+			// Copy bitmap to screen
+			dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
+				&maskDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCAND);
+
+			//prepare memDC
+			CBitmap bmp;
+			bmp.CreateCompatibleBitmap(dc, bmpRect.Width(), bmpRect.Height());
+			CBitmap* pOldBmp = memDC.SelectObject(&bmp);
+
+			memDC.SetBkMode(m_bkMode);
+			memDC.SetBkColor(m_bkColor);
+			memDC.SetTextColor(m_textColor);
+			memDC.SelectObject(&font);
+			memDC.DrawText(GetTitle(), &fontRect, m_textAlignment);
+
+			dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
+				&memDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCPAINT);
+
+			memDC.SelectObject(pOldBmp);
+			maskDC.SelectObject(pOldMaskBmp);
 		}
-		maskDC.FillRect(&CRect(0, 0, bmpRect.Width(), bmpRect.Height()), &bgBrush);
-		maskDC.SetTextColor(RGB(0, 0, 0));
-		maskDC.SelectObject(&font);
-		maskDC.DrawText(GetTitle(), &fontRect, m_textAlignment);
 
-		// Copy bitmap to screen
-		dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
-			&maskDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCAND);
-
-		//prepare memDC
-		CBitmap bmp;
-		bmp.CreateCompatibleBitmap(dc, bmpRect.Width(), bmpRect.Height());
-		CBitmap* pOldBmp = memDC.SelectObject(&bmp);
-
-		memDC.SetBkMode(m_bkMode);
-		memDC.SetBkColor(m_bkColor);
-		memDC.SetTextColor(m_textColor);
-		memDC.SelectObject(&font);
-		memDC.DrawText(GetTitle(), &fontRect, m_textAlignment);
-
-		dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
-			&memDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCPAINT);
-
-		memDC.SelectObject(pOldBmp);
-		maskDC.SelectObject(pOldMaskBmp);
+		dc->SetTextColor(oldTextColor);
+		dc->SetBkColor(oldBkColor);
+		dc->SetBkMode(oldBkMode);
+		dc->SelectObject(pOldFont);
 	}
-	
-	dc->SetTextColor(oldTextColor);
-	dc->SetBkColor(oldBkColor);
-	dc->SetBkMode(oldBkMode);
-	dc->SelectObject(pOldFont);
 }
 
 void CProMoLabel::ShowPopup(CPoint point, CWnd* parent)
@@ -410,6 +415,24 @@ BOOL CProMoLabel::IsLocked(const unsigned int& flag) const
    ============================================================*/
 {
 	return (m_lockFlags & flag) != 0;
+}
+
+unsigned int CProMoLabel::GetLock() const
+/* ============================================================
+	Function :		CProMoLabel::IsLocked
+	Description :	Returns the specified property (or
+					combination of properties)
+
+	Access :		Public
+
+	Return :		unsigned int& flag	-	The property (or
+											combination) being
+											locked
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lockFlags;
 }
 
 void CProMoLabel::SetLock(const unsigned int& flag)
@@ -1127,6 +1150,21 @@ unsigned int CProMoLabel::GetAnchorView() const
 	return m_anchorView;
 }
 
+BOOL CProMoLabel::IsVisible() const
+/* ============================================================
+	Function :		CProMoLabel::IsVisible()
+	Description :	Returns if the label is visible
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the label is
+									visible
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_visible;
+}
+
 unsigned int CProMoLabel::GetBkMode() const
 /* ============================================================
 	Function :		CProMoLabel::GetBkMode()
@@ -1405,6 +1443,30 @@ BOOL CProMoLabel::SetAnchorView(const unsigned int& position)
 		return FALSE;
 	m_anchorView = position;
 	AutoResize();
+	return TRUE;
+}
+
+BOOL CProMoLabel::SetVisible(const BOOL& visible)
+/* ============================================================
+	Function :		CProMoLabel::SetVisible()
+	Description :	Sets whether the label should be visible
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& underline			-	"TRUE" if the
+												label should be
+												visible
+	Usage:			The function should be used to hide labels
+					that are not relevant. Note that an 
+					invisible label can still be selected and
+					moved by the user. To prevent that, invoke
+					SetLock with PROMO_LOCK_SELECTION
+
+   ============================================================*/
+{
+	m_visible = visible;
 	return TRUE;
 }
 
@@ -1702,3 +1764,25 @@ void CProMoLabel::AutoResize()
 	}
 }
 
+void CProMoLabel::Select(BOOL selected)
+/* ============================================================
+	Function :		CProMoLabel::Select
+	Description :	Sets the object select state.
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL selected	-	"TRUE" to select, "FALSE"
+										to unselect.
+
+	Usage :			Call to select/deselect the object.
+					Overridden to prevent selection from
+					happening if the label is locked
+
+   ============================================================*/
+{
+	if (IsLocked(PROMO_LOCK_SELECTION))
+		return;
+
+	CDiagramEntity::Select(selected);
+
+}

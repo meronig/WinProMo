@@ -54,7 +54,6 @@ CProMoBlockView::CProMoBlockView()
 {
 	m_blockmodel = NULL;
 	m_lockProportions = FALSE;
-	m_fitTitle = FALSE;
 	m_shape = SHAPE_CUSTOM;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
@@ -66,10 +65,6 @@ CProMoBlockView::CProMoBlockView()
 	CString title;
 	BOOL result;
 	SetModel(new CProMoBlockModel());
-	/*result = title.LoadString(IDS_PROMO_BLOCK);
-	if (result) {
-		SetTitle(title);
-	}*/
 	m_target = FALSE;
 
 	SetName(CProMoNameFactory::GetID());
@@ -119,38 +114,6 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 
 	DrawShape(dc, rect);
 	Highlight(dc, rect);
-	DrawTitle(dc, rect);
-}
-
-void CProMoBlockView::DrawTitle(CDC* dc, CRect& rect)
-/* ============================================================
-	Function :		CProMoBlockView::DrawTitle
-	Description :	Draws the title of the block.
-
-	Return :		void
-	Parameters :	CDC* dc		-	The CDC to draw to.
-					CRect rect	-	The real rectangle of the
-									object.
-
-   ============================================================*/
-{
-	CFont font;
-	CString str;
-	/* uncomment line below for debug */
-	//str.Format(_T("%d,%d"), getModel()->getIncomingEdges()->GetSize(), getModel()->getOutgoingEdges()->GetSize());
-	str = GetTitle();
-	font.CreateFont(-round(12.0 * GetZoom()), 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, _T("Courier New"));
-	dc->SelectObject(&font);
-	int mode = dc->SetBkMode(TRANSPARENT);
-
-	if (this->GetModel()->GetSubBlocks()->GetSize() == 0) {
-		dc->DrawText(str, rect, DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER);
-	}
-	else {
-		dc->DrawText(str, rect, DT_NOPREFIX | DT_SINGLELINE | DT_TOP | DT_CENTER);
-	}
-	dc->SelectStockObject(DEFAULT_GUI_FONT);
-	dc->SetBkMode(mode);
 }
 
 void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
@@ -296,36 +259,6 @@ BOOL CProMoBlockView::HasLockedProportions()
    ============================================================*/
 {
 	return m_lockProportions;
-}
-
-void CProMoBlockView::SetFitTitle(BOOL hasFitTitle)
-/* ============================================================
-	Function :		CProMoBlockView::SetFitTitle
-	Description :	Sets whether the block should fit the title
-	Access :		Public
-
-	Return :		void
-	Parameters :	BOOL hasFitTitle	-	"TRUE" if the block
-											must fit the title
-
-   ============================================================*/
-{
-	m_fitTitle = hasFitTitle;
-}
-
-BOOL CProMoBlockView::HasFitTitle()
-/* ============================================================
-	Function :		CProMoBlockView::HasFitTitle
-	Description :	Returns if the block must fit the title
-	Access :		Public
-
-	Return :		BOOL	-	"TRUE" if the block must fit the
-								title
-	Parameters :	none
-
-   ============================================================*/
-{
-	return m_fitTitle;
 }
 
 void CProMoBlockView::ShowPopup(CPoint point, CWnd* parent)
@@ -1132,7 +1065,6 @@ void CProMoBlockView::Copy(CDiagramEntity* obj)
 		GetModel()->Copy(objView->GetModel());
 	}
 	SetLockedProportions(objView->HasLockedProportions());
-	SetFitTitle(objView->HasFitTitle());
 }
 
 void CProMoBlockView::SetRect(CRect rect)

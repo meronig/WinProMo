@@ -62,6 +62,7 @@ public:
 	virtual BOOL HasFitView();
 
 	virtual BOOL IsLocked(const unsigned int& flag) const;
+	virtual unsigned int GetLock() const;
 	virtual void SetLock(const unsigned int& flag);
 	virtual CDoubleRect GetTitleRect() const;
 	
@@ -78,6 +79,8 @@ public:
 	virtual unsigned int GetLabelAnchorPoint() const;
 	virtual unsigned int GetViewAnchorPoint() const;
 	virtual unsigned int GetAnchorView() const;
+	virtual BOOL IsVisible() const;
+
 
 	virtual BOOL SetFontName(const CString& name);
 	virtual BOOL SetFontSize(const unsigned int& size);
@@ -92,6 +95,7 @@ public:
 	virtual BOOL SetLabelAnchorPoint(const unsigned int& position);
 	virtual BOOL SetViewAnchorPoint(const unsigned int& position);
 	virtual BOOL SetAnchorView(const unsigned int& position);
+	virtual BOOL SetVisible(const BOOL& visible);
 
 	virtual void Reposition();
 
@@ -124,6 +128,8 @@ protected:
 	unsigned int m_viewAnchorPoint;
 	unsigned int m_anchorView;
 	CDoublePoint m_offset;
+
+	BOOL m_visible;
 
 	BOOL m_noOffset;
 	
@@ -159,6 +165,8 @@ public:
 	virtual void	SetRect(double left, double top, double right, double bottom);
 
 	virtual int		GetHitCode(const CPoint& point, const CRect& rect) const;
+
+	virtual void	Select(BOOL selected);
 
 
 protected:

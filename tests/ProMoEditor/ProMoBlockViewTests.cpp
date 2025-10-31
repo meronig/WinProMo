@@ -53,7 +53,6 @@ namespace CProMoBlockViewTests
 
             Assert::IsFalse(view.IsTarget());
             Assert::IsFalse(view.HasLockedProportions());
-            Assert::IsFalse(view.HasFitTitle());
             TestHelpers::PointerAssert::IsNotNull(view.GetModel());
         }
 
@@ -455,7 +454,6 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub parent;
             parent.SetLockedProportions(TRUE);
             parent.SetRect(0, 0, 200, 100);
-            parent.SetFitTitle(TRUE);
             parent.SetTitle(CString("Parent with a very long long title"));
             parent.SetShape(SHAPE_RECTANGLE);
             
