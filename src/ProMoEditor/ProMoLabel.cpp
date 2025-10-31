@@ -26,6 +26,7 @@ CProMoLabel::CProMoLabel()
 	m_fontWeight = FW_NORMAL;
 	m_fontItalic = FALSE;
 	m_fontUnderline = FALSE;
+	m_fontStrikeOut = FALSE;
 	m_textAlignment = DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER;
 	m_textColor = RGB(0, 0, 0);
 	m_bkColor = CLR_NONE;
@@ -180,7 +181,7 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 	int fontHeight = -round(m_fontSize * GetZoom());
 	
 	CFont font;
-	font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, 0, 0, 0, 0, 0, 0, m_fontName);
+	font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, m_fontStrikeOut, 0, 0, 0, 0, 0, m_fontName);
 	
 	CFont* pOldFont = dc->SelectObject(&font);
 	COLORREF oldTextColor = dc->SetTextColor(m_textColor);
@@ -615,10 +616,10 @@ CString CProMoLabel::GetDefaultGetString() const
 	CString name = GetName();
 	CFileParser::EncodeString(name);
 
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f"), 
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f"), 
 		(LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)property, m_lockFlags,
-		(LPCTSTR)m_fontName,	m_fontSize,	m_fontWeight, m_fontItalic, m_fontUnderline, m_textColor, m_bkColor, m_bkMode, m_textAlignment, m_labelAnchorPoint, m_viewAnchorPoint,
-		m_anchorView, m_offset.x, m_offset.y, m_topMargin, m_leftMargin, m_bottomMargin, m_rightMargin);
+		(LPCTSTR)m_fontName,	m_fontSize,	m_fontWeight, m_fontItalic, m_fontUnderline, m_fontStrikeOut, m_textColor, m_bkColor, m_bkMode, m_textAlignment, 
+		m_labelAnchorPoint, m_viewAnchorPoint, m_anchorView, m_offset.x, m_offset.y, m_topMargin, m_leftMargin, m_bottomMargin, m_rightMargin);
 
 	return str;
 
@@ -705,12 +706,13 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 			SetProperty(property);
 
 			// missing style attributes should not prevent the label from loading
-			if (size >= 27) {
+			if (size >= 28) {
 				CString fontName;
 				int fontSize;
 				int fontWeight;
 				BOOL fontItalic;
 				BOOL fontUnderline;
+				BOOL fontStrikeOut;
 				COLORREF textColor;
 				COLORREF bkColor;
 				int bkMode;
@@ -733,6 +735,7 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				tok->GetAt(count++, fontWeight);
 				tok->GetAt(count++, fontItalic);
 				tok->GetAt(count++, fontUnderline);
+				tok->GetAt(count++, fontStrikeOut);
 				tok->GetAt(count++, textColor);
 				tok->GetAt(count++, bkColor);
 				tok->GetAt(count++, bkMode);
@@ -752,6 +755,7 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				m_fontWeight = fontWeight;
 				m_fontItalic = fontItalic;
 				m_fontUnderline = fontUnderline;
+				m_fontStrikeOut = fontStrikeOut;
 				m_textColor = textColor;
 				m_bkColor = bkColor;
 				m_bkMode = bkMode;
@@ -893,7 +897,7 @@ CDoubleRect CProMoLabel::ComputeTextRect(CDC* dc, double zoom)
 	
 	int fontHeight = -round(m_fontSize * zoom);
 	
-	font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, 0, 0, 0, 0, 0, 0, m_fontName);
+	font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, m_fontStrikeOut, 0, 0, 0, 0, 0, m_fontName);
 
 	CFont* pOldFont = dc->SelectObject(&font);
 	int oldBk = dc->SetBkMode(TRANSPARENT);
@@ -1010,6 +1014,23 @@ BOOL CProMoLabel::IsFontUnderline() const
    ============================================================*/
 {
 	return m_fontUnderline;
+}
+
+BOOL CProMoLabel::IsFontStrikeOut() const
+/* ============================================================
+	Function :		CProMoLabel::IsFontStrikeOut()
+	Description :	Returns if the font used to display the
+					label is stroken out
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the label is
+									stroken out
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_fontStrikeOut;
 }
 
 COLORREF CProMoLabel::GetTextColor() const
@@ -1232,6 +1253,29 @@ BOOL CProMoLabel::SetFontUnderline(const BOOL& underline)
 	if (IsLocked(PROMO_LOCK_FONTUNDERLINE))
 		return FALSE;
 	m_fontUnderline = underline;
+	AutoResize();
+	return TRUE;
+}
+
+BOOL CProMoLabel::SetFontStrikeOut(const BOOL& strikeOut)
+/* ============================================================
+	Function :		CProMoLabel::SetFontStrikeOut()
+	Description :	Sets the font used to display the label as
+					stroken out
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& strikeOut			-	"TRUE" if the
+												font should be
+												stroken out
+
+   ============================================================*/
+{
+	if (IsLocked(PROMO_LOCK_FONTSTRIKEOUT))
+		return FALSE;
+	m_fontStrikeOut = strikeOut;
 	AutoResize();
 	return TRUE;
 }

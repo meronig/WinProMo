@@ -347,6 +347,18 @@ void CProMoModel::RecreateLabelsR(CObArray& list, CProMoProperty* prop)
 }
 
 void CProMoModel::GetPropertyNamesR(CStringArray& array, CProMoProperty* prop) const
+/* ============================================================
+	Function :		CProMoModel::GetPropertyNamesR
+	Description :	Gets the names of all child properties for the
+					current property.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CStringArray& array	-	The names of all
+											properties.
+					CProMoProperty* prop-	The parent property
+
+   ============================================================*/
 {
 	if (prop) {
 		array.Add(prop->GetFullName());

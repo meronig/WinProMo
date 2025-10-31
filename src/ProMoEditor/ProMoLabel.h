@@ -20,15 +20,16 @@
 #define PROMO_LOCK_FONTWEIGHT		0x0004
 #define PROMO_LOCK_FONTITALIC		0x0008
 #define PROMO_LOCK_FONTUNDERLINE	0x0010
-#define PROMO_LOCK_TEXTCOLOR		0x0020
-#define PROMO_LOCK_BKCOLOR			0x0040
-#define PROMO_LOCK_BKMODE			0x0080
-#define PROMO_LOCK_ALIGNMENT		0x0100
-#define PROMO_LOCK_ROTATION			0x0200
-#define PROMO_LOCK_MARGINS			0x0400
-#define PROMO_LOCK_ANCHORING		0x0800
-#define PROMO_LOCK_REPOSITIONING	0x1000
-#define PROMO_LOCK_SELECTION		0x2000
+#define PROMO_LOCK_FONTSTRIKEOUT	0x0020
+#define PROMO_LOCK_TEXTCOLOR		0x0040
+#define PROMO_LOCK_BKCOLOR			0x0080
+#define PROMO_LOCK_BKMODE			0x0100
+#define PROMO_LOCK_ALIGNMENT		0x0200
+#define PROMO_LOCK_ROTATION			0x0400
+#define PROMO_LOCK_MARGINS			0x0800
+#define PROMO_LOCK_ANCHORING		0x1000
+#define PROMO_LOCK_REPOSITIONING	0x2000
+#define PROMO_LOCK_SELECTION		0x4000
 
 #define PROMO_VIEW_FIRST			0
 #define PROMO_VIEW_LAST				1
@@ -69,6 +70,7 @@ public:
 	virtual unsigned int GetFontWeight() const;
 	virtual BOOL IsFontItalic() const;
 	virtual BOOL IsFontUnderline() const;
+	virtual BOOL IsFontStrikeOut() const;
 	virtual COLORREF GetTextColor() const;
 	virtual COLORREF GetBkColor() const;
 	virtual unsigned int GetBkMode() const;
@@ -82,6 +84,7 @@ public:
 	virtual BOOL SetFontWeight(const unsigned int& weight);
 	virtual BOOL SetFontItalic(const BOOL& italic);
 	virtual BOOL SetFontUnderline(const BOOL& underline);
+	virtual BOOL SetFontStrikeOut(const BOOL& strikeOut);
 	virtual BOOL SetTextColor(const COLORREF& color);
 	virtual BOOL SetBkColor(const COLORREF& color);
 	virtual BOOL SetBkMode(const unsigned int& mode);
@@ -107,6 +110,7 @@ protected:
 	unsigned int m_fontWeight;
 	BOOL m_fontItalic;
 	BOOL m_fontUnderline;
+	BOOL m_fontStrikeOut;
 	COLORREF m_textColor;
 	COLORREF m_bkColor;
 	unsigned int m_bkMode;
