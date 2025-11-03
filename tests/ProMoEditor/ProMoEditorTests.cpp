@@ -67,6 +67,7 @@ namespace CProMoEditorTests
         
         TEST_METHOD_INITIALIZE(SetUp)
         {
+            //Some MFC-related assertions still fail
             WinProMoTestHelpers::BootstrapMFC(); 
             CProMoEntityContainer* c = new CProMoEntityContainer(CString("custom"));
             m_editor.SetDiagramEntityContainer(c);
@@ -113,15 +114,32 @@ namespace CProMoEditorTests
             m_x->GetModel()->SetName(CString("391"));
             m_z->GetModel()->SetName(CString("522"));
 
-            m_a->SetTitle(CString("A"));
-            m_a1->SetTitle(CString("A1"));
-            m_a2->SetTitle(CString("A2"));
-            m_b->SetTitle(CString("B"));
-            m_b1->SetTitle(CString("B1"));
-            m_b2->SetTitle(CString("B2"));
-            m_x->SetTitle(CString("x"));
-            m_y->SetTitle(CString("y"));
-            m_z->SetTitle(CString("z"));
+            CVariantWrapper titleA;
+            CVariantWrapper titleA1;
+            CVariantWrapper titleA2;
+            CVariantWrapper titleB;
+            CVariantWrapper titleB1;
+            CVariantWrapper titleB2;
+            CVariantWrapper titleX;
+            CVariantWrapper titleZ;
+            
+            titleA.SetString(CString("A"));
+            titleA1.SetString(CString("A1"));
+            titleA2.SetString(CString("A2"));
+            titleB.SetString(CString("B"));
+            titleB1.SetString(CString("B1"));
+            titleB2.SetString(CString("B2"));
+            titleX.SetString(CString("x"));
+            titleZ.SetString(CString("z"));
+            
+            m_a->GetModel()->SetPropertyValue(CString("Title"), titleA);
+            m_a1->GetModel()->SetPropertyValue(CString("Title"), titleA1);
+            m_a2->GetModel()->SetPropertyValue(CString("Title"), titleA2);
+            m_b->GetModel()->SetPropertyValue(CString("Title"), titleB);
+            m_b1->GetModel()->SetPropertyValue(CString("Title"), titleB1);
+            m_b2->GetModel()->SetPropertyValue(CString("Title"), titleB2);
+            m_x->GetModel()->SetPropertyValue(CString("Title"), titleX);
+            m_z->GetModel()->SetPropertyValue(CString("Title"), titleZ);
 
             m_a->SetRect(182.000000, 100.000000, 489.000000, 158.000000);
             m_a1->SetRect(216.000000, 121.000000, 344.000000, 153.000000);
@@ -142,6 +160,15 @@ namespace CProMoEditorTests
             c->Add(m_x);
             c->Add(m_y);
             c->Add(m_z);
+
+            m_a->GetModel()->RecreateLabels();
+            m_a1->GetModel()->RecreateLabels();
+            m_a2->GetModel()->RecreateLabels();
+            m_b->GetModel()->RecreateLabels();
+            m_b1->GetModel()->RecreateLabels();
+            m_b2->GetModel()->RecreateLabels();
+            m_x->GetModel()->RecreateLabels();
+            m_z->GetModel()->RecreateLabels();
         }
 
 #pragma region ConstructionAndDefaults
@@ -273,15 +300,15 @@ namespace CProMoEditorTests
             CProMoControlFactory factory;
 
             diagram.Add(CString("custom:762,1091;"));
-            diagram.Add(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,A,0,4;"));
-            diagram.Add(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,A1,0,30;"));
-            diagram.Add(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,A2,0,72;"));
-            diagram.Add(CString("promo_block_view:17,316.000000,238.000000,484.000000,344.000000,B,0,15;"));
-            diagram.Add(CString("promo_edge_view:523,438.000000,237.000000,447.000000,154.000000,z,0,522,,;"));
-            diagram.Add(CString("promo_block_view:51,340.000000,266.000000,468.000000,298.000000,B1,0,49;"));
-            diagram.Add(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,x,0,391,,452;"));
-            diagram.Add(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,y,0,391,392,;"));
-            diagram.Add(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,B2,0,119;"));
+            diagram.Add(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4;"));
+            diagram.Add(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30;"));
+            diagram.Add(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,,0,72;"));
+            diagram.Add(CString("promo_block_view:17,316.000000,238.000000,484.000000,344.000000,,0,15;"));
+            diagram.Add(CString("promo_edge_view:523,438.000000,237.000000,447.000000,154.000000,,0,522,,;"));
+            diagram.Add(CString("promo_block_view:51,340.000000,266.000000,468.000000,298.000000,,0,49;"));
+            diagram.Add(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,,0,391,,452;"));
+            diagram.Add(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,,0,391,392,;"));
+            diagram.Add(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,,0,119;"));
             diagram.Add(CString("promo_block_model:4,;"));
             diagram.Add(CString("promo_block_model:30,4;"));
             diagram.Add(CString("promo_block_model:72,4;"));
@@ -290,12 +317,29 @@ namespace CProMoEditorTests
             diagram.Add(CString("promo_block_model:49,15;"));
             diagram.Add(CString("promo_edge_model:391,4,49;"));
             diagram.Add(CString("promo_block_model:119,15;"));
-
+            diagram.Add(CString("promo_label:3620,333.000000,105.000000,340.000000,120.000000,,0,4,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:3835,274.000000,135.500000,288.000000,150.500000,,0,30,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:4050,414.000000,130.500000,428.000000,145.500000,,0,72,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:914,460.000000,185.000000,467.000000,200.000000,,0,522,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,20.000000,-3.500000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:3405,396.500000,238.000000,403.500000,253.000000,,0,15,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:965,186.000000,203.000000,193.000000,218.000000,,0,391,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,-21.000000,-8.500000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:2975,397.000000,274.500000,411.000000,289.500000,,0,49,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:3136,397.000000,311.500000,411.000000,326.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:1174,97.000000,47.000000,153.000000,62.000000,My Label,0,,,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("property:Title,3,A,4;"));
+            diagram.Add(CString("property:Title,3,A1,30;"));
+            diagram.Add(CString("property:Title,3,A2,72;"));
+            diagram.Add(CString("property:Title,3,B,15;"));
+            diagram.Add(CString("property:Title,3,z,522;"));
+            diagram.Add(CString("property:Title,3,B1,49;"));
+            diagram.Add(CString("property:Title,3,x,391;"));
+            diagram.Add(CString("property:Title,3,B2,119;"));
+            
             m_editor.Load(diagram, factory);
 
             CProMoEntityContainer* c = dynamic_cast<CProMoEntityContainer*>(m_editor.GetDiagramEntityContainer());
 
-            Assert::AreEqual(9, c->GetSize());
+            Assert::AreEqual(18, c->GetSize());
             Assert::AreEqual(CString("custom"), c->GetModelType());
             Assert::AreEqual((LONG)762, c->GetVirtualSize().cx);
             Assert::AreEqual((LONG)1091, c->GetVirtualSize().cy);

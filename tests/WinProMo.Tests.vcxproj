@@ -176,6 +176,7 @@
     <ClCompile Include="ProMoEditor\ProMoEdgeViewTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoEditorTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoEntityContainerTests.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoLabelTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoModelTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoPropertyTests.cpp" />
     <ClCompile Include="WinProMoTests.h" />

@@ -80,7 +80,7 @@ public:
 	virtual unsigned int GetViewAnchorPoint() const;
 	virtual unsigned int GetAnchorView() const;
 	virtual BOOL IsVisible() const;
-
+	virtual void GetMargins(double& left, double& top, double& right, double& bottom) const;
 
 	virtual BOOL SetFontName(const CString& name);
 	virtual BOOL SetFontSize(const unsigned int& size);
@@ -96,7 +96,8 @@ public:
 	virtual BOOL SetViewAnchorPoint(const unsigned int& position);
 	virtual BOOL SetAnchorView(const unsigned int& position);
 	virtual BOOL SetVisible(const BOOL& visible);
-
+	virtual void SetMargins(double left, double top, double right, double bottom);
+	
 	virtual void Reposition();
 
 
@@ -177,4 +178,4 @@ protected:
 	
 };
 
-#endif //_PROMOBLOCKVIEW_H_
+#endif //_PROMOLABEL_H_

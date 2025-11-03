@@ -35,9 +35,14 @@ BOOL MockEdit(CProMoProperty* prop, CWnd* parent) {
 
 namespace ProMoPropertyTests
 {
-    TEST_CLASS(ProMoPropertyStressTests)
+    TEST_CLASS(ProMoPropertyTests)
     {
     public:
+
+        TEST_METHOD_INITIALIZE(SetUp)
+        {
+            WinProMoTestHelpers::BootstrapMFC();
+        }
 
         TEST_METHOD(SetValue_ValidAndInvalid_ChangesTracked)
         {

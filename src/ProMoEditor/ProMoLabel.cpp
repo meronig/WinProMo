@@ -472,7 +472,7 @@ void CProMoLabel::SetProperty(const CString& property)
 /* ============================================================
 	Function :		CProMoLabel::SetProperty
 	Description :	Sets the property displayed by the label
-	Access :		Public
+	Access :		Protected
 
 	Return :		void
 	Parameters :	CString title	-	The name of the 
@@ -639,10 +639,10 @@ CString CProMoLabel::GetDefaultGetString() const
 	CString name = GetName();
 	CFileParser::EncodeString(name);
 
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f"), 
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%i,%f,%f,%f,%f,%f,%f,%i"), 
 		(LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)property, m_lockFlags,
 		(LPCTSTR)m_fontName,	m_fontSize,	m_fontWeight, m_fontItalic, m_fontUnderline, m_fontStrikeOut, m_textColor, m_bkColor, m_bkMode, m_textAlignment, 
-		m_labelAnchorPoint, m_viewAnchorPoint, m_anchorView, m_offset.x, m_offset.y, m_topMargin, m_leftMargin, m_bottomMargin, m_rightMargin);
+		m_labelAnchorPoint, m_viewAnchorPoint, m_anchorView, m_offset.x, m_offset.y, m_topMargin, m_leftMargin, m_bottomMargin, m_rightMargin, m_fitTitle);
 
 	return str;
 
@@ -716,6 +716,9 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 			tok->GetAt(count++, model);
 			tok->GetAt(count++, property);
 
+			BOOL fitTitleTemp = m_fitTitle;
+			m_fitTitle = FALSE;
+
 			CScopedUpdate guard(m_noOffset);
 			SetRect(left, top, right, bottom);
 			
@@ -729,7 +732,7 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 			SetProperty(property);
 
 			// missing style attributes should not prevent the label from loading
-			if (size >= 28) {
+			if (size >= 29) {
 				CString fontName;
 				int fontSize;
 				int fontWeight;
@@ -751,6 +754,7 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				double rightMargin;
 
 				BOOL lockFlags;
+				BOOL fitTitle;
 				
 				tok->GetAt(count++, lockFlags);
 				tok->GetAt(count++, fontName);
@@ -772,7 +776,9 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				tok->GetAt(count++, leftMargin);
 				tok->GetAt(count++, bottomMargin);
 				tok->GetAt(count++, rightMargin);
+				tok->GetAt(count++, fitTitle);
 
+				m_fitTitle = fitTitle;
 				m_fontName = fontName;
 				m_fontSize = fontSize;
 				m_fontWeight = fontWeight;
@@ -793,6 +799,9 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				m_rightMargin = rightMargin;
 
 				m_lockFlags = lockFlags;
+			}
+			else {
+				m_fitTitle = fitTitleTemp;
 			}
 
 			result = TRUE;
@@ -1600,6 +1609,9 @@ CDoublePoint CProMoLabel::ComputeAnchoredPosition() const
 		);
 		
 	}
+	else {
+		topLeft.SetPoint(GetLeft(), GetTop());
+	}
 	return topLeft;
 }
 
@@ -1784,5 +1796,53 @@ void CProMoLabel::Select(BOOL selected)
 		return;
 
 	CDiagramEntity::Select(selected);
+
+}
+
+void CProMoLabel::SetMargins(double left, double top, double right, double bottom)
+/* ============================================================
+	Function :		CProMoLabel::SetMargins
+	Description :	Sets text margins.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double left		-	New left margin.
+					double top		-	New top margin.
+					double right	-	New right margin.
+					double bottom	-	New bottom margin.
+
+	Usage :			Call to set new margins for the label.
+
+   ============================================================*/
+{
+
+	m_leftMargin = left;
+	m_topMargin = top;
+	m_rightMargin = right;
+	m_bottomMargin = bottom;
+
+}
+
+void CProMoLabel::GetMargins(double& left, double& top, double& right, double& bottom) const
+/* ============================================================
+	Function :		CProMoLabel::GetMargins
+	Description :	Return text margins.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double& left	-	Current left margin.
+					double& top		-	Current top margin.
+					double& right	-	Current right margin.
+					double& bottom	-	Current bottom margin.
+
+	Usage :			Call to get the margins of the label.
+
+   ============================================================*/
+{
+
+	left = m_leftMargin;
+	top = m_topMargin;
+	right = m_rightMargin;
+	bottom = m_bottomMargin;
 
 }
