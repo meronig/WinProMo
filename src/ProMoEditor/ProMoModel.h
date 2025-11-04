@@ -59,6 +59,7 @@ public:
 
 	static CString GetNameFromString(const CString& str);
 
+	// Labels
 	virtual CObArray* GetLabels();
 	virtual CProMoLabel* GetLabel(CString property);
 	virtual CObArray* RecreateLabels();

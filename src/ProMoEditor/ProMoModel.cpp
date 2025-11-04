@@ -169,25 +169,25 @@ void CProMoModel::LinkLabel(CProMoLabel* label)
 {
 	if (label) {
 		if (label->m_model != this) {
-			for (int i = 0; i < m_properties.GetSize(); i++) {
-				CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
-				if (prop) {
-					if (prop->GetFullName() == label->m_property && prop->IsLabelVisible()) {
-						// unlink existing label for this property (if any)
-						UnlinkLabel(GetLabel(label->m_property));
 
-						// unlink from previous model (if any)
-						if (label->m_model) {
-							label->m_model->UnlinkLabel(label);
-						}
+			CProMoProperty* prop = FindProperty(label->m_property);
+			
+			if (prop) {
+				if (prop->IsLabelVisible()) {
+					// unlink existing label for this property (if any)
+					UnlinkLabel(GetLabel(label->m_property));
 
-						// link the label
-						label->m_model = this;
-						m_labels.Add(label);
-						CString value = GetPropertyValue(label->m_property).GetString();
-						label->SetTitle(value);
-						CustomizeLabel(label);
+					// unlink from previous model (if any)
+					if (label->m_model) {
+						label->m_model->UnlinkLabel(label);
 					}
+
+					// link the label
+					label->m_model = this;
+					m_labels.Add(label);
+					CString value = prop->GetValue().GetString();
+					label->SetTitle(value);
+					CustomizeLabel(label);
 				}
 			}
 
@@ -335,7 +335,7 @@ void CProMoModel::RecreateLabelsR(CObArray& list, CProMoProperty* prop)
    ============================================================*/
 {
 	if (prop) {
-		if (!GetLabel(prop->GetName()) && prop->IsLabelVisible()) {
+		if (!GetLabel(prop->GetFullName()) && prop->IsLabelVisible()) {
 			CProMoLabel* label = new CProMoLabel();
 			label->SetProperty(prop->GetFullName());
 			LinkLabel(label);

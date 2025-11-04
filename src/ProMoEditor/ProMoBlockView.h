@@ -63,8 +63,7 @@ protected:
 	virtual void RecomputeIntersectionLinks();
 	virtual void KeepElementsConnected(double left, double top, double right, double bottom);
 	virtual CPoint MapPointToNewRect(CPoint oldPoint, double left, double top, double right, double bottom);
-	virtual CRect ComputeTextRect(const CString &text, const CFont &font);
-
+	
 	virtual void SetModel(CProMoBlockModel* model);
 
 	virtual void SetShape(const int& type);

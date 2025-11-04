@@ -69,6 +69,15 @@ namespace CProMoEdgeViewTests
             Assert::AreEqual(DEHT_CENTER, code);
         }
 
+        TEST_METHOD(GetHitCode_WhenInside_ReturnsCorrectConstant)
+        {
+            CProMoEdgeView view;
+
+            int code = view.GetHitCode(CPoint(15, 15), CRect(0, 0, 20, 20));
+
+            Assert::AreEqual(DEHT_BODY, code);
+        }
+
 #pragma endregion
 
 #pragma region Path
@@ -503,6 +512,7 @@ namespace CProMoEdgeViewTests
 
             // Act / Assert
             view.GetCursor(DEHT_CENTER);
+            view.GetCursor(DEHT_TOPLEFT);
         }
 
 #pragma endregion

@@ -128,6 +128,7 @@ void CProMoLabel::Copy(CDiagramEntity* obj)
 		m_fontWeight = objView->m_fontWeight;
 		m_fontItalic = objView->m_fontItalic;
 		m_fontUnderline = objView->m_fontUnderline;
+		m_fontStrikeOut = objView->m_fontStrikeOut;
 		m_textColor = objView->m_textColor;
 		m_bkColor = objView->m_bkColor;
 		m_bkMode = objView->m_bkMode;

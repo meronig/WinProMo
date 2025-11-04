@@ -50,14 +50,18 @@ namespace CProMoEntityContainerTests
 
 #pragma region RemovalTests
 
-        TEST_METHOD(RemoveAt_WhenInvoked_RemoveElement)
+        TEST_METHOD(RemoveAt_WhenInvoked_RemoveElementAndLabels)
         {
             CProMoEntityContainer c;
             CProMoBlockView* block = new CProMoBlockView();
             CProMoEdgeView* edge = new CProMoEdgeView();
+            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(block->GetModel()->RecreateLabels()->GetAt(0));
+            CProMoLabel* le = dynamic_cast<CProMoLabel*>(edge->GetModel()->RecreateLabels()->GetAt(0));
 
             c.Add(block);
             c.Add(edge);
+            c.Add(lb);
+            c.Add(le);
 
             c.RemoveAt(0);
             c.RemoveAt(0);
@@ -143,10 +147,15 @@ namespace CProMoEntityContainerTests
             CProMoBlockView* b1 = new CProMoBlockView();
             CProMoBlockView* b2 = new CProMoBlockView();
 
+            CProMoEdgeView* w = new CProMoEdgeView();
             CProMoEdgeView* x = new CProMoEdgeView();
             CProMoEdgeView* y = new CProMoEdgeView();
             CProMoEdgeView* z = new CProMoEdgeView();
+            CProMoEdgeView* m = new CProMoEdgeView();
+            CProMoEdgeView* n = new CProMoEdgeView();
 
+            CProMoLabel* l = new CProMoLabel();
+            
             a1->SetParentBlock(a);
             a2->SetParentBlock(a);
             b1->SetParentBlock(b);
@@ -158,53 +167,73 @@ namespace CProMoEntityContainerTests
             z->SetSource(b);
             z->SetDestination(a2);
 
+            m->SetSource(a1);
+            n->SetDestination(b2);
+
             CProMoLabel* la = dynamic_cast<CProMoLabel*>(a->GetModel()->RecreateLabels()->GetAt(0));
             CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(a1->GetModel()->RecreateLabels()->GetAt(0));
             CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(a2->GetModel()->RecreateLabels()->GetAt(0));
             CProMoLabel* lb = dynamic_cast<CProMoLabel*>(b->GetModel()->RecreateLabels()->GetAt(0));
             CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(b1->GetModel()->RecreateLabels()->GetAt(0));
             CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(b2->GetModel()->RecreateLabels()->GetAt(0));
+            CProMoLabel* lw = dynamic_cast<CProMoLabel*>(w->GetModel()->RecreateLabels()->GetAt(0));
             CProMoLabel* lx = dynamic_cast<CProMoLabel*>(x->GetModel()->RecreateLabels()->GetAt(0));
             CProMoLabel* lz = dynamic_cast<CProMoLabel*>(z->GetModel()->RecreateLabels()->GetAt(0));
-            
+            CProMoLabel* lm = dynamic_cast<CProMoLabel*>(m->GetModel()->RecreateLabels()->GetAt(0));
+            CProMoLabel* ln = dynamic_cast<CProMoLabel*>(n->GetModel()->RecreateLabels()->GetAt(0));
+
+            c.Add(l);
             c.Add(x);
             c.Add(y);
             c.Add(z);
             c.Add(a1);
             c.Add(a2);
             c.Add(a);
+            c.Add(w);
             c.Add(b1);
             c.Add(b2);
             c.Add(b);
-            
+            c.Add(m);
+            c.Add(n);
+
             c.Add(la);
             c.Add(la1);
             c.Add(la2);
             c.Add(lb);
             c.Add(lb1);
             c.Add(lb2);
+            c.Add(lw);
             c.Add(lx);
             c.Add(lz);
+            c.Add(lm);
+            c.Add(ln);
 
             c.Reorder();
 
-            TestHelpers::PointerAssert::AreEqual(a, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(0)));
-            TestHelpers::PointerAssert::AreEqual(la, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(1)));
-            TestHelpers::PointerAssert::AreEqual(a1, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(2)));
-            TestHelpers::PointerAssert::AreEqual(la1, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(3)));
-            TestHelpers::PointerAssert::AreEqual(a2, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(4)));
-            TestHelpers::PointerAssert::AreEqual(la2, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(5)));
-            TestHelpers::PointerAssert::AreEqual(b, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(6)));
-            TestHelpers::PointerAssert::AreEqual(z, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(7)));
-            TestHelpers::PointerAssert::AreEqual(lz, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(8)));
-            TestHelpers::PointerAssert::AreEqual(lb, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(9)));
-            TestHelpers::PointerAssert::AreEqual(b1, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(10)));
-            TestHelpers::PointerAssert::AreEqual(y, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(11)));
-            TestHelpers::PointerAssert::AreEqual(x, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(12)));
-            TestHelpers::PointerAssert::AreEqual(lx, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(13)));
-            TestHelpers::PointerAssert::AreEqual(lb1, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(14)));
-            TestHelpers::PointerAssert::AreEqual(b2, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(15)));
-            TestHelpers::PointerAssert::AreEqual(lb2, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(16)));
+            TestHelpers::PointerAssert::AreEqual(l, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(0)));
+            TestHelpers::PointerAssert::AreEqual(a, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(1)));
+            TestHelpers::PointerAssert::AreEqual(la, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(2)));
+            TestHelpers::PointerAssert::AreEqual(a1, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(3)));
+            TestHelpers::PointerAssert::AreEqual(m, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(4)));
+            TestHelpers::PointerAssert::AreEqual(lm, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(5)));
+            TestHelpers::PointerAssert::AreEqual(la1, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(6)));
+            TestHelpers::PointerAssert::AreEqual(a2, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(7)));
+            TestHelpers::PointerAssert::AreEqual(la2, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(8)));
+            TestHelpers::PointerAssert::AreEqual(w, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(9)));
+            TestHelpers::PointerAssert::AreEqual(lw, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(10)));
+            TestHelpers::PointerAssert::AreEqual(b, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(11)));
+            TestHelpers::PointerAssert::AreEqual(z, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(12)));
+            TestHelpers::PointerAssert::AreEqual(lz, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(13)));
+            TestHelpers::PointerAssert::AreEqual(lb, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(14)));
+            TestHelpers::PointerAssert::AreEqual(b1, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(15)));
+            TestHelpers::PointerAssert::AreEqual(y, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(16)));
+            TestHelpers::PointerAssert::AreEqual(x, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(17)));
+            TestHelpers::PointerAssert::AreEqual(lx, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(18)));
+            TestHelpers::PointerAssert::AreEqual(lb1, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(19)));
+            TestHelpers::PointerAssert::AreEqual(b2, dynamic_cast<CProMoBlockView*>(c.GetData()->GetAt(20)));
+            TestHelpers::PointerAssert::AreEqual(n, dynamic_cast<CProMoEdgeView*>(c.GetData()->GetAt(21)));
+            TestHelpers::PointerAssert::AreEqual(ln, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(22)));
+            TestHelpers::PointerAssert::AreEqual(lb2, dynamic_cast<CProMoLabel*>(c.GetData()->GetAt(23)));
             
 
         }

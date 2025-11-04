@@ -126,8 +126,11 @@ void CProMoEntityContainer::RemoveAt(int index)
 
 		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(obj);
 		if (edge) {
-			// identify labels
-			labels.Append(*(edge->GetModel()->GetLabels()));
+			// remove labels only if the edge view is the last segment
+			if (edge->IsFirstSegment() && edge->IsLastSegment()) {
+				// identify labels
+				labels.Append(*(edge->GetModel()->GetLabels()));
+			}
 		}
 
 		// remove labels

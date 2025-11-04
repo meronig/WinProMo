@@ -7,7 +7,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace ProMoLabelTests
+namespace CProMoLabelTests
 {
     TEST_CLASS(ProMoLabelTests)
     {
@@ -24,8 +24,27 @@ namespace ProMoLabelTests
             // Arrange
             CProMoLabel label;
 
-            // TODO: continue
             // Assert
+            Assert::AreEqual(CString("Courier New"), label.GetFontName());
+            Assert::AreEqual((unsigned int)12, label.GetFontSize());
+            Assert::AreEqual((unsigned int)FW_NORMAL, label.GetFontWeight());
+            Assert::IsFalse(label.IsFontItalic());
+            Assert::IsFalse(label.IsFontUnderline());
+            Assert::IsFalse(label.IsFontStrikeOut());
+            Assert::AreEqual(RGB(0, 0, 0), label.GetTextColor());
+            Assert::AreEqual(CLR_NONE, label.GetBkColor());
+            Assert::AreEqual((unsigned int)TRANSPARENT, label.GetBkMode());
+            Assert::AreEqual((unsigned int)DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER, label.GetTextAlignment());
+            Assert::AreEqual((unsigned int)DEHT_CENTER, label.GetViewAnchorPoint());
+            Assert::AreEqual((unsigned int)DEHT_CENTER, label.GetLabelAnchorPoint());
+            Assert::AreEqual((unsigned int)PROMO_VIEW_FIRST, label.GetAnchorView());
+            double lMargin, rMargin, tMargin, bMargin;
+            label.GetMargins(lMargin, tMargin, rMargin, bMargin);
+            Assert::AreEqual(0.0, lMargin);
+            Assert::AreEqual(0.0, tMargin);
+            Assert::AreEqual(0.0, rMargin);
+            Assert::AreEqual(0.0, bMargin);
+            
             Assert::IsTrue(label.HasFitTitle());
             Assert::IsFalse(label.HasFitView());
             Assert::IsTrue(label.IsVisible());
@@ -65,6 +84,11 @@ namespace ProMoLabelTests
             BOOL result = label.SetFontSize(size);
 
             Assert::IsTrue(result);
+            Assert::AreEqual(size, label.GetFontSize());
+
+            result = label.SetFontSize(0);
+
+            Assert::IsFalse(result);
             Assert::AreEqual(size, label.GetFontSize());
             
             label.SetLock(PROMO_LOCK_FONTSIZE);
@@ -221,6 +245,34 @@ namespace ProMoLabelTests
 
 #pragma endregion
 
+#pragma region Geometry
+
+        TEST_METHOD(SetRect_WhenCRectPassed_UpdatesCoordinates)
+        {
+            CProMoLabel label;
+            CRect rect(10, 20, 210, 120);
+
+            label.SetRect(rect);
+
+            Assert::AreEqual(10.0, label.GetLeft());
+            Assert::AreEqual(20.0, label.GetTop());
+            Assert::AreEqual(210.0, label.GetRight());
+            Assert::AreEqual(120.0, label.GetBottom());
+        }
+
+        TEST_METHOD(SetRect_WhenCoordinatesPassed_UpdatesCoordinates)
+        {
+            CProMoLabel label;
+            label.SetRect(5.0, 15.0, 155.0, 65.0);
+
+            Assert::AreEqual(5.0, label.GetLeft());
+            Assert::AreEqual(15.0, label.GetTop());
+            Assert::AreEqual(155.0, label.GetRight());
+            Assert::AreEqual(65.0, label.GetBottom());
+        }
+
+#pragma endregion
+
 #pragma region LayoutTests
 
         TEST_METHOD(SetLabelAnchorPoint_ValidValue_SetsAnchor)
@@ -314,6 +366,19 @@ namespace ProMoLabelTests
             CProMoLabel original;
             original.SetFontName(_T("Tahoma"));
             original.SetFontSize(18);
+            original.SetRect(100, 50, 250, 120);
+            original.SetFontWeight(FW_BOLD);
+            original.SetFontItalic(TRUE);
+            original.SetFontUnderline(TRUE);
+            original.SetFontStrikeOut(TRUE);
+            original.SetTextColor(RGB(255, 0, 0));
+            original.SetBkColor(RGB(0, 255, 0));
+            original.SetBkMode(OPAQUE);
+            original.SetTextAlignment(DT_NOPREFIX | DT_SINGLELINE | DT_BOTTOM | DT_RIGHT);
+            original.SetViewAnchorPoint(DEHT_TOPLEFT);
+            original.SetLabelAnchorPoint(DEHT_BOTTOMRIGHT);
+            original.SetAnchorView(PROMO_VIEW_MID);
+            original.SetMargins(1.0, 2.0, 3.0, 4.0);
 
             // Act
             std::unique_ptr<CDiagramEntity> clone(original.Clone());
@@ -321,8 +386,34 @@ namespace ProMoLabelTests
             // Assert
             CProMoLabel* clonedLabel = dynamic_cast<CProMoLabel*>(clone.get());
             Assert::IsNotNull(clonedLabel);
+            
+            Assert::AreEqual(original.GetProperty(), clonedLabel->GetProperty());
+            Assert::AreEqual(original.GetLeft(), clonedLabel->GetLeft());
+            Assert::AreEqual(original.GetTop(), clonedLabel->GetTop());
+            Assert::AreEqual(original.GetRight(), clonedLabel->GetRight());
+            Assert::AreEqual(original.GetBottom(), clonedLabel->GetBottom());
             Assert::AreEqual(original.GetFontName(), clonedLabel->GetFontName());
             Assert::AreEqual(original.GetFontSize(), clonedLabel->GetFontSize());
+            Assert::AreEqual(original.GetFontWeight(), clonedLabel->GetFontWeight());
+            Assert::AreEqual(original.IsFontItalic(), clonedLabel->IsFontItalic());
+            Assert::AreEqual(original.IsFontUnderline(), clonedLabel->IsFontUnderline());
+            Assert::AreEqual(original.IsFontStrikeOut(), clonedLabel->IsFontStrikeOut());
+            Assert::AreEqual(original.GetTextColor(), clonedLabel->GetTextColor());
+            Assert::AreEqual(original.GetBkColor(), clonedLabel->GetBkColor());
+            Assert::AreEqual(original.GetBkMode(), clonedLabel->GetBkMode());
+            Assert::AreEqual(original.GetTextAlignment(), clonedLabel->GetTextAlignment());
+            Assert::AreEqual(original.GetViewAnchorPoint(), clonedLabel->GetViewAnchorPoint());
+            Assert::AreEqual(original.GetLabelAnchorPoint(), clonedLabel->GetLabelAnchorPoint());
+            Assert::AreEqual(original.GetAnchorView(), clonedLabel->GetAnchorView());
+            double lMargin, rMargin, tMargin, bMargin;
+            original.GetMargins(lMargin, tMargin, rMargin, bMargin);
+            double clMargin, crMargin, ctMargin, cbMargin;
+            clonedLabel->GetMargins(clMargin, ctMargin, crMargin, cbMargin);
+            Assert::AreEqual(clMargin, lMargin);
+            Assert::AreEqual(ctMargin, tMargin);
+            Assert::AreEqual(crMargin, rMargin);
+            Assert::AreEqual(cbMargin, bMargin);
+
         }
 
 #pragma endregion
@@ -564,6 +655,14 @@ namespace ProMoLabelTests
             label.Draw(&memDC, rect);
 
             label.DrawObject(&memDC, 0.5);
+
+            label.SetTextAlignment(DT_NOPREFIX | DT_SINGLELINE | DT_BOTTOM | DT_RIGHT | DT_WORDBREAK);
+            label.SetBkMode(TRANSPARENT);
+
+            label.Draw(&memDC, rect);
+
+            label.DrawObject(&memDC, 0.5);
+
         }
 
         TEST_METHOD(ShowPopup_WhenCalledWithDesktopWindow_DoesNotCrash)

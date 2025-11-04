@@ -4,6 +4,7 @@
 #include "../../src/ProMoEditor/ProMoEditor.h"
 #include "../../src/ProMoEditor/ProMoEntityContainer.h"
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
+#include "../../src/ProMoEditor/ProMoLabel.h"
 #include "../WinProMoTests.h"
 
 class CProMoEditorTestStub : public CProMoEditor {
@@ -161,14 +162,6 @@ namespace CProMoEditorTests
             c->Add(m_y);
             c->Add(m_z);
 
-            m_a->GetModel()->RecreateLabels();
-            m_a1->GetModel()->RecreateLabels();
-            m_a2->GetModel()->RecreateLabels();
-            m_b->GetModel()->RecreateLabels();
-            m_b1->GetModel()->RecreateLabels();
-            m_b2->GetModel()->RecreateLabels();
-            m_x->GetModel()->RecreateLabels();
-            m_z->GetModel()->RecreateLabels();
         }
 
 #pragma region ConstructionAndDefaults
@@ -460,6 +453,22 @@ namespace CProMoEditorTests
             Assert::IsFalse(m_x->IsSelected());
             Assert::IsFalse(m_z->IsSelected());
             Assert::IsTrue(m_a->IsSelected());
+        }
+
+        TEST_METHOD(DeselectInvalidElements_WhenInvoked_DeselectLabels) {
+            CProMoLabel* la = dynamic_cast<CProMoLabel*>(m_a->GetModel()->RecreateLabels()->GetAt(0));
+            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(m_a2->GetModel()->RecreateLabels()->GetAt(0));
+            
+            m_a->Select(TRUE);
+            m_a2->Select(TRUE);
+            la->Select(TRUE);
+            la2->Select(TRUE);
+
+            m_editor.DeselectInvalidElements();
+            
+            Assert::IsFalse(la2->IsSelected());
+            Assert::IsFalse(la->IsSelected());
+            
         }
 
         TEST_METHOD(DeselectInvalidElements_WhenInvoked_KeepEdgesWhenBothEndsAreSelected) {

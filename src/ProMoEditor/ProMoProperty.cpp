@@ -563,9 +563,6 @@ void CProMoProperty::ClearChildren()
 
    ============================================================*/
 {
-	if (!IsMultiValue()) {
-		return; // cannot clear children of non-multivalue properties
-	}
 	for (int i = 0; i < m_childProperties.GetSize(); i++) {
 		CProMoProperty* prop = (CProMoProperty*)m_childProperties.GetAt(i);
 		if (prop) {

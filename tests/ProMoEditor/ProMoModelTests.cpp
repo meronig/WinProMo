@@ -2,8 +2,9 @@
 #include "../Helpers/MfcAssertHelpers.h"
 #include "../Helpers/PointerAssertHelpers.h"
 #include "../../src/ProMoEditor/ProMoModel.h"
-#include "../WinProMoTests.h"
 #include "../../src/ProMoEditor/ProMoProperty.h"
+#include "../../src/ProMoEditor/ProMoLabel.h"
+#include "../WinProMoTests.h"
 
 class CProMoModelTestStub : public CProMoModel
 {
@@ -23,7 +24,7 @@ public:
         CVariantWrapper nullVal;
         CVariantWrapper intVal;
         intVal.SetInt(42);
-        CProMoProperty* root = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+        CProMoProperty* root = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, FALSE, TRUE, NULL);
         CProMoProperty* child = new CProMoProperty(_T("child"), TYPE_INT, intVal, FALSE, TRUE, TRUE, this, NULL, NULL, NULL, root, NULL);
         AddProperty(root);
     }
@@ -296,6 +297,37 @@ namespace CProMoModelTests
             prop = model.GetProperty(10);
 
             Assert::IsNull(prop);
+        }
+#pragma endregion
+
+#pragma region LabelTests
+
+        TEST_METHOD(RecreateLabels_IfPropertyExist_CreateLabel)
+        {
+            CProMoModelTestStub model;
+            CProMoLabel* label = NULL;
+            model.CreateProperties();
+            model.RecreateLabels();
+            
+            Assert::AreEqual((INT_PTR)1, model.GetLabels()->GetSize());
+            
+            label = dynamic_cast<CProMoLabel*>(model.GetLabels()->GetAt(0));
+
+            Assert::IsNotNull(label);
+            Assert::AreEqual(CString("root.child"), label->GetProperty());
+        }
+
+        TEST_METHOD(GetLabel_IfPropertyExist_GetLabel)
+        {
+            CProMoModelTestStub model;
+            CProMoLabel* label = NULL;
+            model.CreateProperties();
+            model.RecreateLabels();
+
+            label = dynamic_cast<CProMoLabel*>(model.GetLabel(CString("root.child")));
+
+            Assert::IsNotNull(label);
+            Assert::AreEqual(CString("root.child"), label->GetProperty());
         }
 
 #pragma endregion

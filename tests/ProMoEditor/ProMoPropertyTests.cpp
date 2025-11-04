@@ -33,7 +33,7 @@ BOOL MockEdit(CProMoProperty* prop, CWnd* parent) {
     return TRUE;
 }
 
-namespace ProMoPropertyTests
+namespace CProMoPropertyTests
 {
     TEST_CLASS(ProMoPropertyTests)
     {
@@ -161,29 +161,32 @@ namespace ProMoPropertyTests
 			CVariantWrapper strVal;
 			strVal.SetString(_T("val"));
 
-            CProMoProperty root(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty* root = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
 
-            CProMoProperty c1(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &root, NULL);
+            CProMoProperty* c1 = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
             
-            CProMoProperty leaf(_T("leaf"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &c1, NULL);
+            CProMoProperty* leaf = new CProMoProperty(_T("leaf"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1, NULL);
             
             CVariantWrapper strValEmpty;
 			strValEmpty.SetString(_T(""));
 
-            CProMoProperty rootCopy(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty* rootCopy = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
 
-            CProMoProperty c1Copy(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &rootCopy, NULL);
+            CProMoProperty* c1Copy = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, rootCopy, NULL);
 
-            CProMoProperty leafCopy(_T("leaf"), TYPE_STRING, strValEmpty, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &c1Copy, NULL);
+            CProMoProperty* leafCopy = new CProMoProperty(_T("leaf"), TYPE_STRING, strValEmpty, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1Copy, NULL);
 
 
             // action: serialize
-            CString serialized = root.GetString();
+            CString serialized = root->GetString();
             Assert::IsTrue(!serialized.IsEmpty());
                         
             // action: deserialize into new object
             CString copyStr = serialized;
-            Assert::IsTrue(rootCopy.FromString(copyStr));
+            Assert::IsTrue(rootCopy->FromString(copyStr));
+
+            delete root;
+            delete rootCopy;
         }
 
         TEST_METHOD(Clone_WithChildren_AllChildrenCloned)
@@ -333,12 +336,14 @@ namespace ProMoPropertyTests
             CVariantWrapper strVal;
             strVal.SetString(_T("v"));
 
-            CProMoProperty root(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty child(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, &root, NULL);
+            CProMoProperty* root = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty* child = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
 
-            CString fullName = child.GetFullName();
+            CString fullName = child->GetFullName();
             Assert::IsTrue(fullName.Find(_T("root")) != -1);
-            Assert::IsTrue(fullName.Find(_T("child")) != -1);
+            Assert::IsTrue(fullName.Find(_T("root.child")) != -1);
+
+            delete root;
         }
 
         TEST_METHOD(FromString_InvalidInput_ReturnsFalse)
