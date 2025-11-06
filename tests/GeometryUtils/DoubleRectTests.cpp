@@ -97,7 +97,7 @@ namespace CDoubleRectTests
         TEST_METHOD(SetRect_WhenCRectIsPassed_SetCorrectMeasures)
         {
             CDoubleRect rect;
-            rect.SetRect(CRect(10.1, 20.2, 30.3, 40.4));
+            rect.SetRect(CRect(10, 20, 30, 40));
             
             Assert::AreEqual(20.0, rect.top);
             Assert::AreEqual(10.0, rect.left);

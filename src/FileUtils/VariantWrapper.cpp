@@ -47,7 +47,7 @@ CVariantWrapper::CVariantWrapper(const CVariantWrapper& var)
 	============================================================*/
 {
 	VariantInit(&m_var);
-	VariantCopy(&m_var, (VARIANT*)&var.m_var);
+	(void)VariantCopy(&m_var, (VARIANT*)&var.m_var);
 }
 
 CVariantWrapper& CVariantWrapper::operator=(const CVariantWrapper& var)
@@ -61,7 +61,7 @@ CVariantWrapper& CVariantWrapper::operator=(const CVariantWrapper& var)
 	if (this != &var)
 	{
 		VariantClear(&m_var);
-		VariantCopy(&m_var, (VARIANT*)&var.m_var);
+		(void)VariantCopy(&m_var, (VARIANT*)&var.m_var);
 	}
 	return *this;
 }

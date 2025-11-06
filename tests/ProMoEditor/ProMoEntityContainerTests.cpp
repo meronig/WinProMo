@@ -681,9 +681,9 @@ namespace CProMoEntityContainerTests
             b->SetRect(316.000000, 238.000000, 484.000000, 344.000000);
             b1->SetRect(340.000000, 266.000000, 468.000000, 298.000000);
             b2->SetRect(340.000000, 303.000000, 468.000000, 335.000000);
-            x->SetRect(CRect(211.000000, 163.000000, 210.000000, 275.000000));
-            y->SetRect(CRect(210.000000, 275.000000, 340.000000, 266.000000));
-            z->SetRect(CRect(438.000000, 237.000000, 447.000000, 154.000000));
+            x->SetRect(CDoubleRect(211.000000, 163.000000, 210.000000, 275.000000).ToCRect());
+            y->SetRect(CDoubleRect(210.000000, 275.000000, 340.000000, 266.000000).ToCRect());
+            z->SetRect(CDoubleRect(438.000000, 237.000000, 447.000000, 154.000000).ToCRect());
 
             CProMoLabel* la = dynamic_cast<CProMoLabel*>(a->GetModel()->RecreateLabels()->GetAt(0));
             CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(a1->GetModel()->RecreateLabels()->GetAt(0));

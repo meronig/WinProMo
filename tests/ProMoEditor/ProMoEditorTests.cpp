@@ -148,9 +148,9 @@ namespace CProMoEditorTests
             m_b->SetRect(324.000000, 238.000000, 492.000000, 344.000000);
             m_b1->SetRect(348.000000, 266.000000, 476.000000, 298.000000);
             m_b2->SetRect(348.000000, 303.000000, 476.000000, 335.000000);
-            m_x->SetRect(CRect(210.000000, 158.000000, 353.000000, 245.000000));
-            m_y->SetRect(CRect(353.000000, 245.000000, 348.000000, 266.000000));
-            m_z->SetRect(CRect(446.000000, 238.000000, 446.000000, 149.000000));
+            m_x->SetRect(CDoubleRect(210.000000, 158.000000, 353.000000, 245.000000).ToCRect());
+            m_y->SetRect(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect());
+            m_z->SetRect(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect());
 
             c->Add(m_a);
             c->Add(m_a1);
@@ -187,15 +187,15 @@ namespace CProMoEditorTests
 
             m_editor.LeftAlignSelected();
 
-            Assert::AreEqual(CRect(348.000000, 100.000000, 655.000000, 158.000000), m_a->GetRect());
-            Assert::AreEqual(CRect(382.000000, 121.000000, 510.000000, 153.000000), m_a1->GetRect());
-            Assert::AreEqual(CRect(522.000000, 117.000000, 650.000000, 149.000000), m_a2->GetRect());
-            Assert::AreEqual(CRect(324.000000, 238.000000, 492.000000, 344.000000), m_b->GetRect());
-            Assert::AreEqual(CRect(348.000000, 266.000000, 476.000000, 298.000000), m_b1->GetRect());
-            Assert::AreEqual(CRect(348.000000, 303.000000, 476.000000, 335.000000), m_b2->GetRect());
-            Assert::AreEqual(CRect(376.000000, 158.000000, 353.000000, 245.000000), m_x->GetRect());
-            Assert::AreEqual(CRect(353.000000, 245.000000, 348.000000, 266.000000), m_y->GetRect());
-            Assert::AreEqual(CRect(446.000000, 238.000000, 613.000000, 149.000000), m_z->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 100.000000, 655.000000, 158.000000).ToCRect(), m_a->GetRect());
+            Assert::AreEqual(CDoubleRect(382.000000, 121.000000, 510.000000, 153.000000).ToCRect(), m_a1->GetRect());
+            Assert::AreEqual(CDoubleRect(522.000000, 117.000000, 650.000000, 149.000000).ToCRect(), m_a2->GetRect());
+            Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(376.000000, 158.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
+            Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
+            Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 613.000000, 149.000000).ToCRect(), m_z->GetRect());
         }
 
         TEST_METHOD(RightAlignSelected_WhenInvoked_PositionIsCorrect) {
@@ -204,15 +204,15 @@ namespace CProMoEditorTests
 
             m_editor.RightAlignSelected();
 
-            Assert::AreEqual(CRect(169.000000, 100.000000, 476.000000, 158.000000), m_a->GetRect());
-            Assert::AreEqual(CRect(203.000000, 121.000000, 331.000000, 153.000000), m_a1->GetRect());
-            Assert::AreEqual(CRect(343.000000, 117.000000, 471.000000, 149.000000), m_a2->GetRect());
-            Assert::AreEqual(CRect(324.000000, 238.000000, 492.000000, 344.000000), m_b->GetRect());
-            Assert::AreEqual(CRect(348.000000, 266.000000, 476.000000, 298.000000), m_b1->GetRect());
-            Assert::AreEqual(CRect(348.000000, 303.000000, 476.000000, 335.000000), m_b2->GetRect());
-            Assert::AreEqual(CRect(197.000000, 158.000000, 353.000000, 245.000000), m_x->GetRect());
-            Assert::AreEqual(CRect(353.000000, 245.000000, 348.000000, 266.000000), m_y->GetRect());
-            Assert::AreEqual(CRect(446.000000, 238.000000, 433.000000, 149.000000), m_z->GetRect());
+            Assert::AreEqual(CDoubleRect(169.000000, 100.000000, 476.000000, 158.000000).ToCRect(), m_a->GetRect());
+            Assert::AreEqual(CDoubleRect(203.000000, 121.000000, 331.000000, 153.000000).ToCRect(), m_a1->GetRect());
+            Assert::AreEqual(CDoubleRect(343.000000, 117.000000, 471.000000, 149.000000).ToCRect(), m_a2->GetRect());
+            Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(197.000000, 158.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
+            Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
+            Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 433.000000, 149.000000).ToCRect(), m_z->GetRect());
         }
 
         TEST_METHOD(CenterAlignSelected_WhenInvoked_PositionIsCorrect) {
@@ -221,15 +221,15 @@ namespace CProMoEditorTests
 
             m_editor.CenterAlignSelected();
 
-            Assert::AreEqual(CRect(258.500000, 100.000000, 565.500000, 158.000000), m_a->GetRect());
-            Assert::AreEqual(CRect(292.500000, 121.000000, 420.500000, 153.000000), m_a1->GetRect());
-            Assert::AreEqual(CRect(432.500000, 117.000000, 560.500000, 149.000000), m_a2->GetRect());
-            Assert::AreEqual(CRect(324.000000, 238.000000, 492.000000, 344.000000), m_b->GetRect());
-            Assert::AreEqual(CRect(348.000000, 266.000000, 476.000000, 298.000000), m_b1->GetRect());
-            Assert::AreEqual(CRect(348.000000, 303.000000, 476.000000, 335.000000), m_b2->GetRect());
-            Assert::AreEqual(CRect(287.000000, 158.000000, 353.000000, 245.000000), m_x->GetRect());
-            Assert::AreEqual(CRect(353.000000, 245.000000, 348.000000, 266.000000), m_y->GetRect());
-            Assert::AreEqual(CRect(446.000000, 238.000000, 523.000000, 149.000000), m_z->GetRect());
+            Assert::AreEqual(CDoubleRect(258.500000, 100.000000, 565.500000, 158.000000).ToCRect(), m_a->GetRect());
+            Assert::AreEqual(CDoubleRect(292.500000, 121.000000, 420.500000, 153.000000).ToCRect(), m_a1->GetRect());
+            Assert::AreEqual(CDoubleRect(432.500000, 117.000000, 560.500000, 149.000000).ToCRect(), m_a2->GetRect());
+            Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(287.000000, 158.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
+            Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
+            Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 523.000000, 149.000000).ToCRect(), m_z->GetRect());
         }
 
         TEST_METHOD(TopAlignSelected_WhenInvoked_PositionIsCorrect) {
@@ -238,15 +238,15 @@ namespace CProMoEditorTests
 
             m_editor.TopAlignSelected();
 
-            Assert::AreEqual(CRect(182.000000, 100.000000, 489.000000, 275.000000), m_a->GetRect());
-            Assert::AreEqual(CRect(216.000000, 238.000000, 344.000000, 270.000000), m_a1->GetRect());
-            Assert::AreEqual(CRect(356.000000, 117.000000, 484.000000, 149.000000), m_a2->GetRect());
-            Assert::AreEqual(CRect(324.000000, 238.000000, 492.000000, 344.000000), m_b->GetRect());
-            Assert::AreEqual(CRect(348.000000, 266.000000, 476.000000, 298.000000), m_b1->GetRect());
-            Assert::AreEqual(CRect(348.000000, 303.000000, 476.000000, 335.000000), m_b2->GetRect());
-            Assert::AreEqual(CRect(210.000000, 275.000000, 353.000000, 245.000000), m_x->GetRect());
-            Assert::AreEqual(CRect(353.000000, 245.000000, 348.000000, 266.000000), m_y->GetRect());
-            Assert::AreEqual(CRect(446.000000, 238.000000, 446.000000, 149.000000), m_z->GetRect());
+            Assert::AreEqual(CDoubleRect(182.000000, 100.000000, 489.000000, 275.000000).ToCRect(), m_a->GetRect());
+            Assert::AreEqual(CDoubleRect(216.000000, 238.000000, 344.000000, 270.000000).ToCRect(), m_a1->GetRect());
+            Assert::AreEqual(CDoubleRect(356.000000, 117.000000, 484.000000, 149.000000).ToCRect(), m_a2->GetRect());
+            Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(210.000000, 275.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
+            Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
+            Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect(), m_z->GetRect());
         }
 
         TEST_METHOD(BottomAlignSelected_WhenInvoked_PositionIsCorrect) {
@@ -255,15 +255,15 @@ namespace CProMoEditorTests
 
             m_editor.BottomAlignSelected();
 
-            Assert::AreEqual(CRect(182.000000, 100.000000, 489.000000, 349.000000), m_a->GetRect());
-            Assert::AreEqual(CRect(216.000000, 312.000000, 344.000000, 344.000000), m_a1->GetRect());
-            Assert::AreEqual(CRect(356.000000, 117.000000, 484.000000, 149.000000), m_a2->GetRect());
-            Assert::AreEqual(CRect(324.000000, 238.000000, 492.000000, 344.000000), m_b->GetRect());
-            Assert::AreEqual(CRect(348.000000, 266.000000, 476.000000, 298.000000), m_b1->GetRect());
-            Assert::AreEqual(CRect(348.000000, 303.000000, 476.000000, 335.000000), m_b2->GetRect());
-            Assert::AreEqual(CRect(210.000000, 349.000000, 353.000000, 245.000000), m_x->GetRect());
-            Assert::AreEqual(CRect(353.000000, 245.000000, 348.000000, 266.000000), m_y->GetRect());
-            Assert::AreEqual(CRect(446.000000, 238.000000, 446.000000, 149.000000), m_z->GetRect());
+            Assert::AreEqual(CDoubleRect(182.000000, 100.000000, 489.000000, 349.000000).ToCRect(), m_a->GetRect());
+            Assert::AreEqual(CDoubleRect(216.000000, 312.000000, 344.000000, 344.000000).ToCRect(), m_a1->GetRect());
+            Assert::AreEqual(CDoubleRect(356.000000, 117.000000, 484.000000, 149.000000).ToCRect(), m_a2->GetRect());
+            Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(210.000000, 349.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
+            Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
+            Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect(), m_z->GetRect());
         }
 
         TEST_METHOD(MiddleAlignSelected_WhenInvoked_PositionIsCorrect) {
@@ -272,15 +272,15 @@ namespace CProMoEditorTests
 
             m_editor.MiddleAlignSelected();
 
-            Assert::AreEqual(CRect(182.000000, 100.000000, 489.000000, 312.000000), m_a->GetRect());
-            Assert::AreEqual(CRect(216.000000, 275.000000, 344.000000, 307.000000), m_a1->GetRect());
-            Assert::AreEqual(CRect(356.000000, 117.000000, 484.000000, 149.000000), m_a2->GetRect());
-            Assert::AreEqual(CRect(324.000000, 238.000000, 492.000000, 344.000000), m_b->GetRect());
-            Assert::AreEqual(CRect(348.000000, 266.000000, 476.000000, 298.000000), m_b1->GetRect());
-            Assert::AreEqual(CRect(348.000000, 303.000000, 476.000000, 335.000000), m_b2->GetRect());
-            Assert::AreEqual(CRect(210.000000, 312.000000, 353.000000, 245.000000), m_x->GetRect());
-            Assert::AreEqual(CRect(353.000000, 245.000000, 348.000000, 266.000000), m_y->GetRect());
-            Assert::AreEqual(CRect(446.000000, 238.000000, 446.000000, 149.000000), m_z->GetRect());
+            Assert::AreEqual(CDoubleRect(182.000000, 100.000000, 489.000000, 312.000000).ToCRect(), m_a->GetRect());
+            Assert::AreEqual(CDoubleRect(216.000000, 275.000000, 344.000000, 307.000000).ToCRect(), m_a1->GetRect());
+            Assert::AreEqual(CDoubleRect(356.000000, 117.000000, 484.000000, 149.000000).ToCRect(), m_a2->GetRect());
+            Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(210.000000, 312.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
+            Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
+            Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect(), m_z->GetRect());
         }
 
 #pragma endregion
