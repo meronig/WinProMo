@@ -40,7 +40,7 @@ CProMoProperty::CProMoProperty()
 
    ============================================================*/
 {
-	m_type = TYPE_UNKNOWN;
+	m_type = PROPTYPE_UNKNOWN;
 	m_value = CVariantWrapper();
 	m_readOnly = FALSE;
 	m_labelVisible = TRUE;
@@ -132,7 +132,7 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 		m_template = NULL;
 	}
 	if (parent) {
-		if (parent->m_type == TYPE_COMPOSITE || (parent->IsMultiValue() && parent->m_type == type && !IsMultiValue())) {
+		if (parent->m_type == PROPTYPE_COMPOSITE || (parent->IsMultiValue() && parent->m_type == type && !IsMultiValue())) {
 			m_parentProperty = parent;
 			parent->m_childProperties.Add(this);
 			return;
@@ -281,7 +281,7 @@ BOOL CProMoProperty::SetValue(const CVariantWrapper& val)
 
    ============================================================*/
 {
-	if (m_type == TYPE_COMPOSITE)
+	if (m_type == PROPTYPE_COMPOSITE)
 		return FALSE; // cannot set value for composite properties
 	if (IsMultiValue())
 		return FALSE; // cannot set value for multivalue properties
@@ -344,14 +344,14 @@ const unsigned int& CProMoProperty::GetType()
 	return m_type;
 }
 
-const BOOL& CProMoProperty::IsReadOnly()
+BOOL CProMoProperty::IsReadOnly() const
 /* ============================================================
 	Function :		CProMoProperty::IsReadOnly
 	Description :	Returns "TRUE" if the property is
 					read-only
 	Access :		Public
 
-	Return :		BOOL&	-	"TRUE" if the property is
+	Return :		BOOL	-	"TRUE" if the property is
 								read-only, "FALSE" otherwise
 	Parameters :	none
 
@@ -360,14 +360,14 @@ const BOOL& CProMoProperty::IsReadOnly()
 	return m_readOnly;
 }
 
-const BOOL& CProMoProperty::IsLabelVisible()
+BOOL CProMoProperty::IsLabelVisible() const
 /* ============================================================
 	Function :		CProMoProperty::IsLabelVisible
 	Description :	Returns "TRUE" if no label should be
 					shown for the property
 	Access :		Public
 
-	Return :		BOOL&	-	"TRUE" if no label should be
+	Return :		BOOL	-	"TRUE" if no label should be
 								visible, "FALSE" otherwise
 	Parameters :	none
 
@@ -376,14 +376,14 @@ const BOOL& CProMoProperty::IsLabelVisible()
 	return m_labelVisible;
 }
 
-const BOOL& CProMoProperty::IsPersistent()
+BOOL CProMoProperty::IsPersistent() const
 /* ============================================================
 	Function :		CProMoProperty::IsPersistent
 	Description :	Returns "TRUE" if the property should be
 					serialized
 	Access :		Public
 
-	Return :		BOOL&	-	"TRUE" if the property should be
+	Return :		BOOL	-	"TRUE" if the property should be
 								serialized, "FALSE" otherwise
 	Parameters :	none
 
@@ -392,14 +392,14 @@ const BOOL& CProMoProperty::IsPersistent()
 	return m_persistent;
 }
 
-const BOOL& CProMoProperty::HasHandler()
+BOOL CProMoProperty::HasHandler() const
 /* ============================================================
 	Function :		CProMoProperty::HasHandler
 	Description :	Returns "TRUE" if the property has an
 					associated handler function
 	Access :		Public
 
-	Return :		BOOL&	-	"TRUE" if the property has an
+	Return :		BOOL	-	"TRUE" if the property has an
 								associated handler function,
 								"FALSE" otherwise
 	Parameters :	none
@@ -412,14 +412,14 @@ const BOOL& CProMoProperty::HasHandler()
 	return FALSE;
 }
 
-const BOOL& CProMoProperty::IsMultiValue()
+BOOL CProMoProperty::IsMultiValue() const
 /* ============================================================
 	Function :		CProMoProperty::IsMultivalue
 	Description :	Returns "TRUE" if the property accepts
 					multiple values
 	Access :		Public
 
-	Return :		BOOL&	-	"TRUE" if the property is 
+	Return :		BOOL	-	"TRUE" if the property is 
 								multi-value, "FALSE" otherwise
 	Parameters :	none
 
@@ -537,7 +537,7 @@ CProMoProperty* CProMoProperty::AddChild()
 	CProMoProperty* newChild = m_template->Clone();
 
 	// Determine next numeric index
-	int nextIndex = m_childProperties.GetSize();
+	int nextIndex = static_cast<int>(m_childProperties.GetSize());
 	CString numberedName;
 	numberedName.Format(_T("%d"), nextIndex);
 	newChild->m_name = numberedName;
@@ -587,7 +587,7 @@ int CProMoProperty::GetChildrenCount() const
 
    ============================================================*/
 {
-	return m_childProperties.GetSize();
+	return static_cast<int>(m_childProperties.GetSize());
 }
 
 CProMoProperty* CProMoProperty::GetChild(const int& index) const
@@ -686,7 +686,7 @@ int CProMoProperty::GetOptionsCount() const
 
    ============================================================*/
 {
-	return m_options.GetSize();
+	return static_cast<int>(m_options.GetSize());
 }
 
 CProMoProperty* CProMoProperty::GetOption(const int& index)
@@ -781,20 +781,20 @@ BOOL CProMoProperty::GetDefaultFromString(CString& str)
 				CVariantWrapper wrapper;
 
 				switch (type) {
-				case TYPE_STRING:
+				case PROPTYPE_STRING:
 					tok->GetAt(count++, stringValue);
 					CFileParser::DecodeString(stringValue);
 					wrapper.SetString(stringValue);
 					break;
-				case TYPE_INT:
+				case PROPTYPE_INT:
 					tok->GetAt(count++, intValue);
 					wrapper.SetInt(intValue);
 					break;
-				case TYPE_BOOL: // BOOLs are stored as ints (0/1)
+				case PROPTYPE_BOOL: // BOOLs are stored as ints (0/1)
 					tok->GetAt(count++, intValue);
 					wrapper.SetBool(intValue);
 					break;
-				case TYPE_DOUBLE:
+				case PROPTYPE_DOUBLE:
 					tok->GetAt(count++, doubleValue);
 					wrapper.SetDouble(doubleValue);
 					break;
@@ -861,7 +861,7 @@ CProMoProperty* CProMoProperty::HandleChild(const CString& str)
 	if (m_template)
 	{
 		// Only create if the next expected index matches the requested name
-		int nextIndex = m_childProperties.GetSize();
+		int nextIndex = static_cast<int>(m_childProperties.GetSize());
 		CString expectedName;
 		expectedName.Format(_T("%d"), nextIndex);
 
@@ -1003,7 +1003,7 @@ CString CProMoProperty::GetDefaultGetString() const
 	if (m_persistent) {
 
 		value = m_value.GetString();
-		if (m_type == TYPE_STRING) {
+		if (m_type == PROPTYPE_STRING) {
 			CFileParser::EncodeString(value);
 		}
 	}

@@ -264,7 +264,7 @@ int CVariantWrapper::GetInt() const
 		case VT_I4:
 			return m_var.lVal;
 		case VT_R8:
-			return GetDouble();
+			return (int)GetDouble();
 		case VT_BOOL:
 			return GetBool();
 		case VT_EMPTY:

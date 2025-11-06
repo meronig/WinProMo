@@ -46,8 +46,8 @@ public:
  
 protected:
     virtual void DrawLine(CDC* dc, CRect rect);
-    virtual void DrawHead(CDC* dc, CRect rect, int size);
-    virtual void DrawTail(CDC* dc, CRect rect, int size);
+    virtual void DrawHead(CDC* dc, CRect rect, double size);
+    virtual void DrawTail(CDC* dc, CRect rect, double size);
     virtual void Reposition();
     virtual void KeepElementsConnected(double left, double top, double right, double bottom);
 

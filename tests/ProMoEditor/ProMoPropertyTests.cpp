@@ -49,7 +49,7 @@ namespace CProMoPropertyTests
             MockOwner owner;
             CVariantWrapper initial;
             initial.SetString(_T("default"));
-            CProMoProperty prop(_T("name"), TYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, MockValidation, MockChange);
+            CProMoProperty prop(_T("name"), PROPTYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, MockValidation, MockChange);
 
             // precondition: initial value
             Assert::AreEqual(CString("default"), prop.GetValue().GetString());
@@ -72,7 +72,7 @@ namespace CProMoPropertyTests
         {
             CVariantWrapper initial;
             initial.SetInt(1);
-            CProMoProperty prop(_T("intProp"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL, MockValidation, MockChange);
+            CProMoProperty prop(_T("intProp"), PROPTYPE_INT, initial, FALSE, TRUE, TRUE, NULL, MockValidation, MockChange);
 
             // precondition: initial value
             Assert::AreEqual(1, prop.GetValue().GetInt());
@@ -93,7 +93,7 @@ namespace CProMoPropertyTests
         {
             CVariantWrapper initial;
             initial.SetDouble(1.5);
-            CProMoProperty prop(_T("dblProp"), TYPE_DOUBLE, initial, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("dblProp"), PROPTYPE_DOUBLE, initial, FALSE, TRUE, TRUE, NULL);
 
             // action: set new value
             CVariantWrapper newVal;
@@ -109,7 +109,7 @@ namespace CProMoPropertyTests
         {
             CVariantWrapper initial;
             initial.SetBool(TRUE);
-            CProMoProperty prop(_T("boolProp"), TYPE_BOOL, initial, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("boolProp"), PROPTYPE_BOOL, initial, FALSE, TRUE, TRUE, NULL);
 
             // action: toggle value
             CVariantWrapper newVal;
@@ -127,7 +127,7 @@ namespace CProMoPropertyTests
             MockOwner owner;
             CVariantWrapper initial;
 			initial.SetString(_T("default"));
-            CProMoProperty prop(_T("name"), TYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, NULL, NULL, MockEdit, NULL, NULL);
+            CProMoProperty prop(_T("name"), PROPTYPE_STRING, initial, FALSE, TRUE, TRUE, &owner, NULL, NULL, MockEdit, NULL, NULL);
 
             // precondition: initial value
             Assert::AreEqual(CString("default"), prop.GetValue().GetString());
@@ -141,8 +141,8 @@ namespace CProMoPropertyTests
         {
 			CVariantWrapper initial;
 			initial.SetInt(0);
-            CProMoProperty templateChild(_T("child"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_INT, initial, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
+            CProMoProperty templateChild(_T("child"), PROPTYPE_INT, initial, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("parent"), PROPTYPE_INT, initial, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
 
             // action: add multiple children
             for (int i = 0; i < 10; ++i) {
@@ -161,20 +161,20 @@ namespace CProMoPropertyTests
 			CVariantWrapper strVal;
 			strVal.SetString(_T("val"));
 
-            CProMoProperty* root = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty* root = new CProMoProperty(_T("root"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
 
-            CProMoProperty* c1 = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
+            CProMoProperty* c1 = new CProMoProperty(_T("child1"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
             
-            CProMoProperty* leaf = new CProMoProperty(_T("leaf"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1, NULL);
+            CProMoProperty* leaf = new CProMoProperty(_T("leaf"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1, NULL);
             
             CVariantWrapper strValEmpty;
 			strValEmpty.SetString(_T(""));
 
-            CProMoProperty* rootCopy = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty* rootCopy = new CProMoProperty(_T("root"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
 
-            CProMoProperty* c1Copy = new CProMoProperty(_T("child1"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, rootCopy, NULL);
+            CProMoProperty* c1Copy = new CProMoProperty(_T("child1"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, rootCopy, NULL);
 
-            CProMoProperty* leafCopy = new CProMoProperty(_T("leaf"), TYPE_STRING, strValEmpty, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1Copy, NULL);
+            CProMoProperty* leafCopy = new CProMoProperty(_T("leaf"), PROPTYPE_STRING, strValEmpty, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1Copy, NULL);
 
 
             // action: serialize
@@ -196,8 +196,8 @@ namespace CProMoPropertyTests
             CVariantWrapper strVal;
             strVal.SetString(_T("val"));
 
-            CProMoProperty templateChild(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
+            CProMoProperty templateChild(_T("child"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("parent"), PROPTYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
 
             for (int i = 0; i < 5; ++i)
                 parent.AddChild();
@@ -226,13 +226,13 @@ namespace CProMoPropertyTests
             CVariantWrapper strVal;
             strVal.SetString(_T("val"));
             
-            CProMoProperty templateChild(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
+            CProMoProperty templateChild(_T("child"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("parent"), PROPTYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
 
             parent.AddChild();
             parent.AddChild();
 
-            CProMoProperty parentCopy(_T("parent"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
+            CProMoProperty parentCopy(_T("parent"), PROPTYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
 
 
             // action: serialize and deserialize each leaf
@@ -252,10 +252,10 @@ namespace CProMoPropertyTests
         TEST_METHOD(Getters_DefaultProperty_ReturnsCorrectMetadata)
         {
             CVariantWrapper nullVal;
-            CProMoProperty prop(_T("testProp"), TYPE_INT, nullVal, TRUE, FALSE, TRUE, NULL);
+            CProMoProperty prop(_T("testProp"), PROPTYPE_INT, nullVal, TRUE, FALSE, TRUE, NULL);
 
             Assert::AreEqual(CString("testProp"), prop.GetName());
-            Assert::AreEqual((unsigned int)TYPE_INT, prop.GetType());
+            Assert::AreEqual((unsigned int)PROPTYPE_INT, prop.GetType());
             Assert::IsTrue(prop.IsReadOnly());
             Assert::IsFalse(prop.IsLabelVisible());
             Assert::IsTrue(prop.IsPersistent());
@@ -268,8 +268,8 @@ namespace CProMoPropertyTests
             CVariantWrapper opt;
             opt.SetInt(42);
 
-            CProMoProperty templ(_T("optProp"), TYPE_INT, nullVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty prop(_T("optProp"), TYPE_INT, nullVal, FALSE, TRUE, TRUE, NULL,NULL,NULL,NULL,NULL, &templ);
+            CProMoProperty templ(_T("optProp"), PROPTYPE_INT, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("optProp"), PROPTYPE_INT, nullVal, FALSE, TRUE, TRUE, NULL,NULL,NULL,NULL,NULL, &templ);
 
             Assert::AreEqual(0, prop.GetOptionsCount());
 
@@ -283,7 +283,7 @@ namespace CProMoPropertyTests
         {
             CVariantWrapper val;
             val.SetInt(10);
-            CProMoProperty prop(_T("readonly"), TYPE_INT, val, TRUE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("readonly"), PROPTYPE_INT, val, TRUE, TRUE, TRUE, NULL);
 
             CVariantWrapper newVal;
             newVal.SetInt(20);
@@ -296,7 +296,7 @@ namespace CProMoPropertyTests
         {
             CVariantWrapper val;
             val.SetInt(5);
-            CProMoProperty prop(_T("simple"), TYPE_INT, val, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("simple"), PROPTYPE_INT, val, FALSE, TRUE, TRUE, NULL);
 
             CVariantWrapper newVal;
             newVal.SetInt(15);
@@ -309,7 +309,7 @@ namespace CProMoPropertyTests
         {
             CVariantWrapper val;
             val.SetString(_T("none"));
-            CProMoProperty prop(_T("editless"), TYPE_STRING, val, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("editless"), PROPTYPE_STRING, val, FALSE, TRUE, TRUE, NULL);
             Assert::IsFalse(prop.InvokeHandler(NULL));
         }
 
@@ -319,8 +319,8 @@ namespace CProMoPropertyTests
             CVariantWrapper strVal;
             strVal.SetString(_T("v"));
 
-            CProMoProperty templ(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty parent(_T("p"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templ);
+            CProMoProperty templ(_T("child"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("p"), PROPTYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templ);
 
             parent.AddChild();
             parent.AddChild();
@@ -336,8 +336,8 @@ namespace CProMoPropertyTests
             CVariantWrapper strVal;
             strVal.SetString(_T("v"));
 
-            CProMoProperty* root = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
-            CProMoProperty* child = new CProMoProperty(_T("child"), TYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
+            CProMoProperty* root = new CProMoProperty(_T("root"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty* child = new CProMoProperty(_T("child"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
 
             CString fullName = child->GetFullName();
             Assert::IsTrue(fullName.Find(_T("root")) != -1);
@@ -350,7 +350,7 @@ namespace CProMoPropertyTests
         {
             CString badData = _T("property:foobar,3,Test,10");
             CVariantWrapper nullVal;
-            CProMoProperty prop(_T("broken"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("broken"), PROPTYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL);
             Assert::IsFalse(prop.FromString(badData));
         }
 
@@ -359,7 +359,7 @@ namespace CProMoPropertyTests
             // Integer property
             CString goodData = _T("property:intProp,1,42,10");
             CVariantWrapper val; 
-            CProMoProperty prop(_T("intProp"), TYPE_INT, val, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("intProp"), PROPTYPE_INT, val, FALSE, TRUE, TRUE, NULL);
             Assert::IsTrue(prop.FromString(goodData));
             Assert::AreEqual(42, prop.GetValue().GetInt());
         }
@@ -369,7 +369,7 @@ namespace CProMoPropertyTests
             // Integer property
             CString goodData = _T("property:dblProp,2,2.5,10");
             CVariantWrapper val;
-            CProMoProperty prop(_T("dblProp"), TYPE_INT, val, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("dblProp"), PROPTYPE_INT, val, FALSE, TRUE, TRUE, NULL);
             Assert::IsTrue(prop.FromString(goodData));
             Assert::AreEqual(2.5, prop.GetValue().GetDouble());
         }
@@ -379,7 +379,7 @@ namespace CProMoPropertyTests
             // Integer property
             CString goodData = _T("property:boolProp,4,1,10");
             CVariantWrapper val;
-            CProMoProperty prop(_T("boolProp"), TYPE_INT, val, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("boolProp"), PROPTYPE_INT, val, FALSE, TRUE, TRUE, NULL);
             Assert::IsTrue(prop.FromString(goodData));
             Assert::AreEqual(TRUE, prop.GetValue().GetBool());
         }
@@ -388,7 +388,7 @@ namespace CProMoPropertyTests
         {
             CString goodData = _T("property:foobar,3,Test,10");
             CVariantWrapper nullVal;
-            CProMoProperty prop(_T("foobar"), TYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty prop(_T("foobar"), PROPTYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL);
             Assert::IsTrue(prop.LoadFromString(goodData));
         }
 

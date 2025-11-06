@@ -24,8 +24,8 @@ public:
         CVariantWrapper nullVal;
         CVariantWrapper intVal;
         intVal.SetInt(42);
-        CProMoProperty* root = new CProMoProperty(_T("root"), TYPE_COMPOSITE, nullVal, FALSE, FALSE, TRUE, NULL);
-        CProMoProperty* child = new CProMoProperty(_T("child"), TYPE_INT, intVal, FALSE, TRUE, TRUE, this, NULL, NULL, NULL, root, NULL);
+        CProMoProperty* root = new CProMoProperty(_T("root"), PROPTYPE_COMPOSITE, nullVal, FALSE, FALSE, TRUE, NULL);
+        CProMoProperty* child = new CProMoProperty(_T("child"), PROPTYPE_INT, intVal, FALSE, TRUE, TRUE, this, NULL, NULL, NULL, root, NULL);
         AddProperty(root);
     }
 };
@@ -230,7 +230,7 @@ namespace CProMoModelTests
             model.CreateProperties();
             unsigned int type = model.GetPropertyType(CString("root.child"));
 
-            Assert::AreEqual(TYPE_INT, (int)type);
+            Assert::AreEqual(PROPTYPE_INT, (int)type);
         }
 
         TEST_METHOD(GetPropertyType_IfPropertyDoesNotExist_ReturnUnknownType)
@@ -239,7 +239,7 @@ namespace CProMoModelTests
             model.CreateProperties();
             unsigned int type = model.GetPropertyType(CString("Foobar"));
 
-            Assert::AreEqual(TYPE_UNKNOWN, (int)type);
+            Assert::AreEqual(PROPTYPE_UNKNOWN, (int)type);
         }
 
         TEST_METHOD(SetPropertyValue_IfPropertyExist_SetValue)

@@ -69,7 +69,8 @@ CProMoEditor::CProMoEditor()
 	SetSnapToGrid(FALSE);
 	SetRestraints(RESTRAINT_VIRTUAL);
 	m_pageBreaksVisible = TRUE;
-	m_paperSize = CSize(0,0);
+	m_paperSize = CSize(0, 0);
+	m_printableArea = CSize(0, 0);
 	m_printResolutionX = 0;
 	m_printResolutionY = 0;
 	SetMargins(0,0,0,0);
@@ -1231,8 +1232,8 @@ void CProMoEditor::DrawPageBreaks(CDC* dc, CRect rect, double zoom) const
 
 	CSize scaledPaperSize;
 	
-	scaledPaperSize.cx = m_printableArea.cx * xzoom;
-	scaledPaperSize.cy = m_printableArea.cy * yzoom;
+	scaledPaperSize.cx = (long)(m_printableArea.cx * xzoom);
+	scaledPaperSize.cy = (long)(m_printableArea.cy * yzoom);
 
 	int nHorzPages = (rect.Width() + scaledPaperSize.cx - 1) / scaledPaperSize.cx;
 	int nVertPages = (rect.Height() + scaledPaperSize.cy - 1) / scaledPaperSize.cy;

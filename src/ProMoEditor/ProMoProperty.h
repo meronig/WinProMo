@@ -14,12 +14,12 @@
 #include <afxtempl.h>
 #include "../FileUtils/VariantWrapper.h"
 
-#define TYPE_COMPOSITE     0
-#define TYPE_INT       1
-#define TYPE_DOUBLE    2
-#define TYPE_STRING    3
-#define TYPE_BOOL      4
-#define TYPE_UNKNOWN   999
+#define PROPTYPE_COMPOSITE     0
+#define PROPTYPE_INT       1
+#define PROPTYPE_DOUBLE    2
+#define PROPTYPE_STRING    3
+#define PROPTYPE_BOOL      4
+#define PROPTYPE_UNKNOWN   999
 
 class AFX_EXT_CLASS CProMoProperty :
     public CObject
@@ -58,11 +58,11 @@ public:
 	virtual CVariantWrapper& GetValue();
 	virtual const CString& GetName();
 	virtual const unsigned int& GetType();
-	virtual const BOOL& IsReadOnly();
-	virtual const BOOL& IsLabelVisible();
-	virtual const BOOL& IsPersistent();
-	virtual const BOOL& HasHandler();
-	virtual const BOOL& IsMultiValue();
+	virtual BOOL IsReadOnly() const;
+	virtual BOOL IsLabelVisible() const;
+	virtual BOOL IsPersistent() const;
+	virtual BOOL HasHandler() const;
+	virtual BOOL IsMultiValue() const;
 	virtual BOOL InvokeHandler(CWnd* parent);
 
 	virtual CProMoProperty* Clone();

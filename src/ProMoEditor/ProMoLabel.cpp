@@ -35,7 +35,7 @@ CProMoLabel::CProMoLabel()
 	m_noOffset = FALSE;
 	m_labelAnchorPoint = DEHT_CENTER;
 	m_viewAnchorPoint = DEHT_CENTER;
-	m_anchorView = PROMO_VIEW_FIRST;
+	m_anchorView = VIEW_FIRST;
 
 	m_offset = CPoint(0, 0);
 	m_fitTitle = TRUE;
@@ -209,8 +209,8 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 			maskDC.CreateCompatibleDC(dc);
 			nullDC.CreateCompatibleDC(NULL);
 
-			CDoubleRect textBounds(0, 0, 0, 0);
-			textBounds = ComputeTextRect(&nullDC, GetZoom());
+			CRect textBounds(0, 0, 0, 0);
+			textBounds = ComputeTextRect(&nullDC, GetZoom()).ToCRect();
 
 			CRect bmpRect = rect;
 			bmpRect.OffsetRect(-rect.left, -rect.top);
@@ -222,7 +222,7 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 				bmpRect.bottom = bmpRect.top + textBounds.Height();
 			}
 
-			CRect fontRect = bmpRect;
+			CDoubleRect fontRect = bmpRect;
 			fontRect.top += m_topMargin * GetZoom();
 			fontRect.left += m_leftMargin * GetZoom();
 			fontRect.bottom -= m_bottomMargin * GetZoom();
@@ -245,7 +245,7 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 			maskDC.FillRect(&CRect(0, 0, bmpRect.Width(), bmpRect.Height()), &bgBrush);
 			maskDC.SetTextColor(RGB(0, 0, 0));
 			maskDC.SelectObject(&font);
-			maskDC.DrawText(GetTitle(), &fontRect, m_textAlignment);
+			maskDC.DrawText(GetTitle(), &fontRect.ToCRect(), m_textAlignment);
 
 			// Copy bitmap to screen
 			dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
@@ -260,7 +260,7 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 			memDC.SetBkColor(m_bkColor);
 			memDC.SetTextColor(m_textColor);
 			memDC.SelectObject(&font);
-			memDC.DrawText(GetTitle(), &fontRect, m_textAlignment);
+			memDC.DrawText(GetTitle(), &fontRect.ToCRect(), m_textAlignment);
 
 			dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
 				&memDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCPAINT);
@@ -875,7 +875,7 @@ void CProMoLabel::SetRect(double left, double top, double right, double bottom)
 
 	if (!m_noOffset) {
 		// The user is manually moving the label
-		if (!IsLocked(PROMO_LOCK_REPOSITIONING)) {
+		if (!IsLocked(LOCK_REPOSITIONING)) {
 			UpdateOffset();
 			CDiagramEntity::SetRect(left, top, right, bottom);
 		}
@@ -958,8 +958,8 @@ CDoubleRect CProMoLabel::ComputeTextRect(CDC* dc, double zoom)
 		dc->DrawText(GetTitle(), &textBounds, format);
 	}
 
-	textBounds.right += ((m_leftMargin + m_rightMargin + hPadding) * zoom);
-	textBounds.bottom += ((m_topMargin + m_bottomMargin + vPadding) * zoom);
+	textBounds.right += (long)((m_leftMargin + m_rightMargin + hPadding) * zoom);
+	textBounds.bottom += (long)((m_topMargin + m_bottomMargin + vPadding) * zoom);
 
 	dc->SetBkMode(oldBk);
 	dc->SelectObject(pOldFont);
@@ -1206,7 +1206,7 @@ BOOL CProMoLabel::SetFontName(const CString& name)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_FONTNAME)) 
+	if (IsLocked(LOCK_FONTNAME)) 
 		return FALSE;
 	m_fontName = name;
 	AutoResize();
@@ -1228,7 +1228,7 @@ BOOL CProMoLabel::SetFontSize(const unsigned int& size)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_FONTSIZE))
+	if (IsLocked(LOCK_FONTSIZE))
 		return FALSE;
 	if (size == 0)
 		return FALSE;
@@ -1252,7 +1252,7 @@ BOOL CProMoLabel::SetFontWeight(const unsigned int& weight)
 												
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_FONTWEIGHT))
+	if (IsLocked(LOCK_FONTWEIGHT))
 		return FALSE;
 	m_fontWeight = weight;
 	AutoResize();
@@ -1275,7 +1275,7 @@ BOOL CProMoLabel::SetFontItalic(const BOOL& italic)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_FONTITALIC))
+	if (IsLocked(LOCK_FONTITALIC))
 		return FALSE;
 	m_fontItalic = italic;
 	AutoResize();
@@ -1298,7 +1298,7 @@ BOOL CProMoLabel::SetFontUnderline(const BOOL& underline)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_FONTUNDERLINE))
+	if (IsLocked(LOCK_FONTUNDERLINE))
 		return FALSE;
 	m_fontUnderline = underline;
 	AutoResize();
@@ -1321,7 +1321,7 @@ BOOL CProMoLabel::SetFontStrikeOut(const BOOL& strikeOut)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_FONTSTRIKEOUT))
+	if (IsLocked(LOCK_FONTSTRIKEOUT))
 		return FALSE;
 	m_fontStrikeOut = strikeOut;
 	AutoResize();
@@ -1343,7 +1343,7 @@ BOOL CProMoLabel::SetTextColor(const COLORREF& color)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_TEXTCOLOR))
+	if (IsLocked(LOCK_TEXTCOLOR))
 		return FALSE;
 	m_textColor = color;
 	return TRUE;
@@ -1364,7 +1364,7 @@ BOOL CProMoLabel::SetBkColor(const COLORREF& color)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_BKCOLOR))
+	if (IsLocked(LOCK_BKCOLOR))
 		return FALSE;
 	m_bkColor = color;
 	return TRUE;
@@ -1385,7 +1385,7 @@ BOOL CProMoLabel::SetTextAlignment(const unsigned int& alignment)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_ALIGNMENT))
+	if (IsLocked(LOCK_ALIGNMENT))
 		return FALSE;
 	m_textAlignment = alignment;
 	AutoResize();
@@ -1406,7 +1406,7 @@ BOOL CProMoLabel::SetLabelAnchorPoint(const unsigned int& position)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_ANCHORING))
+	if (IsLocked(LOCK_ANCHORING))
 		return FALSE;
 	m_labelAnchorPoint = position;
 	AutoResize();
@@ -1427,7 +1427,7 @@ BOOL CProMoLabel::SetViewAnchorPoint(const unsigned int& position)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_ANCHORING))
+	if (IsLocked(LOCK_ANCHORING))
 		return FALSE;
 	m_viewAnchorPoint = position;
 	AutoResize();
@@ -1449,7 +1449,7 @@ BOOL CProMoLabel::SetAnchorView(const unsigned int& position)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_ANCHORING))
+	if (IsLocked(LOCK_ANCHORING))
 		return FALSE;
 	m_anchorView = position;
 	AutoResize();
@@ -1493,7 +1493,7 @@ BOOL CProMoLabel::SetBkMode(const unsigned int& mode)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_BKMODE))
+	if (IsLocked(LOCK_BKMODE))
 		return FALSE;
 	m_bkMode = mode;
 	return TRUE;
@@ -1699,12 +1699,12 @@ CDiagramEntity* CProMoLabel::GetView() const
 	}
 	CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_model);
 	if (edgeModel) {
-		if (m_anchorView == PROMO_VIEW_FIRST) {
+		if (m_anchorView == VIEW_FIRST) {
 			if (edgeModel->GetFirstSegment()) {
 				view = (CDiagramEntity*)edgeModel->GetFirstSegment();
 			}
 		}
-		else if (m_anchorView == PROMO_VIEW_LAST) {
+		else if (m_anchorView == VIEW_LAST) {
 			if (edgeModel->GetLastSegment()) {
 				view = (CDiagramEntity*)edgeModel->GetLastSegment();
 			}
@@ -1731,11 +1731,11 @@ int CProMoLabel::GetHitCode(const CPoint& point, const CRect& rect) const
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_SELECTION)) {
+	if (IsLocked(LOCK_SELECTION)) {
 		return DEHT_NONE;
 	}
 
-	if (IsLocked(PROMO_LOCK_REPOSITIONING)) {
+	if (IsLocked(LOCK_REPOSITIONING)) {
 		if (rect.PtInRect(point)) {
 			return DEHT_BODY;
 		}
@@ -1793,7 +1793,7 @@ void CProMoLabel::Select(BOOL selected)
 
    ============================================================*/
 {
-	if (IsLocked(PROMO_LOCK_SELECTION))
+	if (IsLocked(LOCK_SELECTION))
 		return;
 
 	CDiagramEntity::Select(selected);

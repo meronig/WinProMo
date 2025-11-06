@@ -63,7 +63,6 @@ CProMoBlockView::CProMoBlockView()
 	SetZoom(1.0);
 
 	CString title;
-	BOOL result;
 	SetModel(new CProMoBlockModel());
 	m_target = FALSE;
 
@@ -154,7 +153,7 @@ void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
 				scaledPoints[i].y = (LONG)scaled.y;
 			}
 
-			dc->Polygon(scaledPoints.GetData(), scaledPoints.GetSize());
+			dc->Polygon(scaledPoints.GetData(), static_cast<int>(scaledPoints.GetSize()));
 			break;
 		}
 	case SHAPE_RECTANGLE:
@@ -787,7 +786,7 @@ void CProMoBlockView::ClearVertices()
 
    ============================================================*/
 {
-	for (int i = m_vertices.GetSize() - 1; i >= 0; i--) {
+	for (INT_PTR i = m_vertices.GetSize() - 1; i >= 0; i--) {
 		delete m_vertices.GetAt(i);
 	}
 	m_vertices.RemoveAll();

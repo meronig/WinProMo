@@ -37,7 +37,7 @@ namespace CProMoLabelTests
             Assert::AreEqual((unsigned int)DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER, label.GetTextAlignment());
             Assert::AreEqual((unsigned int)DEHT_CENTER, label.GetViewAnchorPoint());
             Assert::AreEqual((unsigned int)DEHT_CENTER, label.GetLabelAnchorPoint());
-            Assert::AreEqual((unsigned int)PROMO_VIEW_FIRST, label.GetAnchorView());
+            Assert::AreEqual((unsigned int)VIEW_FIRST, label.GetAnchorView());
             double lMargin, rMargin, tMargin, bMargin;
             label.GetMargins(lMargin, tMargin, rMargin, bMargin);
             Assert::AreEqual(0.0, lMargin);
@@ -67,7 +67,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(expected, label.GetFontName());
 
-            label.SetLock(PROMO_LOCK_FONTNAME);
+            label.SetLock(LOCK_FONTNAME);
 
             result = label.SetFontName(CString("Times New Roman"));
 
@@ -91,7 +91,7 @@ namespace CProMoLabelTests
             Assert::IsFalse(result);
             Assert::AreEqual(size, label.GetFontSize());
             
-            label.SetLock(PROMO_LOCK_FONTSIZE);
+            label.SetLock(LOCK_FONTSIZE);
 
             result = label.SetFontSize(20);
             
@@ -109,7 +109,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(weight, label.GetFontWeight());
 
-            label.SetLock(PROMO_LOCK_FONTWEIGHT);
+            label.SetLock(LOCK_FONTWEIGHT);
 
             result = label.SetFontWeight(FW_HEAVY);
 
@@ -127,7 +127,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::IsTrue(label.IsFontItalic());
 
-            label.SetLock(PROMO_LOCK_FONTITALIC);
+            label.SetLock(LOCK_FONTITALIC);
 
             result = label.SetFontItalic(FALSE);
 
@@ -145,7 +145,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::IsTrue(label.IsFontUnderline());
 
-            label.SetLock(PROMO_LOCK_FONTUNDERLINE);
+            label.SetLock(LOCK_FONTUNDERLINE);
 
             result = label.SetFontUnderline(FALSE);
 
@@ -163,7 +163,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::IsTrue(label.IsFontStrikeOut());
 
-            label.SetLock(PROMO_LOCK_FONTSTRIKEOUT);
+            label.SetLock(LOCK_FONTSTRIKEOUT);
 
             result = label.SetFontStrikeOut(FALSE);
 
@@ -181,7 +181,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(color, label.GetTextColor());
 
-            label.SetLock(PROMO_LOCK_TEXTCOLOR);
+            label.SetLock(LOCK_TEXTCOLOR);
 
             result = label.SetTextColor(RGB(0,255,0));
 
@@ -199,7 +199,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(color, label.GetBkColor());
 
-            label.SetLock(PROMO_LOCK_BKCOLOR);
+            label.SetLock(LOCK_BKCOLOR);
 
             result = label.SetBkColor(RGB(0, 255, 0));
 
@@ -217,7 +217,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(mode, label.GetBkMode());
 
-            label.SetLock(PROMO_LOCK_BKMODE);
+            label.SetLock(LOCK_BKMODE);
 
             result = label.SetBkMode(TRANSPARENT);
 
@@ -235,7 +235,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(alignment, label.GetTextAlignment());
 
-            label.SetLock(PROMO_LOCK_ALIGNMENT);
+            label.SetLock(LOCK_ALIGNMENT);
 
             result = label.SetTextAlignment(DT_RIGHT);
 
@@ -285,7 +285,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(labelAnchoring, label.GetLabelAnchorPoint());
 
-            label.SetLock(PROMO_LOCK_ANCHORING);
+            label.SetLock(LOCK_ANCHORING);
 
             result = label.SetLabelAnchorPoint(DEHT_BOTTOMRIGHT);
 
@@ -303,7 +303,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(labelAnchoring, label.GetViewAnchorPoint());
 
-            label.SetLock(PROMO_LOCK_ANCHORING);
+            label.SetLock(LOCK_ANCHORING);
 
             result = label.SetViewAnchorPoint(DEHT_BOTTOMRIGHT);
 
@@ -314,16 +314,16 @@ namespace CProMoLabelTests
         TEST_METHOD(SetAnchorView_ValidValue_SetsAnchor)
         {
             CProMoLabel label;
-            unsigned int labelAnchoring = PROMO_VIEW_LAST;
+            unsigned int labelAnchoring = VIEW_LAST;
 
             BOOL result = label.SetAnchorView(labelAnchoring);
 
             Assert::IsTrue(result);
             Assert::AreEqual(labelAnchoring, label.GetAnchorView());
 
-            label.SetLock(PROMO_LOCK_ANCHORING);
+            label.SetLock(LOCK_ANCHORING);
 
-            result = label.SetAnchorView(PROMO_VIEW_FIRST);
+            result = label.SetAnchorView(VIEW_FIRST);
 
             Assert::IsFalse(result);
             Assert::AreEqual(labelAnchoring, label.GetAnchorView());
@@ -377,7 +377,7 @@ namespace CProMoLabelTests
             original.SetTextAlignment(DT_NOPREFIX | DT_SINGLELINE | DT_BOTTOM | DT_RIGHT);
             original.SetViewAnchorPoint(DEHT_TOPLEFT);
             original.SetLabelAnchorPoint(DEHT_BOTTOMRIGHT);
-            original.SetAnchorView(PROMO_VIEW_MID);
+            original.SetAnchorView(VIEW_MID);
             original.SetMargins(1.0, 2.0, 3.0, 4.0);
 
             // Act
@@ -432,7 +432,7 @@ namespace CProMoLabelTests
         TEST_METHOD(GetHitCode_WhenRepositionIsLocked_ReturnsCorrectConstant)
         {
             CProMoLabel label;
-            label.SetLock(PROMO_LOCK_REPOSITIONING);
+            label.SetLock(LOCK_REPOSITIONING);
 
             int code = label.GetHitCode(CPoint(10, 10), CRect(0, 0, 20, 20));
 
@@ -446,7 +446,7 @@ namespace CProMoLabelTests
         TEST_METHOD(GetHitCode_WhenSelectionIsLocked_ReturnsCorrectConstant)
         {
             CProMoLabel label;
-            label.SetLock(PROMO_LOCK_SELECTION);
+            label.SetLock(LOCK_SELECTION);
 
             int code = label.GetHitCode(CPoint(10, 10), CRect(0, 0, 20, 20));
 
@@ -478,7 +478,7 @@ namespace CProMoLabelTests
             label.SetTextAlignment(DT_NOPREFIX | DT_SINGLELINE | DT_BOTTOM | DT_RIGHT);
             label.SetViewAnchorPoint(DEHT_TOPLEFT);
             label.SetLabelAnchorPoint(DEHT_BOTTOMRIGHT);
-            label.SetAnchorView(PROMO_VIEW_MID);
+            label.SetAnchorView(VIEW_MID);
             label.SetMargins(1.0, 2.0, 3.0, 4.0);
             
             viewString = label.GetString();
@@ -511,7 +511,7 @@ namespace CProMoLabelTests
             Assert::AreEqual((unsigned int)DT_NOPREFIX | DT_SINGLELINE | DT_BOTTOM | DT_RIGHT, label->GetTextAlignment());
             Assert::AreEqual((unsigned int)DEHT_TOPLEFT, label->GetViewAnchorPoint());
             Assert::AreEqual((unsigned int)DEHT_BOTTOMRIGHT, label->GetLabelAnchorPoint());
-            Assert::AreEqual((unsigned int)PROMO_VIEW_MID, label->GetAnchorView());
+            Assert::AreEqual((unsigned int)VIEW_MID, label->GetAnchorView());
             double lMargin, rMargin, tMargin, bMargin;
             label->GetMargins(lMargin, tMargin, rMargin, bMargin);
             Assert::AreEqual(1.0, lMargin);
@@ -545,7 +545,7 @@ namespace CProMoLabelTests
             Assert::AreEqual((unsigned int)DT_NOPREFIX | DT_SINGLELINE | DT_BOTTOM | DT_RIGHT, label->GetTextAlignment());
             Assert::AreEqual((unsigned int)DEHT_TOPLEFT, label->GetViewAnchorPoint());
             Assert::AreEqual((unsigned int)DEHT_BOTTOMRIGHT, label->GetLabelAnchorPoint());
-            Assert::AreEqual((unsigned int)PROMO_VIEW_MID, label->GetAnchorView());
+            Assert::AreEqual((unsigned int)VIEW_MID, label->GetAnchorView());
             double lMargin, rMargin, tMargin, bMargin;
             label->GetMargins(lMargin, tMargin, rMargin, bMargin);
             Assert::AreEqual(1.0, lMargin);
@@ -580,7 +580,7 @@ namespace CProMoLabelTests
             Assert::AreEqual((unsigned int)DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER, label->GetTextAlignment());
             Assert::AreEqual((unsigned int)DEHT_CENTER, label->GetViewAnchorPoint());
             Assert::AreEqual((unsigned int)DEHT_CENTER, label->GetLabelAnchorPoint());
-            Assert::AreEqual((unsigned int)PROMO_VIEW_FIRST, label->GetAnchorView());
+            Assert::AreEqual((unsigned int)VIEW_FIRST, label->GetAnchorView());
             double lMargin, rMargin, tMargin, bMargin;
             label->GetMargins(lMargin, tMargin, rMargin, bMargin);
             Assert::AreEqual(0.0, lMargin);
@@ -639,7 +639,7 @@ namespace CProMoLabelTests
             label.SetTextAlignment(DT_NOPREFIX | DT_SINGLELINE | DT_BOTTOM | DT_RIGHT);
             label.SetViewAnchorPoint(DEHT_TOPLEFT);
             label.SetLabelAnchorPoint(DEHT_BOTTOMRIGHT);
-            label.SetAnchorView(PROMO_VIEW_MID);
+            label.SetAnchorView(VIEW_MID);
             label.SetMargins(1.0, 2.0, 3.0, 4.0);
 
             // Create memory DC

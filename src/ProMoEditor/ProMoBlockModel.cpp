@@ -43,8 +43,7 @@ CProMoBlockModel::CProMoBlockModel()
 {
 	SetType(_T("promo_block_model"));
 	SetName(CProMoNameFactory::GetID());
-	this->m_parentBlock = NULL;
-
+	m_parentBlock = NULL;
 }
 
 CProMoBlockModel::~CProMoBlockModel()
@@ -576,7 +575,7 @@ void CProMoBlockModel::CustomizeLabel(CProMoLabel* label)
 	if (label) {
 		if (label->GetProperty() == CString("Title") && label->GetModel()) {
 			label->SetFitView(TRUE);
-			label->SetLock(PROMO_LOCK_REPOSITIONING);
+			label->SetLock(LOCK_REPOSITIONING);
 			if (GetSubBlocks()->GetSize() > 0) {
 				label->SetViewAnchorPoint(DEHT_TOPMIDDLE);
 				label->SetLabelAnchorPoint(DEHT_TOPMIDDLE);

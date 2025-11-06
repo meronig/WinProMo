@@ -51,7 +51,7 @@ public:
 	// Custom properties
 	virtual void GetPropertyNames(CStringArray& array, const BOOL& recursive) const;
 	virtual unsigned int GetPropertyType(const CString& name) const;
-	virtual CVariantWrapper& GetPropertyValue(const CString& name) const;
+	virtual const CVariantWrapper& GetPropertyValue(const CString& name) const;
 	virtual BOOL SetPropertyValue(const CString& name, const CVariantWrapper& value);
 	virtual unsigned int GetPropertiesCount() const;
 	virtual CProMoProperty* GetProperty(const int& index) const;

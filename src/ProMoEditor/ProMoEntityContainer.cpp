@@ -343,7 +343,7 @@ void CProMoEntityContainer::SaveObjects(CStringArray& stra)
 		}
 		if (!found) {
 			stra.Add(currModel->GetString());
-			for (int j = 0; j < currModel->GetPropertiesCount(); j++) {
+			for (unsigned int j = 0; j < currModel->GetPropertiesCount(); j++) {
 				CProMoProperty* prop = currModel->GetProperty(j);
 				SaveProperties(stra, prop);
 			}
@@ -975,7 +975,7 @@ void CProMoEntityContainer::LoadProperties(const CStringArray& stra, const CObAr
 				CFileParser::GetHeaderFromString(str,header);
 				if (header == _T("property")) {
 					if (model->GetName() == CProMoProperty::GetElementFromString(str)) {
-						for (int k = 0; k < model->GetPropertiesCount(); k++) {
+						for (unsigned int k = 0; k < model->GetPropertiesCount(); k++) {
 							CProMoProperty* prop = model->GetProperty(k);
 							prop->FromString(str);
 						}
@@ -1126,7 +1126,7 @@ void CProMoEntityContainer::SaveProperties(CStringArray& stra, CProMoProperty* p
 {
 	if (prop) {
 		if (prop->IsPersistent()) {
-			if (!(prop->IsMultiValue() || prop->GetType() == TYPE_COMPOSITE)) {
+			if (!(prop->IsMultiValue() || prop->GetType() == PROPTYPE_COMPOSITE)) {
 				stra.Add(prop->GetString());
 			}
 			else {

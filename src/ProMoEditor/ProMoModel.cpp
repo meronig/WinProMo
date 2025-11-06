@@ -341,7 +341,7 @@ void CProMoModel::RecreateLabelsR(CObArray& list, CProMoProperty* prop)
 			LinkLabel(label);
 			list.Add(label);
 		}
-		if (prop->GetType() == TYPE_COMPOSITE || prop->IsMultiValue()) {
+		if (prop->GetType() == PROPTYPE_COMPOSITE || prop->IsMultiValue()) {
 			for (int i = 0; i < prop->GetChildrenCount(); i++) {
 				CProMoProperty* child = prop->GetChild(i);
 				RecreateLabelsR(list, child);
@@ -366,7 +366,7 @@ void CProMoModel::GetPropertyNamesR(CStringArray& array, CProMoProperty* prop) c
 {
 	if (prop) {
 		array.Add(prop->GetFullName());
-		if (prop->GetType() == TYPE_COMPOSITE || prop->IsMultiValue()) {
+		if (prop->GetType() == PROPTYPE_COMPOSITE || prop->IsMultiValue()) {
 			for (int i = 0; i < prop->GetChildrenCount(); i++) {
 				CProMoProperty* child = prop->GetChild(i);
 				GetPropertyNamesR(array, child);
@@ -412,7 +412,7 @@ void CProMoModel::CreateProperties()
 	ClearProperties();
 	CVariantWrapper wrapper;
 	wrapper.SetString(_T("Title"));
-	AddProperty(new CProMoProperty(_T("Title"), TYPE_STRING, wrapper, FALSE, TRUE, TRUE, this));
+	AddProperty(new CProMoProperty(_T("Title"), PROPTYPE_STRING, wrapper, FALSE, TRUE, TRUE, this));
 }
 
 void CProMoModel::AddProperty(CProMoProperty* prop)
@@ -778,10 +778,10 @@ unsigned int CProMoModel::GetPropertyType(const CString& name) const
 	if (prop) {
 		return prop->GetType();
 	}
-	return TYPE_UNKNOWN;
+	return PROPTYPE_UNKNOWN;
 }
 
-CVariantWrapper& CProMoModel::GetPropertyValue(const CString& name) const
+const CVariantWrapper& CProMoModel::GetPropertyValue(const CString& name) const
 /* ============================================================
 	Function :		CProMoModel::GetPropertyValue
 	Description :	Gets the value of the specified property
@@ -797,11 +797,12 @@ CVariantWrapper& CProMoModel::GetPropertyValue(const CString& name) const
 	
    ============================================================*/
 {
+	static const CVariantWrapper empty;
 	CProMoProperty* prop = FindProperty(name);
 	if (prop) {
 		return prop->GetValue();
 	}
-	return CVariantWrapper();
+	return empty;
 }
 
 BOOL CProMoModel::SetPropertyValue(const CString& name, const CVariantWrapper& value)
@@ -843,7 +844,7 @@ unsigned int CProMoModel::GetPropertiesCount() const
 
    ============================================================*/
 {
-	return m_properties.GetSize();
+	return static_cast<int>(m_properties.GetSize());
 }
 
 CProMoProperty* CProMoModel::GetProperty(const int& index) const

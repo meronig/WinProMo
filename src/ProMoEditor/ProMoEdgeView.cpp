@@ -55,6 +55,7 @@ CProMoEdgeView::CProMoEdgeView()
 	m_source = NULL;
 	m_dest = NULL;
 	m_edgemodel = NULL;
+	m_propagating = FALSE;
 	SetModel(new CProMoEdgeModel());
 }
 
@@ -171,7 +172,7 @@ void CProMoEdgeView::DrawLine(CDC* dc, CRect rect)
 
 }
 
-void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, int size)
+void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, double size)
 /* ============================================================
 	Function :		CProMoEdgeView::DrawHead
 	Description :	Draws the head of the edge.
@@ -181,7 +182,7 @@ void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, int size)
 	Parameters :	CDC* dc		-	The CDC to draw to.
 					CRect rect	-	The real rectangle of the 
 									object.
-					int size	-	The size of the head
+					double size	-	The size of the head
 
 	Usage :			The function should clean up all selected
 					objects. Note that the CDC is a memory CDC,
@@ -219,7 +220,7 @@ void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, int size)
 	
 }
 
-void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, int size)
+void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, double size)
 /* ============================================================
 	Function :		CProMoEdgeView::DrawTail
 	Description :	Draws the tail of the edge.
@@ -229,7 +230,7 @@ void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, int size)
 	Parameters :	CDC* dc		-	The CDC to draw to.
 					CRect rect	-	The real rectangle of the
 									object.
-					int size	-	The size of the tail
+					double size	-	The size of the tail
 
 	Usage :			The function should clean up all selected
 					objects. Note that the CDC is a memory CDC,
@@ -247,7 +248,7 @@ void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, int size)
 	int y2 = rect.BottomRight().y;
 
 	// 2. Calculate the circle radius
-	int radius = size / 2;
+	double radius = size / 2;
 
 	// 3. Find the center of the circle: it's the midpoint of (x1, y1) and the second intersection point (x3, y3)
 	int dx = x2 - x1;
@@ -269,14 +270,14 @@ void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, int size)
 	int centerY = (y1 + y3) / 2;
 
 	// 7. Calculate the bounding rectangle for the circle centered at (centerX, centerY)
-	CRect circleRect;
+	CDoubleRect circleRect;
 	circleRect.left = centerX - radius;
 	circleRect.top = centerY - radius;
 	circleRect.right = centerX + radius;
 	circleRect.bottom = centerY + radius;
 
 	// 8. Draw the circle
-	dc->Ellipse(circleRect);
+	dc->Ellipse(circleRect.ToCRect());
 }
 
 void CProMoEdgeView::KeepElementsConnected(double left, double top, double right, double bottom)
@@ -345,7 +346,7 @@ void CProMoEdgeView::KeepElementsConnected(double left, double top, double right
 			}
 		}
 	}
-	
+
 }
 
 void CProMoEdgeView::Reposition()
