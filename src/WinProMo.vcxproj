@@ -254,6 +254,8 @@
     <ClInclude Include="DiagramEditor\Tokenizer.h" />
     <ClInclude Include="DiagramEditor\UndoItem.h" />
     <ClInclude Include="FileUtils\VariantWrapper.h" />
+    <ClInclude Include="ProMoEditor\ProMoEntity.h" />
+    <ClInclude Include="ProMoEditor\ProMoView.h" />
     <ClInclude Include="WinProMoDocTemplate.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockModel.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockView.h" />

@@ -12,31 +12,10 @@
 #include "ProMoModel.h"
 #include "../GeometryUtils/DoublePoint.h"
 #include "../GeometryUtils/DoubleRect.h"
-
-#define DEHT_CENTER		10
-
-#define LOCK_FONTNAME			0x0001
-#define LOCK_FONTSIZE			0x0002
-#define LOCK_FONTWEIGHT		0x0004
-#define LOCK_FONTITALIC		0x0008
-#define LOCK_FONTUNDERLINE	0x0010
-#define LOCK_FONTSTRIKEOUT	0x0020
-#define LOCK_TEXTCOLOR		0x0040
-#define LOCK_BKCOLOR			0x0080
-#define LOCK_BKMODE			0x0100
-#define LOCK_ALIGNMENT		0x0200
-#define LOCK_ROTATION			0x0400
-#define LOCK_MARGINS			0x0800
-#define LOCK_ANCHORING		0x1000
-#define LOCK_REPOSITIONING	0x2000
-#define LOCK_SELECTION		0x4000
-
-#define VIEW_FIRST			0
-#define VIEW_LAST				1
-#define VIEW_MID				2
+#include "ProMoEntity.h"
 
 class AFX_EXT_CLASS CProMoLabel :
-    public CDiagramEntity
+    public CDiagramEntity, public IProMoEntity
 {
 public:
 	friend class CProMoModel;
@@ -44,15 +23,11 @@ public:
 	CProMoLabel();
 	virtual ~CProMoLabel();
 
-	virtual CDiagramEntity* Clone();
-	virtual void	Copy(CDiagramEntity* obj);
-
 	static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
 
 	static CString GetModelFromString(const CString& str);
 	static CString GetNameFromString(const CString& str);
 
-	virtual CProMoModel* GetModel() const;
 	virtual CString GetProperty() const;
 	
 	virtual void SetFitTitle(BOOL hasFitTitle);
@@ -61,45 +36,8 @@ public:
 	virtual void SetFitView(BOOL hasFitView);
 	virtual BOOL HasFitView();
 
-	virtual BOOL IsLocked(const unsigned int& flag) const;
-	virtual unsigned int GetLock() const;
-	virtual void SetLock(const unsigned int& flag);
 	virtual CDoubleRect GetTitleRect() const;
 	
-	virtual CString GetFontName() const;
-	virtual unsigned int GetFontSize() const;
-	virtual unsigned int GetFontWeight() const;
-	virtual BOOL IsFontItalic() const;
-	virtual BOOL IsFontUnderline() const;
-	virtual BOOL IsFontStrikeOut() const;
-	virtual COLORREF GetTextColor() const;
-	virtual COLORREF GetBkColor() const;
-	virtual unsigned int GetBkMode() const;
-	virtual unsigned int GetTextAlignment() const;
-	virtual unsigned int GetLabelAnchorPoint() const;
-	virtual unsigned int GetViewAnchorPoint() const;
-	virtual unsigned int GetAnchorView() const;
-	virtual BOOL IsVisible() const;
-	virtual void GetMargins(double& left, double& top, double& right, double& bottom) const;
-
-	virtual BOOL SetFontName(const CString& name);
-	virtual BOOL SetFontSize(const unsigned int& size);
-	virtual BOOL SetFontWeight(const unsigned int& weight);
-	virtual BOOL SetFontItalic(const BOOL& italic);
-	virtual BOOL SetFontUnderline(const BOOL& underline);
-	virtual BOOL SetFontStrikeOut(const BOOL& strikeOut);
-	virtual BOOL SetTextColor(const COLORREF& color);
-	virtual BOOL SetBkColor(const COLORREF& color);
-	virtual BOOL SetBkMode(const unsigned int& mode);
-	virtual BOOL SetTextAlignment(const unsigned int& alignment);
-	virtual BOOL SetLabelAnchorPoint(const unsigned int& position);
-	virtual BOOL SetViewAnchorPoint(const unsigned int& position);
-	virtual BOOL SetAnchorView(const unsigned int& position);
-	virtual BOOL SetVisible(const BOOL& visible);
-	virtual void SetMargins(double left, double top, double right, double bottom);
-	
-	virtual void Reposition();
-
 
 protected:
 	CProMoModel* m_model;
@@ -149,11 +87,59 @@ protected:
 	virtual void SetProperty(const CString& property);
 	virtual CDoubleRect ComputeTextRect(CDC* dc, double zoom);
 	virtual CDiagramEntity* GetView() const;
+
+	
+// Implements
+public:
+	virtual CProMoModel* GetModel() const;
 	virtual void AutoResize();
+	virtual void Reposition();
+
+	virtual BOOL IsLocked(const unsigned int& flag) const;
+	virtual unsigned int GetLock() const;
+	virtual void SetLock(const unsigned int& flag);
+
+	virtual CString GetFontName() const;
+	virtual unsigned int GetFontSize() const;
+	virtual unsigned int GetFontWeight() const;
+	virtual BOOL IsFontItalic() const;
+	virtual BOOL IsFontUnderline() const;
+	virtual BOOL IsFontStrikeOut() const;
+	virtual COLORREF GetTextColor() const;
+	virtual COLORREF GetBkColor() const;
+	virtual unsigned int GetBkMode() const;
+	virtual unsigned int GetTextAlignment() const;
+	virtual unsigned int GetLabelAnchorPoint() const;
+	virtual unsigned int GetViewAnchorPoint() const;
+	virtual unsigned int GetAnchorView() const;
+	virtual BOOL IsVisible() const;
+	virtual void GetMargins(double& left, double& top, double& right, double& bottom) const;
+
+	virtual BOOL SetFontName(const CString& name);
+	virtual BOOL SetFontSize(const unsigned int& size);
+	virtual BOOL SetFontWeight(const unsigned int& weight);
+	virtual BOOL SetFontItalic(const BOOL& italic);
+	virtual BOOL SetFontUnderline(const BOOL& underline);
+	virtual BOOL SetFontStrikeOut(const BOOL& strikeOut);
+	virtual BOOL SetTextColor(const COLORREF& color);
+	virtual BOOL SetBkColor(const COLORREF& color);
+	virtual BOOL SetBkMode(const unsigned int& mode);
+	virtual BOOL SetTextAlignment(const unsigned int& alignment);
+	virtual BOOL SetLabelAnchorPoint(const unsigned int& position);
+	virtual BOOL SetViewAnchorPoint(const unsigned int& position);
+	virtual BOOL SetAnchorView(const unsigned int& position);
+	virtual BOOL SetVisible(const BOOL& visible);
+	virtual void SetMargins(double left, double top, double right, double bottom);
+
+protected:
+	virtual void SetModel(CProMoModel* model);
 
 // Overrides
 
 public:
+	virtual CDiagramEntity* Clone();
+	virtual void	Copy(CDiagramEntity* obj);
+
 	static	CDiagramEntity* CreateFromString(const CString& str);
 
 	virtual void	Draw(CDC* dc, CRect rect);

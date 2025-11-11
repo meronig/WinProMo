@@ -52,10 +52,19 @@ CProMoEdgeView::CProMoEdgeView()
 
 	SetName(CProMoNameFactory::GetID());
 
+	m_lockFlags = 0;
+
+	m_bkColor = CLR_NONE;
+
+	m_lineColor = RGB(0, 0, 0);
+	m_lineWidth = 1;
+	m_lineStyle = PS_SOLID;
+	
 	m_source = NULL;
 	m_dest = NULL;
-	m_edgemodel = NULL;
+	m_edgeModel = NULL;
 	m_propagating = FALSE;
+	m_visible = TRUE;
 	SetModel(new CProMoEdgeModel());
 }
 
@@ -155,7 +164,11 @@ void CProMoEdgeView::DrawLine(CDC* dc, CRect rect)
 
    ============================================================*/
 {
-	dc->SelectStockObject(BLACK_PEN);
+	CPen pen;
+	pen.CreatePen(m_lineStyle, m_lineWidth, m_lineColor);
+	CPen* pOldPen = dc->SelectObject(&pen);
+
+	COLORREF pOldBkColor = dc->SetBkColor(m_bkColor);
 
 	dc->MoveTo(rect.TopLeft());
 	dc->LineTo(rect.BottomRight());
@@ -169,6 +182,9 @@ void CProMoEdgeView::DrawLine(CDC* dc, CRect rect)
 	if (m_source == NULL) {
 		DrawTail(dc, rect, 10 * GetZoom());
 	}
+
+	dc->SelectObject(pOldPen);
+	dc->SetBkColor(pOldBkColor);
 
 }
 
@@ -194,6 +210,16 @@ void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, double size)
    ============================================================*/
 {
 
+	CPen pen;
+	pen.CreatePen(m_lineStyle, m_lineWidth, m_lineColor);
+	CPen* pOldPen = dc->SelectObject(&pen);
+
+	CBrush brush;
+	brush.CreateSolidBrush(m_lineColor);
+	CBrush* pOldBrush = dc->SelectObject(&brush);
+
+	COLORREF pOldBkColor = dc->SetBkColor(m_bkColor);
+
 	const double dx = static_cast<double>(rect.BottomRight().x) - static_cast<double>(rect.TopLeft().x);
 	const double dy = static_cast<double>(rect.BottomRight().y) - static_cast<double>(rect.TopLeft().y);
 	const double length = sqrt(dx * dx + dy * dy);
@@ -218,6 +244,10 @@ void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, double size)
 			 round(rect.BottomRight().y - size * uy - half_width * vy) );
 	dc->Polygon(arrow, 3);
 	
+	dc->SelectObject(pOldBrush);
+	dc->SelectObject(pOldPen);
+	dc->SetBkColor(pOldBkColor);
+
 }
 
 void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, double size)
@@ -241,6 +271,17 @@ void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, double size)
 
    ============================================================*/
 {
+	
+	CPen pen;
+	pen.CreatePen(m_lineStyle, m_lineWidth, m_lineColor);
+	CPen* pOldPen = dc->SelectObject(&pen);
+
+	CBrush brush;
+	brush.CreateSolidBrush(m_lineColor);
+	CBrush* pOldBrush = dc->SelectObject(&brush);
+
+	COLORREF pOldBkColor = dc->SetBkColor(m_bkColor);
+
 	// 1. Define the start and end points
 	int x1 = rect.TopLeft().x;
 	int y1 = rect.TopLeft().y;
@@ -278,6 +319,11 @@ void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, double size)
 
 	// 8. Draw the circle
 	dc->Ellipse(circleRect.ToCRect());
+
+	dc->SelectObject(pOldBrush);
+	dc->SelectObject(pOldPen);
+	dc->SetBkColor(pOldBkColor);
+
 }
 
 void CProMoEdgeView::KeepElementsConnected(double left, double top, double right, double bottom)
@@ -299,50 +345,48 @@ void CProMoEdgeView::KeepElementsConnected(double left, double top, double right
 
    ============================================================*/
 {
-	ASSERT_VALID(this->GetModel());
-	CProMoEdgeModel* model = this->GetModel();
-
-	//keep connected edges connected
-	if (GetLeft() != left) {
-		if (m_source && !m_propagating) {
-			CScopedUpdate guard(m_propagating);
-			if (!m_source->IsSelected()) {
-				m_source->SetRight(left);
+	if (m_edgeModel) {
+		//keep connected edges connected
+		if (GetLeft() != left) {
+			if (m_source && !m_propagating) {
+				CScopedUpdate guard(m_propagating);
+				if (!m_source->IsSelected()) {
+					m_source->SetRight(left);
+				}
 			}
 		}
-	}
-	if (GetRight() != right) {
-		if (m_dest && !m_propagating) {
-			CScopedUpdate guard(m_propagating);
-			if (!m_dest->IsSelected()) {
-				m_dest->SetLeft(right);
+		if (GetRight() != right) {
+			if (m_dest && !m_propagating) {
+				CScopedUpdate guard(m_propagating);
+				if (!m_dest->IsSelected()) {
+					m_dest->SetLeft(right);
+				}
 			}
 		}
-	}
-	if (GetTop() != top) {
-		if (m_source && !m_propagating) {
-			CScopedUpdate guard(m_propagating);
-			if (!m_source->IsSelected()) {
-				m_source->SetBottom(top);
+		if (GetTop() != top) {
+			if (m_source && !m_propagating) {
+				CScopedUpdate guard(m_propagating);
+				if (!m_source->IsSelected()) {
+					m_source->SetBottom(top);
+				}
 			}
 		}
-	}
-	if (GetBottom() != bottom) {
-		if (m_dest && !m_propagating) {
-			CScopedUpdate guard(m_propagating);
-			if (!m_dest->IsSelected()) {
-				m_dest->SetTop(bottom);
+		if (GetBottom() != bottom) {
+			if (m_dest && !m_propagating) {
+				CScopedUpdate guard(m_propagating);
+				if (!m_dest->IsSelected()) {
+					m_dest->SetTop(bottom);
+				}
 			}
 		}
-	}
-
 	
-	for (int i = 0; i < model->GetLabels()->GetSize(); i++) {
-		CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
-		if (label) {
-			//reposition labels that are not selected (otherwise they will be moved twice)
-			if (!label->IsSelected()) {
-				label->Reposition();
+		for (int i = 0; i < m_edgeModel->GetLabels()->GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(m_edgeModel->GetLabels()->GetAt(i));
+			if (label) {
+				//reposition labels that are not selected (otherwise they will be moved twice)
+				if (!label->IsSelected()) {
+					label->Reposition();
+				}
 			}
 		}
 	}
@@ -363,48 +407,50 @@ void CProMoEdgeView::Reposition()
    ============================================================*/
 
 {
-	if (m_source) {
-		SetTop(m_source->GetBottom());
-		SetLeft(m_source->GetRight());
-	}
-	else {
-		if (IsFirstSegment() && GetModel()->GetSource()) {
-			CProMoBlockModel* sourceBlockModel = GetModel()->GetSource();
-			if (sourceBlockModel) {
-				CProMoBlockView* sourceBlockView = sourceBlockModel->GetMainView();
-				if (sourceBlockView) {
-					CPoint pt = sourceBlockView->GetIntersection(GetRect().TopLeft(), GetRect().BottomRight());
-					// No intersection exists, set to block center and compute again
-					if (pt.x < 0) {
-						pt = sourceBlockView->GetIntersection(CPoint(sourceBlockView->GetRect().BottomRight() - sourceBlockView->GetRect().TopLeft()), GetRect().BottomRight());
-					}
-					if (pt.x >= 0) {
-						SetTop(pt.y);
-						SetLeft(pt.x);
+	if (m_edgeModel) {
+		if (m_source) {
+			SetTop(m_source->GetBottom());
+			SetLeft(m_source->GetRight());
+		}
+		else {
+			if (IsFirstSegment() && m_edgeModel->GetSource()) {
+				CProMoBlockModel* sourceBlockModel = m_edgeModel->GetSource();
+				if (sourceBlockModel) {
+					CProMoBlockView* sourceBlockView = sourceBlockModel->GetMainView();
+					if (sourceBlockView) {
+						CPoint pt = sourceBlockView->GetIntersection(GetRect().TopLeft(), GetRect().BottomRight());
+						// No intersection exists, set to block center and compute again
+						if (pt.x < 0) {
+							pt = sourceBlockView->GetIntersection(CPoint(sourceBlockView->GetRect().BottomRight() - sourceBlockView->GetRect().TopLeft()), GetRect().BottomRight());
+						}
+						if (pt.x >= 0) {
+							SetTop(pt.y);
+							SetLeft(pt.x);
+						}
 					}
 				}
 			}
 		}
-	}
-	
-	if (m_dest) {
-		SetBottom(m_dest->GetTop());
-		SetRight(m_dest->GetLeft());
-	}
-	else {
-		if (IsLastSegment() && GetModel()->GetDestination()) {
-			CProMoBlockModel* destBlockModel = GetModel()->GetDestination();
-			if (destBlockModel) {
-				CProMoBlockView* destBlockView = destBlockModel->GetMainView();
-				if (destBlockView) {
-					CPoint pt = destBlockView->GetIntersection(GetRect().BottomRight(), GetRect().TopLeft());
-					// No intersection exists, set to block center and compute again
-					if (pt.x < 0) {
-						pt = destBlockView->GetIntersection(GetRect().TopLeft(), CPoint(destBlockView->GetRect().BottomRight() - destBlockView->GetRect().TopLeft()));
-					}
-					if (pt.x >= 0) {
-						SetBottom(pt.y);
-						SetRight(pt.x);
+
+		if (m_dest) {
+			SetBottom(m_dest->GetTop());
+			SetRight(m_dest->GetLeft());
+		}
+		else {
+			if (IsLastSegment() && m_edgeModel->GetDestination()) {
+				CProMoBlockModel* destBlockModel = m_edgeModel->GetDestination();
+				if (destBlockModel) {
+					CProMoBlockView* destBlockView = destBlockModel->GetMainView();
+					if (destBlockView) {
+						CPoint pt = destBlockView->GetIntersection(GetRect().BottomRight(), GetRect().TopLeft());
+						// No intersection exists, set to block center and compute again
+						if (pt.x < 0) {
+							pt = destBlockView->GetIntersection(GetRect().TopLeft(), CPoint(destBlockView->GetRect().BottomRight() - destBlockView->GetRect().TopLeft()));
+						}
+						if (pt.x >= 0) {
+							SetBottom(pt.y);
+							SetRight(pt.x);
+						}
 					}
 				}
 			}
@@ -429,9 +475,9 @@ void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 
    ============================================================*/
 {
-
-	DrawLine(dc, rect);
-
+	if (m_visible) {
+		DrawLine(dc, rect);
+	}
 }
 
 int CProMoEdgeView::GetHitCode(const CPoint& point, const CRect& rect) const
@@ -651,9 +697,11 @@ CDiagramEntity* CProMoEdgeView::GetSource() const
 	if (m_source) {
 		return m_source;
 	}
-	if (IsFirstSegment()) {
-		if (GetModel()->GetSource()) {
-			return GetModel()->GetSource()->GetMainView();
+	if (m_edgeModel) {
+		if (IsFirstSegment()) {
+			if (m_edgeModel->GetSource()) {
+				return m_edgeModel->GetSource()->GetMainView();
+			}
 		}
 	}
 	return NULL;
@@ -674,9 +722,11 @@ CDiagramEntity* CProMoEdgeView::GetDestination() const
 	if (m_dest) {
 		return m_dest;
 	}
-	if (IsLastSegment()) {
-		if (GetModel()->GetDestination()) {
-			return GetModel()->GetDestination()->GetMainView();
+	if (m_edgeModel) {
+		if (IsLastSegment()) {
+			if (m_edgeModel->GetDestination()) {
+				return m_edgeModel->GetDestination()->GetMainView();
+			}
 		}
 	}
 	return NULL;
@@ -857,53 +907,70 @@ CProMoEdgeView* CProMoEdgeView::Split()
    ============================================================*/
 
 {
-	CDiagramEntity* newEntity = Clone();
-	
-	CProMoEdgeView* newEdge = dynamic_cast<CProMoEdgeView*>(newEntity);
+	if (m_edgeModel) {
+		CDiagramEntity* newEntity = Clone();
 
-	if (newEdge) {
-		//compute the length and position of the new edge
-		CRect newEdgeRect(GetRect());
-		newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
-		newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
-		newEdge->Select(FALSE);
-		CProMoBlockModel* sourceBlockModel = GetModel()->GetSource();
-		CProMoBlockModel* destBlockModel = GetModel()->GetDestination();
-		//update edge links
-		newEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
-		newEdge->SetSourceEdge(this);
-		if (destBlockModel) {
-			newEdge->SetDestinationBlock(destBlockModel->GetMainView());
+		CProMoEdgeView* newEdge = dynamic_cast<CProMoEdgeView*>(newEntity);
+
+		if (newEdge) {
+			//compute the length and position of the new edge
+			CRect newEdgeRect(GetRect());
+			newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
+			newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
+			newEdge->Select(FALSE);
+			CProMoBlockModel* sourceBlockModel = m_edgeModel->GetSource();
+			CProMoBlockModel* destBlockModel = m_edgeModel->GetDestination();
+			//update edge links
+			newEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
+			newEdge->SetSourceEdge(this);
+			if (destBlockModel) {
+				newEdge->SetDestinationBlock(destBlockModel->GetMainView());
+			}
+			if (sourceBlockModel) {
+				newEdge->SetSourceBlock(sourceBlockModel->GetMainView());
+			}
+			newEdge->SetRect(newEdgeRect);
+			//clear duplicated properties
+			newEdge->SetTitle(_T(""));
+			return newEdge;
 		}
-		if (sourceBlockModel) {
-			newEdge->SetSourceBlock(sourceBlockModel->GetMainView());
-		}
-		newEdge->SetRect(newEdgeRect);
-		//clear duplicated properties
-		newEdge->SetTitle(_T(""));
-		return newEdge;
 	}
 	return NULL;
 	
 }
 
-CProMoEdgeModel* CProMoEdgeView::GetModel() const
+void CProMoEdgeView::AutoResize()
+/* ============================================================
+	Function :		CProMoEdgeView::AutoResize
+	Description :	Automatically resizes edges. Not implemented
+					for this class.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+
+}
+
+CProMoModel* CProMoEdgeView::GetModel() const
 /* ============================================================
 	Function :		CProMoEdgeView::GetModel
 	Description :	Returns a pointer to the model of this
 					edge
 	Access :		Public
 
-	Return :		CProMoEdgeModel*	-	A pointer to the
+	Return :		CProMoModel*		-	A pointer to the
 											model
 	Parameters :	none
 
    ============================================================*/
 {
-	return m_edgemodel;
+	return m_edgeModel;
 }
 
-void CProMoEdgeView::SetModel(CProMoEdgeModel* model)
+void CProMoEdgeView::SetModel(CProMoModel* model)
 /* ============================================================
 	Function :		CProMoEdgeView::SetModel
 	Description :	Makes the object being passed as input
@@ -911,24 +978,25 @@ void CProMoEdgeView::SetModel(CProMoEdgeModel* model)
 	Access :		Protected
 
 	Return :		void
-	Parameters :	CProMoEdgeModel* block	-	the object that
+	Parameters :	CProMoModel* model		-	the object that
 												should be the
 												model
 
    ============================================================*/
 {
-	if (m_edgemodel != model) {
-		CProMoEdgeModel* oldModel = m_edgemodel;
-		m_edgemodel = model;
+	CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model);
+	if (m_edgeModel != edgeModel) {
+		CProMoEdgeModel* oldModel = m_edgeModel;
+		m_edgeModel = edgeModel;
 		
 		//link this class to the new model
-		if (model) {
-			model->LinkView(this);
+		if (edgeModel) {
+			edgeModel->LinkView(this);
 			if (m_source) {
-				m_source->SetModel(model);
+				m_source->SetModel(edgeModel);
 			}
 			if (m_dest) {
-				m_dest->SetModel(model);
+				m_dest->SetModel(edgeModel);
 			}
 		}
 		//unlink this class from the old model
@@ -957,34 +1025,36 @@ void CProMoEdgeView::SetSourceEdge(CProMoEdgeView* source)
 
    ============================================================*/
 {
-	//save the old source edge view
-	CProMoEdgeView* oldSourceView = m_source;
+	if (m_edgeModel) {
+		//save the old source edge view
+		CProMoEdgeView* oldSourceView = m_source;
 
-	// the source edge view has changed
+		// the source edge view has changed
 
-	if (source != oldSourceView) {
+		if (source != oldSourceView) {
 
-		if (source) {
-			m_source = source;
-			source->SetDestinationEdge(this);
-			
-			CProMoBlockModel* oldSourceModel = source->GetModel()->GetSource();
-			source->SetModel(GetModel());
-			source->GetModel()->SetSource(oldSourceModel);
+			if (source) {
+				m_source = source;
+				source->SetDestinationEdge(this);
+
+				CProMoBlockModel* oldSourceModel = ((CProMoEdgeModel*)source->GetModel())->GetSource();
+				source->SetModel(GetModel());
+				((CProMoEdgeModel*)source->GetModel())->SetSource(oldSourceModel);
+			}
+
+			else {
+				m_source = NULL;
+
+				CProMoBlockModel* oldDestModel = m_edgeModel->GetDestination();
+				m_edgeModel->SetDestination(NULL);
+				SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
+				m_edgeModel->SetDestination(oldDestModel);
+			}
+
+			if (oldSourceView) {
+				oldSourceView->m_dest = NULL;
+			}
 		}
-
-		else {
-			m_source = NULL;
-			
-			CProMoBlockModel* oldDestModel = GetModel()->GetDestination();
-			GetModel()->SetDestination(NULL);
-			SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
-			GetModel()->SetDestination(oldDestModel);
-		}
-
-		if (oldSourceView) {
-			oldSourceView->m_dest = NULL;
-		}	
 	}
 }
 
@@ -1003,13 +1073,13 @@ void CProMoEdgeView::SetSourceBlock(CProMoBlockView* source)
 
    ============================================================*/
 {
-	if (source) {
-		//connect the elements at the model level
-		GetModel()->SetSource(source->GetModel());
-	}
-	else {
-		if (GetModel()) {
-			GetModel()->SetSource(NULL);
+	if (m_edgeModel) {
+		if (source) {
+			//connect the elements at the model level
+			m_edgeModel->SetSource((CProMoBlockModel*)(source->GetModel()));
+		}
+		else {
+			m_edgeModel->SetSource(NULL);
 		}
 	}
 }
@@ -1031,35 +1101,36 @@ void CProMoEdgeView::SetDestinationEdge(CProMoEdgeView* destination)
 
    ============================================================*/
 {
-	//save the old source edge view
-	CProMoEdgeView* oldDestView = m_dest;
+	if (m_edgeModel) {
+		//save the old source edge view
+		CProMoEdgeView* oldDestView = m_dest;
 
-	if (oldDestView != destination) {
-		if (destination) {
-			m_dest = destination;
-			destination->SetSourceEdge(this);
+		if (oldDestView != destination) {
+			if (destination) {
+				m_dest = destination;
+				destination->SetSourceEdge(this);
 
-			CProMoBlockModel* oldDestModel = destination->GetModel()->GetDestination();
-			destination->SetModel(GetModel());
-			destination->GetModel()->SetDestination(oldDestModel);
-			
-		}
+				CProMoBlockModel* oldDestModel = ((CProMoEdgeModel*)destination->GetModel())->GetDestination();
+				destination->SetModel(GetModel());
+				((CProMoEdgeModel*)destination->GetModel())->SetDestination(oldDestModel);
 
-		else {
-			m_dest = NULL;
-			
-			CProMoBlockModel* oldSourceModel = GetModel()->GetSource();
-			GetModel()->SetSource(NULL);
-			SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
-			GetModel()->SetSource(oldSourceModel);
-		}
+			}
 
-		// the source edge view has changed
-		if (oldDestView) {
-			oldDestView->m_source = NULL;
+			else {
+				m_dest = NULL;
+
+				CProMoBlockModel* oldSourceModel = m_edgeModel->GetSource();
+				m_edgeModel->SetSource(NULL);
+				SetModel(dynamic_cast<CProMoEdgeModel*>(GetModel()->Clone()));
+				m_edgeModel->SetSource(oldSourceModel);
+			}
+
+			// the source edge view has changed
+			if (oldDestView) {
+				oldDestView->m_source = NULL;
+			}
 		}
 	}
-
 }
 
 void CProMoEdgeView::SetDestinationBlock(CProMoBlockView* destination)
@@ -1079,14 +1150,14 @@ void CProMoEdgeView::SetDestinationBlock(CProMoBlockView* destination)
 
    ============================================================*/
 {
-	if (destination) {
-		//connect the elements at the model level
-		GetModel()->SetDestination(destination->GetModel());
+	if (m_edgeModel) {
+		if (destination) {
+			//connect the elements at the model level
+			m_edgeModel->SetDestination((CProMoBlockModel*)(destination->GetModel()));
 
-	}
-	else {
-		if (GetModel()) {
-			GetModel()->SetDestination(NULL);
+		}
+		else {
+			m_edgeModel->SetDestination(NULL);
 		}
 	}
 
@@ -1157,7 +1228,9 @@ CString CProMoEdgeView::GetDefaultGetString() const
 		CFileParser::EncodeString(destString);
 	}
 
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)sourceString, (LPCTSTR)destString);
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s,%i,%i,%i,%i,%i"), 
+		(LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)sourceString, (LPCTSTR)destString, m_lockFlags,
+		m_bkColor, m_lineColor, m_lineWidth, m_lineStyle);
 
 	return str;
 
@@ -1188,7 +1261,7 @@ BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
 
 		int size = tok->GetSize();
 
-		if (size >= 7)
+		if (size >= 10)
 		{
 			CString name;
 			double left;
@@ -1197,6 +1270,10 @@ BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
 			double bottom;
 			CString title;
 			int group;
+			CString model;
+			CString source;
+			CString dest;
+
 			int count = 0;
 
 			tok->GetAt(count++, name);
@@ -1206,6 +1283,9 @@ BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
 			tok->GetAt(count++, bottom);
 			tok->GetAt(count++, title);
 			tok->GetAt(count++, group);
+			tok->GetAt(count++, model);
+			tok->GetAt(count++, source);
+			tok->GetAt(count++, dest);
 
 			CDiagramEntity::SetRect(left, top, right, bottom);
 
@@ -1215,6 +1295,27 @@ BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
 			SetTitle(title);
 			SetName(name);
 			SetGroup(group);
+			
+			// missing style attributes should not prevent the block from loading
+			if (size >= 15) {
+				int lockFlags;
+				COLORREF bkColor;
+				COLORREF lineColor;
+				int lineWidth;
+				int lineStyle;
+				
+				tok->GetAt(count++, lockFlags);
+				tok->GetAt(count++, bkColor);
+				tok->GetAt(count++, lineColor);
+				tok->GetAt(count++, lineWidth);
+				tok->GetAt(count++, lineStyle);
+				
+				m_bkColor = bkColor;
+				m_lineColor = lineColor;
+				m_lineWidth = lineWidth;
+				m_lineStyle = lineStyle;
+				m_lockFlags = lockFlags;
+			}
 
 			result = TRUE;
 		}
@@ -1428,7 +1529,901 @@ void CProMoEdgeView::LinkLabel(CProMoLabel* label)
 
    ============================================================*/
 {
-	if (label) {
-		GetModel()->LinkLabel(label);
+	if (label && m_edgeModel) {
+		m_edgeModel->LinkLabel(label);
 	}
+}
+
+void CProMoEdgeView::OnLabelChanged(CProMoLabel* label)
+/* ============================================================
+	Function :		CProMoEdgeView::OnLabelChanged
+	Description :	Notification that a label has changed.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoLabel* label	-	Label that changed.
+
+	Usage :			Can be called by a label to notify the
+					view that it changed, and to trigger UI
+					updates. Currently not used.
+
+   ============================================================*/
+{
+	
+}
+
+BOOL CProMoEdgeView::IsLocked(const unsigned int& flag) const
+/* ============================================================
+	Function :		CProMoEdgeView::IsLocked
+	Description :	Returns if the specified property (or
+					combination of properties) is locked
+
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the
+											property specified
+											is locked
+	Parameters :	unsigned int& flag	-	The property (or
+											combination) to
+											check
+
+   ============================================================*/
+{
+	return (m_lockFlags & flag) != 0;
+}
+
+unsigned int CProMoEdgeView::GetLock() const
+/* ============================================================
+	Function :		CProMoEdgeView::IsLocked
+	Description :	Returns the specified property (or
+					combination of properties)
+
+	Access :		Public
+
+	Return :		unsigned int& flag	-	The property (or
+											combination) being
+											locked
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lockFlags;
+}
+
+void CProMoEdgeView::SetLock(const unsigned int& flag)
+/* ============================================================
+	Function :		CProMoEdgeView::SetLock
+	Description :	Locks the specified property (or combination
+					of properties)
+
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& flag	-	The property (or
+											combination) to
+											lock
+
+   ============================================================*/
+{
+	m_lockFlags = flag;
+}
+
+CString CProMoEdgeView::GetFontName() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetFontName()
+	Description :	Returns the name of the font used to
+					display the labels
+	Access :		Public
+
+	Return :		CString		-	The name of the font used
+									to display the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	CString fontName;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTNAME)) {
+					continue;
+				}
+				CString currValue = label->GetFontName();
+				if (fontName.IsEmpty()) {
+					fontName = currValue;
+				}
+				else if (fontName != currValue) {
+					return CString();
+				}
+			}
+		}
+	}
+	return fontName;
+}
+
+unsigned int CProMoEdgeView::GetFontSize() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetFontSize()
+	Description :	Returns the size of the font used to
+					display the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The size of the font used
+										to display the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int fontSize = 0;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTSIZE)) {
+					continue;
+				}
+				unsigned int currValue = label->GetFontSize();
+				if (fontSize > 0) {
+					fontSize = currValue;
+				}
+				else if (fontSize != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return fontSize;
+}
+
+unsigned int CProMoEdgeView::GetFontWeight() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetFontWeight()
+	Description :	Returns the weight of the font used to
+					display the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The weight of the font used
+										to display the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int fontWeight = 0;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetFontWeight();
+				if (fontWeight > 0) {
+					fontWeight = currValue;
+				}
+				else if (fontWeight != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return fontWeight;
+}
+
+BOOL CProMoEdgeView::IsFontItalic() const
+/* ============================================================
+	Function :		CProMoEdgeView::IsFontItalic()
+	Description :	Returns if the font used to display the
+					labels are in italic
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the label is in
+									italic
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL italic = FALSE;
+	BOOL hasValue = FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTITALIC))
+					continue;
+
+				BOOL currValue = label->IsFontItalic();
+				if (!hasValue) {
+					italic = currValue;
+					hasValue = TRUE;
+				}
+				else if (italic != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+	return italic;
+}
+
+BOOL CProMoEdgeView::IsFontUnderline() const
+/* ============================================================
+	Function :		CProMoEdgeView::IsFontUnderline()
+	Description :	Returns if the font used to display the
+					labels are underlined
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the label is
+									underlined
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL underline = FALSE;
+	BOOL hasValue = FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTUNDERLINE))
+					continue;
+
+				BOOL currValue = label->IsFontUnderline();
+				if (!hasValue) {
+					underline = currValue;
+					hasValue = TRUE;
+				}
+				else if (underline != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+	return underline;
+}
+
+BOOL CProMoEdgeView::IsFontStrikeOut() const
+/* ============================================================
+	Function :		CProMoEdgeView::IsFontStrikeOut()
+	Description :	Returns if the font used to display the
+					labels are stroken out
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the label is
+									stroken out
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL strikeOut = FALSE;
+	BOOL hasValue = FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT))
+					continue;
+
+				BOOL currValue = label->IsFontStrikeOut();
+				if (!hasValue) {
+					strikeOut = currValue;
+					hasValue = TRUE;
+				}
+				else if (strikeOut != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+	return strikeOut;
+}
+
+COLORREF CProMoEdgeView::GetTextColor() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetTextColor()
+	Description :	Returns the color of the text in the labels
+	Access :		Public
+
+	Return :		COLORREF	-	The color of the text in
+									the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	COLORREF textColor = RGB(0, 0, 0);
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
+					continue;
+				}
+				COLORREF currValue = label->GetTextColor();
+				if (textColor > 0) {
+					textColor = currValue;
+				}
+				else if (textColor != currValue) {
+					return RGB(0, 0, 0);
+				}
+			}
+		}
+	}
+	return textColor;
+}
+
+COLORREF CProMoEdgeView::GetBkColor() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetBkColor()
+	Description :	Returns the background color of the block
+	Access :		Public
+
+	Return :		COLORREF	-	The background color of the
+									block
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_bkColor;
+}
+
+unsigned int CProMoEdgeView::GetTextAlignment() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetTextAlignment()
+	Description :	Returns the alignment of the text in the
+					labels
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the labels
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetTextAlignment();
+				if (alignment > 0) {
+					alignment = currValue;
+				}
+				else if (alignment != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return alignment;
+}
+
+BOOL CProMoEdgeView::IsVisible() const
+/* ============================================================
+	Function :		CProMoEdgeView::IsVisible()
+	Description :	Returns if the edge is visible
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the block is
+									visible
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_visible;
+}
+
+unsigned int CProMoEdgeView::GetBkMode() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetBkMode()
+	Description :	Returns the background style of the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The background style of
+										the labels
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int bkMode = TRANSPARENT;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetBkMode();
+				if (bkMode > 0) {
+					bkMode = currValue;
+				}
+				else if (bkMode != currValue) {
+					return TRANSPARENT;
+				}
+			}
+		}
+	}
+	return bkMode;
+}
+
+COLORREF CProMoEdgeView::GetLineColor() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetLineColor()
+	Description :	Returns the line color of the edge
+	Access :		Public
+
+	Return :		COLORREF	-	The line color of the
+									edge
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lineColor;
+}
+
+unsigned int CProMoEdgeView::GetLineWidth() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetLineWidth()
+	Description :	Returns the line width of the edge
+	Access :		Public
+
+	Return :		unsigned int	-	The line width of the
+										edge
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lineWidth;
+}
+
+unsigned int CProMoEdgeView::GetLineStyle() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetLineStyle()
+	Description :	Returns the line style of the edge
+	Access :		Public
+
+	Return :		unsigned int	-	The line style of the
+										edge
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lineStyle;
+}
+
+// Setters
+BOOL CProMoEdgeView::SetFontName(const CString& name)
+/* ============================================================
+	Function :		CProMoEdgeView::SetFontName()
+	Description :	Sets the name of the font used to display
+					the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	CString& name		-	The name of
+												the font
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTNAME))
+		return FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTNAME)) {
+					continue;
+				}
+				result &= label->SetFontName(name);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetFontSize(const unsigned int& size)
+/* ============================================================
+	Function :		CProMoEdgeView::SetFontSize()
+	Description :	Sets the size of the font used to display
+					the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& size		-	The size of
+												the font
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTSIZE))
+		return FALSE;
+	if (size == 0)
+		return FALSE;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTSIZE)) {
+					continue;
+				}
+				result &= label->SetFontSize(size);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetFontWeight(const unsigned int& weight)
+/* ============================================================
+	Function :		CProMoEdgeView::SetFontWeight()
+	Description :	Sets the weight of the font used to display
+					the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& weight		-	The weight of
+												the font
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTWEIGHT))
+		return FALSE;
+	if (weight == 0)
+		return FALSE;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
+					continue;
+				}
+				result &= label->SetFontWeight(weight);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetFontItalic(const BOOL& italic)
+/* ============================================================
+	Function :		CProMoEdgeView::SetFontItalic()
+	Description :	Sets the font used to display the labels as
+					italic
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& italic				-	"TRUE" if the
+												font should be
+												in italic
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTITALIC))
+		return FALSE;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTITALIC)) {
+					continue;
+				}
+				result &= label->SetFontItalic(italic);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetFontUnderline(const BOOL& underline)
+/* ============================================================
+	Function :		CProMoEdgeView::SetFontUnderline()
+	Description :	Sets the font used to display the labels as
+					underlined
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& underline			-	"TRUE" if the
+												font should be
+												underlined
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTUNDERLINE))
+		return FALSE;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTUNDERLINE)) {
+					continue;
+				}
+				result &= label->SetFontUnderline(underline);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetFontStrikeOut(const BOOL& strikeOut)
+/* ============================================================
+	Function :		CProMoEdgeView::SetFontStrikeOut()
+	Description :	Sets the font used to display the labels as
+					stroken out
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& strikeOut			-	"TRUE" if the
+												font should be
+												stroken out
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTSTRIKEOUT))
+		return FALSE;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT)) {
+					continue;
+				}
+				result &= label->SetFontStrikeOut(strikeOut);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetTextColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoEdgeView::SetTextColor()
+	Description :	Sets the color of the text in the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	COLORREF& color			-	The color of
+												the text in
+												the label
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_TEXTCOLOR))
+		return FALSE;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
+					continue;
+				}
+				result &= label->SetTextColor(color);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetBkColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoEdgeView::SetBkColor()
+	Description :	Sets the background color of the block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	COLORREF& color			-	The background
+												color of the
+												block
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_BKCOLOR))
+		return FALSE;
+	m_bkColor = color;
+	return TRUE;
+}
+
+BOOL CProMoEdgeView::SetTextAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoEdgeView::SetTextAlignment()
+	Description :	Sets the alignment of the text in the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the labels
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				result &= label->SetTextAlignment(alignment);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetVisible(const BOOL& visible)
+/* ============================================================
+	Function :		CProMoEdgeView::SetVisible()
+	Description :	Sets whether the block should be visible
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& underline			-	"TRUE" if the
+												block should be
+												visible
+	Usage:			The function should be used to hide blocks
+					that are not relevant. Note that an
+					invisible block can still be selected and
+					moved by the user. To prevent that, invoke
+					SetLock with PROMO_LOCK_SELECTION
+
+   ============================================================*/
+{
+	m_visible = visible;
+	return TRUE;
+}
+
+BOOL CProMoEdgeView::SetBkMode(const unsigned int& mode)
+/* ============================================================
+	Function :		CProMoEdgeView::SetBkMode()
+	Description :	Sets the background style of the labels
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the operation
+											succeeded
+	Parameters :	unsigned int& model	-	The background style of
+											the labels
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_BKMODE))
+		return FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_BKMODE)) {
+					continue;
+				}
+				result &= label->SetBkMode(mode);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetLineColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoEdgeView::SetLineColor()
+	Description :	Sets the line color of the edge
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	COLORREF& color			-	The line color
+												of the edge
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_LINECOLOR))
+		return FALSE;
+	m_lineColor = color;
+	return TRUE;
+}
+
+BOOL CProMoEdgeView::SetLineWidth(const unsigned int& width)
+/* ============================================================
+	Function :		CProMoEdgeView::SetLineWidth()
+	Description :	Sets the line width of the edge
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& width		-	The line width
+												of the block
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_LINEWIDTH))
+		return FALSE;
+	m_lineWidth = width;
+	return TRUE;
+}
+
+BOOL CProMoEdgeView::SetLineStyle(const unsigned int& style)
+/* ============================================================
+	Function :		CProMoEdgeView::SetLineStyle()
+	Description :	Sets the line style of the edge
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& style		-	The line style
+												of the edge
+
+	Usage:			If the line width is greater than 1, the
+					line style is ignored and the line is drawn
+					as solid. Otherwise, the line style is used.
+					The style should be one of the
+					PS_* constants defined in Wingdi.h
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_LINESTYLE))
+		return FALSE;
+	m_lineStyle = style;
+	return TRUE;
 }

@@ -52,9 +52,21 @@ CProMoBlockView::CProMoBlockView()
 
    ============================================================*/
 {
-	m_blockmodel = NULL;
+	m_blockModel = NULL;
 	m_lockProportions = FALSE;
 	m_shape = SHAPE_CUSTOM;
+
+	m_lockFlags = 0;
+
+	m_bkColor = CLR_NONE;
+
+	m_lineColor = RGB(0, 0, 0);
+	m_lineWidth = 1;
+	m_lineStyle = PS_SOLID;
+
+	m_fillColor = RGB(255, 255, 255);
+	m_fillPattern = FALSE;
+	m_fillStyle = HS_CROSS;
 
 	SetConstraints(CSize(128, 32), CSize(-1, -1));
 	m_titleRect = CDoubleRect(0,0,0,0);
@@ -65,6 +77,7 @@ CProMoBlockView::CProMoBlockView()
 	CString title;
 	SetModel(new CProMoBlockModel());
 	m_target = FALSE;
+	m_visible = TRUE;
 
 	SetName(CProMoNameFactory::GetID());
 
@@ -109,10 +122,10 @@ void CProMoBlockView::Draw(CDC* dc, CRect rect)
 
    ============================================================*/
 {
-	ASSERT_VALID(this->GetModel());
-
-	DrawShape(dc, rect);
-	Highlight(dc, rect);
+	if (m_visible) {
+		DrawShape(dc, rect);
+		Highlight(dc, rect);
+	}
 }
 
 void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
@@ -127,13 +140,25 @@ void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
 
    ============================================================*/
 {
-	dc->SelectStockObject(BLACK_PEN);
-	dc->SelectStockObject(WHITE_BRUSH);
-
+	
 	CSize sz = GetMarkerSize();
 	CPoint pt;
 	pt.x = round((double)sz.cx * GetZoom());
 	pt.y = round((double)sz.cy * GetZoom());
+
+	CPen pen;
+	pen.CreatePen(m_lineStyle, m_lineWidth, m_lineColor);
+	CPen* pOldPen = dc->SelectObject(&pen);
+
+	CBrush brush;
+	if (m_fillPattern) {
+		brush.CreateHatchBrush(m_fillStyle, m_fillColor);
+	} else {
+		brush.CreateSolidBrush(m_fillColor);
+	}
+	CBrush* pOldBrush = dc->SelectObject(&brush);
+
+	COLORREF pOldBkColor = dc->SetBkColor(m_bkColor);
 
 	switch (GetShape()) {
 	case SHAPE_ELLIPSE:
@@ -162,6 +187,10 @@ void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
 	default:
 		dc->RoundRect(rect, pt);
 	}
+
+	dc->SelectObject(pOldPen);
+	dc->SelectObject(pOldBrush);
+	dc->SetBkColor(pOldBkColor);
 
 }
 
@@ -343,7 +372,7 @@ void CProMoBlockView::SetLeft(double left)
 
 	KeepElementsConnected(left, GetTop(), GetRight(), GetBottom()); 
 	CDiagramEntity::SetLeft(left);
-	RepositionLabels();
+	Reposition();
 
 }
 
@@ -368,7 +397,7 @@ void CProMoBlockView::SetRight(double right)
 
 	KeepElementsConnected(GetLeft(), GetTop(), right, GetBottom());
 	CDiagramEntity::SetRight(right);
-	RepositionLabels();
+	Reposition();
 }
 
 void CProMoBlockView::SetTop(double top)
@@ -390,7 +419,7 @@ void CProMoBlockView::SetTop(double top)
 {
 	KeepElementsConnected(GetLeft(), top, GetRight(), GetBottom());
 	CDiagramEntity::SetTop(top);
-	RepositionLabels();
+	Reposition();
 
 }
 
@@ -415,7 +444,7 @@ void CProMoBlockView::SetBottom(double bottom)
 
 	KeepElementsConnected(GetLeft(), GetTop(), GetRight(), bottom);
 	CDiagramEntity::SetBottom(bottom);
-	RepositionLabels();
+	Reposition();
 }
 
 void CProMoBlockView::SetTitle(CString title)
@@ -470,63 +499,63 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 
    ============================================================*/
 {
-	ASSERT_VALID(this->GetModel());
-	CProMoBlockModel* model = this->GetModel();
-	//note: reposition links
-	int i = 0;
+	if (m_blockModel) {
 
-	for (i = 0; i < model->GetIncomingEdges()->GetSize(); i++) {
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetIncomingEdges()->GetAt(i));
-		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
+		//note: reposition links
+		int i = 0;
 
-			//destination: bottomright
-			if (!edgeView->IsSelected()) {
-				CPoint newPoint = MapPointToNewRect(edgeView->GetRect().BottomRight(), left, top, right, bottom);
+		for (i = 0; i < m_blockModel->GetIncomingEdges()->GetSize(); i++) {
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_blockModel->GetIncomingEdges()->GetAt(i));
+			if (edgeModel) {
+				CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
 
-				edgeView->SetBottom(newPoint.y);
-				edgeView->SetRight(newPoint.x);
+				//destination: bottomright
+				if (!edgeView->IsSelected()) {
+					CPoint newPoint = MapPointToNewRect(edgeView->GetRect().BottomRight(), left, top, right, bottom);
 
+					edgeView->SetBottom(newPoint.y);
+					edgeView->SetRight(newPoint.x);
+
+				}
 			}
+
 		}
 
-	}
+		for (i = 0; i < m_blockModel->GetOutgoingEdges()->GetSize(); i++) {
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_blockModel->GetOutgoingEdges()->GetAt(i));
+			if (edgeModel) {
+				CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
+				//destination: topleft
+				if (!edgeView->IsSelected()) {
+					CPoint newPoint = MapPointToNewRect(edgeView->GetRect().TopLeft(), left, top, right, bottom);
 
-	for (i = 0; i < model->GetOutgoingEdges()->GetSize(); i++) {
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetOutgoingEdges()->GetAt(i));
-		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
-			//destination: topleft
-			if (!edgeView->IsSelected()) {
-				CPoint newPoint = MapPointToNewRect(edgeView->GetRect().TopLeft(), left, top, right, bottom);
-
-				edgeView->SetTop(newPoint.y);
-				edgeView->SetLeft(newPoint.x);
+					edgeView->SetTop(newPoint.y);
+					edgeView->SetLeft(newPoint.x);
+				}
 			}
+
 		}
 
-	}
+		double deltaY = GetTop() - top;
+		double deltaX = GetLeft() - left;
 
-	double deltaY = GetTop() - top;
-	double deltaX = GetLeft() - left;
+		if (deltaX != 0 || deltaY != 0) {
 
-	if (deltaX != 0 || deltaY != 0) {
-
-		for (i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
-			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
-			if (childModel) {
-				CProMoBlockView* childView = childModel->GetMainView();
-				if (childView) {
-					//move child nodes that are not selected (otherwise they will be moved twice)
-					if (!childView->IsSelected()) {
-						childView->SetRect(childView->GetLeft() - deltaX, childView->GetTop() - deltaY, childView->GetRight() - deltaX, childView->GetBottom() - deltaY);
+			for (i = 0; i < m_blockModel->GetSubBlocks()->GetSize(); i++) {
+				CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(m_blockModel->GetSubBlocks()->GetAt(i));
+				if (childModel) {
+					CProMoBlockView* childView = childModel->GetMainView();
+					if (childView) {
+						//move child nodes that are not selected (otherwise they will be moved twice)
+						if (!childView->IsSelected()) {
+							childView->SetRect(childView->GetLeft() - deltaX, childView->GetTop() - deltaY, childView->GetRight() - deltaX, childView->GetBottom() - deltaY);
+						}
 					}
 				}
 			}
 		}
-	}
 
-	
+	}
 
 }
 
@@ -589,68 +618,67 @@ void CProMoBlockView::RecomputeIntersectionLinks()
 
 	   ============================================================*/
 {
-	ASSERT_VALID(this->GetModel());
-	CProMoBlockModel* model = this->GetModel();
-	//recompute intersection for edges
-	int i = 0;
-	
-	for (i = 0; i < model->GetIncomingEdges()->GetSize(); i++) {
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetIncomingEdges()->GetAt(i));
-		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
-			//destination: bottomright
-			CPoint pt = GetIntersection(edgeView->GetRect().BottomRight(), edgeView->GetRect().TopLeft());
-			if (pt.x >= 0) {
-				edgeView->SetBottom(pt.y);
-				edgeView->SetRight(pt.x);
+	if (m_blockModel) {
+		//recompute intersection for edges
+		int i = 0;
+
+		for (i = 0; i < m_blockModel->GetIncomingEdges()->GetSize(); i++) {
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_blockModel->GetIncomingEdges()->GetAt(i));
+			if (edgeModel) {
+				CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
+				//destination: bottomright
+				CPoint pt = GetIntersection(edgeView->GetRect().BottomRight(), edgeView->GetRect().TopLeft());
+				if (pt.x >= 0) {
+					edgeView->SetBottom(pt.y);
+					edgeView->SetRight(pt.x);
+				}
+			}
+
+		}
+
+		for (i = 0; i < m_blockModel->GetOutgoingEdges()->GetSize(); i++) {
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_blockModel->GetOutgoingEdges()->GetAt(i));
+			if (edgeModel) {
+				CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
+				//destination: topleft
+				CPoint pt = GetIntersection(edgeView->GetRect().TopLeft(), edgeView->GetRect().BottomRight());
+				if (pt.x >= 0) {
+					edgeView->SetTop(pt.y);
+					edgeView->SetLeft(pt.x);
+				}
 			}
 		}
 
-	}
-
-	for (i = 0; i < model->GetOutgoingEdges()->GetSize(); i++) {
-		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(model->GetOutgoingEdges()->GetAt(i));
-		if (edgeModel) {
-			CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
-			//destination: topleft
-			CPoint pt = GetIntersection(edgeView->GetRect().TopLeft(), edgeView->GetRect().BottomRight());
-			if (pt.x >= 0) {
-				edgeView->SetTop(pt.y);
-				edgeView->SetLeft(pt.x);
+		//recompute intersection for sub-blocks
+		for (i = 0; i < m_blockModel->GetSubBlocks()->GetSize(); i++) {
+			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(m_blockModel->GetSubBlocks()->GetAt(i));
+			if (childModel) {
+				CProMoBlockView* childView = childModel->GetMainView();
+				if (childView) {
+					childView->RecomputeIntersectionLinks();
+				}
 			}
 		}
 	}
-	
-	//recompute intersection for sub-blocks
-	for (i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
-		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
-		if (childModel) {
-			CProMoBlockView* childView = childModel->GetMainView();
-			if (childView) {
-				childView->RecomputeIntersectionLinks();
-			}
-		}
-	}
-
 }
 
-CProMoBlockModel* CProMoBlockView::GetModel() const
+CProMoModel* CProMoBlockView::GetModel() const
 /* ============================================================
 	Function :		CProMoBlockView::GetModel
 	Description :	Returns a pointer to the model of this 
 					block
 	Access :		Public
 
-	Return :		CProMoBlockModel*	-	A pointer to the 
-											model
+	Return :		CProMoModel*	-	A pointer to the 
+										model
 	Parameters :	none
 
    ============================================================*/
 {
-	return m_blockmodel;
+	return m_blockModel;
 }
 
-void CProMoBlockView::SetModel(CProMoBlockModel* model)
+void CProMoBlockView::SetModel(CProMoModel* model)
 /* ============================================================
 	Function :		CProMoBlockView::SetModel
 	Description :	Makes the object being passed as input
@@ -658,19 +686,20 @@ void CProMoBlockView::SetModel(CProMoBlockModel* model)
 	Access :		Protected
 
 	Return :		void
-	Parameters :	CProMoBlockModel* block	-	the object that
-												should be the
-												model
+	Parameters :	CProMoModel* block	-	the object that
+											should be the
+											model
 
    ============================================================*/
 {
-	if (m_blockmodel != model) {
-		CProMoBlockModel* oldModel = m_blockmodel;
-		m_blockmodel = model;
+	CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(model);
+	if (m_blockModel != blockModel) {
+		CProMoBlockModel* oldModel = m_blockModel;
+		m_blockModel = blockModel;
 
 		//link this class to the new model
-		if (model) {
-			model->LinkView(this);
+		if (blockModel) {
+			blockModel->LinkView(this);
 		}
 		//unlink this class from the old model
 		if (oldModel) {
@@ -804,39 +833,39 @@ void CProMoBlockView::AutoResize()
 
    ============================================================*/
 {
-	ASSERT_VALID(this->GetModel());
-	CProMoBlockModel* model = this->GetModel();
-	for (int i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
-		CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
-		if (childModel) {
-			CProMoBlockView* childView = childModel->GetMainView();
-			if (childView) {
-				BOOL isSelected = childView->IsSelected();
-				childView->Select(TRUE);
-				if (childView->GetBottom() > this->GetBottom()) {
-					this->SetRect(GetLeft(), GetTop(), GetRight(), childView->GetBottom() + 5);
+	if (m_blockModel) {
+		for (int i = 0; i < m_blockModel->GetSubBlocks()->GetSize(); i++) {
+			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(m_blockModel->GetSubBlocks()->GetAt(i));
+			if (childModel) {
+				CProMoBlockView* childView = childModel->GetMainView();
+				if (childView) {
+					BOOL isSelected = childView->IsSelected();
+					childView->Select(TRUE);
+					if (childView->GetBottom() > this->GetBottom()) {
+						this->SetRect(GetLeft(), GetTop(), GetRight(), childView->GetBottom() + 5);
+					}
+					if (childView->GetRight() > this->GetRight()) {
+						this->SetRect(GetLeft(), GetTop(), childView->GetRight() + 5, GetBottom());
+					}
+					if (childView->GetTop() < this->GetTop()) {
+						this->SetRect(GetLeft(), childView->GetTop() - 5, GetRight(), GetBottom());
+					}
+					if (childView->GetLeft() < this->GetLeft()) {
+						this->SetRect(childView->GetLeft() - 5, GetTop(), GetRight(), GetBottom());
+					}
+					childView->Select(isSelected);
 				}
-				if (childView->GetRight() > this->GetRight()) {
-					this->SetRect(GetLeft(), GetTop(), childView->GetRight() + 5, GetBottom());
-				}
-				if (childView->GetTop() < this->GetTop()) {
-					this->SetRect(GetLeft(), childView->GetTop() - 5, GetRight(), GetBottom());
-				}
-				if (childView->GetLeft() < this->GetLeft()) {
-					this->SetRect(childView->GetLeft() - 5, GetTop(), GetRight(), GetBottom());
-				}
-				childView->Select(isSelected);
 			}
 		}
-	}
-	
-	if (model->GetParentBlock() != NULL) {
-		if (model->GetParentBlock()->GetMainView() != NULL) {
-			model->GetParentBlock()->GetMainView()->AutoResize();
+
+		if (m_blockModel->GetParentBlock() != NULL) {
+			if (m_blockModel->GetParentBlock()->GetMainView() != NULL) {
+				m_blockModel->GetParentBlock()->GetMainView()->AutoResize();
+			}
 		}
-	}
-	else {
-		this->RecomputeIntersectionLinks();
+		else {
+			this->RecomputeIntersectionLinks();
+		}
 	}
 }
 
@@ -868,7 +897,9 @@ CString CProMoBlockView::GetDefaultGetString() const
 	CString name = GetName();
 	CFileParser::EncodeString(name);
 	
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s"), (LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model);
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i"), 
+		(LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, m_lockFlags,
+		m_bkColor, m_lineColor, m_lineWidth, m_lineStyle, m_fillColor, m_fillPattern, m_fillStyle);
 	
 	return str;
 
@@ -920,7 +951,7 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 	if (tok) {
 
 		int size = tok->GetSize();
-		if (size >= 7)
+		if (size >= 8)
 		{
 			CString name;
 			double left;
@@ -929,6 +960,8 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 			double bottom;
 			CString title;
 			int group;
+			CString model;
+
 			int count = 0;
 
 			tok->GetAt(count++, name);
@@ -938,6 +971,7 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 			tok->GetAt(count++, bottom);
 			tok->GetAt(count++, title);
 			tok->GetAt(count++, group);
+			tok->GetAt(count++, model);
 
 			SetRect(left, top, right, bottom);
 
@@ -947,6 +981,36 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 			SetTitle(title);
 			SetName(name);
 			SetGroup(group);
+
+			// missing style attributes should not prevent the block from loading
+			if (size >= 16) {
+				int lockFlags;
+				COLORREF bkColor;
+				COLORREF lineColor;
+				int lineWidth;
+				int lineStyle;
+				COLORREF fillColor;
+				BOOL fillPattern;
+				int fillStyle;
+
+				tok->GetAt(count++, lockFlags);
+				tok->GetAt(count++, bkColor);
+				tok->GetAt(count++, lineColor);
+				tok->GetAt(count++, lineWidth);
+				tok->GetAt(count++, lineStyle);
+				tok->GetAt(count++, fillColor);
+				tok->GetAt(count++, fillPattern);
+				tok->GetAt(count++, fillStyle);
+
+				m_bkColor = bkColor;
+				m_lineColor = lineColor;
+				m_lineWidth = lineWidth;
+				m_lineStyle = lineStyle;
+				m_fillColor = fillColor;
+				m_fillPattern = fillPattern;
+				m_fillStyle = fillStyle;
+				m_lockFlags = lockFlags;
+			}
 
 			result = TRUE;
 		}
@@ -1156,11 +1220,14 @@ void CProMoBlockView::SetParentBlock(CProMoBlockView* parent)
 
    ============================================================*/
 {
-	if (parent) {
-		GetModel()->SetParentBlock(parent->GetModel());
-	}
-	else {
-		GetModel()->SetParentBlock(NULL);
+	if (m_blockModel) {
+		if (parent) {
+			CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(parent->GetModel());
+			m_blockModel->SetParentBlock(blockModel);
+		}
+		else {
+			m_blockModel->SetParentBlock(NULL);
+		}
 	}
 }
 
@@ -1176,8 +1243,10 @@ CProMoBlockView* CProMoBlockView::GetParentBlock() const
 
    ============================================================*/
 {
-	if (GetModel()->GetParentBlock()) {
-		return GetModel()->GetParentBlock()->GetMainView();
+	if (m_blockModel) {
+		if (m_blockModel->GetParentBlock()) {
+			return m_blockModel->GetParentBlock()->GetMainView();
+		}
 	}
 	return NULL;
 }
@@ -1193,7 +1262,9 @@ void CProMoBlockView::UnlinkAllSubBlocks()
 
    ============================================================*/
 {
-	GetModel()->UnlinkAllSubBlocks();
+	if (m_blockModel) {
+		m_blockModel->UnlinkAllSubBlocks();
+	}
 }
 
 CString CProMoBlockView::GetModelFromString(const CString& str)
@@ -1251,8 +1322,8 @@ void CProMoBlockView::LinkLabel(CProMoLabel* label)
 
    ============================================================*/
 {
-	if (label) {
-		GetModel()->LinkLabel(label);
+	if (label && m_blockModel) {
+		m_blockModel->LinkLabel(label);
 	}
 }
 
@@ -1425,23 +1496,20 @@ void CProMoBlockView::AdjustToLabel(CProMoLabel* label)
 	SetRect(rect.left, rect.top, rect.right, rect.bottom);
 }
 
-void CProMoBlockView::RepositionLabels()
+void CProMoBlockView::Reposition()
 /* ============================================================
-	Function :		CProMoBlockView::RepositionLabels
+	Function :		CProMoBlockView::Reposition
 	Description :	Repositions all the labels attached to the
 					block, such that the anchoring is preserved.
-	Access :		Protected
+	Access :		Public
 
 	Return :		void
 	Parameters :	CProMoLabel* label - the label to link
 
    ============================================================*/
 {
-	ASSERT_VALID(this->GetModel());
-	CProMoBlockModel* model = this->GetModel();
-
-	for (int i = 0; i < model->GetLabels()->GetSize(); i++) {
-		CProMoLabel* label = dynamic_cast<CProMoLabel*>(model->GetLabels()->GetAt(i));
+	for (int i = 0; i < m_blockModel->GetLabels()->GetSize(); i++) {
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(m_blockModel->GetLabels()->GetAt(i));
 		if (label) {
 			//reposition labels
 			if (!label->IsSelected()) {
@@ -1450,3 +1518,989 @@ void CProMoBlockView::RepositionLabels()
 		}
 	}
 }
+
+BOOL CProMoBlockView::IsLocked(const unsigned int& flag) const
+/* ============================================================
+	Function :		CProMoBlockView::IsLocked
+	Description :	Returns if the specified property (or
+					combination of properties) is locked
+
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the
+											property specified
+											is locked
+	Parameters :	unsigned int& flag	-	The property (or
+											combination) to
+											check
+
+   ============================================================*/
+{
+	return (m_lockFlags & flag) != 0;
+}
+
+unsigned int CProMoBlockView::GetLock() const
+/* ============================================================
+	Function :		CProMoBlockView::IsLocked
+	Description :	Returns the specified property (or
+					combination of properties)
+
+	Access :		Public
+
+	Return :		unsigned int& flag	-	The property (or
+											combination) being
+											locked
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lockFlags;
+}
+
+void CProMoBlockView::SetLock(const unsigned int& flag)
+/* ============================================================
+	Function :		CProMoBlockView::SetLock
+	Description :	Locks the specified property (or combination
+					of properties)
+
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& flag	-	The property (or
+											combination) to
+											lock
+
+   ============================================================*/
+{
+	m_lockFlags = flag;
+}
+
+CString CProMoBlockView::GetFontName() const
+/* ============================================================
+	Function :		CProMoBlockView::GetFontName()
+	Description :	Returns the name of the font used to
+					display the labels
+	Access :		Public
+
+	Return :		CString		-	The name of the font used
+									to display the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	CString fontName;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTNAME)) {
+					continue;
+				}
+				CString currValue = label->GetFontName();
+				if (fontName.IsEmpty()) {
+					fontName = currValue;
+				}
+				else if (fontName != currValue ) {
+					return CString();
+				}
+			}
+		}	
+	}
+	return fontName;
+}
+
+unsigned int CProMoBlockView::GetFontSize() const
+/* ============================================================
+	Function :		CProMoBlockView::GetFontSize()
+	Description :	Returns the size of the font used to
+					display the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The size of the font used
+										to display the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int fontSize = 0;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTSIZE)) {
+					continue;
+				}
+				unsigned int currValue = label->GetFontSize();
+				if (fontSize > 0) {
+					fontSize = currValue;
+				}
+				else if (fontSize != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return fontSize;
+}
+
+unsigned int CProMoBlockView::GetFontWeight() const
+/* ============================================================
+	Function :		CProMoBlockView::GetFontWeight()
+	Description :	Returns the weight of the font used to
+					display the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The weight of the font used
+										to display the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int fontWeight = 0;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetFontWeight();
+				if (fontWeight > 0) {
+					fontWeight = currValue;
+				}
+				else if (fontWeight != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return fontWeight;
+}
+
+BOOL CProMoBlockView::IsFontItalic() const
+/* ============================================================
+	Function :		CProMoBlockView::IsFontItalic()
+	Description :	Returns if the font used to display the
+					labels are in italic
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the label is in
+									italic
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL italic = FALSE;
+	BOOL hasValue = FALSE;
+
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTITALIC))
+					continue;
+
+				BOOL currValue = label->IsFontItalic();
+				if (!hasValue) {
+					italic = currValue;
+					hasValue = TRUE;
+				}
+				else if (italic != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+	return italic;
+}
+
+BOOL CProMoBlockView::IsFontUnderline() const
+/* ============================================================
+	Function :		CProMoBlockView::IsFontUnderline()
+	Description :	Returns if the font used to display the
+					labels are underlined
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the label is
+									underlined
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL underline = FALSE;
+	BOOL hasValue = FALSE;
+
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTUNDERLINE))
+					continue;
+
+				BOOL currValue = label->IsFontUnderline();
+				if (!hasValue) {
+					underline = currValue;
+					hasValue = TRUE;
+				}
+				else if (underline != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+	return underline;
+}
+
+BOOL CProMoBlockView::IsFontStrikeOut() const
+/* ============================================================
+	Function :		CProMoBlockView::IsFontStrikeOut()
+	Description :	Returns if the font used to display the
+					labels are stroken out
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the label is
+									stroken out
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL strikeOut = FALSE;
+	BOOL hasValue = FALSE;
+
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT))
+					continue;
+
+				BOOL currValue = label->IsFontStrikeOut();
+				if (!hasValue) {
+					strikeOut = currValue;
+					hasValue = TRUE;
+				}
+				else if (strikeOut != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+	return strikeOut;
+}
+
+COLORREF CProMoBlockView::GetTextColor() const
+/* ============================================================
+	Function :		CProMoBlockView::GetTextColor()
+	Description :	Returns the color of the text in the labels
+	Access :		Public
+
+	Return :		COLORREF	-	The color of the text in
+									the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	COLORREF textColor = RGB(0, 0, 0);
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
+					continue;
+				}
+				COLORREF currValue = label->GetTextColor();
+				if (textColor > 0) {
+					textColor = currValue;
+				}
+				else if (textColor != currValue) {
+					return RGB(0,0,0);
+				}
+			}
+		}
+	}
+	return textColor;
+}
+
+COLORREF CProMoBlockView::GetBkColor() const
+/* ============================================================
+	Function :		CProMoBlockView::GetBkColor()
+	Description :	Returns the background color of the block
+	Access :		Public
+
+	Return :		COLORREF	-	The background color of the
+									block
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_bkColor;
+}
+
+unsigned int CProMoBlockView::GetTextAlignment() const
+/* ============================================================
+	Function :		CProMoBlockView::GetTextAlignment()
+	Description :	Returns the alignment of the text in the
+					labels
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the labels
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetTextAlignment();
+				if (alignment > 0) {
+					alignment = currValue;
+				}
+				else if (alignment != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return alignment;
+}
+
+BOOL CProMoBlockView::IsVisible() const
+/* ============================================================
+	Function :		CProMoBlockView::IsVisible()
+	Description :	Returns if the block is visible
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the block is
+									visible
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_visible;
+}
+
+unsigned int CProMoBlockView::GetBkMode() const
+/* ============================================================
+	Function :		CProMoBlockView::GetBkMode()
+	Description :	Returns the background style of the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The background style of
+										the labels
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int bkMode = TRANSPARENT;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetBkMode();
+				if (bkMode > 0) {
+					bkMode = currValue;
+				}
+				else if (bkMode != currValue) {
+					return TRANSPARENT;
+				}
+			}
+		}
+	}
+	return bkMode;
+}
+
+COLORREF CProMoBlockView::GetLineColor() const
+/* ============================================================
+	Function :		CProMoBlockView::GetLineColor()
+	Description :	Returns the line color of the block
+	Access :		Public
+
+	Return :		COLORREF	-	The line color of the
+									block
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lineColor;
+}
+
+unsigned int CProMoBlockView::GetLineWidth() const
+/* ============================================================
+	Function :		CProMoBlockView::GetLineWidth()
+	Description :	Returns the line width of the block
+	Access :		Public
+
+	Return :		unsigned int	-	The line width of the
+										block
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lineWidth;
+}
+
+unsigned int CProMoBlockView::GetLineStyle() const
+/* ============================================================
+	Function :		CProMoBlockView::GetLineStyle()
+	Description :	Returns the line style of the block
+	Access :		Public
+
+	Return :		unsigned int	-	The line style of the
+										block
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_lineStyle;
+}
+
+COLORREF CProMoBlockView::GetFillColor() const
+/* ============================================================
+	Function :		CProMoBlockView::GetFillColor()
+	Description :	Returns the fill color of the block
+	Access :		Public
+
+	Return :		COLORREF	-	The fill color of the
+									block
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_fillColor;
+}
+
+BOOL CProMoBlockView::IsFillPattern() const
+/* ============================================================
+	Function :		CProMoBlockView::IsFillPattern()
+	Description :	Returns if the block should be filled with
+					a pattern
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the block should
+									be filled with a pattern
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_fillPattern;
+}
+
+unsigned int CProMoBlockView::GetFillStyle() const
+/* ============================================================
+	Function :		CProMoBlockView::GetFillStyle()
+	Description :	Returns the fill style of the block
+	Access :		Public
+
+	Return :		unsigned int	-	The fill style of the
+										block
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_fillStyle;
+}
+
+// Setters
+BOOL CProMoBlockView::SetFontName(const CString& name)
+/* ============================================================
+	Function :		CProMoBlockView::SetFontName()
+	Description :	Sets the name of the font used to display
+					the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	CString& name		-	The name of
+												the font
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTNAME))
+		return FALSE;
+
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTNAME)) {
+					continue;
+				}
+				result &= label->SetFontName(name);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetFontSize(const unsigned int& size)
+/* ============================================================
+	Function :		CProMoBlockView::SetFontSize()
+	Description :	Sets the size of the font used to display
+					the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& size		-	The size of
+												the font
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTSIZE))
+		return FALSE;
+	if (size == 0)
+		return FALSE;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTSIZE)) {
+					continue;
+				}
+				result &= label->SetFontSize(size);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetFontWeight(const unsigned int& weight)
+/* ============================================================
+	Function :		CProMoBlockView::SetFontWeight()
+	Description :	Sets the weight of the font used to display
+					the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& weight		-	The weight of
+												the font
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTWEIGHT))
+		return FALSE;
+	if (weight == 0)
+		return FALSE;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
+					continue;
+				}
+				result &= label->SetFontWeight(weight);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetFontItalic(const BOOL& italic)
+/* ============================================================
+	Function :		CProMoBlockView::SetFontItalic()
+	Description :	Sets the font used to display the labels as
+					italic
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& italic				-	"TRUE" if the
+												font should be
+												in italic
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTITALIC))
+		return FALSE;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTITALIC)) {
+					continue;
+				}
+				result &= label->SetFontItalic(italic);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetFontUnderline(const BOOL& underline)
+/* ============================================================
+	Function :		CProMoBlockView::SetFontUnderline()
+	Description :	Sets the font used to display the labels as
+					underlined
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& underline			-	"TRUE" if the
+												font should be
+												underlined
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTUNDERLINE))
+		return FALSE;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTUNDERLINE)) {
+					continue;
+				}
+				result &= label->SetFontUnderline(underline);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetFontStrikeOut(const BOOL& strikeOut)
+/* ============================================================
+	Function :		CProMoBlockView::SetFontStrikeOut()
+	Description :	Sets the font used to display the labels as
+					stroken out
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& strikeOut			-	"TRUE" if the
+												font should be
+												stroken out
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_FONTSTRIKEOUT))
+		return FALSE;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT)) {
+					continue;
+				}
+				result &= label->SetFontStrikeOut(strikeOut);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetTextColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoBlockView::SetTextColor()
+	Description :	Sets the color of the text in the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	COLORREF& color			-	The color of
+												the text in
+												the label
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_TEXTCOLOR))
+		return FALSE;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
+					continue;
+				}
+				result &= label->SetTextColor(color);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetBkColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoBlockView::SetBkColor()
+	Description :	Sets the background color of the block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	COLORREF& color			-	The background
+												color of the
+												block
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_BKCOLOR))
+		return FALSE;
+	m_bkColor = color;
+	return TRUE;
+}
+
+BOOL CProMoBlockView::SetTextAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoBlockView::SetTextAlignment()
+	Description :	Sets the alignment of the text in the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the labels
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+	
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				result &= label->SetTextAlignment(alignment);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetVisible(const BOOL& visible)
+/* ============================================================
+	Function :		CProMoBlockView::SetVisible()
+	Description :	Sets whether the block should be visible
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& underline			-	"TRUE" if the
+												block should be
+												visible
+	Usage:			The function should be used to hide blocks
+					that are not relevant. Note that an
+					invisible block can still be selected and
+					moved by the user. To prevent that, invoke
+					SetLock with PROMO_LOCK_SELECTION
+
+   ============================================================*/
+{
+	m_visible = visible;
+	return TRUE;
+}
+
+BOOL CProMoBlockView::SetBkMode(const unsigned int& mode)
+/* ============================================================
+	Function :		CProMoBlockView::SetBkMode()
+	Description :	Sets the background style of the labels
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the operation
+											succeeded
+	Parameters :	unsigned int& model	-	The background style of
+											the labels
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_BKMODE))
+		return FALSE;
+	
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_BKMODE)) {
+					continue;
+				}
+				result &= label->SetBkMode(mode);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetLineColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoBlockView::SetLineColor()
+	Description :	Sets the line color of the block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	COLORREF& color			-	The line color
+												of the block
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_LINECOLOR))
+		return FALSE;
+	m_lineColor = color;
+	return TRUE;
+}
+
+BOOL CProMoBlockView::SetLineWidth(const unsigned int& width)
+/* ============================================================
+	Function :		CProMoBlockView::SetLineWidth()
+	Description :	Sets the line width of the block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& width		-	The line width
+												of the block
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_LINEWIDTH))
+		return FALSE;
+	m_lineWidth = width;
+	return TRUE;
+}
+
+BOOL CProMoBlockView::SetLineStyle(const unsigned int& style)
+/* ============================================================
+	Function :		CProMoBlockView::SetLineStyle()
+	Description :	Sets the line style of the block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& style		-	The line style
+												of the block
+
+	Usage:			If the line width is greater than 1, the
+					line style is ignored and the line is drawn
+					as solid. Otherwise, the line style is used.
+					The style should be one of the
+					PS_* constants defined in Wingdi.h
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_LINESTYLE))
+		return FALSE;
+	m_lineStyle = style;
+	return TRUE;
+}
+
+BOOL CProMoBlockView::SetFillColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoBlockView::SetFillColor()
+	Description :	Sets the fill color of the block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	COLORREF& color			-	The fill color
+												of the block
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_FILLCOLOR))
+		return FALSE;
+	m_fillColor = color;
+	return TRUE;
+}
+
+BOOL CProMoBlockView::SetFillPattern(const BOOL& pattern)
+/* ============================================================
+	Function :		CProMoBlockView::SetFillPattern()
+	Description :	Sets whether the fill style of the block is
+					patterned
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& pattern			-	"TRUE" if the
+												fill style 
+												should be
+												a pattern
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_FILLSTYLE))
+		return FALSE;
+	m_fillPattern = pattern;
+	return TRUE;
+}
+
+BOOL CProMoBlockView::SetFillStyle(const unsigned int& style)
+/* ============================================================
+	Function :		CProMoBlockView::SetFillStyle()
+	Description :	Sets the fill style of the block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& style		-	The fill style
+												of the block
+
+   ============================================================*/
+{
+	if (IsLocked(LOCK_FILLSTYLE))
+		return FALSE;
+	m_fillStyle = style;
+	return TRUE;
+}
+

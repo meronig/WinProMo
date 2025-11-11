@@ -10,28 +10,24 @@
 
 #include "../DiagramEditor/DiagramLine.h"
 #include "ProMoBlockView.h"
+#include "ProMoView.h"
 
 #define DEHT_CENTER		10
 
 class AFX_EXT_CLASS CProMoEdgeView :
-    public CDiagramLine
+    public CDiagramLine, public IProMoView
 {
 public:
     // Creation/initialization
     CProMoEdgeView();
     virtual ~CProMoEdgeView();
     
-    virtual	CDiagramEntity* Clone();
-    virtual void	Copy(CDiagramEntity* obj);
     static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
-
+    
     static CString GetSourceFromString(const CString& str);
     static CString GetDestinationFromString(const CString& str);
     static CString GetModelFromString(const CString& str);
     static CString GetNameFromString(const CString& str);
-
-
-    virtual CProMoEdgeModel* GetModel() const;
 
     // Edge-specific methods
     virtual void SetSource(CDiagramEntity *source);
@@ -42,17 +38,12 @@ public:
     virtual BOOL IsLastSegment() const;
     virtual CProMoEdgeView* Split();
 
-    virtual void LinkLabel(CProMoLabel* label);
- 
 protected:
     virtual void DrawLine(CDC* dc, CRect rect);
     virtual void DrawHead(CDC* dc, CRect rect, double size);
     virtual void DrawTail(CDC* dc, CRect rect, double size);
-    virtual void Reposition();
-    virtual void KeepElementsConnected(double left, double top, double right, double bottom);
-
+    
     // Model-view links
-    virtual void SetModel(CProMoEdgeModel* model);
     virtual void SetSourceEdge(CProMoEdgeView* source);
     virtual void SetSourceBlock(CProMoBlockView* source);
     virtual void SetDestinationEdge(CProMoEdgeView* destination);
@@ -61,10 +52,16 @@ protected:
     CProMoEdgeView* m_source;
     CProMoEdgeView* m_dest;
 
-    CProMoEdgeModel* m_edgemodel;	
+    CProMoEdgeModel* m_edgeModel;	
 
 private:
     BOOL m_propagating;
+    COLORREF		m_bkColor;
+    BOOL			m_visible;
+    unsigned int	m_lockFlags;
+    COLORREF		m_lineColor;
+    unsigned int	m_lineWidth;
+    unsigned int	m_lineStyle;
 
     class CScopedUpdate {
     public:
@@ -74,8 +71,63 @@ private:
         BOOL& m_flag;
     };
 
+    // Implements
+public:
+    virtual CProMoModel* GetModel() const;
+    virtual void AutoResize();
+    virtual void Reposition();
+
+    virtual BOOL IsLocked(const unsigned int& flag) const;
+    virtual unsigned int GetLock() const;
+    virtual void SetLock(const unsigned int& flag);
+
+    virtual CString GetFontName() const;
+    virtual unsigned int GetFontSize() const;
+    virtual unsigned int GetFontWeight() const;
+    virtual BOOL IsFontItalic() const;
+    virtual BOOL IsFontUnderline() const;
+    virtual BOOL IsFontStrikeOut() const;
+    virtual COLORREF GetTextColor() const;
+    virtual COLORREF GetBkColor() const;
+    virtual unsigned int GetBkMode() const;
+    virtual unsigned int GetTextAlignment() const;
+    virtual BOOL IsVisible() const;
+    //virtual void GetMargins(double& left, double& top, double& right, double& bottom) const;
+
+    virtual BOOL SetFontName(const CString& name);
+    virtual BOOL SetFontSize(const unsigned int& size);
+    virtual BOOL SetFontWeight(const unsigned int& weight);
+    virtual BOOL SetFontItalic(const BOOL& italic);
+    virtual BOOL SetFontUnderline(const BOOL& underline);
+    virtual BOOL SetFontStrikeOut(const BOOL& strikeOut);
+    virtual BOOL SetTextColor(const COLORREF& color);
+    virtual BOOL SetBkColor(const COLORREF& color);
+    virtual BOOL SetBkMode(const unsigned int& mode);
+    virtual BOOL SetTextAlignment(const unsigned int& alignment);
+    virtual BOOL SetVisible(const BOOL& visible);
+    //virtual void SetMargins(double left, double top, double right, double bottom);
+
+    virtual void LinkLabel(CProMoLabel* label);
+    virtual void OnLabelChanged(CProMoLabel* label);
+
+    virtual COLORREF GetLineColor() const;
+    virtual unsigned int GetLineWidth() const;
+    virtual unsigned int GetLineStyle() const;
+
+    virtual BOOL SetLineColor(const COLORREF& color);
+    virtual BOOL SetLineWidth(const unsigned int& width);
+    virtual BOOL SetLineStyle(const unsigned int& style);
+
+protected:
+    virtual void SetModel(CProMoModel* model);
+
+    virtual void KeepElementsConnected(double left, double top, double right, double bottom);
+
 // Overrides
 public:
+    virtual	CDiagramEntity* Clone();
+    virtual void	Copy(CDiagramEntity* obj);
+    
     static	CDiagramEntity* CreateFromString(const CString& str);
 
     virtual void	Draw(CDC* dc, CRect rect);

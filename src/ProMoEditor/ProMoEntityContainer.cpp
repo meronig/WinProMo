@@ -106,7 +106,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 		if (block){
 			// remove sub-blocks
 			CObArray subBlockModels;
-			subBlockModels.Append(*(block->GetModel()->GetSubBlocks()));
+			subBlockModels.Append(*(((CProMoBlockModel*)block->GetModel())->GetSubBlocks()));
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {
 				CProMoBlockModel* subBlockModel = NULL;
 				subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
@@ -115,7 +115,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 				}
 			}
 			// disconnect block from parent
-			if (block->GetModel()->GetParentBlock()) {
+			if (((CProMoBlockModel*)block->GetModel())->GetParentBlock()) {
 				//remove from parent
 				block->SetParentBlock(NULL);
 			}
@@ -373,7 +373,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 	ASSERT(block->GetModel());
 	newOrder->Add(block);
 	//check for connected incoming edges
-	CObArray* edges = block->GetModel()->GetIncomingEdges();
+	CObArray* edges = ((CProMoBlockModel*)block->GetModel())->GetIncomingEdges();
 	if (edges) {
 		for (int i = 0; i < edges->GetSize(); i++) {
 			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
@@ -409,7 +409,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 	}
 
 	//check for connected outgoing edges
-	edges = block->GetModel()->GetOutgoingEdges();
+	edges = ((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges();
 	if (edges) {
 		for (int i = 0; i < edges->GetSize(); i++) {
 			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
@@ -452,7 +452,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 		newOrder->Append(*labels);
 	}
 
-	CObArray *subBlockViews = block->GetModel()->GetSubBlocks();
+	CObArray *subBlockViews = ((CProMoBlockModel*)block->GetModel())->GetSubBlocks();
 
 	int max = GetSize();
 
@@ -495,14 +495,14 @@ void CProMoEntityContainer::Reorder()
 		if (obj) {
 			CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(obj);
 			if (blockView) {
-				if (blockView->GetModel()->GetParentBlock() == NULL) {
+				if (((CProMoBlockModel*)blockView->GetModel())->GetParentBlock() == NULL) {
 					ReorderR(blockView, &newOrder);
 				}
 			}
 			CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(obj);
 			if (edgeView) {
 				//edge is disconnected, so add it immediately
-				if (!(edgeView->GetModel()->GetSource() || edgeView->GetModel()->GetDestination())) {
+				if (!(((CProMoEdgeModel*)edgeView->GetModel())->GetSource() || ((CProMoEdgeModel*)edgeView->GetModel())->GetDestination())) {
 					newOrder.Add(edgeView);
 					if (edgeView->IsFirstSegment()) {
 						//add the labels

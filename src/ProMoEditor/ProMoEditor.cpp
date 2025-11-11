@@ -217,14 +217,14 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 						// new block
 						CProMoBlockView* newObj = dynamic_cast<CProMoBlockView*>(GetDrawingObject());
 						if (newObj) {
-							if (newObj->GetModel()->CanBeNestedBy(currObj->GetModel())) {
+							if (((CProMoBlockModel*)newObj->GetModel())->CanBeNestedBy((CProMoBlockModel*)currObj->GetModel())) {
 								return currObj;
 							}
 						}
 						// new edge
 						CProMoEdgeView* newEdge = dynamic_cast<CProMoEdgeView*>(GetDrawingObject());
 						if (newEdge) {
-							if (newEdge->GetModel()->CanConnectSource(currObj->GetModel())) {
+							if (((CProMoEdgeModel*)newEdge->GetModel())->CanConnectSource((CProMoBlockModel*)currObj->GetModel())) {
 								return currObj;
 							}
 						}
@@ -239,7 +239,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 							if (selObj) {
 								if (selObj->IsSelected()) {
 									noSelectedBlocks = FALSE;
-									if (!(selObj->GetModel()->CanBeNestedBy(currObj->GetModel()))) {
+									if (!(((CProMoBlockModel*)selObj->GetModel())->CanBeNestedBy((CProMoBlockModel*)currObj->GetModel()))) {
 										isValid = FALSE;
 										break;
 									}
@@ -256,12 +256,12 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 						//use actual point rather than cursor position
 						if (edge) {
 							if (GetSubMode() == DEHT_BOTTOMRIGHT) {
-								if (edge->GetModel()->CanConnectDestination(currObj->GetModel())) {
+								if (((CProMoEdgeModel*)edge->GetModel())->CanConnectDestination((CProMoBlockModel*)currObj->GetModel())) {
 									return currObj;
 								}
 							}
 							else if (GetSubMode() == DEHT_TOPLEFT) {
-								if (edge->GetModel()->CanConnectSource(currObj->GetModel())) {
+								if (((CProMoEdgeModel*)edge->GetModel())->CanConnectSource((CProMoBlockModel*)currObj->GetModel())) {
 									return currObj;
 								}
 							}
@@ -298,13 +298,13 @@ CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL back
 {
 	CProMoBlockModel* model = NULL;
 	if (backwards) {
-		model = line->GetModel()->GetSource();
+		model = ((CProMoEdgeModel*)line->GetModel())->GetSource();
 		if (model) {
 			return model->GetMainView();
 		}
 	}
 	else {
-		model = line->GetModel()->GetDestination();
+		model = ((CProMoEdgeModel*)line->GetModel())->GetDestination();
 		if (model) {
 			return model->GetMainView();
 		}
@@ -328,7 +328,7 @@ void CProMoEditor::DeselectChildBlocks(CProMoBlockView* block)
    ============================================================*/
 {
 	ASSERT(block->GetModel()!=NULL);
-	CProMoBlockModel* model = block->GetModel();
+	CProMoBlockModel* model = (CProMoBlockModel*)block->GetModel();
 	for (int i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
 		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 		subBlock->GetMainView()->Select(FALSE);
@@ -351,7 +351,7 @@ void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
    ============================================================*/
 {
 	ASSERT(block->GetModel() != NULL);
-	CProMoBlockModel* model = block->GetModel();
+	CProMoBlockModel* model = (CProMoBlockModel*)block->GetModel();
 	for (int i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
 		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
 		subBlock->GetMainView()->Select(TRUE);
@@ -371,7 +371,7 @@ void CProMoEditor::DeselectLabels(CProMoBlockView* block)
    ============================================================*/
 {
 	if (!block) return;
-	CProMoBlockModel* model = block->GetModel();
+	CProMoBlockModel* model = (CProMoBlockModel*)block->GetModel();
 	if (!model) return;
 	CObArray* labels = model->GetLabels();
 	if (labels) {
@@ -878,19 +878,19 @@ void CProMoEditor::DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) co
 		CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 		CProMoBlockView* child = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
 		if (child) {
-			if (block->GetModel()->Contains(child->GetModel(), FALSE)) {
+			if (((CProMoBlockModel*)block->GetModel())->Contains((CProMoBlockModel*)child->GetModel(), FALSE)) {
 				DrawObjectsR(child, dc, zoom);
 			}
 		}
 	}
-	for (i = 0; i < block->GetModel()->GetIncomingEdges()->GetSize(); i++) {
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(block->GetModel()->GetIncomingEdges()->GetAt(i));
+	for (i = 0; i < ((CProMoBlockModel*)block->GetModel())->GetIncomingEdges()->GetSize(); i++) {
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(((CProMoBlockModel*)block->GetModel())->GetIncomingEdges()->GetAt(i));
 		if (edge) {
 			edge->DrawObject(dc, zoom);
 		}
 	}
-	for (i = 0; i < block->GetModel()->GetOutgoingEdges()->GetSize(); i++) {
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(block->GetModel()->GetOutgoingEdges()->GetAt(i));
+	for (i = 0; i < ((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges()->GetSize(); i++) {
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges()->GetAt(i));
 		if (edge) {
 			edge->DrawObject(dc, zoom);
 		}
@@ -974,7 +974,7 @@ void CProMoEditor::NestSelectedBlock(CProMoBlockView* parentBlock)
 			if (selObj->IsSelected()) {
 				//check which is the object being dropped, if any
 				if (parentBlock) {
-					if (selObj->GetModel()->GetParentBlock() != parentBlock->GetModel()) {
+					if (((CProMoBlockModel*)selObj->GetModel())->GetParentBlock() != (CProMoBlockModel*)parentBlock->GetModel()) {
 						// Set the parent to be that object
 						selObj->SetParentBlock(parentBlock);
 					}

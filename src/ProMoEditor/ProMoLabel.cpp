@@ -21,6 +21,10 @@ CProMoLabel::CProMoLabel()
 {
 	m_model = NULL;
 	
+	m_lockFlags = 0;
+
+	m_bkColor = CLR_NONE;
+
 	m_fontName = CString("Courier New");
 	m_fontSize = 12;
 	m_fontWeight = FW_NORMAL;
@@ -29,9 +33,8 @@ CProMoLabel::CProMoLabel()
 	m_fontStrikeOut = FALSE;
 	m_textAlignment = DT_NOPREFIX | DT_SINGLELINE | DT_VCENTER | DT_CENTER;
 	m_textColor = RGB(0, 0, 0);
-	m_bkColor = CLR_NONE;
 	m_bkMode = TRANSPARENT;
-	m_lockFlags = 0;
+	
 	m_noOffset = FALSE;
 	m_labelAnchorPoint = DEHT_CENTER;
 	m_viewAnchorPoint = DEHT_CENTER;
@@ -317,6 +320,28 @@ CProMoModel* CProMoLabel::GetModel() const
    ============================================================*/
 {
 	return m_model;
+}
+
+void CProMoLabel::SetModel(CProMoModel* model)
+/* ============================================================
+	Function :		CProMoLabel::SetModel
+	Description :	Makes the object being passed as input
+					parameter the model for this label
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CProMoModel* block	-	the object that
+											should be the
+											model
+
+   ============================================================*/
+{
+	if (model) {
+		if (m_model) {
+			m_model->UnlinkLabel(this);
+		}
+		model->LinkLabel(this);
+	}
 }
 
 CString CProMoLabel::GetProperty() const
@@ -754,7 +779,7 @@ BOOL CProMoLabel::GetDefaultFromString(CString& str)
 				double bottomMargin;
 				double rightMargin;
 
-				BOOL lockFlags;
+				int lockFlags;
 				BOOL fitTitle;
 				
 				tok->GetAt(count++, lockFlags);
