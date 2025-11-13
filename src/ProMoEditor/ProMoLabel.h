@@ -14,6 +14,11 @@
 #include "../GeometryUtils/DoubleRect.h"
 #include "ProMoEntity.h"
 
+const unsigned int H_GROUP = DT_LEFT | DT_CENTER | DT_RIGHT;
+const unsigned int V_GROUP = DT_TOP | DT_VCENTER | DT_BOTTOM;
+const unsigned int LINE_GROUP = DT_SINGLELINE | DT_WORDBREAK;
+
+
 class AFX_EXT_CLASS CProMoLabel :
     public CDiagramEntity, public IProMoEntity
 {
@@ -108,6 +113,9 @@ public:
 	virtual COLORREF GetTextColor() const;
 	virtual COLORREF GetBkColor() const;
 	virtual unsigned int GetBkMode() const;
+	virtual unsigned int GetTextHorizontalAlignment() const;
+	virtual unsigned int GetTextVerticalAlignment() const;
+	virtual BOOL HasTextAlignmentFlag(unsigned int flag) const;
 	virtual unsigned int GetTextAlignment() const;
 	virtual unsigned int GetLabelAnchorPoint() const;
 	virtual unsigned int GetViewAnchorPoint() const;
@@ -124,6 +132,9 @@ public:
 	virtual BOOL SetTextColor(const COLORREF& color);
 	virtual BOOL SetBkColor(const COLORREF& color);
 	virtual BOOL SetBkMode(const unsigned int& mode);
+	virtual BOOL SetTextHorizontalAlignment(const unsigned int& flag);
+	virtual BOOL SetTextVerticalAlignment(const unsigned int& flag);
+	virtual BOOL SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled);
 	virtual BOOL SetTextAlignment(const unsigned int& alignment);
 	virtual BOOL SetLabelAnchorPoint(const unsigned int& position);
 	virtual BOOL SetViewAnchorPoint(const unsigned int& position);

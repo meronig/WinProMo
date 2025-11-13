@@ -384,15 +384,114 @@ void CProMoEditor::DeselectLabels(CProMoBlockView* block)
 	}
 }
 
+BOOL CProMoEditor::IsLocked(unsigned int lockType) const
+/* ============================================================
+	Function :		CProMoEditor::IsLocked
+	Description :	Determines if the specified lock holds for
+					all selected objects.
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												lock holds for
+												all selected
+												objects.
+	Parameters :	unsigned int lockType	-	The type of lock
+												to check.
+
+   ============================================================*/
+{
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (!entity->IsLocked(lockType)) {
+				return FALSE;
+			}
+		}
+	}
+	return TRUE;
+}
+
+BOOL CProMoEditor::IsAnyLabelSelected() const
+/* ============================================================
+	Function :		CProMoEditor::IsAnyLabelSelected
+	Description :	Determines if any label is selected
+	Access :		Protected
+
+	Return :		BOOL					-	"TRUE" if one
+												or more labels
+												are selected.
+	Parameters :	none
+
+   ============================================================*/
+{
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CProMoLabel* selObj = dynamic_cast<CProMoLabel*>(objs->GetAt(i));
+		if (selObj && selObj->IsSelected()) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+BOOL CProMoEditor::IsAnyBlockSelected() const
+/* ============================================================
+	Function :		CProMoEditor::IsAnyBlockSelected
+	Description :	Determines if any block is selected
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if one
+												or more blocks
+												are selected.
+	Parameters :	none
+
+   ============================================================*/
+{
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CProMoBlockView* selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
+		if (selObj && selObj->IsSelected()) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
+BOOL CProMoEditor::IsAnyEdgeSelected() const
+/* ============================================================
+	Function :		CProMoEditor::IsAnyEdgeSelected
+	Description :	Determines if any edge is selected
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if one
+												or more edges
+												are selected.
+	Parameters :	none
+
+   ============================================================*/
+{
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CProMoEdgeView* selObj = dynamic_cast<CProMoEdgeView*>(objs->GetAt(i));
+		if (selObj && selObj->IsSelected()) {
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 void CProMoEditor::DeselectInvalidElements() 
 /* ============================================================
 	Function :		CProMoEditor::DeselectInvalidElements
 	Description :	Deselect elements that would break the 
 					model consistency when moved all at once.
-	Access :		Protected
+	Access :		Public
 
 
 	Return :		void
+	Parameters :	none
    ============================================================*/
 {
 	CProMoBlockView* selObj = NULL;
@@ -1494,6 +1593,1286 @@ void CProMoEditor::CenterAlignSelected()
 	AutoResizeAll();
 }
 
+void CProMoEditor::SetFontName(const CString& name)
+/* ============================================================
+	Function :		CProMoEditor::SetFontName
+	Description :	Sets the font name for all selected objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CString& name			-	The name of
+												the font
+
+	Usage :			Call to set the font name for all selected
+					objects.
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetFontName(name);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetFontSize(const unsigned int& size)
+/* ============================================================
+	Function :		CProMoEditor::SetFontSize
+	Description :	Sets the font size for all selected objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& size		-	The size of
+												the font
+
+	Usage :			Call to set the font size for all selected
+					objects.
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetFontSize(size);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetFontWeight(const unsigned int& weight)
+/* ============================================================
+	Function :		CProMoEditor::SetFontWeight
+	Description :	Sets the font weight for all selected objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& weight	-	The weight of
+												the font
+
+	Usage :			Call to set the font weight for all selected
+					objects.
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetFontWeight(weight);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetFontItalic(const BOOL& italic)
+/* ============================================================
+	Function :		CProMoEditor::SetFontItalic
+	Description :	Sets the font used to display the selected
+					objects as italic
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL& italic			-	"TRUE" if the
+												font should be
+												in italic
+
+	Usage :			Call to set the font used for all selected
+					objects as italic.
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetFontItalic(italic);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetFontUnderline(const BOOL& underline)
+/* ============================================================
+	Function :		CProMoEditor::SetFontUnderline
+	Description :	Sets the font used to display the selected
+					objects as underlined
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL& underline			-	"TRUE" if the
+												font should be
+												underlined
+
+	Usage :			Call to set the font used for all selected
+					objects as underlined.
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetFontUnderline(underline);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetFontStrikeOut(const BOOL& strikeOut)
+/* ============================================================
+	Function :		CProMoEditor::SetFontStrikeOut
+	Description :	Sets the font used to display the selected
+					objects as strikeout
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL& strikeOut			-	"TRUE" if the
+												font should be
+												strikeout
+
+	Usage :			Call to set the font used for all selected
+					objects as strikeout.
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetFontStrikeOut(strikeOut);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetTextColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoEditor::SetTextColor
+	Description :	Sets the color of the text in the selected
+					objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	COLORREF& color			-	The color of
+												the text in
+												the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetTextColor(color);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetBkColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoEditor::SetTextColor
+	Description :	Sets the background color of the selected
+					objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	COLORREF& color			-	The color of
+												background in
+												the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetBkColor(color);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetBkMode(const unsigned int& mode)
+/* ============================================================
+	Function :		CProMoEditor::SetBkMode
+	Description :	Sets whether the background of the selected
+					objects should be transparent or opaque.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& mode		-	Whether the
+												background
+												should be
+												transparent
+												or opaque
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetBkMode(mode);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetTextHorizontalAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoEditor::SetTextHorizontalAlignment()
+	Description :	Sets the horizontal alignment of the text 
+					in the selected objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetTextHorizontalAlignment(alignment);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetTextVerticalAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoEditor::SetTextVerticalAlignment()
+	Description :	Sets the vertical alignment of the text in 
+					the	selected objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetTextVerticalAlignment(alignment);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled)
+/* ============================================================
+	Function :		CProMoEditor::SetTextAlignmentFlag()
+	Description :	Sets the alignment flag of the text in the
+					selected objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetTextAlignmentFlag(flag, enabled);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetTextAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoEditor::SetTextAlignment()
+	Description :	Sets the alignment of the text in the 
+					selected objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetTextAlignment(alignment);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetLineColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoEditor::SetLineColor
+	Description :	Sets the line color of the selected
+					objects. Applicable only for blocks and edges.
+	Access :		Public
+
+	Return :		void
+	Parameters :	COLORREF& color			-	The line color 
+												for the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				block->SetLineColor(color);
+			}
+			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(selObj);
+			if (edge) {
+				edge->SetLineColor(color);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetLineWidth(const unsigned int& width)
+/* ============================================================
+	Function :		CProMoEditor::SetLineWidth
+	Description :	Sets the line width of the selected
+					objects. Applicable only for blocks and edges.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& width		-	The line width
+												for the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				block->SetLineWidth(width);
+			}
+			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(selObj);
+			if (edge) {
+				edge->SetLineWidth(width);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetLineStyle(const unsigned int& style)
+/* ============================================================
+	Function :		CProMoEditor::SetLineStyle
+	Description :	Sets the line style of the selected
+					objects. Applicable only for blocks and edges.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& style		-	The line style
+												for the selected
+												objects
+
+	Usage:			If the line width is greater than 1, the
+					line style is ignored and the line is drawn
+					as solid. Otherwise, the line style is used.
+					The style should be one of the
+					PS_* constants defined in Wingdi.h
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				block->SetLineStyle(style);
+			}
+			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(selObj);
+			if (edge) {
+				edge->SetLineStyle(style);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetFillColor(const COLORREF& color)
+/* ============================================================
+	Function :		CProMoEditor::SetFillColor
+	Description :	Sets the fill color of the selected
+					objects. Applicable only for blocks.
+	Access :		Public
+
+	Return :		void
+	Parameters :	COLORREF& color			-	The fill color
+												for the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				block->SetFillColor(color);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetFillPattern(const BOOL& pattern)
+/* ============================================================
+	Function :		CProMoEditor::SetFillPattern()
+	Description :	Sets whether the fill style of the selected
+					elements is patterned. Applicable only for 
+					blocks.
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL& pattern			-	"TRUE" if the
+												fill style
+												should be
+												a pattern
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				block->SetFillPattern(pattern);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+void CProMoEditor::SetFillStyle(const unsigned int& style)
+/* ============================================================
+	Function :		CProMoEditor::SetFillStyle
+	Description :	Sets the fill style of the selected
+					objects. Applicable only for blocks.
+	Access :		Public
+
+	Return :		void
+	Parameters :	unsigned int& style		-	The fill style
+												for the selected
+												objects
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				block->SetFillStyle(style);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+
+CString CProMoEditor::GetFontName() const
+/* ============================================================
+	Function :		CProMoEditor::GetFontName()
+	Description :	Returns the name of the font used to
+					display the selected objects
+	Access :		Public
+
+	Return :		CString		-	The name of the font used
+									to display the selected
+									objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	CString fontName;
+	
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			CString currValue = entity->GetFontName();
+			if (fontName.IsEmpty()) {
+				fontName = currValue;
+			}
+			else if (fontName != currValue) {
+				return CString();
+			}
+		}
+	}
+
+	return fontName;
+}
+
+unsigned int CProMoEditor::GetFontSize() const
+/* ============================================================
+	Function :		CProMoEditor::GetFontSize()
+	Description :	Returns the size of the font used to
+					display the selected objects
+	Access :		Public
+
+	Return :		unsigned int	-	The size of the font used
+										to display the selected
+										objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int fontSize = 0;
+	
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			unsigned int currValue = entity->GetFontSize();
+			if (fontSize == 0) {
+				fontSize = currValue;
+			}
+			else if (fontSize != currValue) {
+				return 0;
+			}
+		}
+	}
+	
+	return fontSize;
+}
+
+unsigned int CProMoEditor::GetFontWeight() const
+/* ============================================================
+	Function :		CProMoEditor::GetFontWeight()
+	Description :	Returns the weight of the font used to
+					display the selected objects.
+	Access :		Public
+
+	Return :		unsigned int	-	The weight of the font used
+										to display the selected
+										objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int fontWeight = 0;
+	
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
+			unsigned int currValue = entity->GetFontWeight();
+			if (fontWeight == 0) {
+				fontWeight = currValue;
+			}
+			else if (fontWeight != currValue) {
+				return 0;
+			}
+		}
+	}
+
+	return fontWeight;
+}
+
+BOOL CProMoEditor::IsFontItalic() const
+/* ============================================================
+	Function :		CProMoEditor::IsFontItalic()
+	Description :	Returns if the font used to display the
+					selected objects is in italic
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the selected
+									objects is in italic
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL italic = FALSE;
+	BOOL hasValue = FALSE;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
+			BOOL currValue = entity->IsFontItalic();
+			if (!hasValue) {
+				italic = currValue;
+				hasValue = TRUE;
+			}
+			else if (italic != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
+			}
+		}
+	}
+
+	return italic;
+}
+
+BOOL CProMoEditor::IsFontUnderline() const
+/* ============================================================
+	Function :		CProMoEditor::IsFontUnderline()
+	Description :	Returns if the font used to display the
+					selected objects is underlined
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the selected
+									objects is underlined
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL underline = FALSE;
+	BOOL hasValue = FALSE;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			BOOL currValue = entity->IsFontUnderline();
+			if (!hasValue) {
+				underline = currValue;
+				hasValue = TRUE;
+			}
+			else if (underline != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
+			}
+		}
+	}
+
+	return underline;
+}
+
+BOOL CProMoEditor::IsFontStrikeOut() const
+/* ============================================================
+	Function :		CProMoEditor::IsFontStrikeOut()
+	Description :	Returns if the font used to display the
+					selected objects is stroken out
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the font used
+									to display the selected
+									objects is stroken out
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL strikeOut = FALSE;
+	BOOL hasValue = FALSE;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
+			BOOL currValue = entity->IsFontStrikeOut();
+			if (!hasValue) {
+				strikeOut = currValue;
+				hasValue = TRUE;
+			}
+			else if (strikeOut != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
+			}
+		}
+	}
+
+	return strikeOut;
+}
+
+COLORREF CProMoEditor::GetTextColor() const
+/* ============================================================
+	Function :		CProMoEditor::GetTextColor()
+	Description :	Returns the color of the text in the 
+					selected objects.
+	Access :		Public
+
+	Return :		COLORREF	-	The color of the text in
+									the selected objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	COLORREF textColor = RGB(0, 0, 0);
+	
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
+			unsigned int currValue = entity->GetTextColor();
+			if (textColor == RGB(0, 0, 0)) {
+				textColor = currValue;
+			}
+			else if (textColor != currValue) {
+				return RGB(0, 0, 0);
+			}
+		}
+	}
+	
+	return textColor;
+}
+
+COLORREF CProMoEditor::GetBkColor() const
+/* ============================================================
+	Function :		CProMoEditor::GetBkColor()
+	Description :	Returns the background color of the selected
+					objects.
+	Access :		Public
+
+	Return :		COLORREF	-	The background color of the
+									selected objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	COLORREF bkColor = RGB(0, 0, 0);
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			unsigned int currValue = entity->GetBkColor();
+			if (bkColor == RGB(0, 0, 0)) {
+				bkColor = currValue;
+			}
+			else if (bkColor != currValue) {
+				return RGB(0, 0, 0);
+			}
+		}
+	}
+
+	return bkColor;
+}
+
+unsigned int CProMoEditor::GetTextHorizontalAlignment() const
+/* ============================================================
+	Function :		CProMoEditor::GetTextHorizontalAlignment()
+	Description :	Returns the horizontal alignment of the text
+					in the selected objects.
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the selected
+										objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			unsigned int currValue = entity->GetTextHorizontalAlignment();
+			if (alignment == 0) {
+				alignment = currValue;
+			}
+			else if (alignment != currValue) {
+				return 0;
+			}
+		}
+	}
+
+	return alignment;
+}
+
+unsigned int CProMoEditor::GetTextVerticalAlignment() const
+/* ============================================================
+	Function :		CProMoEditor::GetTextVerticalAlignment()
+	Description :	Returns the vertical alignment of the text 
+					in the selected objects.
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the selected
+										objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			unsigned int currValue = entity->GetTextVerticalAlignment();
+			if (alignment == 0) {
+				alignment = currValue;
+			}
+			else if (alignment != currValue) {
+				return 0;
+			}
+		}
+	}
+
+	return alignment;
+}
+
+BOOL CProMoEditor::HasTextAlignmentFlag(unsigned int flag) const
+/* ============================================================
+	Function :		CProMoEditor::HasTextAlignmentFlag()
+	Description :	Returns if the alignment flag is set for
+					the text in all selected objects.
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the alignment
+											flag is set for the text
+											in the selected objects.
+	Parameters :	unsigned int flag	-	The alignment flag
+											for the	text in the
+											selected objects.
+
+   ============================================================*/
+{
+	BOOL hasFlag = FALSE;
+	BOOL hasValue = FALSE;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
+			BOOL currValue = entity->HasTextAlignmentFlag(flag);
+			if (!hasValue) {
+				hasFlag = currValue;
+				hasValue = TRUE;
+			}
+			else if (hasFlag != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
+			}
+		}
+	}
+
+	return hasFlag;
+}
+
+unsigned int CProMoEditor::GetTextAlignment() const
+/* ============================================================
+	Function :		CProMoEditor::GetTextAlignment()
+	Description :	Returns the alignment of the text in the
+					selected objects.
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the selected
+										objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+	
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
+			unsigned int currValue = entity->GetTextAlignment();
+			if (alignment == 0) {
+				alignment = currValue;
+			}
+			else if (alignment != currValue) {
+				return 0;
+			}
+		}
+	}
+
+	return alignment;
+}
+
+unsigned int CProMoEditor::GetBkMode() const
+/* ============================================================
+	Function :		CProMoEditor::GetBkMode()
+	Description :	Returns the background style of the selected
+					objects.
+	Access :		Public
+
+	Return :		unsigned int	-	The background style of
+										the selected objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int bkMode = TRANSPARENT;
+	
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
+			unsigned int currValue = entity->GetBkMode();
+			if (bkMode == TRANSPARENT) {
+				bkMode = currValue;
+			}
+			else if (bkMode != currValue) {
+				return TRANSPARENT;
+			}
+		}
+	}
+
+	return bkMode;
+}
+
+COLORREF CProMoEditor::GetLineColor() const
+/* ============================================================
+	Function :		CProMoEditor::GetLineColor()
+	Description :	Returns the line color of the selected 
+					objects. Applicable only for blocks and edges.
+	Access :		Public
+
+	Return :		COLORREF	-	The line color of the
+									selected objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	COLORREF lineColor = RGB(0, 0, 0);
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			COLORREF currValue = RGB(0, 0, 0);
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				currValue = block->GetLineColor();
+			}
+			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(selObj);
+			if (edge) {
+				currValue = edge->GetLineColor();
+			}
+			if (block || edge) {
+				if (lineColor == RGB(0, 0, 0)) {
+					lineColor = currValue;
+				}
+				else if (lineColor != currValue) {
+					return RGB(0, 0, 0);
+				}
+			}
+		}
+	}
+
+	return lineColor;
+}
+
+unsigned int CProMoEditor::GetLineWidth() const
+/* ============================================================
+	Function :		CProMoEditor::GetLineWidth()
+	Description :	Returns the line width of the selected 
+					objects. Applicable only for blocks and edges.
+	Access :		Public
+
+	Return :		unsigned int	-	The line width of the
+										selected objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int lineWidth = 0;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			unsigned int currValue = 0;
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				currValue = block->GetLineWidth();
+			}
+			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(selObj);
+			if (edge) {
+				currValue = edge->GetLineWidth();
+			}
+			if (block || edge) {
+				if (lineWidth == 0) {
+					lineWidth = currValue;
+				}
+				else if (lineWidth != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+
+	return lineWidth;
+}
+
+unsigned int CProMoEditor::GetLineStyle() const
+/* ============================================================
+	Function :		CProMoEditor::GetLineStyle()
+	Description :	Returns the line style of the selected 
+					objects. Applicable only for blocks and edges.
+	Access :		Public
+
+	Return :		unsigned int	-	The line style of the
+										selected objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int lineStyle = 0;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			unsigned int currValue = 0;
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				currValue = block->GetLineStyle();
+			}
+			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(selObj);
+			if (edge) {
+				currValue = edge->GetLineStyle();
+			}
+			if (block || edge) {
+				if (lineStyle == 0) {
+					lineStyle = currValue;
+				}
+				else if (lineStyle != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+
+	return lineStyle;
+}
+
+COLORREF CProMoEditor::GetFillColor() const
+/* ============================================================
+	Function :		CProMoEditor::GetFillColor()
+	Description :	Returns the fill color of the selected 
+					objects. Applicable only for blocks.
+	Access :		Public
+
+	Return :		COLORREF	-	The fill color of the
+									selected objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	COLORREF fillColor = RGB(0, 0, 0);
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				COLORREF currValue = block->GetFillColor();
+				if (fillColor == RGB(0, 0, 0)) {
+					fillColor = currValue;
+				}
+				else if (fillColor != currValue) {
+					return RGB(0, 0, 0);
+				}
+			}
+		}
+	}
+
+	return fillColor;
+}
+
+BOOL CProMoEditor::IsFillPattern() const
+/* ============================================================
+	Function :		CProMoEditor::IsFillPattern()
+	Description :	Returns if the selected objects should be 
+					filled with a pattern. Applicable only for 
+					blocks.
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the selected
+									objects should be filled 
+									with a pattern
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL fillPattern = FALSE;
+	BOOL hasValue = FALSE;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				BOOL currValue = block->IsFillPattern();
+				if (!hasValue) {
+					fillPattern = currValue;
+					hasValue = TRUE;
+				}
+				else if (fillPattern != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+
+	return fillPattern;
+}
+
+unsigned int CProMoEditor::GetFillStyle() const
+/* ============================================================
+	Function :		CProMoEditor::GetFillStyle()
+	Description :	Returns the fill style of the selected 
+					objects. Applicable only for blocks.
+	Access :		Public
+
+	Return :		unsigned int	-	The fill style of the
+										selected objects.
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int fillStyle = 0;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
+			if (block) {
+				unsigned int currValue = block->GetFillStyle();
+				if (fillStyle == 0) {
+					fillStyle = currValue;
+				}
+				else if (fillStyle != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+
+	return fillStyle;
+}
 
 void CProMoEditor::ShowPageBreaks(BOOL isVisible)
 /* ============================================================
@@ -1623,24 +3002,3 @@ void CProMoEditor::NotifySelectionChanged()
 		pMainFrame->PostMessage(WM_SELECTION_CHANGED, 0, (LPARAM)pSelectedEntity);
 	}
 }
-
-void CProMoEditor::UpdateDelete(CCmdUI* pCmdUI) const
-/* ============================================================
-	Function :		CProMoEditor::UpdateDelete
-	Description :	Command enabling for a Delete command UI-
-					element.
-	Access :		Public
-
-	Return :		void
-	Parameters :	CCmdUI* pCmdUI	-	Command element to
-										update
-
-	Usage :			Can be called from a doc/view command update
-					function
-
-   ============================================================*/
-{
-	pCmdUI->Enable(IsAnyObjectSelected());
-}
-
-

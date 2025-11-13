@@ -41,7 +41,7 @@ CProMoLabel::CProMoLabel()
 	m_anchorView = VIEW_FIRST;
 
 	m_offset = CPoint(0, 0);
-	m_fitTitle = TRUE;
+	m_fitTitle = FALSE;
 	m_fitView = FALSE;
 	m_titleRect = CRect(0, 0, 0, 0); 
 
@@ -976,6 +976,7 @@ CDoubleRect CProMoLabel::ComputeTextRect(CDC* dc, double zoom)
 	}
 	else
 	{
+		textBounds.right = GetRect().Width();
 		UINT format = m_textAlignment;
 		format &= (DT_VCENTER | DT_BOTTOM | DT_WORDBREAK | DT_CENTER | DT_RIGHT | DT_LEFT);
 		format |= DT_CALCRECT | DT_TOP;
@@ -1119,6 +1120,57 @@ COLORREF CProMoLabel::GetBkColor() const
    ============================================================*/
 {
 	return m_bkColor;
+}
+
+unsigned int CProMoLabel::GetTextHorizontalAlignment() const
+/* ============================================================
+	Function :		CProMoLabel::GetTextHorizontalAlignment()
+	Description :	Returns the horizontal alignment of the text 
+					in the label
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_textAlignment & H_GROUP;
+}
+
+unsigned int CProMoLabel::GetTextVerticalAlignment() const
+/* ============================================================
+	Function :		CProMoLabel::GetTextVerticalAlignment()
+	Description :	Returns the vertical alignment of the text
+					in the label
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the label
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_textAlignment & V_GROUP;
+}
+
+BOOL CProMoLabel::HasTextAlignmentFlag(unsigned int flag) const
+/* ============================================================
+	Function :		CProMoLabel::HasTextAlignmentFlag()
+	Description :	Returns if the alignment flag is set for 
+					the text in the label
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the alignment
+											flag is set for the text
+											in the label
+	Parameters :	unsigned int flag	-	The alignment flag 
+											for the	text in the
+											label
+
+   ============================================================*/
+{
+	return (m_textAlignment & flag) != 0;
 }
 
 unsigned int CProMoLabel::GetTextAlignment() const
@@ -1294,7 +1346,7 @@ BOOL CProMoLabel::SetFontItalic(const BOOL& italic)
 	Return :		BOOL					-	"TRUE" if the
 												operation
 												succeeded
-	Parameters :	BOOL& italic				-	"TRUE" if the
+	Parameters :	BOOL& italic			-	"TRUE" if the
 												font should be
 												in italic
 
@@ -1394,6 +1446,106 @@ BOOL CProMoLabel::SetBkColor(const COLORREF& color)
 	m_bkColor = color;
 	return TRUE;
 }
+
+BOOL CProMoLabel::SetTextHorizontalAlignment(const unsigned int& flag)
+/* ============================================================
+	Function :		CProMoLabel::SetTextHorizontalAlignment()
+	Description :	Sets the horizontal alignment flag of the 
+					text in the label
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the
+											operation
+											succeeded
+	Parameters :	unsigned int& flag	-	The alignment flag
+											of the text in
+											the label
+
+   ============================================================*/
+{
+	unsigned int alignment = m_textAlignment;
+	unsigned int newFlag = flag & H_GROUP;
+	alignment &= ~H_GROUP; // clear horizontal group
+
+	alignment |= newFlag; // set new flag if not default
+
+	return SetTextAlignment(alignment);
+}
+
+BOOL CProMoLabel::SetTextVerticalAlignment(const unsigned int& flag)
+/* ============================================================
+	Function :		CProMoLabel::SetTextVerticalAlignment()
+	Description :	Sets the vertical alignment flag of the
+					text in the label
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the
+											operation
+											succeeded
+	Parameters :	unsigned int& flag	-	The alignment flag
+											of the text in
+											the label
+
+   ============================================================*/
+{
+	unsigned int alignment = m_textAlignment;
+	unsigned int newFlag = flag & V_GROUP;
+	alignment &= ~V_GROUP; // clear vertical group
+
+	alignment |= newFlag; // set new flag if not default
+
+	return SetTextAlignment(alignment);
+}
+
+
+
+BOOL CProMoLabel::SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled) 
+/* ============================================================
+	Function :		CProMoLabel::SetTextAlignmentFlag()
+	Description :	Sets the alignment flag of the text in the label
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the
+											operation
+											succeeded
+	Parameters :	unsigned int& flag	-	The alignment flag
+											of the text in
+											the label
+					BOOL& enabled		-	"TRUE" to enable
+
+   ============================================================*/
+{
+	unsigned int alignment = m_textAlignment;
+
+	if (flag & H_GROUP)
+	{
+		alignment &= ~H_GROUP;
+		if (enabled)
+			alignment |= flag;
+	}
+	else if (flag & V_GROUP)
+	{
+		alignment &= ~V_GROUP;
+		if (enabled)
+			alignment |= flag;
+	}
+	else if (flag & LINE_GROUP)
+	{
+		alignment &= ~LINE_GROUP;
+		if (enabled)
+			alignment |= flag;
+	}
+	else
+	{
+		if (enabled)
+			alignment |= flag;
+		else
+			alignment &= ~flag;
+	}
+
+	return SetTextAlignment(alignment);
+}
+
 
 BOOL CProMoLabel::SetTextAlignment(const unsigned int& alignment)
 /* ============================================================

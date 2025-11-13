@@ -55,6 +55,7 @@ CProMoEdgeView::CProMoEdgeView()
 	m_lockFlags = 0;
 
 	m_bkColor = CLR_NONE;
+	m_bkMode = TRANSPARENT;
 
 	m_lineColor = RGB(0, 0, 0);
 	m_lineWidth = 1;
@@ -147,8 +148,16 @@ void CProMoEdgeView::Copy(CDiagramEntity* obj)
 {
 	CDiagramEntity::Copy(obj);
 	CProMoEdgeView* objView = dynamic_cast<CProMoEdgeView*>(obj);
-	if (GetModel()) {
-		GetModel()->Copy(objView->GetModel());
+	if (objView) {
+		m_bkColor = objView->m_bkColor;
+		m_bkMode = objView->m_bkMode;
+		m_lineColor = objView->m_lineColor;
+		m_lineWidth = objView->m_lineWidth;
+		m_lineStyle = objView->m_lineStyle;
+
+		if (GetModel()) {
+			GetModel()->Copy(objView->GetModel());
+		}
 	}
 }
 
@@ -169,6 +178,7 @@ void CProMoEdgeView::DrawLine(CDC* dc, CRect rect)
 	CPen* pOldPen = dc->SelectObject(&pen);
 
 	COLORREF pOldBkColor = dc->SetBkColor(m_bkColor);
+	int pOldBkMode = dc->SetBkMode(m_bkMode);
 
 	dc->MoveTo(rect.TopLeft());
 	dc->LineTo(rect.BottomRight());
@@ -183,6 +193,7 @@ void CProMoEdgeView::DrawLine(CDC* dc, CRect rect)
 		DrawTail(dc, rect, 10 * GetZoom());
 	}
 
+	dc->SetBkMode(pOldBkMode);
 	dc->SelectObject(pOldPen);
 	dc->SetBkColor(pOldBkColor);
 
@@ -219,6 +230,7 @@ void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, double size)
 	CBrush* pOldBrush = dc->SelectObject(&brush);
 
 	COLORREF pOldBkColor = dc->SetBkColor(m_bkColor);
+	int pOldBkMode = dc->SetBkMode(m_bkMode);
 
 	const double dx = static_cast<double>(rect.BottomRight().x) - static_cast<double>(rect.TopLeft().x);
 	const double dy = static_cast<double>(rect.BottomRight().y) - static_cast<double>(rect.TopLeft().y);
@@ -244,9 +256,10 @@ void CProMoEdgeView::DrawHead(CDC* dc, CRect rect, double size)
 			 round(rect.BottomRight().y - size * uy - half_width * vy) );
 	dc->Polygon(arrow, 3);
 	
+	dc->SetBkMode(pOldBkMode);
+	dc->SetBkColor(pOldBkColor);
 	dc->SelectObject(pOldBrush);
 	dc->SelectObject(pOldPen);
-	dc->SetBkColor(pOldBkColor);
 
 }
 
@@ -281,6 +294,7 @@ void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, double size)
 	CBrush* pOldBrush = dc->SelectObject(&brush);
 
 	COLORREF pOldBkColor = dc->SetBkColor(m_bkColor);
+	int pOldBkMode = dc->SetBkMode(m_bkMode);
 
 	// 1. Define the start and end points
 	int x1 = rect.TopLeft().x;
@@ -320,10 +334,11 @@ void CProMoEdgeView::DrawTail(CDC* dc, CRect rect, double size)
 	// 8. Draw the circle
 	dc->Ellipse(circleRect.ToCRect());
 
+	dc->SetBkMode(pOldBkMode);
+	dc->SetBkColor(pOldBkColor);
 	dc->SelectObject(pOldBrush);
 	dc->SelectObject(pOldPen);
-	dc->SetBkColor(pOldBkColor);
-
+	
 }
 
 void CProMoEdgeView::KeepElementsConnected(double left, double top, double right, double bottom)
@@ -1228,9 +1243,9 @@ CString CProMoEdgeView::GetDefaultGetString() const
 		CFileParser::EncodeString(destString);
 	}
 
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s,%i,%i,%i,%i,%i"), 
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%s,%s,%i,%i,%i,%i,%i,%i"), 
 		(LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, (LPCTSTR)sourceString, (LPCTSTR)destString, m_lockFlags,
-		m_bkColor, m_lineColor, m_lineWidth, m_lineStyle);
+		m_bkColor, m_bkMode, m_lineColor, m_lineWidth, m_lineStyle);
 
 	return str;
 
@@ -1297,20 +1312,23 @@ BOOL CProMoEdgeView::GetDefaultFromString(CString& str)
 			SetGroup(group);
 			
 			// missing style attributes should not prevent the block from loading
-			if (size >= 15) {
+			if (size >= 16) {
 				int lockFlags;
 				COLORREF bkColor;
+				int bkMode;
 				COLORREF lineColor;
 				int lineWidth;
 				int lineStyle;
 				
 				tok->GetAt(count++, lockFlags);
 				tok->GetAt(count++, bkColor);
+				tok->GetAt(count++, bkMode);
 				tok->GetAt(count++, lineColor);
 				tok->GetAt(count++, lineWidth);
 				tok->GetAt(count++, lineStyle);
 				
 				m_bkColor = bkColor;
+				m_bkMode = bkMode;
 				m_lineColor = lineColor;
 				m_lineWidth = lineWidth;
 				m_lineStyle = lineStyle;
@@ -1666,7 +1684,7 @@ unsigned int CProMoEdgeView::GetFontSize() const
 					continue;
 				}
 				unsigned int currValue = label->GetFontSize();
-				if (fontSize > 0) {
+				if (fontSize == 0) {
 					fontSize = currValue;
 				}
 				else if (fontSize != currValue) {
@@ -1701,7 +1719,7 @@ unsigned int CProMoEdgeView::GetFontWeight() const
 					continue;
 				}
 				unsigned int currValue = label->GetFontWeight();
-				if (fontWeight > 0) {
+				if (fontWeight == 0) {
 					fontWeight = currValue;
 				}
 				else if (fontWeight != currValue) {
@@ -1855,7 +1873,7 @@ COLORREF CProMoEdgeView::GetTextColor() const
 					continue;
 				}
 				COLORREF currValue = label->GetTextColor();
-				if (textColor > 0) {
+				if (textColor == RGB(0, 0, 0)) {
 					textColor = currValue;
 				}
 				else if (textColor != currValue) {
@@ -1882,6 +1900,117 @@ COLORREF CProMoEdgeView::GetBkColor() const
 	return m_bkColor;
 }
 
+unsigned int CProMoEdgeView::GetTextHorizontalAlignment() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetTextHorizontalAlignment()
+	Description :	Returns the horizontal alignment of the text
+					in the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the labels
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetTextHorizontalAlignment();
+				if (alignment == 0) {
+					alignment = currValue;
+				}
+				else if (alignment != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return alignment;
+}
+
+unsigned int CProMoEdgeView::GetTextVerticalAlignment() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetTextVerticalAlignment()
+	Description :	Returns the vertical alignment of the text
+					in the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the labels
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetTextVerticalAlignment();
+				if (alignment == 0) {
+					alignment = currValue;
+				}
+				else if (alignment != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return alignment;
+}
+
+BOOL CProMoEdgeView::HasTextAlignmentFlag(unsigned int flag) const
+/* ============================================================
+	Function :		CProMoEdgeView::HasTextAlignmentFlag()
+	Description :	Returns if the labels have the specified
+					alignment flag
+	Access :		Public
+
+	Return :		BOOL			-	"TRUE" if the labels
+										have the specified
+										alignment flag
+	Parameters :	unsigned int	-	The alignment of the
+										text in the labels
+
+   ============================================================*/
+{
+	BOOL hasFlag = FALSE;
+	BOOL hasValue = FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT))
+					continue;
+
+				BOOL currValue = label->HasTextAlignmentFlag(flag);
+				if (!hasValue) {
+					hasFlag = currValue;
+					hasValue = TRUE;
+				}
+				else if (hasFlag != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+	return hasFlag;
+}
+
 unsigned int CProMoEdgeView::GetTextAlignment() const
 /* ============================================================
 	Function :		CProMoEdgeView::GetTextAlignment()
@@ -1905,7 +2034,7 @@ unsigned int CProMoEdgeView::GetTextAlignment() const
 					continue;
 				}
 				unsigned int currValue = label->GetTextAlignment();
-				if (alignment > 0) {
+				if (alignment == 0) {
 					alignment = currValue;
 				}
 				else if (alignment != currValue) {
@@ -1935,35 +2064,16 @@ BOOL CProMoEdgeView::IsVisible() const
 unsigned int CProMoEdgeView::GetBkMode() const
 /* ============================================================
 	Function :		CProMoEdgeView::GetBkMode()
-	Description :	Returns the background style of the labels
+	Description :	Returns the background style of the edge
 	Access :		Public
 
 	Return :		unsigned int	-	The background style of
-										the labels
+										the edge
 	Parameters :	none
 
    ============================================================*/
 {
-	unsigned int bkMode = TRANSPARENT;
-	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetBkMode();
-				if (bkMode > 0) {
-					bkMode = currValue;
-				}
-				else if (bkMode != currValue) {
-					return TRANSPARENT;
-				}
-			}
-		}
-	}
-	return bkMode;
+	return m_bkMode;
 }
 
 COLORREF CProMoEdgeView::GetLineColor() const
@@ -2272,6 +2382,112 @@ BOOL CProMoEdgeView::SetBkColor(const COLORREF& color)
 	return TRUE;
 }
 
+BOOL CProMoEdgeView::SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled)
+/* ============================================================
+	Function :		CProMoEdgeView::SetTextAlignmentFlag()
+	Description :	Sets the alignment flag of the text in the labels
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the
+											operation
+											succeeded
+	Parameters :	unsigned int& flag	-	The alignment flag
+											of the text in
+											the labels
+					BOOL& enabled		-	"TRUE" to enable
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				result &= label->SetTextAlignmentFlag(flag, enabled);
+			}
+		}
+	}
+	return result;
+}
+
+
+BOOL CProMoEdgeView::SetTextHorizontalAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoEdgeView::SetTextHorizontalAlignment()
+	Description :	Sets the horizontal alignment of the text
+					in the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the labels
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				result &= label->SetTextHorizontalAlignment(alignment);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetTextVerticalAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoEdgeView::SetTextVerticalAlignment()
+	Description :	Sets the vertical alignment of the text
+					in the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the labels
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_edgeModel) {
+		CObArray* labels = m_edgeModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				result &= label->SetTextVerticalAlignment(alignment);
+			}
+		}
+	}
+	return result;
+}
+
 BOOL CProMoEdgeView::SetTextAlignment(const unsigned int& alignment)
 /* ============================================================
 	Function :		CProMoEdgeView::SetTextAlignment()
@@ -2333,33 +2549,20 @@ BOOL CProMoEdgeView::SetVisible(const BOOL& visible)
 BOOL CProMoEdgeView::SetBkMode(const unsigned int& mode)
 /* ============================================================
 	Function :		CProMoEdgeView::SetBkMode()
-	Description :	Sets the background style of the labels
+	Description :	Sets the background style of the edge
 	Access :		Public
 
 	Return :		BOOL				-	"TRUE" if the operation
 											succeeded
 	Parameters :	unsigned int& model	-	The background style of
-											the labels
+											the edge
 
    ============================================================*/
 {
-	BOOL result = TRUE;
 	if (IsLocked(LOCK_BKMODE))
 		return FALSE;
-
-	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_BKMODE)) {
-					continue;
-				}
-				result &= label->SetBkMode(mode);
-			}
-		}
-	}
-	return result;
+	m_bkMode = mode;
+	return TRUE;
 }
 
 BOOL CProMoEdgeView::SetLineColor(const COLORREF& color)

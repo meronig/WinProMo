@@ -27,10 +27,54 @@ public:
 public:
 	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
 	virtual void NotifySelectionChanged();
-	void UpdateDelete(CCmdUI* pCmdUI) const;
-
+	
 	virtual void	MiddleAlignSelected();
 	virtual void	CenterAlignSelected();
+	
+	virtual void SetFontName(const CString& name);
+	virtual void SetFontSize(const unsigned int& size);
+	virtual void SetFontWeight(const unsigned int& weight);
+	virtual void SetFontItalic(const BOOL& italic);
+	virtual void SetFontUnderline(const BOOL& underline);
+	virtual void SetFontStrikeOut(const BOOL& strikeOut);
+	virtual void SetTextColor(const COLORREF& color);
+	virtual void SetBkColor(const COLORREF& color);
+	virtual void SetBkMode(const unsigned int& mode);
+	virtual void SetTextHorizontalAlignment(const unsigned int& flag);
+	virtual void SetTextVerticalAlignment(const unsigned int& flag);
+	virtual void SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled);
+	virtual void SetTextAlignment(const unsigned int& alignment);
+	virtual void SetLineColor(const COLORREF& color);
+	virtual void SetLineWidth(const unsigned int& width);
+	virtual void SetLineStyle(const unsigned int& style);
+	virtual void SetFillColor(const COLORREF& color);
+	virtual void SetFillPattern(const BOOL& pattern);
+	virtual void SetFillStyle(const unsigned int& style);
+
+	virtual CString GetFontName() const;
+	virtual unsigned int GetFontSize() const;
+	virtual unsigned int GetFontWeight() const;
+	virtual BOOL IsFontItalic() const;
+	virtual BOOL IsFontUnderline() const;
+	virtual BOOL IsFontStrikeOut() const;
+	virtual COLORREF GetTextColor() const;
+	virtual COLORREF GetBkColor() const;
+	virtual unsigned int GetBkMode() const;
+	virtual unsigned int GetTextHorizontalAlignment() const;
+	virtual unsigned int GetTextVerticalAlignment() const;
+	virtual BOOL HasTextAlignmentFlag(unsigned int flag) const;
+	virtual unsigned int GetTextAlignment() const;
+	virtual COLORREF GetLineColor() const;
+	virtual unsigned int GetLineWidth() const;
+	virtual unsigned int GetLineStyle() const;
+	virtual COLORREF GetFillColor() const;
+	virtual BOOL IsFillPattern() const;
+	virtual unsigned int GetFillStyle() const;
+
+	virtual BOOL IsLocked(unsigned int lockType) const;
+	virtual BOOL IsAnyLabelSelected() const;
+	virtual BOOL IsAnyBlockSelected() const;
+	virtual BOOL IsAnyEdgeSelected() const;
 
 protected:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
@@ -53,6 +97,7 @@ protected:
 	virtual void HandleSelectedElements(CProMoBlockView* target, BOOL isNew);
 	virtual void HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point);
 	virtual void DeselectLabels(CProMoBlockView* block);
+	
 // Overrides:
 public:
 	// Visuals

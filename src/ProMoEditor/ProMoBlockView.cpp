@@ -59,6 +59,7 @@ CProMoBlockView::CProMoBlockView()
 	m_lockFlags = 0;
 
 	m_bkColor = CLR_NONE;
+	m_bkMode = TRANSPARENT;
 
 	m_lineColor = RGB(0, 0, 0);
 	m_lineWidth = 1;
@@ -159,6 +160,7 @@ void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
 	CBrush* pOldBrush = dc->SelectObject(&brush);
 
 	COLORREF pOldBkColor = dc->SetBkColor(m_bkColor);
+	int pOldBkMode = dc->SetBkMode(m_bkMode);
 
 	switch (GetShape()) {
 	case SHAPE_ELLIPSE:
@@ -188,10 +190,11 @@ void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
 		dc->RoundRect(rect, pt);
 	}
 
-	dc->SelectObject(pOldPen);
-	dc->SelectObject(pOldBrush);
+	dc->SetBkMode(pOldBkMode);
 	dc->SetBkColor(pOldBkColor);
-
+	dc->SelectObject(pOldBrush);
+	dc->SelectObject(pOldPen);
+	
 }
 
 void CProMoBlockView::Highlight(CDC* dc, CRect rect)
@@ -897,9 +900,9 @@ CString CProMoBlockView::GetDefaultGetString() const
 	CString name = GetName();
 	CFileParser::EncodeString(name);
 	
-	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i"), 
+	str.Format(_T("%s:%s,%f,%f,%f,%f,%s,%i,%s,%i,%i,%i,%i,%i,%i,%i,%i,%i"), 
 		(LPCTSTR)GetType(), (LPCTSTR)name, GetLeft(), GetTop(), GetRight(), GetBottom(), (LPCTSTR)title, GetGroup(), (LPCTSTR)model, m_lockFlags,
-		m_bkColor, m_lineColor, m_lineWidth, m_lineStyle, m_fillColor, m_fillPattern, m_fillStyle);
+		m_bkColor, m_bkMode, m_lineColor, m_lineWidth, m_lineStyle, m_fillColor, m_fillPattern, m_fillStyle);
 	
 	return str;
 
@@ -983,9 +986,10 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 			SetGroup(group);
 
 			// missing style attributes should not prevent the block from loading
-			if (size >= 16) {
+			if (size >= 17) {
 				int lockFlags;
 				COLORREF bkColor;
+				int bkMode;
 				COLORREF lineColor;
 				int lineWidth;
 				int lineStyle;
@@ -995,6 +999,7 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 
 				tok->GetAt(count++, lockFlags);
 				tok->GetAt(count++, bkColor);
+				tok->GetAt(count++, bkMode);
 				tok->GetAt(count++, lineColor);
 				tok->GetAt(count++, lineWidth);
 				tok->GetAt(count++, lineStyle);
@@ -1003,6 +1008,7 @@ BOOL CProMoBlockView::GetDefaultFromString(CString& str)
 				tok->GetAt(count++, fillStyle);
 
 				m_bkColor = bkColor;
+				m_bkMode = bkMode;
 				m_lineColor = lineColor;
 				m_lineWidth = lineWidth;
 				m_lineStyle = lineStyle;
@@ -1060,10 +1066,21 @@ void CProMoBlockView::Copy(CDiagramEntity* obj)
 {
 	CDiagramEntity::Copy(obj);
 	CProMoBlockView* objView = dynamic_cast<CProMoBlockView*>(obj);
-	if (GetModel()) {
-		GetModel()->Copy(objView->GetModel());
+	if (objView) {
+		m_bkColor = objView->m_bkColor;
+		m_bkMode = objView->m_bkMode;
+		m_lineColor = objView->m_lineColor;
+		m_lineWidth = objView->m_lineWidth;
+		m_lineStyle = objView->m_lineStyle;
+		m_fillColor = objView->m_fillColor;
+		m_fillStyle = objView->m_fillStyle;
+		m_fillPattern = objView->m_fillPattern;
+
+		if (GetModel()) {
+			GetModel()->Copy(objView->GetModel());
+		}
+		SetLockedProportions(objView->HasLockedProportions());
 	}
-	SetLockedProportions(objView->HasLockedProportions());
 }
 
 void CProMoBlockView::SetRect(CRect rect)
@@ -1633,7 +1650,7 @@ unsigned int CProMoBlockView::GetFontSize() const
 					continue;
 				}
 				unsigned int currValue = label->GetFontSize();
-				if (fontSize > 0) {
+				if (fontSize == 0) {
 					fontSize = currValue;
 				}
 				else if (fontSize != currValue) {
@@ -1668,7 +1685,7 @@ unsigned int CProMoBlockView::GetFontWeight() const
 					continue;
 				}
 				unsigned int currValue = label->GetFontWeight();
-				if (fontWeight > 0) {
+				if (fontWeight == 0) {
 					fontWeight = currValue;
 				}
 				else if (fontWeight != currValue) {
@@ -1822,7 +1839,7 @@ COLORREF CProMoBlockView::GetTextColor() const
 					continue;
 				}
 				COLORREF currValue = label->GetTextColor();
-				if (textColor > 0) {
+				if (textColor == RGB(0, 0, 0)) {
 					textColor = currValue;
 				}
 				else if (textColor != currValue) {
@@ -1849,6 +1866,117 @@ COLORREF CProMoBlockView::GetBkColor() const
 	return m_bkColor;
 }
 
+unsigned int CProMoBlockView::GetTextHorizontalAlignment() const
+/* ============================================================
+	Function :		CProMoBlockView::GetTextHorizontalAlignment()
+	Description :	Returns the horizontal alignment of the text
+					in the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the labels
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetTextHorizontalAlignment();
+				if (alignment == 0) {
+					alignment = currValue;
+				}
+				else if (alignment != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return alignment;
+}
+
+unsigned int CProMoBlockView::GetTextVerticalAlignment() const
+/* ============================================================
+	Function :		CProMoBlockView::GetTextVerticalAlignment()
+	Description :	Returns the vertical alignment of the text
+					in the labels
+	Access :		Public
+
+	Return :		unsigned int	-	The alignment of the
+										text in the labels
+	Parameters :	none
+
+   ============================================================*/
+{
+	unsigned int alignment = 0;
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				unsigned int currValue = label->GetTextVerticalAlignment();
+				if (alignment == 0) {
+					alignment = currValue;
+				}
+				else if (alignment != currValue) {
+					return 0;
+				}
+			}
+		}
+	}
+	return alignment;
+}
+
+BOOL CProMoBlockView::HasTextAlignmentFlag(unsigned int flag) const
+/* ============================================================
+	Function :		CProMoBlockView::HasTextAlignmentFlag()
+	Description :	Returns if the labels have the specified
+					alignment flag
+	Access :		Public
+
+	Return :		BOOL			-	"TRUE" if the labels
+										have the specified
+										alignment flag	
+	Parameters :	unsigned int	-	The alignment of the
+										text in the labels
+
+   ============================================================*/
+{
+	BOOL hasFlag = FALSE;
+	BOOL hasValue = FALSE;
+
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT))
+					continue;
+
+				BOOL currValue = label->HasTextAlignmentFlag(flag);
+				if (!hasValue) {
+					hasFlag = currValue;
+					hasValue = TRUE;
+				}
+				else if (hasFlag != currValue) {
+					// mixed state, return sentinel
+					return FALSE;
+				}
+			}
+		}
+	}
+	return hasFlag;
+}
+
 unsigned int CProMoBlockView::GetTextAlignment() const
 /* ============================================================
 	Function :		CProMoBlockView::GetTextAlignment()
@@ -1872,7 +2000,7 @@ unsigned int CProMoBlockView::GetTextAlignment() const
 					continue;
 				}
 				unsigned int currValue = label->GetTextAlignment();
-				if (alignment > 0) {
+				if (alignment == 0) {
 					alignment = currValue;
 				}
 				else if (alignment != currValue) {
@@ -1902,35 +2030,16 @@ BOOL CProMoBlockView::IsVisible() const
 unsigned int CProMoBlockView::GetBkMode() const
 /* ============================================================
 	Function :		CProMoBlockView::GetBkMode()
-	Description :	Returns the background style of the labels
+	Description :	Returns the background style of the block
 	Access :		Public
 
 	Return :		unsigned int	-	The background style of
-										the labels
+										the block
 	Parameters :	none
 
    ============================================================*/
 {
-	unsigned int bkMode = TRANSPARENT;
-	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetBkMode();
-				if (bkMode > 0) {
-					bkMode = currValue;
-				}
-				else if (bkMode != currValue) {
-					return TRANSPARENT;
-				}
-			}
-		}
-	}
-	return bkMode;
+	return m_bkMode;
 }
 
 COLORREF CProMoBlockView::GetLineColor() const
@@ -2035,7 +2144,7 @@ BOOL CProMoBlockView::SetFontName(const CString& name)
 	Return :		BOOL					-	"TRUE" if the
 												operation
 												succeeded
-	Parameters :	CString& name		-	The name of
+	Parameters :	CString& name			-	The name of
 												the font
 
    ============================================================*/
@@ -2285,6 +2394,111 @@ BOOL CProMoBlockView::SetBkColor(const COLORREF& color)
 	return TRUE;
 }
 
+BOOL CProMoBlockView::SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled)
+/* ============================================================
+	Function :		CProMoBlockView::SetTextAlignmentFlag()
+	Description :	Sets the alignment flag of the text in the labels
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the
+											operation
+											succeeded
+	Parameters :	unsigned int& flag	-	The alignment flag
+											of the text in
+											the labels
+					BOOL& enabled		-	"TRUE" to enable
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				result &= label->SetTextAlignmentFlag(flag, enabled);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetTextHorizontalAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoBlockView::SetTextHorizontalAlignment()
+	Description :	Sets the horizontal alignment of the text 
+					in the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the labels
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				result &= label->SetTextHorizontalAlignment(alignment);
+			}
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetTextVerticalAlignment(const unsigned int& alignment)
+/* ============================================================
+	Function :		CProMoBlockView::SetTextVerticalAlignment()
+	Description :	Sets the vertical alignment of the text
+					in the labels
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	unsigned int& alignment	-	The alignment of
+												the text in
+												the labels
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_blockModel) {
+		CObArray* labels = m_blockModel->GetLabels();
+		if (labels) {
+			for (int i = 0; i < labels->GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
+				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+					continue;
+				}
+				result &= label->SetTextVerticalAlignment(alignment);
+			}
+		}
+	}
+	return result;
+}
+
 BOOL CProMoBlockView::SetTextAlignment(const unsigned int& alignment)
 /* ============================================================
 	Function :		CProMoBlockView::SetTextAlignment()
@@ -2346,33 +2560,20 @@ BOOL CProMoBlockView::SetVisible(const BOOL& visible)
 BOOL CProMoBlockView::SetBkMode(const unsigned int& mode)
 /* ============================================================
 	Function :		CProMoBlockView::SetBkMode()
-	Description :	Sets the background style of the labels
+	Description :	Sets the background style of the block
 	Access :		Public
 
 	Return :		BOOL				-	"TRUE" if the operation
 											succeeded
 	Parameters :	unsigned int& model	-	The background style of
-											the labels
+											the block
 
    ============================================================*/
 {
-	BOOL result = TRUE;
 	if (IsLocked(LOCK_BKMODE))
 		return FALSE;
-	
-	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_BKMODE)) {
-					continue;
-				}
-				result &= label->SetBkMode(mode);
-			}
-		}
-	}
-	return result;
+	m_bkMode = mode;
+	return TRUE;
 }
 
 BOOL CProMoBlockView::SetLineColor(const COLORREF& color)

@@ -90,7 +90,61 @@ BEGIN_MESSAGE_MAP(CWinProMoView, CView)
 	ON_COMMAND(ID_ZOOM_75, &CWinProMoView::OnZoom75)
 	ON_COMMAND(ID_EDIT_REDO, &CWinProMoView::OnEditRedo)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_REDO, &CWinProMoView::OnUpdateEditRedo)
-END_MESSAGE_MAP()
+	ON_COMMAND(ID_FORMAT_FONT, &CWinProMoView::OnFormatFont)
+	ON_UPDATE_COMMAND_UI(ID_FORMAT_FONT, &CWinProMoView::OnUpdateFormatFont)
+	ON_COMMAND(ID_ALIGNMENT_BOTTOM, &CWinProMoView::OnAlignmentBottom)
+	ON_COMMAND(ID_ALIGNMENT_CENTER, &CWinProMoView::OnAlignmentCenter)
+	ON_COMMAND(ID_ALIGNMENT_LEFT, &CWinProMoView::OnAlignmentLeft)
+	ON_COMMAND(ID_ALIGNMENT_MIDDLE, &CWinProMoView::OnAlignmentMiddle)
+	ON_COMMAND(ID_ALIGNMENT_MULTILINE, &CWinProMoView::OnAlignmentMultiline)
+	ON_COMMAND(ID_ALIGNMENT_RIGHT, &CWinProMoView::OnAlignmentRight)
+	ON_COMMAND(ID_ALIGNMENT_TOP, &CWinProMoView::OnAlignmentTop)
+	ON_UPDATE_COMMAND_UI(ID_ALIGNMENT_BOTTOM, &CWinProMoView::OnUpdateAlignmentBottom)
+	ON_UPDATE_COMMAND_UI(ID_ALIGNMENT_CENTER, &CWinProMoView::OnUpdateAlignmentCenter)
+	ON_UPDATE_COMMAND_UI(ID_ALIGNMENT_LEFT, &CWinProMoView::OnUpdateAlignmentLeft)
+	ON_UPDATE_COMMAND_UI(ID_ALIGNMENT_MIDDLE, &CWinProMoView::OnUpdateAlignmentMiddle)
+	ON_UPDATE_COMMAND_UI(ID_ALIGNMENT_MULTILINE, &CWinProMoView::OnUpdateAlignmentMultiline)
+	ON_UPDATE_COMMAND_UI(ID_ALIGNMENT_RIGHT, &CWinProMoView::OnUpdateAlignmentRight)
+	ON_UPDATE_COMMAND_UI(ID_ALIGNMENT_TOP, &CWinProMoView::OnUpdateAlignmentTop)
+	ON_COMMAND(ID_BACKGROUND_COLOR, &CWinProMoView::OnBackgroundColor)
+	ON_UPDATE_COMMAND_UI(ID_BACKGROUND_COLOR, &CWinProMoView::OnUpdateBackgroundColor)
+	ON_COMMAND(ID_BACKGROUND_TRANSPARENT, &CWinProMoView::OnBackgroundTransparent)
+	ON_UPDATE_COMMAND_UI(ID_BACKGROUND_TRANSPARENT, &CWinProMoView::OnUpdateBackgroundTransparent)
+	ON_COMMAND(ID_FILL_COLOR, &CWinProMoView::OnFillColor)
+	ON_UPDATE_COMMAND_UI(ID_FILL_COLOR, &CWinProMoView::OnUpdateFillColor)
+	ON_COMMAND(ID_PATTERN_CROSSHATCH, &CWinProMoView::OnPatternCrosshatch)
+	ON_UPDATE_COMMAND_UI(ID_PATTERN_CROSSHATCH, &CWinProMoView::OnUpdatePatternCrosshatch)
+	ON_COMMAND(ID_PATTERN_DIAGONALCROSSHATCH, &CWinProMoView::OnPatternDiagonalcrosshatch)
+	ON_UPDATE_COMMAND_UI(ID_PATTERN_DIAGONALCROSSHATCH, &CWinProMoView::OnUpdatePatternDiagonalcrosshatch)
+	ON_COMMAND(ID_PATTERN_DIAGONALLEFT, &CWinProMoView::OnPatternDiagonalleft)
+	ON_UPDATE_COMMAND_UI(ID_PATTERN_DIAGONALLEFT, &CWinProMoView::OnUpdatePatternDiagonalleft)
+	ON_COMMAND(ID_PATTERN_DIAGONALRIGHT, &CWinProMoView::OnPatternDiagonalright)
+	ON_UPDATE_COMMAND_UI(ID_PATTERN_DIAGONALRIGHT, &CWinProMoView::OnUpdatePatternDiagonalright)
+	ON_COMMAND(ID_PATTERN_HORIZONTAL, &CWinProMoView::OnPatternHorizontal)
+	ON_UPDATE_COMMAND_UI(ID_PATTERN_HORIZONTAL, &CWinProMoView::OnUpdatePatternHorizontal)
+	ON_COMMAND(ID_PATTERN_SOLID, &CWinProMoView::OnPatternSolid)
+	ON_UPDATE_COMMAND_UI(ID_PATTERN_SOLID, &CWinProMoView::OnUpdatePatternSolid)
+	ON_COMMAND(ID_PATTERN_VERTICAL, &CWinProMoView::OnPatternVertical)
+	ON_UPDATE_COMMAND_UI(ID_PATTERN_VERTICAL, &CWinProMoView::OnUpdatePatternVertical)
+	ON_COMMAND(ID_LINE_COLOR, &CWinProMoView::OnLineColor)
+	ON_UPDATE_COMMAND_UI(ID_LINE_COLOR, &CWinProMoView::OnUpdateLineColor)
+	ON_COMMAND(ID_STYLE_SOLID, &CWinProMoView::OnStyleSolid)
+	ON_UPDATE_COMMAND_UI(ID_STYLE_SOLID, &CWinProMoView::OnUpdateStyleSolid)
+	ON_COMMAND(ID_STYLE_DOTTED, &CWinProMoView::OnStyleDotted)
+	ON_UPDATE_COMMAND_UI(ID_STYLE_DOTTED, &CWinProMoView::OnUpdateStyleDotted)
+	ON_COMMAND(ID_STYLE_DASHED, &CWinProMoView::OnStyleDashed)
+	ON_UPDATE_COMMAND_UI(ID_STYLE_DASHED, &CWinProMoView::OnUpdateStyleDashed)
+	ON_COMMAND(ID_STYLE_DOTDASHDOTTED, &CWinProMoView::OnStyleDotdashdotted)
+	ON_UPDATE_COMMAND_UI(ID_STYLE_DOTDASHDOTTED, &CWinProMoView::OnUpdateStyleDotdashdotted)
+	ON_COMMAND(ID_STYLE_DASHDOTTED, &CWinProMoView::OnStyleDashdotted)
+	ON_UPDATE_COMMAND_UI(ID_STYLE_DASHDOTTED, &CWinProMoView::OnUpdateStyleDashdotted)
+	ON_COMMAND(ID_WIDTH_1PT, &CWinProMoView::OnWidth1pt)
+	ON_UPDATE_COMMAND_UI(ID_WIDTH_1PT, &CWinProMoView::OnUpdateWidth1pt)
+	ON_COMMAND(ID_WIDTH_2PT, &CWinProMoView::OnWidth2pt)
+	ON_UPDATE_COMMAND_UI(ID_WIDTH_2PT, &CWinProMoView::OnUpdateWidth2pt)
+	ON_COMMAND(ID_WIDTH_4PT, &CWinProMoView::OnWidth4pt)
+	ON_UPDATE_COMMAND_UI(ID_WIDTH_4PT, &CWinProMoView::OnUpdateWidth4pt)
+	END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
 // CWinProMoView construction/destruction
@@ -469,7 +523,7 @@ void CWinProMoView::OnEditDelete()
 void CWinProMoView::OnUpdateEditDelete(CCmdUI* pCmdUI)
 {
 	if (m_editor) {
-		m_editor->UpdateDelete(pCmdUI);
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected());
 	}
 }
 
@@ -704,4 +758,563 @@ void CWinProMoView::OnZoom75()
 	}
 }
 
+void CWinProMoView::OnFormatFont()
+{
+	if (m_editor) {
+		CClientDC dc(this);
+		LOGFONT lf = { 0 };  // zero-initialize
 
+		lf.lfHeight = -MulDiv(m_editor->GetFontSize(), GetDeviceCaps(dc, LOGPIXELSY), 72);
+
+		// Weight
+		lf.lfWeight = m_editor->GetFontWeight();
+
+		// Style flags
+		lf.lfItalic = m_editor->IsFontItalic();
+		lf.lfUnderline = m_editor->IsFontUnderline();
+		lf.lfStrikeOut = m_editor->IsFontStrikeOut();
+
+		// Charset (use DEFAULT_CHARSET unless you need otherwise)
+		lf.lfCharSet = DEFAULT_CHARSET;
+
+		// Font face name
+#if _MSC_VER >= 1500
+		_tcsncpy_s(lf.lfFaceName, LF_FACESIZE, m_editor->GetFontName(), _TRUNCATE);
+#else
+		_tcsncpy(lf.lfFaceName, m_editor->GetFontName(), LF_FACESIZE - 1);
+		lf.lfFaceName[LF_FACESIZE - 1] = _T('\0');
+#endif
+
+		CFontDialog dlg(&lf, CF_EFFECTS | CF_SCREENFONTS, NULL, AfxGetMainWnd());
+		dlg.m_cf.rgbColors = m_editor->GetTextColor();
+
+		if (dlg.DoModal() == IDOK)
+		{
+			m_editor->SetFontName(dlg.GetFaceName());
+			m_editor->SetFontSize(dlg.GetSize()/10);
+			m_editor->SetFontWeight(dlg.GetWeight());
+			m_editor->SetFontItalic(dlg.IsItalic());
+			m_editor->SetFontUnderline(dlg.IsUnderline());
+			m_editor->SetFontStrikeOut(dlg.IsStrikeOut());
+			m_editor->SetTextColor(dlg.GetColor());
+		}
+	}
+}
+
+void CWinProMoView::OnUpdateFormatFont(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected());
+	}
+}
+
+void CWinProMoView::OnAlignmentBottom()
+{
+	if (m_editor) {
+		m_editor->SetTextVerticalAlignment(DT_BOTTOM);	
+	}
+}
+
+void CWinProMoView::OnAlignmentCenter()
+{
+	if (m_editor) {
+		m_editor->SetTextHorizontalAlignment(DT_CENTER);
+	}
+}
+
+void CWinProMoView::OnAlignmentLeft()
+{
+	if (m_editor) {
+		m_editor->SetTextHorizontalAlignment(DT_LEFT);
+	}
+}
+
+void CWinProMoView::OnAlignmentMiddle()
+{
+	if (m_editor) {
+		m_editor->SetTextVerticalAlignment(DT_VCENTER);
+	}
+}
+
+void CWinProMoView::OnAlignmentMultiline()
+{
+	if (m_editor) {
+		if (m_editor->HasTextAlignmentFlag(DT_WORDBREAK)) {
+			m_editor->SetTextAlignmentFlag(DT_SINGLELINE, TRUE);
+		}
+		else {
+			m_editor->SetTextAlignmentFlag(DT_WORDBREAK, TRUE);
+		}
+	}
+}
+
+void CWinProMoView::OnAlignmentRight()
+{
+	if (m_editor) {
+		m_editor->SetTextHorizontalAlignment(DT_RIGHT);
+	}
+}
+
+void CWinProMoView::OnAlignmentTop()
+{
+	if (m_editor) {
+		m_editor->SetTextVerticalAlignment(DT_TOP);
+	}
+}
+
+void CWinProMoView::OnUpdateAlignmentBottom(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
+		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_BOTTOM);
+	}
+}
+
+void CWinProMoView::OnUpdateAlignmentCenter(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
+		pCmdUI->SetCheck(m_editor->GetTextHorizontalAlignment() == DT_CENTER);
+	}
+}
+
+void CWinProMoView::OnUpdateAlignmentLeft(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
+		pCmdUI->SetCheck(m_editor->GetTextHorizontalAlignment() == DT_LEFT);
+	}
+}
+
+void CWinProMoView::OnUpdateAlignmentMiddle(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
+		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_VCENTER);
+	}
+}
+
+void CWinProMoView::OnUpdateAlignmentMultiline(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
+		pCmdUI->SetCheck(m_editor->HasTextAlignmentFlag(DT_WORDBREAK));
+	}
+}
+
+void CWinProMoView::OnUpdateAlignmentRight(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
+		pCmdUI->SetCheck(m_editor->GetTextHorizontalAlignment() == DT_RIGHT);
+	}
+}
+
+void CWinProMoView::OnUpdateAlignmentTop(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
+		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_TOP);
+	}
+}
+
+void CWinProMoView::OnBackgroundColor()
+{
+	if (m_editor) {
+		CColorDialog dlg (m_editor->GetBkColor(), CC_FULLOPEN | CC_RGBINIT, AfxGetMainWnd());
+		if (dlg.DoModal() == IDOK)
+		{
+			m_editor->SetBkColor(dlg.GetColor());
+		}
+	}
+}
+
+void CWinProMoView::OnUpdateBackgroundColor(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_BKCOLOR));
+	}
+}
+
+void CWinProMoView::OnBackgroundTransparent()
+{
+	if (m_editor) {
+		if (m_editor->GetBkMode() == TRANSPARENT)
+			m_editor->SetBkMode(OPAQUE);
+		else
+			m_editor->SetBkMode(TRANSPARENT);
+	}
+}
+
+void CWinProMoView::OnUpdateBackgroundTransparent(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_BKMODE));
+		pCmdUI->SetCheck(m_editor->GetBkMode() == TRANSPARENT);
+	}
+}
+
+void CWinProMoView::OnFillColor()
+{
+	if (m_editor) {
+		CColorDialog dlg(m_editor->GetFillColor(), CC_FULLOPEN | CC_RGBINIT, AfxGetMainWnd());
+		if (dlg.DoModal() == IDOK)
+		{
+			m_editor->SetFillColor(dlg.GetColor());
+		}
+	}
+}
+
+void CWinProMoView::OnUpdateFillColor(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_FILLCOLOR));
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnPatternCrosshatch()
+{
+	if (m_editor) {
+		m_editor->SetFillPattern(TRUE);
+		m_editor->SetFillStyle(HS_CROSS);
+	}
+}
+
+void CWinProMoView::OnUpdatePatternCrosshatch(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_FILLSTYLE));
+			pCmdUI->SetCheck((m_editor->GetFillStyle() == HS_CROSS) && m_editor->IsFillPattern());
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnPatternDiagonalcrosshatch()
+{
+	if (m_editor) {
+		m_editor->SetFillPattern(TRUE);
+		m_editor->SetFillStyle(HS_DIAGCROSS);
+	}
+}
+
+void CWinProMoView::OnUpdatePatternDiagonalcrosshatch(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_FILLSTYLE));
+			pCmdUI->SetCheck((m_editor->GetFillStyle() == HS_DIAGCROSS) && m_editor->IsFillPattern());
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnPatternDiagonalleft()
+{
+	if (m_editor) {
+		m_editor->SetFillPattern(TRUE);
+		m_editor->SetFillStyle(HS_BDIAGONAL);
+	}
+}
+
+void CWinProMoView::OnUpdatePatternDiagonalleft(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_FILLSTYLE));
+			pCmdUI->SetCheck((m_editor->GetFillStyle() == HS_BDIAGONAL) && m_editor->IsFillPattern());
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnPatternDiagonalright()
+{
+	if (m_editor) {
+		m_editor->SetFillPattern(TRUE);
+		m_editor->SetFillStyle(HS_FDIAGONAL);
+	}
+}
+
+void CWinProMoView::OnUpdatePatternDiagonalright(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_FILLSTYLE));
+			pCmdUI->SetCheck((m_editor->GetFillStyle() == HS_FDIAGONAL) && m_editor->IsFillPattern());
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnPatternHorizontal()
+{
+	if (m_editor) {
+		m_editor->SetFillPattern(TRUE);
+		m_editor->SetFillStyle(HS_HORIZONTAL);
+	}
+}
+
+void CWinProMoView::OnUpdatePatternHorizontal(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_FILLSTYLE));
+			pCmdUI->SetCheck((m_editor->GetFillStyle() == HS_HORIZONTAL) && m_editor->IsFillPattern());
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnPatternSolid()
+{
+	if (m_editor) {
+		m_editor->SetFillPattern(FALSE);
+	}
+}
+
+void CWinProMoView::OnUpdatePatternSolid(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_FILLSTYLE));
+			pCmdUI->SetCheck(!m_editor->IsFillPattern());
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnPatternVertical()
+{
+	if (m_editor) {
+		m_editor->SetFillPattern(TRUE);
+		m_editor->SetFillStyle(HS_VERTICAL);
+	}
+}
+
+void CWinProMoView::OnUpdatePatternVertical(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_FILLSTYLE));
+			pCmdUI->SetCheck((m_editor->GetFillStyle() == HS_VERTICAL) && m_editor->IsFillPattern());
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnLineColor()
+{
+	if (m_editor) {
+		CColorDialog dlg(m_editor->GetLineColor(), CC_FULLOPEN | CC_RGBINIT, AfxGetMainWnd());
+		if (dlg.DoModal() == IDOK)
+		{
+			m_editor->SetLineColor(dlg.GetColor());
+		}
+	}
+}
+
+void CWinProMoView::OnUpdateLineColor(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINECOLOR));
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnStyleSolid()
+{
+	if (m_editor) {
+		m_editor->SetLineStyle(PS_SOLID);
+	}
+}
+
+void CWinProMoView::OnUpdateStyleSolid(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINESTYLE) && m_editor->GetLineWidth() == 1);
+			pCmdUI->SetCheck((m_editor->GetLineStyle() == PS_SOLID) || m_editor->GetLineWidth() != 1);
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnStyleDotted()
+{
+	if (m_editor) {
+		m_editor->SetLineStyle(PS_DOT);
+	}
+}
+
+void CWinProMoView::OnUpdateStyleDotted(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINESTYLE) && m_editor->GetLineWidth() == 1);
+			pCmdUI->SetCheck((m_editor->GetLineStyle() == PS_DOT) && m_editor->GetLineWidth() == 1);
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnStyleDashed()
+{
+	if (m_editor) {
+		m_editor->SetLineStyle(PS_DASH);
+	}
+}
+
+void CWinProMoView::OnUpdateStyleDashed(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINESTYLE) && m_editor->GetLineWidth() == 1);
+			pCmdUI->SetCheck((m_editor->GetLineStyle() == PS_DASH) && m_editor->GetLineWidth() == 1);
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnStyleDotdashdotted()
+{
+	if (m_editor) {
+		m_editor->SetLineStyle(PS_DASHDOTDOT);
+	}
+}
+
+void CWinProMoView::OnUpdateStyleDotdashdotted(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINESTYLE) && m_editor->GetLineWidth() == 1);
+			pCmdUI->SetCheck((m_editor->GetLineStyle() == PS_DASHDOTDOT) && m_editor->GetLineWidth() == 1);
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnStyleDashdotted()
+{
+	if (m_editor) {
+		m_editor->SetLineStyle(PS_DASHDOT);
+	}
+}
+
+void CWinProMoView::OnUpdateStyleDashdotted(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINESTYLE) && m_editor->GetLineWidth() == 1);
+			pCmdUI->SetCheck((m_editor->GetLineStyle() == PS_DASHDOT) && m_editor->GetLineWidth() == 1);
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnWidth1pt()
+{
+	if (m_editor) {
+		m_editor->SetLineWidth(1);
+	}
+}
+
+void CWinProMoView::OnUpdateWidth1pt(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINEWIDTH));
+			pCmdUI->SetCheck(m_editor->GetLineWidth() == 1);
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+			pCmdUI->SetCheck(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnWidth2pt()
+{
+	if (m_editor) {
+		m_editor->SetLineWidth(2);
+	}
+}
+
+void CWinProMoView::OnUpdateWidth2pt(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINEWIDTH));
+			pCmdUI->SetCheck(m_editor->GetLineWidth() == 2);
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+		}
+	}
+}
+
+void CWinProMoView::OnWidth4pt()
+{
+	if (m_editor) {
+		m_editor->SetLineWidth(4);
+	}
+}
+
+void CWinProMoView::OnUpdateWidth4pt(CCmdUI* pCmdUI)
+{
+	if (m_editor) {
+		if (m_editor->IsAnyEdgeSelected() || m_editor->IsAnyBlockSelected()) {
+			pCmdUI->Enable(!m_editor->IsLocked(LOCK_LINEWIDTH));
+			pCmdUI->SetCheck(m_editor->GetLineWidth() == 4);
+		}
+		else {
+			pCmdUI->Enable(FALSE);
+		}
+	}
+}

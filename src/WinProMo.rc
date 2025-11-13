@@ -263,7 +263,7 @@ BEGIN
         MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
         MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
         MENUITEM SEPARATOR
-        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1
         MENUITEM SEPARATOR
         MENUITEM "E&xit",                       ID_APP_EXIT
     END
@@ -304,6 +304,60 @@ BEGIN
     BEGIN
         MENUITEM "(dummy)",                     ID_INSERT_
     END
+    POPUP "F&ormat"
+    BEGIN
+        MENUITEM "&Font...",                    ID_FORMAT_FONT
+        POPUP "&Alignment"
+        BEGIN
+            MENUITEM "&Left",                       ID_ALIGNMENT_LEFT
+            MENUITEM "&Center",                     ID_ALIGNMENT_CENTER
+            MENUITEM "&Right",                      ID_ALIGNMENT_RIGHT
+            MENUITEM SEPARATOR
+            MENUITEM "&Top",                        ID_ALIGNMENT_TOP
+            MENUITEM "&Middle",                     ID_ALIGNMENT_MIDDLE
+            MENUITEM "&Bottom",                     ID_ALIGNMENT_BOTTOM
+            MENUITEM SEPARATOR
+            MENUITEM "&Multiline",                  ID_ALIGNMENT_MULTILINE
+        END
+        MENUITEM SEPARATOR
+        POPUP "&Background"
+        BEGIN
+            MENUITEM "&Color...",                   ID_BACKGROUND_COLOR
+            MENUITEM "&Transparent",                ID_BACKGROUND_TRANSPARENT
+        END
+        POPUP "&Line"
+        BEGIN
+            MENUITEM "&Color...",                   ID_LINE_COLOR
+            POPUP "Width"
+            BEGIN
+                MENUITEM "1 pt",                        ID_WIDTH_1PT
+                MENUITEM "2 pt",                        ID_WIDTH_2PT
+                MENUITEM "4 pt",                        ID_WIDTH_4PT
+            END
+            POPUP "Style"
+            BEGIN
+                MENUITEM "Solid",                       ID_STYLE_SOLID
+                MENUITEM "Dashed",                      ID_STYLE_DASHED
+                MENUITEM "Dotted",                      ID_STYLE_DOTTED
+                MENUITEM "Dash-dotted",                 ID_STYLE_DASHDOTTED
+                MENUITEM "Dot-dash-dotted",             ID_STYLE_DOTDASHDOTTED
+            END
+        END
+        POPUP "&Fill"
+        BEGIN
+            MENUITEM "&Color...",                   ID_FILL_COLOR
+            POPUP "Pattern"
+            BEGIN
+                MENUITEM "Solid",                       ID_PATTERN_SOLID
+                MENUITEM "Horizontal",                  ID_PATTERN_HORIZONTAL
+                MENUITEM "Vertical",                    ID_PATTERN_VERTICAL
+                MENUITEM "Downward hatch",              ID_PATTERN_DIAGONALLEFT
+                MENUITEM "Upward hatch",                ID_PATTERN_DIAGONALRIGHT
+                MENUITEM "Crosshatch",                  ID_PATTERN_CROSSHATCH
+                MENUITEM "Diagonal crosshatch",         ID_PATTERN_DIAGONALCROSSHATCH
+            END
+        END
+    END
     POPUP "&Arrange"
     BEGIN
         MENUITEM "Group",                       ID_ARRANGE_GROUP
@@ -319,7 +373,6 @@ BEGIN
             MENUITEM "Middle",                      ID_ALIGN_MIDDLE
             MENUITEM "Bottom",                      ID_ALIGN_BOTTOM
         END
-        MENUITEM SEPARATOR
         MENUITEM "Snap to Grid",                ID_ARRANGE_SNAPTOGRID
     END
     POPUP "&Window"

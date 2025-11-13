@@ -61,13 +61,47 @@
 #define ID_EDIT_CANVASSIZE              32798
 #define ID_EDIT_GRIDSIZE                32799
 #define ID_EDIT_REDO32800               32800
+#define ID_FORMAT_FONT32803             32803
+#define ID_FORMAT_ALIGNMENT             32804
+#define ID_FORMAT_LINE                  32805
+#define ID_FORMAT_FILL                  32806
+#define ID_LINE_COLOR                   32807
+#define ID_LINE_WIDTH                   32808
+#define ID_LINE_STYLE                   32809
+#define ID_WIDTH_1PT                    32810
+#define ID_WIDTH_2PT                    32811
+#define ID_WIDTH_4PT                    32812
+#define ID_STYLE_SOLID                  32813
+#define ID_STYLE_DASHED                 32814
+#define ID_STYLE_DOTTED                 32815
+#define ID_STYLE_DASHDOTTED             32816
+#define ID_STYLE_DOTDASHDOTTED          32817
+#define ID_FILL_COLOR			        32818
+#define ID_FILL_PATTERN                 32820
+#define ID_PATTERN_HORIZONTAL           32821
+#define ID_PATTERN_VERTICAL             32822
+#define ID_PATTERN_DIAGONALLEFT         32823
+#define ID_PATTERN_DIAGONALRIGHT        32824
+#define ID_PATTERN_CROSSHATCH           32825
+#define ID_PATTERN_DIAGONALCROSSHATCH   32826
+#define ID_PATTERN_SOLID                32827
+#define ID_FORMAT_BACKGROUND            32828
+#define ID_BACKGROUND_COLOR             32829
+#define ID_BACKGROUND_TRANSPARENT       32830
+#define ID_ALIGNMENT_LEFT               32831
+#define ID_ALIGNMENT_CENTER             32832
+#define ID_ALIGNMENT_RIGHT              32833
+#define ID_ALIGNMENT_TOP                32834
+#define ID_ALIGNMENT_MIDDLE             32835
+#define ID_ALIGNMENT_BOTTOM             32836
+#define ID_ALIGNMENT_MULTILINE          32837
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        137
-#define _APS_NEXT_COMMAND_VALUE         32803
+#define _APS_NEXT_COMMAND_VALUE         32841
 #define _APS_NEXT_CONTROL_VALUE         1015
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

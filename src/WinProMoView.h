@@ -77,18 +77,6 @@ protected:
 	afx_msg void OnUpdateButtonSnap(CCmdUI* pCmdUI);
 	afx_msg void OnEditDelete();
 	afx_msg void OnUpdateEditDelete(CCmdUI* pCmdUI);
-	//}}AFX_MSG
-	//Commands
-	DECLARE_MESSAGE_MAP()
-
-protected:
-	// Private data
-	CProMoEditor*	m_editor;
-	int				m_screenResolutionX;
-	int				m_screenResolutionY;
-	int				m_nHorzPages;
-	int				m_nVertPages;
-public:
 	afx_msg void OnArrangeGroup();
 	afx_msg void OnUpdateArrangeGroup(CCmdUI* pCmdUI);
 	afx_msg void OnArrangeUngroup();
@@ -119,6 +107,72 @@ public:
 	afx_msg void OnZoom75();
 	afx_msg void OnEditRedo();
 	afx_msg void OnUpdateEditRedo(CCmdUI* pCmdUI);
+	afx_msg void OnFormatFont();
+	afx_msg void OnUpdateFormatFont(CCmdUI* pCmdUI);
+	afx_msg void OnAlignmentBottom();
+	afx_msg void OnAlignmentCenter();
+	afx_msg void OnAlignmentLeft();
+	afx_msg void OnAlignmentMiddle();
+	afx_msg void OnAlignmentMultiline();
+	afx_msg void OnAlignmentRight();
+	afx_msg void OnAlignmentTop();
+	afx_msg void OnUpdateAlignmentBottom(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAlignmentCenter(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAlignmentLeft(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAlignmentMiddle(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAlignmentMultiline(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAlignmentRight(CCmdUI* pCmdUI);
+	afx_msg void OnUpdateAlignmentTop(CCmdUI* pCmdUI);
+	afx_msg void OnBackgroundColor();
+	afx_msg void OnUpdateBackgroundColor(CCmdUI* pCmdUI);
+	afx_msg void OnBackgroundTransparent();
+	afx_msg void OnUpdateBackgroundTransparent(CCmdUI* pCmdUI);
+	afx_msg void OnFillColor();
+	afx_msg void OnUpdateFillColor(CCmdUI* pCmdUI);
+	afx_msg void OnPatternCrosshatch();
+	afx_msg void OnUpdatePatternCrosshatch(CCmdUI* pCmdUI);
+	afx_msg void OnPatternDiagonalcrosshatch();
+	afx_msg void OnUpdatePatternDiagonalcrosshatch(CCmdUI* pCmdUI);
+	afx_msg void OnPatternDiagonalleft();
+	afx_msg void OnUpdatePatternDiagonalleft(CCmdUI* pCmdUI);
+	afx_msg void OnPatternDiagonalright();
+	afx_msg void OnUpdatePatternDiagonalright(CCmdUI* pCmdUI);
+	afx_msg void OnPatternHorizontal();
+	afx_msg void OnUpdatePatternHorizontal(CCmdUI* pCmdUI);
+	afx_msg void OnPatternSolid();
+	afx_msg void OnUpdatePatternSolid(CCmdUI* pCmdUI);
+	afx_msg void OnPatternVertical();
+	afx_msg void OnUpdatePatternVertical(CCmdUI* pCmdUI);
+	afx_msg void OnLineColor();
+	afx_msg void OnUpdateLineColor(CCmdUI* pCmdUI);
+	afx_msg void OnStyleSolid();
+	afx_msg void OnUpdateStyleSolid(CCmdUI* pCmdUI);
+	afx_msg void OnStyleDotted();
+	afx_msg void OnUpdateStyleDotted(CCmdUI* pCmdUI);
+	afx_msg void OnStyleDashed();
+	afx_msg void OnUpdateStyleDashed(CCmdUI* pCmdUI);
+	afx_msg void OnStyleDotdashdotted();
+	afx_msg void OnUpdateStyleDotdashdotted(CCmdUI* pCmdUI);
+	afx_msg void OnStyleDashdotted();
+	afx_msg void OnUpdateStyleDashdotted(CCmdUI* pCmdUI);
+	afx_msg void OnWidth1pt();
+	afx_msg void OnUpdateWidth1pt(CCmdUI* pCmdUI);
+	afx_msg void OnWidth2pt();
+	afx_msg void OnUpdateWidth2pt(CCmdUI* pCmdUI);
+	afx_msg void OnWidth4pt();
+	afx_msg void OnUpdateWidth4pt(CCmdUI* pCmdUI);
+	//}}AFX_MSG
+	//Commands
+	DECLARE_MESSAGE_MAP()
+
+protected:
+	// Private data
+	CProMoEditor*	m_editor;
+	int				m_screenResolutionX;
+	int				m_screenResolutionY;
+	int				m_nHorzPages;
+	int				m_nVertPages;
+public:
 };
 
 #ifndef _DEBUG  // debug version in WinProMoView.cpp

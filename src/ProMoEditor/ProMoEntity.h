@@ -60,6 +60,9 @@ public:
 	virtual COLORREF GetTextColor() const = 0;
 	virtual COLORREF GetBkColor() const = 0;
 	virtual unsigned int GetBkMode() const = 0;
+	virtual BOOL HasTextAlignmentFlag(unsigned int flag) const = 0;
+	virtual unsigned int GetTextHorizontalAlignment() const = 0;
+	virtual unsigned int GetTextVerticalAlignment() const = 0;
 	virtual unsigned int GetTextAlignment() const = 0;
 	virtual BOOL IsVisible() const = 0;
 	//virtual void GetMargins(double& left, double& top, double& right, double& bottom) const = 0;
@@ -73,6 +76,9 @@ public:
 	virtual BOOL SetTextColor(const COLORREF& color) = 0;
 	virtual BOOL SetBkColor(const COLORREF& color) = 0;
 	virtual BOOL SetBkMode(const unsigned int& mode) = 0;
+	virtual BOOL SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled) = 0;
+	virtual BOOL SetTextHorizontalAlignment(const unsigned int& flag) = 0;
+	virtual BOOL SetTextVerticalAlignment(const unsigned int& flag) = 0;
 	virtual BOOL SetTextAlignment(const unsigned int& alignment) = 0;
 	virtual BOOL SetVisible(const BOOL& visible) = 0;
 	//virtual void SetMargins(double left, double top, double right, double bottom) = 0;

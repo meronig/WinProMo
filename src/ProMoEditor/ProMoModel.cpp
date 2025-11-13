@@ -186,6 +186,7 @@ void CProMoModel::LinkLabel(CProMoLabel* label)
 					label->m_model = this;
 					m_labels.Add(label);
 					CString value = prop->GetValue().GetString();
+					label->SetFitTitle(TRUE);
 					label->SetTitle(value);
 					CustomizeLabel(label);
 				}
