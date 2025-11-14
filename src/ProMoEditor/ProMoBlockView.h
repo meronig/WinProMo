@@ -42,6 +42,8 @@ public:
 	virtual void SetLockedProportions(BOOL hasLockedProportions);
 	virtual BOOL HasLockedProportions();
 
+	virtual CProMoBlockModel* GetBlockModel() const;
+
 	// Parent-child block links
 	virtual void SetParentBlock(CProMoBlockView* parent);
 	virtual CProMoBlockView* GetParentBlock() const;
@@ -120,8 +122,7 @@ public:
 	virtual BOOL HasTextAlignmentFlag(unsigned int flag) const;
 	virtual unsigned int GetTextAlignment() const;
 	virtual BOOL IsVisible() const;
-	//virtual void GetMargins(double& left, double& top, double& right, double& bottom) const;
-
+	
 	virtual BOOL SetFontName(const CString& name);
 	virtual BOOL SetFontSize(const unsigned int& size);
 	virtual BOOL SetFontWeight(const unsigned int& weight);
@@ -136,8 +137,7 @@ public:
 	virtual BOOL SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled);
 	virtual BOOL SetTextAlignment(const unsigned int& alignment);
 	virtual BOOL SetVisible(const BOOL& visible);
-	//virtual void SetMargins(double left, double top, double right, double bottom);
-
+	
 	virtual void LinkLabel(CProMoLabel* label);
 	virtual void OnLabelChanged(CProMoLabel* label);
 

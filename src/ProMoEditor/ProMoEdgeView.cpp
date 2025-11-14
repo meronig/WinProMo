@@ -969,6 +969,22 @@ void CProMoEdgeView::AutoResize()
 
 }
 
+CProMoEdgeModel* CProMoEdgeView::GetEdgeModel() const
+/* ============================================================
+	Function :		CProMoEdgeView::GetEdgeModel
+	Description :	Returns a pointer to the model of this
+					edge
+	Access :		Public
+
+	Return :		CProMoEdgeModel*		-	A pointer to the
+												model
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_edgeModel;
+}
+
 CProMoModel* CProMoEdgeView::GetModel() const
 /* ============================================================
 	Function :		CProMoEdgeView::GetModel

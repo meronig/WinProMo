@@ -573,7 +573,7 @@ void CProMoBlockModel::CustomizeLabel(CProMoLabel* label)
    ============================================================*/
 {
 	if (label) {
-		if (label->GetProperty() == CString("Title") && label->GetModel()) {
+		if (label->GetPropertyName() == CString("Title") && label->GetModel()) {
 			label->SetFitView(TRUE);
 			label->SetLock(LOCK_REPOSITIONING);
 			if (GetSubBlocks()->GetSize() > 0) {

@@ -58,6 +58,424 @@ namespace CProMoBlockViewTests
 
 #pragma endregion
 
+#pragma region FormattingTests
+        TEST_METHOD(SetFontName_ValidName_SetsFontName)
+        {
+            // Arrange
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            CString expected = _T("Arial");
+
+            // Act
+            BOOL result = view.SetFontName(expected);
+
+            // Assert
+            Assert::IsTrue(result);
+            Assert::AreEqual(expected, view.GetFontName());
+
+            view.SetLock(LOCK_FONTNAME);
+
+            result = view.SetFontName(CString("Times New Roman"));
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(expected, view.GetFontName());
+
+        }
+
+        TEST_METHOD(SetFontSize_ValidSize_SetsFontSize)
+        {
+            CProMoBlockView view;
+			view.GetBlockModel()->RecreateLabels();
+            unsigned int size = 14;
+
+            BOOL result = view.SetFontSize(size);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(size, view.GetFontSize());
+
+            result = view.SetFontSize(0);
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(size, view.GetFontSize());
+
+            view.SetLock(LOCK_FONTSIZE);
+
+            result = view.SetFontSize(20);
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(size, view.GetFontSize());
+        }
+
+        TEST_METHOD(SetFontWeight_ValidWeight_SetsFontWeight)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int weight = FW_BOLD;
+
+            BOOL result = view.SetFontWeight(weight);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(weight, view.GetFontWeight());
+
+            view.SetLock(LOCK_FONTWEIGHT);
+
+            result = view.SetFontWeight(FW_HEAVY);
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(weight, view.GetFontWeight());
+        }
+
+        TEST_METHOD(SetFontItalic_True_SetsItalic)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            BOOL italic = TRUE;
+
+            BOOL result = view.SetFontItalic(italic);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(view.IsFontItalic());
+
+            view.SetLock(LOCK_FONTITALIC);
+
+            result = view.SetFontItalic(FALSE);
+
+            Assert::IsFalse(result);
+            Assert::IsTrue(view.IsFontItalic());
+        }
+
+        TEST_METHOD(SetFontUnderline_True_SetsUnderline)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            BOOL underline = TRUE;
+
+            BOOL result = view.SetFontUnderline(underline);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(view.IsFontUnderline());
+
+            view.SetLock(LOCK_FONTUNDERLINE);
+
+            result = view.SetFontUnderline(FALSE);
+
+            Assert::IsFalse(result);
+            Assert::IsTrue(view.IsFontUnderline());
+        }
+
+        TEST_METHOD(SetFontStrikeOut_True_SetsStrikeOut)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            BOOL strikeOut = TRUE;
+
+            BOOL result = view.SetFontStrikeOut(strikeOut);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(view.IsFontStrikeOut());
+
+            view.SetLock(LOCK_FONTSTRIKEOUT);
+
+            result = view.SetFontStrikeOut(FALSE);
+
+            Assert::IsFalse(result);
+            Assert::IsTrue(view.IsFontStrikeOut());
+        }
+
+        TEST_METHOD(SetFontColor_ValidColor_SetsColor)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            COLORREF color = RGB(255, 0, 0);
+
+            BOOL result = view.SetTextColor(color);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(color, view.GetTextColor());
+
+            view.SetLock(LOCK_TEXTCOLOR);
+
+            result = view.SetTextColor(RGB(0, 255, 0));
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(color, view.GetTextColor());
+        }
+
+        TEST_METHOD(SetBkColor_ValidColor_SetsColor)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            COLORREF color = RGB(255, 0, 0);
+
+            BOOL result = view.SetBkColor(color);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(color, view.GetBkColor());
+
+            view.SetLock(LOCK_BKCOLOR);
+
+            result = view.SetBkColor(RGB(0, 255, 0));
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(color, view.GetBkColor());
+        }
+
+        TEST_METHOD(SetBkMode_ValidMode_SetsBkMode)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int mode = OPAQUE;
+
+            BOOL result = view.SetBkMode(mode);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(mode, view.GetBkMode());
+
+            view.SetLock(LOCK_BKMODE);
+
+            result = view.SetBkMode(TRANSPARENT);
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(mode, view.GetBkMode());
+        }
+
+        TEST_METHOD(SetTextAlignment_ValidValue_SetsAlignment)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int alignment = DT_VCENTER;
+
+            BOOL result = view.SetTextAlignment(alignment);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(alignment, view.GetTextAlignment());
+
+            view.SetLock(LOCK_ALIGNMENT);
+
+            result = view.SetTextAlignment(DT_RIGHT);
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(alignment, view.GetTextAlignment());
+        }
+
+        TEST_METHOD(SetTextAlignment_ValidValue_SetsOnlyAppropriateFlags)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int hAlignment = DT_LEFT;
+            unsigned int vAlignment = DT_BOTTOM;
+            unsigned int otherFlag = DT_WORDBREAK;
+
+            BOOL result = view.SetTextAlignment(hAlignment | vAlignment | otherFlag);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(hAlignment | vAlignment | otherFlag, view.GetTextAlignment());
+
+            result = view.SetTextHorizontalAlignment(DT_RIGHT);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(DT_RIGHT, (int)view.GetTextHorizontalAlignment());
+            Assert::AreEqual(vAlignment, view.GetTextVerticalAlignment());
+            Assert::AreEqual(DT_RIGHT | vAlignment | otherFlag, view.GetTextAlignment());
+
+            result = view.SetTextVerticalAlignment(DT_TOP);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(DT_RIGHT, (int)view.GetTextHorizontalAlignment());
+            Assert::AreEqual(DT_TOP, (int)view.GetTextVerticalAlignment());
+            Assert::AreEqual(DT_RIGHT | DT_TOP | otherFlag, view.GetTextAlignment());
+
+        }
+
+        TEST_METHOD(SetTextAlignmentFlag_ValidValue_SetsAlignment)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int hAlignment = DT_RIGHT;
+            unsigned int vAlignment = DT_BOTTOM;
+            unsigned int groupFlag = DT_WORDBREAK;
+            unsigned int otherFlag = DT_NOPREFIX;
+            view.SetTextAlignment(0);
+
+            BOOL result = view.SetTextAlignmentFlag(vAlignment, TRUE);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(view.HasTextAlignmentFlag(vAlignment));
+            Assert::AreEqual(vAlignment, view.GetTextAlignment());
+
+            result = view.SetTextAlignmentFlag(hAlignment, TRUE);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(view.HasTextAlignmentFlag(hAlignment));
+            Assert::AreEqual(vAlignment | hAlignment, view.GetTextAlignment());
+
+            result = view.SetTextAlignmentFlag(groupFlag, TRUE);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(view.HasTextAlignmentFlag(groupFlag));
+            Assert::AreEqual(vAlignment | hAlignment | groupFlag, view.GetTextAlignment());
+
+            result = view.SetTextAlignmentFlag(otherFlag, TRUE);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(view.HasTextAlignmentFlag(otherFlag));
+            Assert::AreEqual(vAlignment | hAlignment | groupFlag | otherFlag, view.GetTextAlignment());
+
+            result = view.SetTextAlignmentFlag(vAlignment, FALSE);
+
+            Assert::IsTrue(result);
+            Assert::IsFalse(view.HasTextAlignmentFlag(vAlignment));
+            Assert::AreEqual(hAlignment | groupFlag | otherFlag, view.GetTextAlignment());
+
+            result = view.SetTextAlignmentFlag(otherFlag, FALSE);
+
+            Assert::IsTrue(result);
+            Assert::IsFalse(view.HasTextAlignmentFlag(otherFlag));
+            Assert::AreEqual(hAlignment | groupFlag, view.GetTextAlignment());
+
+            result = view.SetTextAlignmentFlag(hAlignment, FALSE);
+
+            Assert::IsTrue(result);
+            Assert::IsFalse(view.HasTextAlignmentFlag(hAlignment));
+            Assert::AreEqual(groupFlag, view.GetTextAlignment());
+
+            result = view.SetTextAlignmentFlag(groupFlag, FALSE);
+
+            Assert::IsTrue(result);
+            Assert::IsFalse(view.HasTextAlignmentFlag(groupFlag));
+            Assert::AreEqual(0, (int)view.GetTextAlignment());
+
+        }
+
+        TEST_METHOD(SetLineColor_ValidColor_SetsColor)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            COLORREF color = RGB(255, 0, 0);
+
+            BOOL result = view.SetLineColor(color);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(color, view.GetLineColor());
+
+            view.SetLock(LOCK_LINECOLOR);
+
+            result = view.SetLineColor(RGB(0, 255, 0));
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(color, view.GetLineColor());
+        }
+
+        TEST_METHOD(SetLineWidth_ValidWidth_SetsWidth)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int width = 3;
+
+            BOOL result = view.SetLineWidth(width);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(width, view.GetLineWidth());
+
+            view.SetLock(LOCK_LINEWIDTH);
+
+            result = view.SetLineWidth(5);
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(width, view.GetLineWidth());
+        }
+
+        TEST_METHOD(SetLineStyle_ValidStyle_SetsStyle)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int style = PS_DASHDOT;
+
+            BOOL result = view.SetLineStyle(style);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(style, view.GetLineStyle());
+
+            view.SetLock(LOCK_LINESTYLE);
+
+            result = view.SetLineStyle(PS_DOT);
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(style, view.GetLineStyle());
+        }
+
+        TEST_METHOD(SetFillColor_ValidColor_SetsColor)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            COLORREF color = RGB(255, 0, 0);
+
+            BOOL result = view.SetFillColor(color);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(color, view.GetFillColor());
+
+            view.SetLock(LOCK_FILLCOLOR);
+
+            result = view.SetFillColor(RGB(0, 255, 0));
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(color, view.GetFillColor());
+        }
+
+        TEST_METHOD(SetFillPattern_WhenInvoked_SetsPattern)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int width = 3;
+
+            BOOL result = view.SetFillPattern(TRUE);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(view.IsFillPattern());
+
+            view.SetLock(LOCK_FILLSTYLE);
+
+            result = view.SetFillPattern(FALSE);
+
+            Assert::IsFalse(result);
+            Assert::IsTrue(view.IsFillPattern());
+        }
+
+        TEST_METHOD(SetFillStyle_ValidStyle_SetsStyle)
+        {
+            CProMoBlockView view;
+            view.GetBlockModel()->RecreateLabels();
+            unsigned int style = HS_CROSS;
+
+            BOOL result = view.SetFillStyle(style);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(style, view.GetFillStyle());
+
+            view.SetLock(LOCK_FILLSTYLE);
+
+            result = view.SetFillStyle(PS_DOT);
+
+            Assert::IsFalse(result);
+            Assert::AreEqual(style, view.GetFillStyle());
+        }
+
+#pragma endregion
+
+#pragma region LayoutTests
+
+        TEST_METHOD(SetVisible_False_HidesView)
+        {
+            CProMoBlockView view;
+
+            view.SetVisible(FALSE);
+
+            Assert::IsFalse(view.IsVisible());
+        }
+
+#pragma endregion
+
 #pragma region TargetFlag
 
         TEST_METHOD(SetTarget_WhenTrue_IsTargetReturnsTrue)
@@ -114,6 +532,40 @@ namespace CProMoBlockViewTests
             TestHelpers::PointerAssert::AreNotEqual(view.GetModel(), clonedView->GetModel());
             Assert::AreNotEqual(view.IsTarget(), clonedView->IsTarget());
             Assert::AreEqual(view.HasLockedProportions(), clonedView->HasLockedProportions());
+        }
+
+        TEST_METHOD(Clone_NewObject_PropertiesCopied)
+        {
+            CProMoBlockView original;
+            original.SetRect(100, 50, 250, 120);
+            original.SetBkColor(RGB(0, 255, 0));
+            original.SetBkMode(OPAQUE);
+            original.SetLineColor(RGB(0, 0, 255));
+            original.SetLineWidth(4);
+            original.SetLineStyle(PS_DASH);
+            original.SetFillColor(RGB(255, 0, 0));
+            original.SetFillStyle(HS_CROSS);
+            original.SetFillPattern(TRUE);
+
+            // Act
+            std::unique_ptr<CDiagramEntity> clone(original.Clone());
+
+            // Assert
+            CProMoBlockView* clonedBlock = dynamic_cast<CProMoBlockView*>(clone.get());
+            Assert::IsNotNull(clonedBlock);
+
+            Assert::AreEqual(original.GetLeft(), clonedBlock->GetLeft());
+            Assert::AreEqual(original.GetTop(), clonedBlock->GetTop());
+            Assert::AreEqual(original.GetRight(), clonedBlock->GetRight());
+            Assert::AreEqual(original.GetBottom(), clonedBlock->GetBottom());
+            Assert::AreEqual(original.GetBkColor(), clonedBlock->GetBkColor());
+            Assert::AreEqual(original.GetBkMode(), clonedBlock->GetBkMode());
+            Assert::AreEqual(original.GetLineColor(), clonedBlock->GetLineColor());
+            Assert::AreEqual(original.GetLineWidth(), clonedBlock->GetLineWidth());
+            Assert::AreEqual(original.GetLineStyle(), clonedBlock->GetLineStyle());
+            Assert::AreEqual(original.GetFillColor(), clonedBlock->GetFillColor());
+            Assert::AreEqual(original.IsFillPattern(), clonedBlock->IsFillPattern());
+            Assert::AreEqual(original.GetFillStyle(), clonedBlock->GetFillStyle());
         }
 
 #pragma endregion
@@ -345,17 +797,26 @@ namespace CProMoBlockViewTests
             view.SetTitle(CString("My View"));
             view.GetModel()->SetName(CString("Model"));
             view.SetRect(100, 50, 250, 120);
+            view.SetBkColor(RGB(255, 255, 0));
+            view.SetBkMode(OPAQUE);
+            view.SetLineColor(RGB(0, 255, 0));
+            view.SetLineStyle(PS_DOT);
+            view.SetLineWidth(1);
+            view.SetFillColor(RGB(255, 0, 0));
+            view.SetFillStyle(HS_DIAGCROSS);
+            view.SetFillPattern(TRUE);
+            view.SetLock(LOCK_FILLSTYLE);
             
             viewString = view.GetString();
             
-            Assert::AreEqual(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model;"), viewString);
+            Assert::AreEqual(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model,524288,65535,2,65280,1,2,255,1,5;"), viewString);
 
         }
 
         TEST_METHOD(CreateFromString_WhenCorrectStringIsPassed_ParsesCorrectly)
         {
             CProMoBlockViewTestStub viewStub;
-            CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(viewStub.CreateFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model;")));
+            CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(viewStub.CreateFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model,524288,65535,2,65280,1,2,255,1,5;")));
 
             Assert::AreEqual(CString("promo_block_view"), view->GetType());
             Assert::AreEqual(CString("View"), view->GetName());
@@ -364,13 +825,22 @@ namespace CProMoBlockViewTests
             Assert::AreEqual(50.0, view->GetTop());
             Assert::AreEqual(250.0, view->GetRight());
             Assert::AreEqual(120.0, view->GetBottom());
+            Assert::AreEqual(RGB(255, 255, 0), view->GetBkColor());
+            Assert::AreEqual(OPAQUE, (int)view->GetBkMode());
+            Assert::AreEqual(RGB(0, 255, 0), view->GetLineColor());
+            Assert::AreEqual(PS_DOT, (int)view->GetLineStyle());
+            Assert::AreEqual(1, (int)view->GetLineWidth());
+            Assert::AreEqual(RGB(255, 0, 0), view->GetFillColor());
+            Assert::AreEqual(HS_DIAGCROSS, (int)view->GetFillStyle());
+            Assert::IsTrue(view->IsFillPattern());
+            Assert::AreEqual(LOCK_FILLSTYLE, (int)view->GetLock());
 
         }
 
         TEST_METHOD(CreateFromString_WhenStringWithExtraParametersIsPassed_ParsesCorrectly)
         {
             CProMoBlockViewTestStub viewStub;
-            CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(viewStub.CreateFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model,Extra1,Extra2;")));
+            CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(viewStub.CreateFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model,524288,65535,2,65280,1,2,255,1,5,Extra1,Extra2;")));
 
             Assert::AreEqual(CString("promo_block_view"), view->GetType());
             Assert::AreEqual(CString("View"), view->GetName());
@@ -379,6 +849,39 @@ namespace CProMoBlockViewTests
             Assert::AreEqual(50.0, view->GetTop());
             Assert::AreEqual(250.0, view->GetRight());
             Assert::AreEqual(120.0, view->GetBottom());
+            Assert::AreEqual(RGB(255, 255, 0), view->GetBkColor());
+            Assert::AreEqual(OPAQUE, (int)view->GetBkMode());
+            Assert::AreEqual(RGB(0, 255, 0), view->GetLineColor());
+            Assert::AreEqual(PS_DOT, (int)view->GetLineStyle());
+            Assert::AreEqual(1, (int)view->GetLineWidth());
+            Assert::AreEqual(RGB(255, 0, 0), view->GetFillColor());
+            Assert::AreEqual(HS_DIAGCROSS, (int)view->GetFillStyle());
+            Assert::IsTrue(view->IsFillPattern());
+            Assert::AreEqual(LOCK_FILLSTYLE, (int)view->GetLock());
+        }
+
+        TEST_METHOD(CreateFromString_WhenStringWithMissingParametersIsPassed_UseDefaultFormatting)
+        {
+            CProMoBlockViewTestStub viewStub;
+            CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(viewStub.CreateFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model,524288,65535;")));
+
+            Assert::AreEqual(CString("promo_block_view"), view->GetType());
+            Assert::AreEqual(CString("View"), view->GetName());
+            Assert::AreEqual(CString("My View"), view->GetTitle());
+            Assert::AreEqual(100.0, view->GetLeft());
+            Assert::AreEqual(50.0, view->GetTop());
+            Assert::AreEqual(250.0, view->GetRight());
+            Assert::AreEqual(120.0, view->GetBottom());
+            Assert::AreEqual(CLR_NONE, view->GetBkColor());
+            Assert::AreEqual(TRANSPARENT, (int)view->GetBkMode());
+            Assert::AreEqual(RGB(0, 0, 0), view->GetLineColor());
+            Assert::AreEqual(PS_SOLID, (int)view->GetLineStyle());
+            Assert::AreEqual(1, (int)view->GetLineWidth());
+            Assert::AreEqual(RGB(255, 255, 255), view->GetFillColor());
+            Assert::AreEqual(HS_CROSS, (int)view->GetFillStyle());
+            Assert::IsFalse(view->IsFillPattern());
+            Assert::AreEqual(0, (int)view->GetLock());
+
         }
 
         TEST_METHOD(CreateFromString_WhenIncorrectStringIsPassed_IgnoreParameters)

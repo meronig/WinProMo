@@ -583,17 +583,17 @@ namespace CProMoEntityContainerTests
             TestHelpers::PointerAssert::AreEqual(a2, dynamic_cast<CProMoBlockView*>(z->GetDestination()));
             TestHelpers::PointerAssert::AreNotEqual(z->GetModel(), y->GetModel());
 
-            TestHelpers::PointerAssert::AreEqual(a, a1->GetModel()->GetParentBlock()->GetMainView());
-            TestHelpers::PointerAssert::AreEqual(a, a2->GetModel()->GetParentBlock()->GetMainView());
-            TestHelpers::PointerAssert::AreEqual(b, b1->GetModel()->GetParentBlock()->GetMainView());
-            TestHelpers::PointerAssert::AreEqual(b, b2->GetModel()->GetParentBlock()->GetMainView());
-            TestHelpers::PointerAssert::IsNull(a->GetModel()->GetParentBlock());
-            TestHelpers::PointerAssert::IsNull(b->GetModel()->GetParentBlock());
+            TestHelpers::PointerAssert::AreEqual(a, a1->GetBlockModel()->GetParentBlock()->GetMainView());
+            TestHelpers::PointerAssert::AreEqual(a, a2->GetBlockModel()->GetParentBlock()->GetMainView());
+            TestHelpers::PointerAssert::AreEqual(b, b1->GetBlockModel()->GetParentBlock()->GetMainView());
+            TestHelpers::PointerAssert::AreEqual(b, b2->GetBlockModel()->GetParentBlock()->GetMainView());
+            TestHelpers::PointerAssert::IsNull(a->GetBlockModel()->GetParentBlock());
+            TestHelpers::PointerAssert::IsNull(b->GetBlockModel()->GetParentBlock());
             
-            TestHelpers::PointerAssert::AreEqual(a->GetModel(), x->GetModel()->GetSource());
-            TestHelpers::PointerAssert::AreEqual(b1->GetModel(), x->GetModel()->GetDestination());
-            TestHelpers::PointerAssert::AreEqual(b->GetModel(), z->GetModel()->GetSource());
-            TestHelpers::PointerAssert::AreEqual(a2->GetModel(), z->GetModel()->GetDestination());
+            TestHelpers::PointerAssert::AreEqual(a->GetBlockModel(), x->GetEdgeModel()->GetSource());
+            TestHelpers::PointerAssert::AreEqual(b1->GetBlockModel(), x->GetEdgeModel()->GetDestination());
+            TestHelpers::PointerAssert::AreEqual(b->GetBlockModel(), z->GetEdgeModel()->GetSource());
+            TestHelpers::PointerAssert::AreEqual(a2->GetBlockModel(), z->GetEdgeModel()->GetDestination());
 
         }
 
@@ -723,15 +723,15 @@ namespace CProMoEntityContainerTests
             c.Add(lz);
 
             diagram.AddTail(CString("custom:800,1000;"));
-            diagram.AddTail(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4;"));
-            diagram.AddTail(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30;"));
-            diagram.AddTail(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,,0,72;"));
-            diagram.AddTail(CString("promo_block_view:17,316.000000,238.000000,484.000000,344.000000,,0,15;"));
-            diagram.AddTail(CString("promo_edge_view:523,438.000000,238.000000,447.000000,154.000000,,0,522,,;"));
-            diagram.AddTail(CString("promo_block_view:51,340.000000,266.000000,468.000000,298.000000,,0,49;"));
-            diagram.AddTail(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,,0,391,,452;"));
-            diagram.AddTail(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,,0,391,392,;"));
-            diagram.AddTail(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,,0,119;"));
+            diagram.AddTail(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4,0,-1,1,0,1,0,16777215,0,4;"));
+            diagram.AddTail(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30,0,-1,1,0,1,0,16777215,0,4;"));
+            diagram.AddTail(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,,0,72,0,-1,1,0,1,0,16777215,0,4;"));
+            diagram.AddTail(CString("promo_block_view:17,316.000000,238.000000,484.000000,344.000000,,0,15,0,-1,1,0,1,0,16777215,0,4;"));
+            diagram.AddTail(CString("promo_edge_view:523,438.000000,238.000000,447.000000,154.000000,,0,522,,,0,-1,1,0,1,0;"));
+            diagram.AddTail(CString("promo_block_view:51,340.000000,266.000000,468.000000,298.000000,,0,49,0,-1,1,0,1,0,16777215,0,4;"));
+            diagram.AddTail(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,,0,391,,452,0,-1,1,0,1,0;"));
+            diagram.AddTail(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,,0,391,392,,0,-1,1,0,1,0;"));
+            diagram.AddTail(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,,0,119,0,-1,1,0,1,0,16777215,0,4;"));
             diagram.AddTail(CString("promo_block_model:4,;"));
             diagram.AddTail(CString("promo_block_model:30,4;"));
             diagram.AddTail(CString("promo_block_model:72,4;"));

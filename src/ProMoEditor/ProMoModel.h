@@ -96,7 +96,7 @@ private:
 	CString m_type;
 	CString m_name;
 
-	// overrides
+	// implements
 public:
 	virtual void OnPropertyChanged(CProMoProperty* prop);
 

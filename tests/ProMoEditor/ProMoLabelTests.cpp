@@ -45,7 +45,7 @@ namespace CProMoLabelTests
             Assert::AreEqual(0.0, rMargin);
             Assert::AreEqual(0.0, bMargin);
             
-            Assert::IsTrue(label.HasFitTitle());
+            Assert::IsFalse(label.HasFitTitle());
             Assert::IsFalse(label.HasFitView());
             Assert::IsTrue(label.IsVisible());
             Assert::AreEqual((unsigned int)0, label.GetLock());
@@ -243,6 +243,93 @@ namespace CProMoLabelTests
             Assert::AreEqual(alignment, label.GetTextAlignment());
         }
 
+        TEST_METHOD(SetTextAlignment_ValidValue_SetsOnlyAppropriateFlags)
+        {
+            CProMoLabel label;
+            unsigned int hAlignment = DT_LEFT;
+			unsigned int vAlignment = DT_BOTTOM;
+			unsigned int otherFlag = DT_WORDBREAK;
+
+            BOOL result = label.SetTextAlignment(hAlignment | vAlignment | otherFlag);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(hAlignment | vAlignment | otherFlag, label.GetTextAlignment());
+
+			result = label.SetTextHorizontalAlignment(DT_RIGHT);
+            
+            Assert::IsTrue(result);
+            Assert::AreEqual(DT_RIGHT, (int)label.GetTextHorizontalAlignment());
+			Assert::AreEqual(vAlignment, label.GetTextVerticalAlignment());
+            Assert::AreEqual(DT_RIGHT | vAlignment | otherFlag, label.GetTextAlignment());
+
+            result = label.SetTextVerticalAlignment(DT_TOP);
+
+            Assert::IsTrue(result);
+            Assert::AreEqual(DT_RIGHT, (int)label.GetTextHorizontalAlignment());
+            Assert::AreEqual(DT_TOP, (int)label.GetTextVerticalAlignment());
+            Assert::AreEqual(DT_RIGHT | DT_TOP | otherFlag, label.GetTextAlignment());
+
+        }
+
+        TEST_METHOD(SetTextAlignmentFlag_ValidValue_SetsAlignment)
+        {
+            CProMoLabel label;
+            unsigned int hAlignment = DT_RIGHT;
+            unsigned int vAlignment = DT_BOTTOM;
+            unsigned int groupFlag = DT_WORDBREAK;
+            unsigned int otherFlag = DT_NOPREFIX;
+            label.SetTextAlignment(0);
+
+            BOOL result = label.SetTextAlignmentFlag(vAlignment, TRUE);
+
+            Assert::IsTrue(result);
+			Assert::IsTrue(label.HasTextAlignmentFlag(vAlignment));
+            Assert::AreEqual(vAlignment, label.GetTextAlignment());
+
+            result = label.SetTextAlignmentFlag(hAlignment, TRUE);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(label.HasTextAlignmentFlag(hAlignment));
+            Assert::AreEqual(vAlignment | hAlignment, label.GetTextAlignment());
+
+            result = label.SetTextAlignmentFlag(groupFlag, TRUE);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(label.HasTextAlignmentFlag(groupFlag));
+            Assert::AreEqual(vAlignment | hAlignment | groupFlag, label.GetTextAlignment());
+
+            result = label.SetTextAlignmentFlag(otherFlag, TRUE);
+
+            Assert::IsTrue(result);
+            Assert::IsTrue(label.HasTextAlignmentFlag(otherFlag));
+            Assert::AreEqual(vAlignment | hAlignment | groupFlag | otherFlag, label.GetTextAlignment());
+            
+            result = label.SetTextAlignmentFlag(vAlignment, FALSE);
+
+            Assert::IsTrue(result);
+            Assert::IsFalse(label.HasTextAlignmentFlag(vAlignment));
+            Assert::AreEqual(hAlignment | groupFlag | otherFlag, label.GetTextAlignment());
+
+            result = label.SetTextAlignmentFlag(otherFlag, FALSE);
+
+            Assert::IsTrue(result);
+            Assert::IsFalse(label.HasTextAlignmentFlag(otherFlag));
+            Assert::AreEqual(hAlignment | groupFlag, label.GetTextAlignment());
+
+            result = label.SetTextAlignmentFlag(hAlignment, FALSE);
+
+            Assert::IsTrue(result);
+            Assert::IsFalse(label.HasTextAlignmentFlag(hAlignment));
+            Assert::AreEqual(groupFlag, label.GetTextAlignment());
+
+            result = label.SetTextAlignmentFlag(groupFlag, FALSE);
+
+            Assert::IsTrue(result);
+            Assert::IsFalse(label.HasTextAlignmentFlag(groupFlag));
+            Assert::AreEqual(0, (int)label.GetTextAlignment());
+
+        }
+
 #pragma endregion
 
 #pragma region Geometry
@@ -387,7 +474,7 @@ namespace CProMoLabelTests
             CProMoLabel* clonedLabel = dynamic_cast<CProMoLabel*>(clone.get());
             Assert::IsNotNull(clonedLabel);
             
-            Assert::AreEqual(original.GetProperty(), clonedLabel->GetProperty());
+            Assert::AreEqual(original.GetPropertyName(), clonedLabel->GetPropertyName());
             Assert::AreEqual(original.GetLeft(), clonedLabel->GetLeft());
             Assert::AreEqual(original.GetTop(), clonedLabel->GetTop());
             Assert::AreEqual(original.GetRight(), clonedLabel->GetRight());
@@ -417,6 +504,21 @@ namespace CProMoLabelTests
         }
 
 #pragma endregion
+
+#pragma region PropertyTests
+        TEST_METHOD(GetProperty_NoLinkedModel_ReturnsLabelTitle)
+        {
+            CProMoLabel label;
+			CProMoProperty* property = label.GetProperty();
+
+            Assert::IsNotNull(property);
+
+            CVariantWrapper wrapper;
+            wrapper.SetString(CString("Test"));
+			property->SetValue(wrapper);
+
+			Assert::AreEqual(CString("Test"), label.GetTitle());
+		}
 
 #pragma region HitCode
 
@@ -494,7 +596,7 @@ namespace CProMoLabelTests
 
             Assert::AreEqual(CString("promo_label"), label->GetType());
             Assert::AreEqual(CString("Label"), label->GetName());
-            Assert::AreEqual(CString("Property"), label->GetProperty());
+            Assert::AreEqual(CString("Property"), label->GetPropertyName());
             Assert::AreEqual(100.0, label->GetLeft());
             Assert::AreEqual(50.0, label->GetTop());
             Assert::AreEqual(250.0, label->GetRight());
@@ -528,7 +630,7 @@ namespace CProMoLabelTests
 
             Assert::AreEqual(CString("promo_label"), label->GetType());
             Assert::AreEqual(CString("Label"), label->GetName());
-            Assert::AreEqual(CString("Property"), label->GetProperty());
+            Assert::AreEqual(CString("Property"), label->GetPropertyName());
             Assert::AreEqual(100.0, label->GetLeft());
             Assert::AreEqual(50.0, label->GetTop());
             Assert::AreEqual(250.0, label->GetRight());
@@ -562,7 +664,7 @@ namespace CProMoLabelTests
 
             Assert::AreEqual(CString("promo_label"), label->GetType());
             Assert::AreEqual(CString("Label"), label->GetName());
-            Assert::AreEqual(CString("Property"), label->GetProperty());
+            Assert::AreEqual(CString("Property"), label->GetPropertyName());
             Assert::AreEqual(100.0, label->GetLeft());
             Assert::AreEqual(50.0, label->GetTop());
             Assert::AreEqual(250.0, label->GetRight());

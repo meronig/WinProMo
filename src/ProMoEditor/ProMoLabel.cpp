@@ -67,6 +67,10 @@ CProMoLabel::CProMoLabel()
 	
 	SetName(CProMoNameFactory::GetID());
 
+	CVariantWrapper wrapper;
+	wrapper.SetString(GetTitle());
+	m_titleProperty = new CProMoProperty(_T("Title"), PROPTYPE_STRING, wrapper, FALSE, TRUE, TRUE, this);
+
 }
 
 CProMoLabel::~CProMoLabel()
@@ -84,6 +88,7 @@ CProMoLabel::~CProMoLabel()
 	if (m_model) {
 		m_model->UnlinkLabel(this);
 	}
+	delete m_titleProperty;
 }
 
 CDiagramEntity* CProMoLabel::Clone()
@@ -344,9 +349,9 @@ void CProMoLabel::SetModel(CProMoModel* model)
 	}
 }
 
-CString CProMoLabel::GetProperty() const
+CString CProMoLabel::GetPropertyName() const
 /* ============================================================
-	Function :		CProMoLabel::GetProperty()
+	Function :		CProMoLabel::GetPropertyName()
 	Description :	Returns the name of the property being
 					displayed
 	Access :		Public
@@ -358,6 +363,23 @@ CString CProMoLabel::GetProperty() const
    ============================================================*/
 {
 	return m_property;
+}
+
+CProMoProperty* CProMoLabel::GetProperty() const
+/* ============================================================
+	Function :		CProMoLabel::GetPropertyName()
+	Description :	Returns the property being displayed
+	Access :		Public
+
+	Return :		CProMoProperty*	-	The property being displayed
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (m_model) {
+		return m_model->FindProperty(m_property);
+	}
+	return m_titleProperty;
 }
 
 void CProMoLabel::SetFitTitle(BOOL hasFitTitle)
@@ -654,7 +676,7 @@ CString CProMoLabel::GetDefaultGetString() const
 	if (m_model) {
 		model = GetModel()->GetName();
 		CFileParser::EncodeString(model);
-		property = GetProperty();
+		property = GetPropertyName();
 		CFileParser::EncodeString(property);
 	}
 	else {
@@ -2023,4 +2045,23 @@ void CProMoLabel::GetMargins(double& left, double& top, double& right, double& b
 	right = m_rightMargin;
 	bottom = m_bottomMargin;
 
+}
+
+void CProMoLabel::OnPropertyChanged(CProMoProperty* prop)
+/* ============================================================
+	Function :		CProMoLabel::OnPropertyChanged
+	Description :	Notification that a property has changed.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoProperty* prop	-	Property that
+												changed.
+
+	Usage :			Can be called by a property to notify the
+					model that it changed, and to trigger UI
+					updates.
+
+   ============================================================*/
+{
+	SetTitle(prop->GetValue().GetString());	
 }

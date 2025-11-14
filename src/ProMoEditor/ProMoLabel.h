@@ -13,6 +13,7 @@
 #include "../GeometryUtils/DoublePoint.h"
 #include "../GeometryUtils/DoubleRect.h"
 #include "ProMoEntity.h"
+#include "ProMoProperty.h"
 
 const unsigned int H_GROUP = DT_LEFT | DT_CENTER | DT_RIGHT;
 const unsigned int V_GROUP = DT_TOP | DT_VCENTER | DT_BOTTOM;
@@ -20,7 +21,7 @@ const unsigned int LINE_GROUP = DT_SINGLELINE | DT_WORDBREAK;
 
 
 class AFX_EXT_CLASS CProMoLabel :
-    public CDiagramEntity, public IProMoEntity
+    public CDiagramEntity, public IProMoEntity, public IProMoPropertyOwner
 {
 public:
 	friend class CProMoModel;
@@ -33,8 +34,9 @@ public:
 	static CString GetModelFromString(const CString& str);
 	static CString GetNameFromString(const CString& str);
 
-	virtual CString GetProperty() const;
-	
+	virtual CString GetPropertyName() const;
+	virtual CProMoProperty* GetProperty() const;
+
 	virtual void SetFitTitle(BOOL hasFitTitle);
 	virtual BOOL HasFitTitle();
 
@@ -45,6 +47,8 @@ public:
 	
 
 protected:
+	CProMoProperty* m_titleProperty;
+	
 	CProMoModel* m_model;
 	CString m_property;
 	unsigned int m_lockFlags;
@@ -141,6 +145,8 @@ public:
 	virtual BOOL SetAnchorView(const unsigned int& position);
 	virtual BOOL SetVisible(const BOOL& visible);
 	virtual void SetMargins(double left, double top, double right, double bottom);
+
+	virtual void OnPropertyChanged(CProMoProperty* prop);
 
 protected:
 	virtual void SetModel(CProMoModel* model);

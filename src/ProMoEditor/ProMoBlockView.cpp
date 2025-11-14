@@ -665,6 +665,22 @@ void CProMoBlockView::RecomputeIntersectionLinks()
 	}
 }
 
+CProMoBlockModel* CProMoBlockView::GetBlockModel() const
+/* ============================================================
+	Function :		CProMoBlockView::GetBlockModel
+	Description :	Returns a pointer to the model of this
+					block
+	Access :		Public
+
+	Return :		CProMoBlockModel*	-	A pointer to the
+											model
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_blockModel;
+}
+
 CProMoModel* CProMoBlockView::GetModel() const
 /* ============================================================
 	Function :		CProMoBlockView::GetModel

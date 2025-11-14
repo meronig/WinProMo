@@ -865,8 +865,8 @@ void CWinProMoView::OnAlignmentTop()
 void CWinProMoView::OnUpdateAlignmentBottom(CCmdUI* pCmdUI)
 {
 	if (m_editor) {
-		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
-		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_BOTTOM);
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT) && !m_editor->HasTextAlignmentFlag(DT_WORDBREAK));
+		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_BOTTOM && !m_editor->HasTextAlignmentFlag(DT_WORDBREAK));
 	}
 }
 
@@ -889,8 +889,8 @@ void CWinProMoView::OnUpdateAlignmentLeft(CCmdUI* pCmdUI)
 void CWinProMoView::OnUpdateAlignmentMiddle(CCmdUI* pCmdUI)
 {
 	if (m_editor) {
-		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
-		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_VCENTER);
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT) && !m_editor->HasTextAlignmentFlag(DT_WORDBREAK));
+		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_VCENTER && !m_editor->HasTextAlignmentFlag(DT_WORDBREAK));
 	}
 }
 
@@ -913,8 +913,8 @@ void CWinProMoView::OnUpdateAlignmentRight(CCmdUI* pCmdUI)
 void CWinProMoView::OnUpdateAlignmentTop(CCmdUI* pCmdUI)
 {
 	if (m_editor) {
-		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT));
-		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_TOP);
+		pCmdUI->Enable(m_editor->IsAnyObjectSelected() && !m_editor->IsLocked(LOCK_ALIGNMENT) && !m_editor->HasTextAlignmentFlag(DT_WORDBREAK));
+		pCmdUI->SetCheck(m_editor->GetTextVerticalAlignment() == DT_TOP && !m_editor->HasTextAlignmentFlag(DT_WORDBREAK));
 	}
 }
 

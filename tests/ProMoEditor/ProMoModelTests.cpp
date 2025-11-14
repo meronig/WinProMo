@@ -314,7 +314,7 @@ namespace CProMoModelTests
             label = dynamic_cast<CProMoLabel*>(model.GetLabels()->GetAt(0));
 
             Assert::IsNotNull(label);
-            Assert::AreEqual(CString("root.child"), label->GetProperty());
+            Assert::AreEqual(CString("root.child"), label->GetPropertyName());
         }
 
         TEST_METHOD(GetLabel_IfPropertyExist_GetLabel)
@@ -327,7 +327,7 @@ namespace CProMoModelTests
             label = dynamic_cast<CProMoLabel*>(model.GetLabel(CString("root.child")));
 
             Assert::IsNotNull(label);
-            Assert::AreEqual(CString("root.child"), label->GetProperty());
+            Assert::AreEqual(CString("root.child"), label->GetPropertyName());
         }
 
 #pragma endregion

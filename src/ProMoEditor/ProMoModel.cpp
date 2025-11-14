@@ -974,7 +974,7 @@ CProMoLabel* CProMoModel::GetLabel(CString property)
 	for (int i = 0; i < m_labels.GetSize(); i++) {
 		CProMoLabel* label = dynamic_cast<CProMoLabel*>(m_labels.GetAt(i));
 		if (label) {
-			if (label->GetProperty() == property) {
+			if (label->GetPropertyName() == property) {
 				return label;
 			}
 		}

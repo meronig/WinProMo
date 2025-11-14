@@ -29,6 +29,8 @@ public:
     static CString GetModelFromString(const CString& str);
     static CString GetNameFromString(const CString& str);
 
+    virtual CProMoEdgeModel* GetEdgeModel() const;
+
     // Edge-specific methods
     virtual void SetSource(CDiagramEntity *source);
     virtual void SetDestination(CDiagramEntity *destination);
