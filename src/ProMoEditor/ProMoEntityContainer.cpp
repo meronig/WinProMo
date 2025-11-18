@@ -106,7 +106,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 		if (block){
 			// remove sub-blocks
 			CObArray subBlockModels;
-			subBlockModels.Append(*(((CProMoBlockModel*)block->GetModel())->GetSubBlocks()));
+			((CProMoBlockModel*)block->GetModel())->GetSubBlocks(subBlockModels);
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {
 				CProMoBlockModel* subBlockModel = NULL;
 				subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
@@ -120,7 +120,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 				block->SetParentBlock(NULL);
 			}
 			// identify labels
-			labels.Append(*(block->GetModel()->GetLabels()));
+			block->GetModel()->GetLabels(labels);
 			
 		}
 
@@ -129,7 +129,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 			// remove labels only if the edge view is the last segment
 			if (edge->IsFirstSegment() && edge->IsLastSegment()) {
 				// identify labels
-				labels.Append(*(edge->GetModel()->GetLabels()));
+				edge->GetModel()->GetLabels(labels);
 			}
 		}
 
@@ -147,7 +147,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 
 }
 
-void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* destination) 
+void CProMoEntityContainer::ReplicateRelations(const CObArray& source, CObArray& destination) 
 /* ============================================================
 	Function :		CProMoEntityContainer::ReplicateRelations
 	Description :	Replicate node-edge and nesting relations 
@@ -156,10 +156,10 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 	Access :		Protected
 
 	Return :		void
-	Parameters :	CObArray* source	-	Array of source 
-											objects
-	Parameters :	CObArray* source	-	Array of target
-											objects
+	Parameters :	CObArray source	-	Array of source 
+										objects
+	Parameters :	CObArray source	-	Array of target
+										objects
 
 	Usage :			source and destination must have the same
 					size and, for each position, the object in
@@ -168,23 +168,23 @@ void CProMoEntityContainer::ReplicateRelations(CObArray* source, CObArray* desti
 
    ============================================================*/
 {
-	ASSERT(destination->GetSize() == source->GetSize());
+	ASSERT(destination.GetSize() == source.GetSize());
 
 	int i = 0;
 
-	for (i = 0; i < source->GetSize(); i++) {
-		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(i));
-		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(i));
-		CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(source->GetAt(i));
-		CProMoBlockView* newBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(i));
+	for (i = 0; i < source.GetSize(); i++) {
+		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(source.GetAt(i));
+		CProMoEdgeView* newEdgeView = dynamic_cast<CProMoEdgeView*>(destination.GetAt(i));
+		CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(source.GetAt(i));
+		CProMoBlockView* newBlockView = dynamic_cast<CProMoBlockView*>(destination.GetAt(i));
 		
-		for (int j = 0; j < source->GetSize(); j++) {
-			CProMoLabel* label = dynamic_cast<CProMoLabel*>(source->GetAt(j));
-			CProMoLabel* newLabel = dynamic_cast<CProMoLabel*>(destination->GetAt(j));
-			CProMoEdgeView* connectedEdgeView = dynamic_cast<CProMoEdgeView*>(source->GetAt(j));
-			CProMoEdgeView* newConnectedEdgeView = dynamic_cast<CProMoEdgeView*>(destination->GetAt(j));
-			CProMoBlockView* connectedBlockView = dynamic_cast<CProMoBlockView*>(source->GetAt(j));
-			CProMoBlockView* newConnectedBlockView = dynamic_cast<CProMoBlockView*>(destination->GetAt(j));
+		for (int j = 0; j < source.GetSize(); j++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(source.GetAt(j));
+			CProMoLabel* newLabel = dynamic_cast<CProMoLabel*>(destination.GetAt(j));
+			CProMoEdgeView* connectedEdgeView = dynamic_cast<CProMoEdgeView*>(source.GetAt(j));
+			CProMoEdgeView* newConnectedEdgeView = dynamic_cast<CProMoEdgeView*>(destination.GetAt(j));
+			CProMoBlockView* connectedBlockView = dynamic_cast<CProMoBlockView*>(source.GetAt(j));
+			CProMoBlockView* newConnectedBlockView = dynamic_cast<CProMoBlockView*>(destination.GetAt(j));
 				
 			if (blockView && newBlockView) {
 				//preserve block nesting
@@ -260,7 +260,7 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory&
 
 	LoadModels(stra, fact, models);
 	LoadViews(stra, fact, models);
-	LoadProperties(stra, &models);
+	LoadProperties(stra, models);
 
 	LinkViews(stra, models);
 	LinkModels(stra, models);
@@ -351,7 +351,7 @@ void CProMoEntityContainer::SaveObjects(CStringArray& stra)
 	}
 }
 
-void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder) 
+void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder) 
 /* ============================================================
 	Function :		CProMoEntityContainer::ReorderR
 	Description :	Helper method to recursively reorder 
@@ -364,103 +364,104 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray* newOrder)
 
 	Return :		void
 	Parameters :	CProMoBlockView* block	-	Current block
-					CObArray* newOrder		-	Array of 
+					CObArray newOrder		-	Array of 
 												elements to be
 												reordered.
 
    ============================================================*/
 {
 	ASSERT(block->GetModel());
-	newOrder->Add(block);
+	newOrder.Add(block);
 	//check for connected incoming edges
-	CObArray* edges = ((CProMoBlockModel*)block->GetModel())->GetIncomingEdges();
-	if (edges) {
-		for (int i = 0; i < edges->GetSize(); i++) {
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
-			if (edgeModel) {
-				CObArray* views = edgeModel->GetViews();
-				CProMoBlockModel* sourceModel = edgeModel->GetSource();
-				if (sourceModel) {
-					for (int j = 0; j < newOrder->GetSize(); j++) {
-						//source node has already been explored
-						if (newOrder->GetAt(j) == sourceModel->GetMainView()) {
-							//add all edge views
-							newOrder->Append(*views);
-							//add all edge labels
-							CObArray* labels = edgeModel->GetLabels();
-							if (labels) {
-								newOrder->Append(*labels);
-							}
-						}
-					}
-				}
-				//no source node exists
-				else {
-					//add all edge views
-					newOrder->Append(*views);
-					//add all edge labels
-					CObArray* labels = edgeModel->GetLabels();
-					if (labels) {
-						newOrder->Append(*labels);
+	CObArray edges; 
+	CObArray views;
+	CObArray labels;
+	((CProMoBlockModel*)block->GetModel())->GetIncomingEdges(edges);
+	for (int i = 0; i < edges.GetSize(); i++) {
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges.GetAt(i));
+		if (edgeModel) {
+			views.RemoveAll();
+			edgeModel->GetViews(views);
+			CProMoBlockModel* sourceModel = edgeModel->GetSource();
+			if (sourceModel) {
+				for (int j = 0; j < newOrder.GetSize(); j++) {
+					//source node has already been explored
+					if (newOrder.GetAt(j) == sourceModel->GetMainView()) {
+						//add all edge views
+						newOrder.Append(views);
+						//add all edge labels
+						labels.RemoveAll();
+						edgeModel->GetLabels(labels);
+						newOrder.Append(labels);
 					}
 				}
 			}
+			//no source node exists
+			else {
+				//add all edge views
+				newOrder.Append(views);
+				//add all edge labels
+				labels.RemoveAll();
+				edgeModel->GetLabels(labels);
+				newOrder.Append(labels);
+			}
 		}
 	}
+
+	edges.RemoveAll();
 
 	//check for connected outgoing edges
-	edges = ((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges();
-	if (edges) {
-		for (int i = 0; i < edges->GetSize(); i++) {
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges->GetAt(i));
-			if (edgeModel) {
-				CObArray* views = edgeModel->GetViews();
-				CProMoBlockModel* destModel = edgeModel->GetDestination();
-				if (destModel) {
-					//do not include self-loops
-					if (destModel != block->GetModel()) {
-						for (int j = 0; j < newOrder->GetSize(); j++) {
-							//destination node has already been explored
-							if (newOrder->GetAt(j) == destModel->GetMainView()) {
-								//add all edge views
-								newOrder->Append(*views);
-								//add all edge labels
-								CObArray* labels = edgeModel->GetLabels();
-								if (labels) {
-									newOrder->Append(*labels);
-								}
-							}
+	((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges(edges);
+	for (int i = 0; i < edges.GetSize(); i++) {
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges.GetAt(i));
+		if (edgeModel) {
+			views.RemoveAll();
+			edgeModel->GetViews(views);
+			CProMoBlockModel* destModel = edgeModel->GetDestination();
+			if (destModel) {
+				//do not include self-loops
+				if (destModel != block->GetModel()) {
+					for (int j = 0; j < newOrder.GetSize(); j++) {
+						//destination node has already been explored
+						if (newOrder.GetAt(j) == destModel->GetMainView()) {
+							//add all edge views
+							newOrder.Append(views);
+							//add all edge labels
+							labels.RemoveAll();
+							edgeModel->GetLabels(labels);
+							newOrder.Append(labels);
 						}
 					}
 				}
-				//no destination node exists
-				else {
-					//add all edge views
-					newOrder->Append(*views);
-					//add all edge labels
-					CObArray* labels = edgeModel->GetLabels();
-					if (labels) {
-						newOrder->Append(*labels);
-					}
-				}
+			}
+			//no destination node exists
+			else {
+				//add all edge views
+				newOrder.Append(views);
+				//add all edge labels
+				labels.RemoveAll();
+				edgeModel->GetLabels(labels);
+				newOrder.Append(labels);
 			}
 		}
 	}
-	// Check for labels
-	CObArray* labels = block->GetModel()->GetLabels();
-	if (labels) {
-		newOrder->Append(*labels);
-	}
 
-	CObArray *subBlockViews = ((CProMoBlockModel*)block->GetModel())->GetSubBlocks();
+	// Check for labels
+	labels.RemoveAll();
+	block->GetModel()->GetLabels(labels);
+	newOrder.Append(labels);
+	
+	CObArray subBlockModels;
+	
+	((CProMoBlockModel*)block->GetModel())->GetSubBlocks(subBlockModels);
 
 	int max = GetSize();
 
 	for (int t = 0; t < max; t++) {
 		CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(GetAt(t));
 		if (blockView) {
-			for (int i = 0; i < subBlockViews->GetSize(); i++) {
-				CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockViews->GetAt(i));
+			for (int i = 0; i < subBlockModels.GetSize(); i++) {
+				CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
 				if (blockView == subBlockModel->GetMainView()) {
 					ReorderR(blockView, newOrder);
 				}
@@ -496,7 +497,7 @@ void CProMoEntityContainer::Reorder()
 			CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(obj);
 			if (blockView) {
 				if (((CProMoBlockModel*)blockView->GetModel())->GetParentBlock() == NULL) {
-					ReorderR(blockView, &newOrder);
+					ReorderR(blockView, newOrder);
 				}
 			}
 			CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(obj);
@@ -506,10 +507,9 @@ void CProMoEntityContainer::Reorder()
 					newOrder.Add(edgeView);
 					if (edgeView->IsFirstSegment()) {
 						//add the labels
-						CObArray* labels = edgeView->GetModel()->GetLabels();
-						if (labels) {
-							newOrder.Append(*labels);
-						}
+						CObArray labels; 
+						edgeView->GetModel()->GetLabels(labels);
+						newOrder.Append(labels);
 					}
 				}
 			}
@@ -651,7 +651,7 @@ void CProMoEntityContainer::GetCurrentFromStack(CObArray& arr)
 			SetVirtualSize(CSize(item->pt));
 
 			//Replicate relations
-			ReplicateRelations(&item->arr, GetData());
+			ReplicateRelations(item->arr, *GetData());
 
 			delete item;
 			arr.RemoveAt(arr.GetUpperBound());
@@ -706,7 +706,7 @@ void CProMoEntityContainer::AddCurrentToStack(CObArray& arr)
 				(item->arr).Add(GetAt(t)->Clone());
 
 			//Replicate relations
-			ReplicateRelations(GetData(), &item->arr);
+			ReplicateRelations(*GetData(), item->arr);
 
 			// Add to undo stack
 			arr.Add(item);
@@ -943,7 +943,7 @@ void CProMoEntityContainer::LoadLabels(const CStringArray& stra, CProMoControlFa
 	}
 }
 
-void CProMoEntityContainer::LoadProperties(const CStringArray& stra, const CObArray* models)
+void CProMoEntityContainer::LoadProperties(const CStringArray& stra, const CObArray& models)
 /* ============================================================
 	Function :		CProMoEntityContainer::LoadProperties
 	Description :	Loads properties for model objects
@@ -966,8 +966,8 @@ void CProMoEntityContainer::LoadProperties(const CStringArray& stra, const CObAr
 
    ============================================================*/
 {
-	for (int i = 0; i < models->GetSize(); i++) {
-		CProMoModel* model = dynamic_cast<CProMoModel*>(models->GetAt(i));
+	for (int i = 0; i < models.GetSize(); i++) {
+		CProMoModel* model = dynamic_cast<CProMoModel*>(models.GetAt(i));
 		if (model) {
 			for (int j = 0; j < stra.GetSize(); j++) {
 				CString str = stra.GetAt(j);

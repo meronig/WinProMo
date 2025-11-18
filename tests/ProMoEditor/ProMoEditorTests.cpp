@@ -160,14 +160,38 @@ namespace CProMoEditorTests
             m_y->SetRect(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect());
             m_z->SetRect(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect());
 
-            m_la = dynamic_cast<CProMoLabel*>(m_a->GetModel()->RecreateLabels()->GetAt(0));
-            m_la1 = dynamic_cast<CProMoLabel*>(m_a1->GetModel()->RecreateLabels()->GetAt(0));
-            m_la2 = dynamic_cast<CProMoLabel*>(m_a2->GetModel()->RecreateLabels()->GetAt(0));
-            m_lb = dynamic_cast<CProMoLabel*>(m_b->GetModel()->RecreateLabels()->GetAt(0));
-            m_lb1 = dynamic_cast<CProMoLabel*>(m_b1->GetModel()->RecreateLabels()->GetAt(0));
-            m_lb2 = dynamic_cast<CProMoLabel*>(m_b2->GetModel()->RecreateLabels()->GetAt(0));
-            m_lx = dynamic_cast<CProMoLabel*>(m_x->GetModel()->RecreateLabels()->GetAt(0));
-            m_lz = dynamic_cast<CProMoLabel*>(m_z->GetModel()->RecreateLabels()->GetAt(0));
+            CObArray labels;
+            m_a->GetModel()->RecreateLabels(labels);
+            m_la = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            m_a1->GetModel()->RecreateLabels(labels);
+            m_la1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            m_a2->GetModel()->RecreateLabels(labels);
+            m_la2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            m_b->GetModel()->RecreateLabels(labels);
+            m_lb = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            m_b1->GetModel()->RecreateLabels(labels);
+            m_lb1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            m_b2->GetModel()->RecreateLabels(labels);
+            m_lb2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            m_x->GetModel()->RecreateLabels(labels);
+            m_lx = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            m_z->GetModel()->RecreateLabels(labels);
+            m_lz = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
 
             c->Add(m_a);
             c->Add(m_a1);

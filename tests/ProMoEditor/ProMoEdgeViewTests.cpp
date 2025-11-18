@@ -47,7 +47,8 @@ namespace CProMoEdgeViewTests
         {
             // Arrange
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             CString expected = _T("Arial");
 
             // Act
@@ -69,7 +70,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetFontSize_ValidSize_SetsFontSize)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             unsigned int size = 14;
 
             BOOL result = view.SetFontSize(size);
@@ -93,7 +95,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetFontWeight_ValidWeight_SetsFontWeight)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             unsigned int weight = FW_BOLD;
 
             BOOL result = view.SetFontWeight(weight);
@@ -112,7 +115,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetFontItalic_True_SetsItalic)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             BOOL italic = TRUE;
 
             BOOL result = view.SetFontItalic(italic);
@@ -131,7 +135,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetFontUnderline_True_SetsUnderline)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             BOOL underline = TRUE;
 
             BOOL result = view.SetFontUnderline(underline);
@@ -150,7 +155,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetFontStrikeOut_True_SetsStrikeOut)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             BOOL strikeOut = TRUE;
 
             BOOL result = view.SetFontStrikeOut(strikeOut);
@@ -169,7 +175,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetFontColor_ValidColor_SetsColor)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             COLORREF color = RGB(255, 0, 0);
 
             BOOL result = view.SetTextColor(color);
@@ -188,7 +195,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetBkColor_ValidColor_SetsColor)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             COLORREF color = RGB(255, 0, 0);
 
             BOOL result = view.SetBkColor(color);
@@ -207,7 +215,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetBkMode_ValidMode_SetsBkMode)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             unsigned int mode = OPAQUE;
 
             BOOL result = view.SetBkMode(mode);
@@ -226,7 +235,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetTextAlignment_ValidValue_SetsAlignment)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             unsigned int alignment = DT_LEFT | DT_BOTTOM;
 
             BOOL result = view.SetTextAlignment(alignment);
@@ -245,7 +255,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetTextAlignment_ValidValue_SetsOnlyAppropriateFlags)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             unsigned int hAlignment = DT_LEFT;
             unsigned int vAlignment = DT_BOTTOM;
             unsigned int otherFlag = DT_WORDBREAK;
@@ -274,7 +285,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetTextAlignmentFlag_ValidValue_SetsAlignment)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             unsigned int hAlignment = DT_RIGHT;
             unsigned int vAlignment = DT_BOTTOM;
             unsigned int groupFlag = DT_WORDBREAK;
@@ -334,7 +346,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetLineColor_ValidColor_SetsColor)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             COLORREF color = RGB(255, 0, 0);
 
             BOOL result = view.SetLineColor(color);
@@ -353,7 +366,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetLineWidth_ValidWidth_SetsWidth)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             unsigned int width = 3;
 
             BOOL result = view.SetLineWidth(width);
@@ -372,7 +386,8 @@ namespace CProMoEdgeViewTests
         TEST_METHOD(SetLineStyle_ValidStyle_SetsStyle)
         {
             CProMoEdgeView view;
-            view.GetEdgeModel()->RecreateLabels();
+            CObArray labels;
+            view.GetEdgeModel()->RecreateLabels(labels);
             unsigned int style = PS_DASHDOT;
 
             BOOL result = view.SetLineStyle(style);
@@ -505,11 +520,13 @@ namespace CProMoEdgeViewTests
 
             edgeView.SetSource(&blockView);
 
+            CObArray edges;
+            blockView.GetBlockModel()->GetOutgoingEdges(edges);
+
             TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockView*>(edgeView.GetSource()));
             TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockModel*>(edgeView.GetEdgeModel()->GetSource())->GetMainView());
-            TestHelpers::PointerAssert::IsNotNull(blockView.GetBlockModel()->GetOutgoingEdges());
-            Assert::AreEqual((INT_PTR)1, blockView.GetBlockModel()->GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(edgeView.GetEdgeModel(), dynamic_cast<CProMoEdgeModel*>(blockView.GetBlockModel()->GetOutgoingEdges()->GetAt(0)));
+            Assert::AreEqual((INT_PTR)1, edges.GetSize());
+            TestHelpers::PointerAssert::AreEqual(edgeView.GetEdgeModel(), dynamic_cast<CProMoEdgeModel*>(edges.GetAt(0)));
             
             Assert::IsTrue(edgeView.IsFirstSegment());
             Assert::IsTrue(edgeView.IsLastSegment());
@@ -580,11 +597,13 @@ namespace CProMoEdgeViewTests
 
             edgeView.SetDestination(&blockView);
 
+            CObArray edges;
+            blockView.GetBlockModel()->GetIncomingEdges(edges);
+
             TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockView*>(edgeView.GetDestination()));
             TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockModel*>(edgeView.GetEdgeModel()->GetDestination())->GetMainView());
-            TestHelpers::PointerAssert::IsNotNull(blockView.GetBlockModel()->GetIncomingEdges());
-            Assert::AreEqual((INT_PTR)1, blockView.GetBlockModel()->GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(edgeView.GetEdgeModel(), dynamic_cast<CProMoEdgeModel*>(blockView.GetBlockModel()->GetIncomingEdges()->GetAt(0)));
+            Assert::AreEqual((INT_PTR)1, edges.GetSize());
+            TestHelpers::PointerAssert::AreEqual(edgeView.GetEdgeModel(), dynamic_cast<CProMoEdgeModel*>(edges.GetAt(0)));
 
             Assert::IsTrue(edgeView.IsFirstSegment());
             Assert::IsTrue(edgeView.IsLastSegment());

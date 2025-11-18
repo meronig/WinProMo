@@ -158,7 +158,7 @@ void CProMoClipboardHandler::Paste( CDiagramEntityContainer* container )
 				processContainer->Add(clone);
 			}
 
-			processContainer->ReplicateRelations(paste, &clones);
+			processContainer->ReplicateRelations(*paste, clones);
 
 		}
 
@@ -205,7 +205,7 @@ void CProMoClipboardHandler::CopyAllSelected( CDiagramEntityContainer* container
 			}
 		}
 
-		processContainer->ReplicateRelations(&originals, paste);
+		processContainer->ReplicateRelations(originals, *paste);
 	}
 
 }

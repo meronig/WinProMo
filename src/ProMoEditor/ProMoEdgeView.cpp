@@ -395,8 +395,11 @@ void CProMoEdgeView::KeepElementsConnected(double left, double top, double right
 			}
 		}
 	
-		for (int i = 0; i < m_edgeModel->GetLabels()->GetSize(); i++) {
-			CProMoLabel* label = dynamic_cast<CProMoLabel*>(m_edgeModel->GetLabels()->GetAt(i));
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
 			if (label) {
 				//reposition labels that are not selected (otherwise they will be moved twice)
 				if (!label->IsSelected()) {
@@ -1034,7 +1037,9 @@ void CProMoEdgeView::SetModel(CProMoModel* model)
 		if (oldModel) {
 			oldModel->UnlinkView(this);
 			//if the old model has no views, delete it
-			if (oldModel->GetViews()->GetSize() == 0) {
+			CObArray views;
+			oldModel->GetViews(views);
+			if (views.GetSize() == 0) {
 				delete oldModel;
 			}
 		}
@@ -1659,21 +1664,20 @@ CString CProMoEdgeView::GetFontName() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTNAME)) {
-					continue;
-				}
-				CString currValue = label->GetFontName();
-				if (!hasValue) {
-					fontName = currValue;
-					hasValue = TRUE;
-				}
-				else if (fontName != currValue) {
-					return CString();
-				}
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTNAME)) {
+				continue;
+			}
+			CString currValue = label->GetFontName();
+			if (!hasValue) {
+				fontName = currValue;
+				hasValue = TRUE;
+			}
+			else if (fontName != currValue) {
+				return CString();
 			}
 		}
 	}
@@ -1697,21 +1701,21 @@ unsigned int CProMoEdgeView::GetFontSize() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTSIZE)) {
-					continue;
-				}
-				unsigned int currValue = label->GetFontSize();
-				if (!hasValue) {
-					fontSize = currValue;
-					hasValue = TRUE;
-				}
-				else if (fontSize != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+		
+			if (!label || label->IsLocked(LOCK_FONTSIZE)) {
+				continue;
+			}
+			unsigned int currValue = label->GetFontSize();
+			if (!hasValue) {
+				fontSize = currValue;
+				hasValue = TRUE;
+			}
+			else if (fontSize != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -1735,21 +1739,21 @@ unsigned int CProMoEdgeView::GetFontWeight() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetFontWeight();
-				if (!hasValue) {
-					fontWeight = currValue;
-					hasValue = TRUE;
-				}
-				else if (fontWeight != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
+				continue;
+			}
+			unsigned int currValue = label->GetFontWeight();
+			if (!hasValue) {
+				fontWeight = currValue;
+				hasValue = TRUE;
+			}
+			else if (fontWeight != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -1774,22 +1778,21 @@ BOOL CProMoEdgeView::IsFontItalic() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTITALIC))
-					continue;
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTITALIC))
+				continue;
 
-				BOOL currValue = label->IsFontItalic();
-				if (!hasValue) {
-					italic = currValue;
-					hasValue = TRUE;
-				}
-				else if (italic != currValue) {
-					// mixed state, return sentinel
-					return FALSE;
-				}
+			BOOL currValue = label->IsFontItalic();
+			if (!hasValue) {
+				italic = currValue;
+				hasValue = TRUE;
+			}
+			else if (italic != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
 			}
 		}
 	}
@@ -1814,22 +1817,21 @@ BOOL CProMoEdgeView::IsFontUnderline() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTUNDERLINE))
-					continue;
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTUNDERLINE))
+				continue;
 
-				BOOL currValue = label->IsFontUnderline();
-				if (!hasValue) {
-					underline = currValue;
-					hasValue = TRUE;
-				}
-				else if (underline != currValue) {
-					// mixed state, return sentinel
-					return FALSE;
-				}
+			BOOL currValue = label->IsFontUnderline();
+			if (!hasValue) {
+				underline = currValue;
+				hasValue = TRUE;
+			}
+			else if (underline != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
 			}
 		}
 	}
@@ -1854,22 +1856,21 @@ BOOL CProMoEdgeView::IsFontStrikeOut() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT))
-					continue;
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT))
+				continue;
 
-				BOOL currValue = label->IsFontStrikeOut();
-				if (!hasValue) {
-					strikeOut = currValue;
-					hasValue = TRUE;
-				}
-				else if (strikeOut != currValue) {
-					// mixed state, return sentinel
-					return FALSE;
-				}
+			BOOL currValue = label->IsFontStrikeOut();
+			if (!hasValue) {
+				strikeOut = currValue;
+				hasValue = TRUE;
+			}
+			else if (strikeOut != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
 			}
 		}
 	}
@@ -1892,21 +1893,20 @@ COLORREF CProMoEdgeView::GetTextColor() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
-					continue;
-				}
-				COLORREF currValue = label->GetTextColor();
-				if (!hasValue) {
-					textColor = currValue;
-					hasValue = TRUE;
-				}
-				else if (textColor != currValue) {
-					return RGB(0, 0, 0);
-				}
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
+				continue;
+			}
+			COLORREF currValue = label->GetTextColor();
+			if (!hasValue) {
+				textColor = currValue;
+				hasValue = TRUE;
+			}
+			else if (textColor != currValue) {
+				return RGB(0, 0, 0);
 			}
 		}
 	}
@@ -1945,21 +1945,20 @@ unsigned int CProMoEdgeView::GetTextHorizontalAlignment() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetTextHorizontalAlignment();
-				if (!hasValue) {
-					alignment = currValue;
-					hasValue = TRUE;
-				}
-				else if (alignment != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
+			}
+			unsigned int currValue = label->GetTextHorizontalAlignment();
+			if (!hasValue) {
+				alignment = currValue;
+				hasValue = TRUE;
+			}
+			else if (alignment != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -1983,21 +1982,20 @@ unsigned int CProMoEdgeView::GetTextVerticalAlignment() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetTextVerticalAlignment();
-				if (!hasValue) {
-					alignment = currValue;
-					hasValue = TRUE;
-				}
-				else if (alignment != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
+			}
+			unsigned int currValue = label->GetTextVerticalAlignment();
+			if (!hasValue) {
+				alignment = currValue;
+				hasValue = TRUE;
+			}
+			else if (alignment != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -2023,22 +2021,21 @@ BOOL CProMoEdgeView::HasTextAlignmentFlag(unsigned int flag) const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT))
-					continue;
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT))
+				continue;
 
-				BOOL currValue = label->HasTextAlignmentFlag(flag);
-				if (!hasValue) {
-					hasFlag = currValue;
-					hasValue = TRUE;
-				}
-				else if (hasFlag != currValue) {
-					// mixed state, return sentinel
-					return FALSE;
-				}
+			BOOL currValue = label->HasTextAlignmentFlag(flag);
+			if (!hasValue) {
+				hasFlag = currValue;
+				hasValue = TRUE;
+			}
+			else if (hasFlag != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
 			}
 		}
 	}
@@ -2062,21 +2059,20 @@ unsigned int CProMoEdgeView::GetTextAlignment() const
 	BOOL hasValue = FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetTextAlignment();
-				if (!hasValue) {
-					alignment = currValue;
-					hasValue = TRUE;
-				}
-				else if (alignment != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
+			}
+			unsigned int currValue = label->GetTextAlignment();
+			if (!hasValue) {
+				alignment = currValue;
+				hasValue = TRUE;
+			}
+			else if (alignment != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -2179,15 +2175,14 @@ BOOL CProMoEdgeView::SetFontName(const CString& name)
 		return FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTNAME)) {
-					continue;
-				}
-				result &= label->SetFontName(name);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTNAME)) {
+				continue;
 			}
+			result &= label->SetFontName(name);
 		}
 	}
 	return result;
@@ -2214,15 +2209,14 @@ BOOL CProMoEdgeView::SetFontSize(const unsigned int& size)
 	if (size == 0)
 		return FALSE;
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTSIZE)) {
-					continue;
-				}
-				result &= label->SetFontSize(size);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTSIZE)) {
+				continue;
 			}
+			result &= label->SetFontSize(size);
 		}
 	}
 	return result;
@@ -2249,15 +2243,14 @@ BOOL CProMoEdgeView::SetFontWeight(const unsigned int& weight)
 	if (weight == 0)
 		return FALSE;
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
-					continue;
-				}
-				result &= label->SetFontWeight(weight);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
+				continue;
 			}
+			result &= label->SetFontWeight(weight);
 		}
 	}
 	return result;
@@ -2283,15 +2276,14 @@ BOOL CProMoEdgeView::SetFontItalic(const BOOL& italic)
 	if (IsLocked(LOCK_FONTITALIC))
 		return FALSE;
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTITALIC)) {
-					continue;
-				}
-				result &= label->SetFontItalic(italic);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTITALIC)) {
+				continue;
 			}
+			result &= label->SetFontItalic(italic);
 		}
 	}
 	return result;
@@ -2317,15 +2309,14 @@ BOOL CProMoEdgeView::SetFontUnderline(const BOOL& underline)
 	if (IsLocked(LOCK_FONTUNDERLINE))
 		return FALSE;
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTUNDERLINE)) {
-					continue;
-				}
-				result &= label->SetFontUnderline(underline);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTUNDERLINE)) {
+				continue;
 			}
+			result &= label->SetFontUnderline(underline);
 		}
 	}
 	return result;
@@ -2351,15 +2342,14 @@ BOOL CProMoEdgeView::SetFontStrikeOut(const BOOL& strikeOut)
 	if (IsLocked(LOCK_FONTSTRIKEOUT))
 		return FALSE;
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT)) {
-					continue;
-				}
-				result &= label->SetFontStrikeOut(strikeOut);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT)) {
+				continue;
 			}
+			result &= label->SetFontStrikeOut(strikeOut);
 		}
 	}
 	return result;
@@ -2384,15 +2374,14 @@ BOOL CProMoEdgeView::SetTextColor(const COLORREF& color)
 	if (IsLocked(LOCK_TEXTCOLOR))
 		return FALSE;
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
-					continue;
-				}
-				result &= label->SetTextColor(color);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
+				continue;
 			}
+			result &= label->SetTextColor(color);
 		}
 	}
 	return result;
@@ -2440,15 +2429,14 @@ BOOL CProMoEdgeView::SetTextAlignmentFlag(const unsigned int& flag, const BOOL& 
 		return FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				result &= label->SetTextAlignmentFlag(flag, enabled);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
 			}
+			result &= label->SetTextAlignmentFlag(flag, enabled);
 		}
 	}
 	return result;
@@ -2476,15 +2464,14 @@ BOOL CProMoEdgeView::SetTextHorizontalAlignment(const unsigned int& alignment)
 		return FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				result &= label->SetTextHorizontalAlignment(alignment);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
 			}
+			result &= label->SetTextHorizontalAlignment(alignment);
 		}
 	}
 	return result;
@@ -2511,15 +2498,14 @@ BOOL CProMoEdgeView::SetTextVerticalAlignment(const unsigned int& alignment)
 		return FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				result &= label->SetTextVerticalAlignment(alignment);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
 			}
+			result &= label->SetTextVerticalAlignment(alignment);
 		}
 	}
 	return result;
@@ -2545,15 +2531,14 @@ BOOL CProMoEdgeView::SetTextAlignment(const unsigned int& alignment)
 		return FALSE;
 
 	if (m_edgeModel) {
-		CObArray* labels = m_edgeModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				result &= label->SetTextAlignment(alignment);
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
 			}
+			result &= label->SetTextAlignment(alignment);
 		}
 	}
 	return result;

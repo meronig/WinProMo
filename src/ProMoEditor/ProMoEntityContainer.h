@@ -25,7 +25,7 @@ public:
 	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
 	virtual CProMoBlockView* GetTarget();
 
-	virtual void ReplicateRelations(CObArray* source, CObArray* destination);
+	virtual void ReplicateRelations(const CObArray& source, CObArray& destination);
 	virtual void Load(const CStringArray& stra, CProMoControlFactory& fact);
 	virtual void Save(CStringArray& stra);
 	virtual void SaveObjects(CStringArray& stra);
@@ -38,14 +38,14 @@ protected:
 	void LoadModels(const CStringArray& stra, CProMoControlFactory& fact, CObArray& models);
 	void LoadViews(const CStringArray& stra, CProMoControlFactory& fact, const CObArray& models);
 	void LoadLabels(const CStringArray& stra, CProMoControlFactory& fact, const CObArray& models);
-	void LoadProperties(const CStringArray& stra, const CObArray* models);
+	void LoadProperties(const CStringArray& stra, const CObArray& models);
 	void LinkModels(const CStringArray& stra, const CObArray& models);
 	void LinkViews(const CStringArray& stra, const CObArray& models);
 
 	void SaveProperties(CStringArray& stra, CProMoProperty* prop);
 private:
 	// Private helpers
-	void ReorderR(CProMoBlockView* block, CObArray* m_newOrder);
+	void ReorderR(CProMoBlockView* block, CObArray& m_newOrder);
 	CString m_modelType;
 
 

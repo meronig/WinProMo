@@ -50,8 +50,11 @@ namespace CProMoEdgeModelTests
 
             edge.SetSource(&model);
 
-            Assert::AreEqual((INT_PTR)1, model.GetOutgoingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual((CProMoEdgeModel*)&edge, (CProMoEdgeModel*)model.GetOutgoingEdges()->GetAt(0));
+            CObArray edges;
+            model.GetOutgoingEdges(edges);
+
+            Assert::AreEqual((INT_PTR)1, edges.GetSize());
+            TestHelpers::PointerAssert::AreEqual((CProMoEdgeModel*)&edge, (CProMoEdgeModel*)edges.GetAt(0));
             TestHelpers::PointerAssert::AreEqual(&model, edge.GetSource());
         }
 
@@ -63,7 +66,10 @@ namespace CProMoEdgeModelTests
             edge.SetSource(&model);
             edge.SetSource(NULL);
 
-            Assert::AreEqual((INT_PTR)0, model.GetOutgoingEdges()->GetSize());
+            CObArray edges;
+            model.GetOutgoingEdges(edges);
+
+            Assert::AreEqual((INT_PTR)0, edges.GetSize());
             TestHelpers::PointerAssert::IsNull(edge.GetSource());
         }
 
@@ -85,8 +91,11 @@ namespace CProMoEdgeModelTests
 
             edge.SetDestination(&model);
 
-            Assert::AreEqual((INT_PTR)1, model.GetIncomingEdges()->GetSize());
-            TestHelpers::PointerAssert::AreEqual((CProMoEdgeModel*)&edge, (CProMoEdgeModel*)model.GetIncomingEdges()->GetAt(0));
+            CObArray edges;
+            model.GetIncomingEdges(edges);
+
+            Assert::AreEqual((INT_PTR)1, edges.GetSize());
+            TestHelpers::PointerAssert::AreEqual((CProMoEdgeModel*)&edge, (CProMoEdgeModel*)edges.GetAt(0));
             TestHelpers::PointerAssert::AreEqual(&model, edge.GetDestination());
         }
 
@@ -98,7 +107,10 @@ namespace CProMoEdgeModelTests
             edge.SetSource(&model);
             edge.SetSource(NULL);
 
-            Assert::AreEqual((INT_PTR)0, model.GetIncomingEdges()->GetSize());
+            CObArray edges;
+            model.GetIncomingEdges(edges);
+
+            Assert::AreEqual((INT_PTR)0, edges.GetSize());
             TestHelpers::PointerAssert::IsNull(edge.GetDestination());
         }
 

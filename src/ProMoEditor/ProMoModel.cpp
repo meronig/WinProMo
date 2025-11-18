@@ -431,19 +431,19 @@ void CProMoModel::AddProperty(CProMoProperty* prop)
 	}
 }
 
-CObArray* CProMoModel::GetViews()
+void CProMoModel::GetViews(CObArray& viewList) const
 /* ============================================================
 	Function :		CProMoModel::GetViews
-	Description :	Accessor for the internal views array
+	Description :	Returns all the views associated to the model
 	Access :		Public
 
-	Return :		CObArray*	-	A pointer to the views
-									array
-	Parameters :	none
+	Return :		void
+	Parameters :	CObArray	-	A CObArray that will contain
+									the views
 
    ============================================================*/
 {
-	return &m_views;
+	viewList.Append(m_views);
 }
 
 BOOL CProMoModel::FromString(const CString& str)
@@ -942,19 +942,19 @@ CString CProMoModel::GetNameFromString(const CString& str)
 	return name;
 }
 
-CObArray* CProMoModel::GetLabels()
+void CProMoModel::GetLabels(CObArray& labelList) const
 /* ============================================================
 	Function :		CProMoModel::GetLabels
-	Description :	Accessor for the internal labels array
+	Description :	Returns the labels associated to the model
 	Access :		Public
 
-	Return :		CObArray*	-	A pointer to the labels
-									array
-	Parameters :	none
+	Return :		void
+	Parameters :	CObArray	-	A CObArray that will contain
+									the labels
 
    ============================================================*/
 {
-	return &m_labels;
+	labelList.Append(m_labels);
 }
 
 CProMoLabel* CProMoModel::GetLabel(CString property)
@@ -982,7 +982,7 @@ CProMoLabel* CProMoModel::GetLabel(CString property)
 	return NULL;
 }
 
-CObArray* CProMoModel::RecreateLabels()
+void CProMoModel::RecreateLabels(CObArray& labelList)
 /* ============================================================
 	Function :		CProMoModel::RecreateLabels
 	Description :	Recreates labels for all the properties
@@ -990,20 +990,17 @@ CObArray* CProMoModel::RecreateLabels()
 					are not present.
 	Access :		Public
 
-	Return :		CObArray*	-	A pointer to the labels
-									being created (if any)
-	Parameters :	none
+	Return :		void
+	Parameters :	CObArray	-	A CObArray that will contain
+									the labels being created
+									(if any)
 
    ============================================================*/
 {
-	CObArray* arr = new CObArray;
-
 	for (int i = 0; i < m_properties.GetSize(); i++) {
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_properties.GetAt(i));
-		RecreateLabelsR(*arr, prop);
+		RecreateLabelsR(labelList, prop);
 	}
-
-	return arr;
 }
 
 void CProMoModel::CustomizeLabel(CProMoLabel* label)

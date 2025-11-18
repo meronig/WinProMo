@@ -347,7 +347,7 @@ CPoint CProMoBlockView::GetIntersection(CPoint innerPoint, CPoint outerPoint)
 	if (GetShape() == SHAPE_ELLIPSE) {
 		result = CIntersectionHelper::SegmentIntersectsEllipse(innerPoint, outerPoint, GetRect());
 	} else if (GetShape() == SHAPE_POLYGON) {
-		result = CIntersectionHelper::SegmentIntersectsPolygon(innerPoint, outerPoint, GetRect(), GetVertices());
+		result = CIntersectionHelper::SegmentIntersectsPolygon(innerPoint, outerPoint, GetRect(), m_vertices);
 	} else {
 		result = CIntersectionHelper::SegmentIntersectsRect(innerPoint, outerPoint, GetRect());
 	}
@@ -506,9 +506,11 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 
 		//note: reposition links
 		int i = 0;
+		CObArray edges;
+		m_blockModel->GetIncomingEdges(edges);
 
-		for (i = 0; i < m_blockModel->GetIncomingEdges()->GetSize(); i++) {
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_blockModel->GetIncomingEdges()->GetAt(i));
+		for (i = 0; i < edges.GetSize(); i++) {
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges.GetAt(i));
 			if (edgeModel) {
 				CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
 
@@ -524,8 +526,11 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 
 		}
 
-		for (i = 0; i < m_blockModel->GetOutgoingEdges()->GetSize(); i++) {
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_blockModel->GetOutgoingEdges()->GetAt(i));
+		edges.RemoveAll();
+		m_blockModel->GetOutgoingEdges(edges);
+
+		for (i = 0; i < edges.GetSize(); i++) {
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges.GetAt(i));
 			if (edgeModel) {
 				CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
 				//destination: topleft
@@ -543,9 +548,11 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 		double deltaX = GetLeft() - left;
 
 		if (deltaX != 0 || deltaY != 0) {
+			CObArray childBlocks;
+			m_blockModel->GetSubBlocks(childBlocks);
 
-			for (i = 0; i < m_blockModel->GetSubBlocks()->GetSize(); i++) {
-				CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(m_blockModel->GetSubBlocks()->GetAt(i));
+			for (i = 0; i < childBlocks.GetSize(); i++) {
+				CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 				if (childModel) {
 					CProMoBlockView* childView = childModel->GetMainView();
 					if (childView) {
@@ -624,9 +631,12 @@ void CProMoBlockView::RecomputeIntersectionLinks()
 	if (m_blockModel) {
 		//recompute intersection for edges
 		int i = 0;
+		
+		CObArray edges;
+		m_blockModel->GetIncomingEdges(edges);
 
-		for (i = 0; i < m_blockModel->GetIncomingEdges()->GetSize(); i++) {
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_blockModel->GetIncomingEdges()->GetAt(i));
+		for (i = 0; i < edges.GetSize(); i++) {
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges.GetAt(i));
 			if (edgeModel) {
 				CProMoEdgeView* edgeView = edgeModel->GetLastSegment();
 				//destination: bottomright
@@ -639,8 +649,11 @@ void CProMoBlockView::RecomputeIntersectionLinks()
 
 		}
 
-		for (i = 0; i < m_blockModel->GetOutgoingEdges()->GetSize(); i++) {
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_blockModel->GetOutgoingEdges()->GetAt(i));
+		edges.RemoveAll();
+		m_blockModel->GetOutgoingEdges(edges);
+
+		for (i = 0; i < edges.GetSize(); i++) {
+			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges.GetAt(i));
 			if (edgeModel) {
 				CProMoEdgeView* edgeView = edgeModel->GetFirstSegment();
 				//destination: topleft
@@ -653,8 +666,11 @@ void CProMoBlockView::RecomputeIntersectionLinks()
 		}
 
 		//recompute intersection for sub-blocks
-		for (i = 0; i < m_blockModel->GetSubBlocks()->GetSize(); i++) {
-			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(m_blockModel->GetSubBlocks()->GetAt(i));
+		CObArray childBlocks;
+		m_blockModel->GetSubBlocks(childBlocks);
+		
+		for (i = 0; i < childBlocks.GetSize(); i++) {
+			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 			if (childModel) {
 				CProMoBlockView* childView = childModel->GetMainView();
 				if (childView) {
@@ -724,7 +740,9 @@ void CProMoBlockView::SetModel(CProMoModel* model)
 		if (oldModel) {
 			oldModel->UnlinkView(this);
 			//if the old model has no views, delete it
-			if (oldModel->GetViews()->GetSize() == 0) {
+			CObArray views;
+			oldModel->GetViews(views);
+			if (views.GetSize() == 0) {
 				delete oldModel;
 			}
 		}
@@ -800,26 +818,23 @@ BOOL CProMoBlockView::AddVertex(const CDoublePoint& point)
 	return FALSE;
 }
 
-CObArray* CProMoBlockView::GetVertices()
+void CProMoBlockView::GetVertices(CObArray& vertices) const
 /* ============================================================
 	Function :		CProMoBlockView::GetVertices
 	Description :	Returns the vertices of the polygon
 					representing the shape of the block.
-					If the shape of the block is not 
-					SHAPE_POLYGON, return NULL.
 	Access :		Protected
 
-	Return :		CObArray*			-	Array containing
+	Return :		void
+	Parameters :	CObArray			-	Array containing
 											pointers to the
 											vertices.
-	Parameters :	none
 
    ============================================================*/
 {
 	if (m_shape == SHAPE_POLYGON) {
-		return &m_vertices;
+		vertices.Append(m_vertices);
 	}
-	return NULL;
 }
 
 void CProMoBlockView::ClearVertices()
@@ -853,8 +868,11 @@ void CProMoBlockView::AutoResize()
    ============================================================*/
 {
 	if (m_blockModel) {
-		for (int i = 0; i < m_blockModel->GetSubBlocks()->GetSize(); i++) {
-			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(m_blockModel->GetSubBlocks()->GetAt(i));
+		CObArray childBlocks;
+		m_blockModel->GetSubBlocks(childBlocks);
+
+		for (int i = 0; i < childBlocks.GetSize(); i++) {
+			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 			if (childModel) {
 				CProMoBlockView* childView = childModel->GetMainView();
 				if (childView) {
@@ -1421,9 +1439,11 @@ void CProMoBlockView::AdjustToLabel(CProMoLabel* label)
 
 		CDoubleRect labelRect;
 
-		CObArray* labels = GetModel()->GetLabels();
-		for (int i = 0; i < labels->GetSize(); i++) {
-			CProMoLabel* otherLabel = (CProMoLabel*)labels->GetAt(i);
+		CObArray labels;
+		GetModel()->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* otherLabel = (CProMoLabel*)labels.GetAt(i);
 			if (!otherLabel || !otherLabel->HasFitView() || !IsFitCompatible(otherLabel->GetViewAnchorPoint(), otherLabel->GetLabelAnchorPoint()))
 				continue;
 			labelRect.UnionRect(labelRect, otherLabel->GetRect());
@@ -1541,8 +1561,11 @@ void CProMoBlockView::Reposition()
 
    ============================================================*/
 {
-	for (int i = 0; i < m_blockModel->GetLabels()->GetSize(); i++) {
-		CProMoLabel* label = dynamic_cast<CProMoLabel*>(m_blockModel->GetLabels()->GetAt(i));
+	CObArray labels;
+	m_blockModel->GetLabels(labels);
+
+	for (int i = 0; i < labels.GetSize(); i++) {
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
 		if (label) {
 			//reposition labels
 			if (!label->IsSelected()) {
@@ -1625,23 +1648,24 @@ CString CProMoBlockView::GetFontName() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTNAME)) {
-					continue;
-				}
-				CString currValue = label->GetFontName();
-				if (!hasValue) {
-					fontName = currValue;
-					hasValue = TRUE;
-				}
-				else if (fontName != currValue ) {
-					return CString();
-				}
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+
+			if (!label || label->IsLocked(LOCK_FONTNAME)) {
+				continue;
 			}
-		}	
+			CString currValue = label->GetFontName();
+			if (!hasValue) {
+				fontName = currValue;
+				hasValue = TRUE;
+			}
+			else if (fontName != currValue ) {
+				return CString();
+			}
+		}
 	}
 	return fontName;
 }
@@ -1663,22 +1687,24 @@ unsigned int CProMoBlockView::GetFontSize() const
 	BOOL hasValue = FALSE;
 	
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTSIZE)) {
-					continue;
-				}
-				unsigned int currValue = label->GetFontSize();
-				if (!hasValue) {
-					fontSize = currValue;
-					hasValue = TRUE;
-				}
-				else if (fontSize != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_FONTSIZE)) {
+				continue;
 			}
+			unsigned int currValue = label->GetFontSize();
+			if (!hasValue) {
+				fontSize = currValue;
+				hasValue = TRUE;
+			}
+			else if (fontSize != currValue) {
+				return 0;
+			}
+			
 		}
 	}
 	return fontSize;
@@ -1701,21 +1727,22 @@ unsigned int CProMoBlockView::GetFontWeight() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetFontWeight();
-				if (!hasValue) {
-					fontWeight = currValue;
-					hasValue = TRUE;
-				}
-				else if (fontWeight != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
+				continue;
+			}
+			unsigned int currValue = label->GetFontWeight();
+			if (!hasValue) {
+				fontWeight = currValue;
+				hasValue = TRUE;
+			}
+			else if (fontWeight != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -1740,22 +1767,23 @@ BOOL CProMoBlockView::IsFontItalic() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTITALIC))
-					continue;
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
 
-				BOOL currValue = label->IsFontItalic();
-				if (!hasValue) {
-					italic = currValue;
-					hasValue = TRUE;
-				}
-				else if (italic != currValue) {
-					// mixed state, return sentinel
-					return FALSE;
-				}
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_FONTITALIC))
+				continue;
+
+			BOOL currValue = label->IsFontItalic();
+			if (!hasValue) {
+				italic = currValue;
+				hasValue = TRUE;
+			}
+			else if (italic != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
 			}
 		}
 	}
@@ -1780,22 +1808,23 @@ BOOL CProMoBlockView::IsFontUnderline() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTUNDERLINE))
-					continue;
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
 
-				BOOL currValue = label->IsFontUnderline();
-				if (!hasValue) {
-					underline = currValue;
-					hasValue = TRUE;
-				}
-				else if (underline != currValue) {
-					// mixed state, return sentinel
-					return FALSE;
-				}
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_FONTUNDERLINE))
+				continue;
+
+			BOOL currValue = label->IsFontUnderline();
+			if (!hasValue) {
+				underline = currValue;
+				hasValue = TRUE;
+			}
+			else if (underline != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
 			}
 		}
 	}
@@ -1820,22 +1849,23 @@ BOOL CProMoBlockView::IsFontStrikeOut() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT))
-					continue;
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
 
-				BOOL currValue = label->IsFontStrikeOut();
-				if (!hasValue) {
-					strikeOut = currValue;
-					hasValue = TRUE;
-				}
-				else if (strikeOut != currValue) {
-					// mixed state, return sentinel
-					return FALSE;
-				}
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT))
+				continue;
+
+			BOOL currValue = label->IsFontStrikeOut();
+			if (!hasValue) {
+				strikeOut = currValue;
+				hasValue = TRUE;
+			}
+			else if (strikeOut != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
 			}
 		}
 	}
@@ -1858,21 +1888,22 @@ COLORREF CProMoBlockView::GetTextColor() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
-					continue;
-				}
-				COLORREF currValue = label->GetTextColor();
-				if (!hasValue) {
-					textColor = currValue;
-					hasValue = TRUE;
-				}
-				else if (textColor != currValue) {
-					return RGB(0,0,0);
-				}
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+		if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
+				continue;
+			}
+			COLORREF currValue = label->GetTextColor();
+			if (!hasValue) {
+				textColor = currValue;
+				hasValue = TRUE;
+			}
+			else if (textColor != currValue) {
+				return RGB(0,0,0);
 			}
 		}
 	}
@@ -1911,21 +1942,22 @@ unsigned int CProMoBlockView::GetTextHorizontalAlignment() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetTextHorizontalAlignment();
-				if (!hasValue) {
-					alignment = currValue;
-					hasValue = TRUE;
-				}
-				else if (alignment != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
+			}
+			unsigned int currValue = label->GetTextHorizontalAlignment();
+			if (!hasValue) {
+				alignment = currValue;
+				hasValue = TRUE;
+			}
+			else if (alignment != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -1949,21 +1981,22 @@ unsigned int CProMoBlockView::GetTextVerticalAlignment() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetTextVerticalAlignment();
-				if (!hasValue) {
-					alignment = currValue;
-					hasValue = TRUE;
-				}
-				else if (alignment != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
+			}
+			unsigned int currValue = label->GetTextVerticalAlignment();
+			if (!hasValue) {
+				alignment = currValue;
+				hasValue = TRUE;
+			}
+			else if (alignment != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -1989,22 +2022,23 @@ BOOL CProMoBlockView::HasTextAlignmentFlag(unsigned int flag) const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT))
-					continue;
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
 
-				BOOL currValue = label->HasTextAlignmentFlag(flag);
-				if (!hasValue) {
-					hasFlag = currValue;
-					hasValue = TRUE;
-				}
-				else if (hasFlag != currValue) {
-					// mixed state, return sentinel
-					return FALSE;
-				}
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+			if (!label || label->IsLocked(LOCK_ALIGNMENT))
+				continue;
+
+			BOOL currValue = label->HasTextAlignmentFlag(flag);
+			if (!hasValue) {
+				hasFlag = currValue;
+				hasValue = TRUE;
+			}
+			else if (hasFlag != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
 			}
 		}
 	}
@@ -2028,21 +2062,22 @@ unsigned int CProMoBlockView::GetTextAlignment() const
 	BOOL hasValue = FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				unsigned int currValue = label->GetTextAlignment();
-				if (!hasValue) {
-					alignment = currValue;
-					hasValue = TRUE;
-				}
-				else if (alignment != currValue) {
-					return 0;
-				}
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			
+		if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
+			}
+			unsigned int currValue = label->GetTextAlignment();
+			if (!hasValue) {
+				alignment = currValue;
+				hasValue = TRUE;
+			}
+			else if (alignment != currValue) {
+				return 0;
 			}
 		}
 	}
@@ -2191,15 +2226,15 @@ BOOL CProMoBlockView::SetFontName(const CString& name)
 		return FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTNAME)) {
-					continue;
-				}
-				result &= label->SetFontName(name);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTNAME)) {
+				continue;
 			}
+			result &= label->SetFontName(name);
 		}
 	}
 	return result;
@@ -2226,15 +2261,15 @@ BOOL CProMoBlockView::SetFontSize(const unsigned int& size)
 	if (size == 0)
 		return FALSE;
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTSIZE)) {
-					continue;
-				}
-				result &= label->SetFontSize(size);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTSIZE)) {
+				continue;
 			}
+			result &= label->SetFontSize(size);
 		}
 	}
 	return result;
@@ -2261,15 +2296,15 @@ BOOL CProMoBlockView::SetFontWeight(const unsigned int& weight)
 	if (weight == 0)
 		return FALSE;
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
-					continue;
-				}
-				result &= label->SetFontWeight(weight);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+		if (!label || label->IsLocked(LOCK_FONTWEIGHT)) {
+				continue;
 			}
+			result &= label->SetFontWeight(weight);
 		}
 	}
 	return result;
@@ -2295,15 +2330,15 @@ BOOL CProMoBlockView::SetFontItalic(const BOOL& italic)
 	if (IsLocked(LOCK_FONTITALIC))
 		return FALSE;
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTITALIC)) {
-					continue;
-				}
-				result &= label->SetFontItalic(italic);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTITALIC)) {
+				continue;
 			}
+			result &= label->SetFontItalic(italic);
 		}
 	}
 	return result;
@@ -2329,15 +2364,15 @@ BOOL CProMoBlockView::SetFontUnderline(const BOOL& underline)
 	if (IsLocked(LOCK_FONTUNDERLINE))
 		return FALSE;
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTUNDERLINE)) {
-					continue;
-				}
-				result &= label->SetFontUnderline(underline);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTUNDERLINE)) {
+				continue;
 			}
+			result &= label->SetFontUnderline(underline);
 		}
 	}
 	return result;
@@ -2363,15 +2398,15 @@ BOOL CProMoBlockView::SetFontStrikeOut(const BOOL& strikeOut)
 	if (IsLocked(LOCK_FONTSTRIKEOUT))
 		return FALSE;
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT)) {
-					continue;
-				}
-				result &= label->SetFontStrikeOut(strikeOut);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_FONTSTRIKEOUT)) {
+				continue;
 			}
+			result &= label->SetFontStrikeOut(strikeOut);
 		}
 	}
 	return result;
@@ -2396,15 +2431,15 @@ BOOL CProMoBlockView::SetTextColor(const COLORREF& color)
 	if (IsLocked(LOCK_TEXTCOLOR))
 		return FALSE;
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
-					continue;
-				}
-				result &= label->SetTextColor(color);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_TEXTCOLOR)) {
+				continue;
 			}
+			result &= label->SetTextColor(color);
 		}
 	}
 	return result;
@@ -2452,15 +2487,15 @@ BOOL CProMoBlockView::SetTextAlignmentFlag(const unsigned int& flag, const BOOL&
 		return FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				result &= label->SetTextAlignmentFlag(flag, enabled);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+		if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
 			}
+			result &= label->SetTextAlignmentFlag(flag, enabled);
 		}
 	}
 	return result;
@@ -2487,15 +2522,15 @@ BOOL CProMoBlockView::SetTextHorizontalAlignment(const unsigned int& alignment)
 		return FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				result &= label->SetTextHorizontalAlignment(alignment);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
 			}
+			result &= label->SetTextHorizontalAlignment(alignment);
 		}
 	}
 	return result;
@@ -2522,15 +2557,15 @@ BOOL CProMoBlockView::SetTextVerticalAlignment(const unsigned int& alignment)
 		return FALSE;
 
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				result &= label->SetTextVerticalAlignment(alignment);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+		if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
 			}
+			result &= label->SetTextVerticalAlignment(alignment);
 		}
 	}
 	return result;
@@ -2556,15 +2591,15 @@ BOOL CProMoBlockView::SetTextAlignment(const unsigned int& alignment)
 		return FALSE;
 	
 	if (m_blockModel) {
-		CObArray* labels = m_blockModel->GetLabels();
-		if (labels) {
-			for (int i = 0; i < labels->GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-				if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
-					continue;
-				}
-				result &= label->SetTextAlignment(alignment);
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
 			}
+			result &= label->SetTextAlignment(alignment);
 		}
 	}
 	return result;

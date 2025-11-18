@@ -329,10 +329,15 @@ void CProMoEditor::DeselectChildBlocks(CProMoBlockView* block)
 {
 	ASSERT(block->GetModel()!=NULL);
 	CProMoBlockModel* model = (CProMoBlockModel*)block->GetModel();
-	for (int i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
-		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
-		subBlock->GetMainView()->Select(FALSE);
-		DeselectChildBlocks(subBlock->GetMainView());
+	CObArray childBlocks;
+	model->GetSubBlocks(childBlocks);
+
+	for (int i = 0; i < childBlocks.GetSize(); i++) {
+		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
+		if (subBlock) {
+			subBlock->GetMainView()->Select(FALSE);
+			DeselectChildBlocks(subBlock->GetMainView());
+		}
 	}
 }
 
@@ -350,12 +355,16 @@ void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
 
    ============================================================*/
 {
-	ASSERT(block->GetModel() != NULL);
 	CProMoBlockModel* model = (CProMoBlockModel*)block->GetModel();
-	for (int i = 0; i < model->GetSubBlocks()->GetSize(); i++) {
-		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(model->GetSubBlocks()->GetAt(i));
-		subBlock->GetMainView()->Select(TRUE);
-		SelectChildBlocks(subBlock->GetMainView());
+	CObArray childBlocks;
+	model->GetSubBlocks(childBlocks);
+
+	for (int i = 0; i < childBlocks.GetSize(); i++) {
+		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
+		if (subBlock) {
+			subBlock->GetMainView()->Select(TRUE);
+			SelectChildBlocks(subBlock->GetMainView());
+		}
 	}
 }
 
@@ -371,15 +380,16 @@ void CProMoEditor::DeselectLabels(CProMoBlockView* block)
    ============================================================*/
 {
 	if (!block) return;
+	
 	CProMoBlockModel* model = (CProMoBlockModel*)block->GetModel();
 	if (!model) return;
-	CObArray* labels = model->GetLabels();
-	if (labels) {
-		for (int i = 0; i < labels->GetSize(); ++i) {
-			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-			if (label) {
-				label->Select(FALSE);
-			}
+	
+	CObArray labels;
+	model->GetLabels(labels);
+	for (int i = 0; i < labels.GetSize(); ++i) {
+		CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+		if (label) {
+			label->Select(FALSE);
 		}
 	}
 }
@@ -982,14 +992,22 @@ void CProMoEditor::DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) co
 			}
 		}
 	}
-	for (i = 0; i < ((CProMoBlockModel*)block->GetModel())->GetIncomingEdges()->GetSize(); i++) {
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(((CProMoBlockModel*)block->GetModel())->GetIncomingEdges()->GetAt(i));
+	
+	CObArray edges;
+	((CProMoBlockModel*)block->GetModel())->GetIncomingEdges(edges);
+
+	for (i = 0; i < edges.GetSize(); i++) {
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(edges.GetAt(i));
 		if (edge) {
 			edge->DrawObject(dc, zoom);
 		}
 	}
-	for (i = 0; i < ((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges()->GetSize(); i++) {
-		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges()->GetAt(i));
+
+	edges.RemoveAll();
+	((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges(edges);
+
+	for (i = 0; i < edges.GetSize(); i++) {
+		CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(edges.GetAt(i));
 		if (edge) {
 			edge->DrawObject(dc, zoom);
 		}
@@ -1134,31 +1152,27 @@ void CProMoEditor::CreateLabels()
 	if (GetSelectedObject() != NULL) {
 		CProMoBlockView* selObj = NULL;
 		selObj = dynamic_cast<CProMoBlockView*>(GetSelectedObject());
+		CObArray labels;
+		
 		if (selObj) {
-			CObArray* labels = selObj->GetModel()->RecreateLabels();
-			if (labels) {
-				for (int i = 0; i < labels->GetSize(); i++) {
-					CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-					if (label) {
-						GetDiagramEntityContainer()->Add(label);
-					}
+			selObj->GetModel()->RecreateLabels(labels);
+			for (int i = 0; i < labels.GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+				if (label) {
+					GetDiagramEntityContainer()->Add(label);
 				}
-				delete labels;
 			}
 		}
 		
 		CProMoEdgeView* selEdge = NULL;
 		selEdge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
 		if (selEdge) {
-			CObArray* labels = selEdge->GetModel()->RecreateLabels();
-			if (labels) {
-				for (int i = 0; i < labels->GetSize(); i++) {
-					CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels->GetAt(i));
-					if (label) {
-						GetDiagramEntityContainer()->Add(label);
-					}
+			selEdge->GetModel()->RecreateLabels(labels);
+			for (int i = 0; i < labels.GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+				if (label) {
+					GetDiagramEntityContainer()->Add(label);
 				}
-				delete labels;
 			}
 		}
 	}

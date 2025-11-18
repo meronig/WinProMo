@@ -44,6 +44,7 @@ CProMoBlockModel::CProMoBlockModel()
 	SetType(_T("promo_block_model"));
 	SetName(CProMoNameFactory::GetID());
 	m_parentBlock = NULL;
+	m_attachmentType = DEHT_NONE;
 }
 
 CProMoBlockModel::~CProMoBlockModel()
@@ -182,19 +183,24 @@ void CProMoBlockModel::UnlinkAllSubBlocks()
 
 }
 
-CObArray* CProMoBlockModel::GetSubBlocks()
+void CProMoBlockModel::GetSubBlocks(CObArray& subblocks) const
 /* ============================================================
 	Function :		CProMoBlockModel::GetSubBlocks
-	Description :	Accessor for the internal child blocks array
+	Description :	Returns the child blocks
 	Access :		Public
 
-	Return :		CObArray*	-	A pointer to the child 
-									blocks array
-	Parameters :	none
+	Return :		void
+	Parameters :	CObArray	-	A CObArray to store the child 
+									blocks
 
    ============================================================*/
 {
-	return &m_subblocks;
+	for (int i = 0; i < m_subblocks.GetSize(); i++) {
+		CProMoBlockModel* child = dynamic_cast<CProMoBlockModel*>(this->m_subblocks.GetAt(i));
+		if (child) {
+			subblocks.Add(child);
+		}
+	}
 }
 
 void CProMoBlockModel::SetParentBlock(CProMoBlockModel* parent)
@@ -366,21 +372,21 @@ void CProMoBlockModel::UnlinkAllOutgoingEdges()
 
 }
 
-CObArray* CProMoBlockModel::GetOutgoingEdges()
+void CProMoBlockModel::GetOutgoingEdges(CObArray& edgeList) const
 /* ============================================================
 	Function :		CProMoBlockModel::GetOutgoingEdges
-	Description :	Accessor for the internal outgoing edges
-					array
+	Description :	Returns the outgoing edges for the current
+					block
 
 	Access :		Public
 
-	Return :		CObArray*	-	A pointer to the outgoing
-									edges array
-	Parameters :	none
+	Return :		void
+	Parameters :	CObArray	-	A CObArray that will contain
+									the edges
 
    ============================================================*/
 {
-	return &m_outgoingEdges;
+	edgeList.Append(m_outgoingEdges);
 }
 
 void CProMoBlockModel::LinkIncomingEdge(CProMoEdgeModel* edge)
@@ -446,21 +452,21 @@ void CProMoBlockModel::UnlinkAllIncomingEdges()
 
 }
 
-CObArray* CProMoBlockModel::GetIncomingEdges()
+void CProMoBlockModel::GetIncomingEdges(CObArray& edgeList) const
 /* ============================================================
 	Function :		CProMoBlockModel::GetIncomingEdges
-	Description :	Accessor for the internal incoming edges 
-					array
+	Description :	Returns the incoming edges for the current
+					block
 	
 	Access :		Public
 
-	Return :		CObArray*	-	A pointer to the incoming
-									edges array
-	Parameters :	none
+	Return :		void
+	Parameters :	CObArray	-	A CObArray that will contain
+									the edges
 
    ============================================================*/
 {
-	return &m_incomingEdges;
+	edgeList.Append(m_incomingEdges);
 }
 
 CProMoBlockView* CProMoBlockModel::GetMainView() const
@@ -576,7 +582,9 @@ void CProMoBlockModel::CustomizeLabel(CProMoLabel* label)
 		if (label->GetPropertyName() == CString("Title") && label->GetModel()) {
 			label->SetFitView(TRUE);
 			label->SetLock(LOCK_REPOSITIONING);
-			if (GetSubBlocks()->GetSize() > 0) {
+			CObArray subBlocks;
+			GetSubBlocks(subBlocks);
+			if (subBlocks.GetSize() > 0) {
 				label->SetViewAnchorPoint(DEHT_TOPMIDDLE);
 				label->SetLabelAnchorPoint(DEHT_TOPMIDDLE);
 			}

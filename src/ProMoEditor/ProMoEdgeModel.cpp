@@ -262,9 +262,10 @@ CProMoEdgeView* CProMoEdgeModel::GetLastSegment()
 
    ============================================================*/
 {
-	CObArray* views = GetViews();
-	for (int i = 0; i < views->GetSize(); i++) {
-		CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(views->GetAt(i));
+	CObArray views;
+	GetViews(views);
+	for (int i = 0; i < views.GetSize(); i++) {
+		CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(views.GetAt(i));
 		if (view) {
 			CProMoEdgeView* destView = dynamic_cast<CProMoEdgeView*>(view->GetDestination());
 			if (!destView) {
@@ -290,9 +291,10 @@ CProMoEdgeView* CProMoEdgeModel::GetFirstSegment()
 
    ============================================================*/
 {
-	CObArray* views = GetViews();
-	for (int i = 0; i < views->GetSize(); i++) {
-		CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(views->GetAt(i));
+	CObArray views;
+	GetViews(views);
+	for (int i = 0; i < views.GetSize(); i++) {
+		CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(views.GetAt(i));
 		if (view) {
 			CProMoEdgeView* sourceView = dynamic_cast<CProMoEdgeView*>(view->GetSource());
 			if (!sourceView) {

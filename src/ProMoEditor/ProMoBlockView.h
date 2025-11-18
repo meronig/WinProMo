@@ -71,7 +71,7 @@ protected:
 	virtual int GetShape() const;
 
 	virtual BOOL AddVertex(const CDoublePoint &point);
-	virtual CObArray* GetVertices();
+	virtual void GetVertices(CObArray& vertices) const;
 	virtual void ClearVertices();
 
 	virtual void DrawShape(CDC* dc, CRect& rect);

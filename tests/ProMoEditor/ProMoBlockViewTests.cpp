@@ -19,9 +19,9 @@ public:
     {
         return CProMoBlockView::AddVertex(point);
     }
-    virtual CObArray* GetVertices() override
+    virtual void GetVertices(CObArray& vertices) const override
     {
-        return CProMoBlockView::GetVertices();
+        CProMoBlockView::GetVertices(vertices);
     }
 
 
@@ -63,7 +63,8 @@ namespace CProMoBlockViewTests
         {
             // Arrange
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             CString expected = _T("Arial");
 
             // Act
@@ -85,7 +86,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFontSize_ValidSize_SetsFontSize)
         {
             CProMoBlockView view;
-			view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int size = 14;
 
             BOOL result = view.SetFontSize(size);
@@ -109,7 +111,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFontWeight_ValidWeight_SetsFontWeight)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int weight = FW_BOLD;
 
             BOOL result = view.SetFontWeight(weight);
@@ -128,7 +131,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFontItalic_True_SetsItalic)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             BOOL italic = TRUE;
 
             BOOL result = view.SetFontItalic(italic);
@@ -147,7 +151,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFontUnderline_True_SetsUnderline)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             BOOL underline = TRUE;
 
             BOOL result = view.SetFontUnderline(underline);
@@ -166,7 +171,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFontStrikeOut_True_SetsStrikeOut)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             BOOL strikeOut = TRUE;
 
             BOOL result = view.SetFontStrikeOut(strikeOut);
@@ -185,7 +191,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFontColor_ValidColor_SetsColor)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             COLORREF color = RGB(255, 0, 0);
 
             BOOL result = view.SetTextColor(color);
@@ -204,7 +211,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetBkColor_ValidColor_SetsColor)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             COLORREF color = RGB(255, 0, 0);
 
             BOOL result = view.SetBkColor(color);
@@ -223,7 +231,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetBkMode_ValidMode_SetsBkMode)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int mode = OPAQUE;
 
             BOOL result = view.SetBkMode(mode);
@@ -242,7 +251,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetTextAlignment_ValidValue_SetsAlignment)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int alignment = DT_LEFT | DT_BOTTOM;
 
             BOOL result = view.SetTextAlignment(alignment);
@@ -261,7 +271,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetTextAlignment_ValidValue_SetsOnlyAppropriateFlags)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int hAlignment = DT_LEFT;
             unsigned int vAlignment = DT_BOTTOM;
             unsigned int otherFlag = DT_WORDBREAK;
@@ -290,7 +301,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetTextAlignmentFlag_ValidValue_SetsAlignment)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int hAlignment = DT_RIGHT;
             unsigned int vAlignment = DT_BOTTOM;
             unsigned int groupFlag = DT_WORDBREAK;
@@ -350,7 +362,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetLineColor_ValidColor_SetsColor)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             COLORREF color = RGB(255, 0, 0);
 
             BOOL result = view.SetLineColor(color);
@@ -369,7 +382,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetLineWidth_ValidWidth_SetsWidth)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int width = 3;
 
             BOOL result = view.SetLineWidth(width);
@@ -388,7 +402,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetLineStyle_ValidStyle_SetsStyle)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int style = PS_DASHDOT;
 
             BOOL result = view.SetLineStyle(style);
@@ -407,7 +422,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFillColor_ValidColor_SetsColor)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             COLORREF color = RGB(255, 0, 0);
 
             BOOL result = view.SetFillColor(color);
@@ -426,7 +442,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFillPattern_WhenInvoked_SetsPattern)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int width = 3;
 
             BOOL result = view.SetFillPattern(TRUE);
@@ -445,7 +462,8 @@ namespace CProMoBlockViewTests
         TEST_METHOD(SetFillStyle_ValidStyle_SetsStyle)
         {
             CProMoBlockView view;
-            view.GetBlockModel()->RecreateLabels();
+            CObArray labels;
+            view.GetBlockModel()->RecreateLabels(labels);
             unsigned int style = HS_CROSS;
 
             BOOL result = view.SetFillStyle(style);
@@ -910,14 +928,20 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub block;
             block.SetShape(SHAPE_POLYGON);
 
-            TestHelpers::PointerAssert::IsNotNull(block.GetVertices());
+            CObArray vertices;
+            block.GetVertices(vertices);
+
+            Assert::AreEqual((INT_PTR)0, vertices.GetSize());
         }
 
-        TEST_METHOD(GetVertices_WhenShapeIsNotPolygon_ReturnNull) {
+        TEST_METHOD(GetVertices_WhenShapeIsNotPolygon_ReturnEmptyArray) {
             CProMoBlockViewTestStub block;
             block.SetShape(SHAPE_ELLIPSE);
 
-            TestHelpers::PointerAssert::IsNull(block.GetVertices());
+            CObArray vertices;
+            block.GetVertices(vertices);
+
+            Assert::AreEqual((INT_PTR)0, vertices.GetSize());
         }
         
         TEST_METHOD(AddVertex_WhenShapeIsPolygon_AddVertex) {
@@ -926,8 +950,11 @@ namespace CProMoBlockViewTests
             BOOL result = block.AddVertex(CDoublePoint(0, 0));
 
             Assert::IsTrue(result);
-            TestHelpers::PointerAssert::IsNotNull(block.GetVertices());
-            Assert::AreEqual((INT_PTR)1, block.GetVertices()->GetSize());
+            
+            CObArray vertices;
+            block.GetVertices(vertices);
+
+            Assert::AreEqual((INT_PTR)1, vertices.GetSize());
         }
 
         TEST_METHOD(AddVertex_WhenVertexIsNotNormalized_DoesNotAddVertex) {

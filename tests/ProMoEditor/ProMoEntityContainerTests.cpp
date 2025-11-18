@@ -55,8 +55,15 @@ namespace CProMoEntityContainerTests
             CProMoEntityContainer c;
             CProMoBlockView* block = new CProMoBlockView();
             CProMoEdgeView* edge = new CProMoEdgeView();
-            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(block->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* le = dynamic_cast<CProMoLabel*>(edge->GetModel()->RecreateLabels()->GetAt(0));
+
+            CObArray labels;
+            block->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            edge->GetModel()->RecreateLabels(labels);
+            CProMoLabel* le = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
 
             c.Add(block);
             c.Add(edge);
@@ -170,18 +177,51 @@ namespace CProMoEntityContainerTests
             m->SetSource(a1);
             n->SetDestination(b2);
 
-            CProMoLabel* la = dynamic_cast<CProMoLabel*>(a->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(a1->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(a2->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(b->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(b1->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(b2->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lw = dynamic_cast<CProMoLabel*>(w->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lx = dynamic_cast<CProMoLabel*>(x->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lz = dynamic_cast<CProMoLabel*>(z->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lm = dynamic_cast<CProMoLabel*>(m->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* ln = dynamic_cast<CProMoLabel*>(n->GetModel()->RecreateLabels()->GetAt(0));
+            CObArray labels;
+            a->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
 
+            a1->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            a2->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b1->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b2->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            w->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lw = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            x->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lx = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            z->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lz = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            m->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lm = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+            
+            n->GetModel()->RecreateLabels(labels);
+            CProMoLabel* ln = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+            
             c.Add(l);
             c.Add(x);
             c.Add(y);
@@ -261,9 +301,20 @@ namespace CProMoEntityContainerTests
             c.Add(a2);
             a1->SetParentBlock(a);
             a2->SetParentBlock(a);
-            CProMoLabel* la = dynamic_cast<CProMoLabel*>(a->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(a1->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(a2->GetModel()->RecreateLabels()->GetAt(0));
+
+            CObArray labels;
+            a->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            a1->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            a2->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
             c.Add(la);
             c.Add(la1);
             c.Add(la2);
@@ -275,8 +326,15 @@ namespace CProMoEntityContainerTests
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
-            CProMoLabel* lx = dynamic_cast<CProMoLabel*>(x->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(b1->GetModel()->RecreateLabels()->GetAt(0));
+
+            x->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lx = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b1->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
             c.Add(lx);
             c.Add(lb1);
             c.Snapshot();
@@ -288,9 +346,19 @@ namespace CProMoEntityContainerTests
             b2->SetParentBlock(b);
             z->SetSource(b);
             z->SetDestination(a2);
-            CProMoLabel* lz = dynamic_cast<CProMoLabel*>(z->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(b->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(b2->GetModel()->RecreateLabels()->GetAt(0));
+
+            z->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lz = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b2->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
             c.Add(lz);
             c.Add(lb2);
             c.Add(lb);
@@ -332,9 +400,20 @@ namespace CProMoEntityContainerTests
             c.Add(a2);
             a1->SetParentBlock(a);
             a2->SetParentBlock(a);
-            CProMoLabel* la = dynamic_cast<CProMoLabel*>(a->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(a1->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(a2->GetModel()->RecreateLabels()->GetAt(0));
+
+            CObArray labels;
+            a->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            a1->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            a2->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
             c.Add(la);
             c.Add(la1);
             c.Add(la2);
@@ -346,8 +425,15 @@ namespace CProMoEntityContainerTests
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
-            CProMoLabel* lx = dynamic_cast<CProMoLabel*>(x->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(b1->GetModel()->RecreateLabels()->GetAt(0));
+
+            x->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lx = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b1->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
             c.Add(lx);
             c.Add(lb1);
             c.Snapshot();
@@ -359,9 +445,19 @@ namespace CProMoEntityContainerTests
             b2->SetParentBlock(b);
             z->SetSource(b);
             z->SetDestination(a2);
-            CProMoLabel* lz = dynamic_cast<CProMoLabel*>(z->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(b->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(b2->GetModel()->RecreateLabels()->GetAt(0));
+
+            z->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lz = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b2->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
             c.Add(lz);
             c.Add(lb2);
             c.Add(lb);
@@ -685,14 +781,38 @@ namespace CProMoEntityContainerTests
             y->SetRect(CDoubleRect(210.000000, 275.000000, 340.000000, 266.000000).ToCRect());
             z->SetRect(CDoubleRect(438.000000, 237.000000, 447.000000, 154.000000).ToCRect());
 
-            CProMoLabel* la = dynamic_cast<CProMoLabel*>(a->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(a1->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(a2->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(b->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(b1->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(b2->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lx = dynamic_cast<CProMoLabel*>(x->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* lz = dynamic_cast<CProMoLabel*>(z->GetModel()->RecreateLabels()->GetAt(0));
+            CObArray labels;
+            a->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            a1->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            a2->GetModel()->RecreateLabels(labels);
+            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b1->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb1 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            b2->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb2 = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            x->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lx = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            z->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lz = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
 
             la->SetName(CString("1000"));
             la1->SetName(CString("1001"));

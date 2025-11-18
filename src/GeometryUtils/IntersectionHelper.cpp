@@ -198,7 +198,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsEllipse(const CDoublePoint& i
     return CDoublePoint((xi), (yi));
 }
 
-CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p1, const CDoublePoint& p2, const CDoubleRect& rect, const CObArray* points)
+CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p1, const CDoublePoint& p2, const CDoubleRect& rect, const CObArray& points)
 /* ============================================================
     Function :		CIntersectionHelper::SegmentIntersectsPolygon
     Description :	Determines the point on the border of the
@@ -228,7 +228,7 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p
                                                     rectangle
                                                     incribing
                                                     the polygon
-                    CObArray* points            -   array of
+                    CObArray& points            -   array of
                                                     points
                                                     representing
                                                     the vertices
@@ -238,16 +238,16 @@ CDoublePoint CIntersectionHelper::SegmentIntersectsPolygon(const CDoublePoint& p
     ============================================================*/
 {
     int i = 0;
-	if (!points || points->GetSize() < 3)
+	if (points.GetSize() < 3)
         return NO_INTERSECTION; // Not a valid polygon
 
     // Scale normalized vertices into polygon coordinates
     CArray<CDoublePoint, CDoublePoint&> scaled;
-    scaled.SetSize(points->GetSize());
+    scaled.SetSize(points.GetSize());
 
-    for (i = 0; i < points->GetSize(); ++i)
+    for (i = 0; i < points.GetSize(); ++i)
     {
-        CDoublePoint* v = reinterpret_cast<CDoublePoint*>(points->GetAt(i));
+        CDoublePoint* v = reinterpret_cast<CDoublePoint*>(points.GetAt(i));
         if (v)
         {
             scaled[i] = CGeometryHelper::ScaleToRect(*v, rect); // maps [0,1] -> rect coords

@@ -53,8 +53,11 @@ namespace CProMoModelTests
 
             model.LinkView(&view);
 
-            Assert::AreEqual((INT_PTR)1, model.GetViews()->GetSize());
-            TestHelpers::PointerAssert::AreEqual(&view, (CDiagramEntity*)model.GetViews()->GetAt(0));
+            CObArray views;
+            model.GetViews(views);
+
+            Assert::AreEqual((INT_PTR)1, views.GetSize());
+            TestHelpers::PointerAssert::AreEqual(&view, (CDiagramEntity*)views.GetAt(0));
         }
 
         TEST_METHOD(UnlinkView_WhenViewPresent_RemovesFromList)
@@ -65,7 +68,10 @@ namespace CProMoModelTests
             model.LinkView(&view);
             model.UnlinkView(&view);
 
-            Assert::AreEqual((INT_PTR)0, model.GetViews()->GetSize());
+            CObArray views;
+            model.GetViews(views);
+
+            Assert::AreEqual((INT_PTR)0, views.GetSize());
         }
 
         TEST_METHOD(UnlinkAllViews_WhenMultipleViews_LinkArrayIsCleared)
@@ -78,7 +84,10 @@ namespace CProMoModelTests
 
             model.UnlinkAllViews();
 
-            Assert::AreEqual((INT_PTR)0, model.GetViews()->GetSize());
+            CObArray views;
+            model.GetViews(views);
+
+            Assert::AreEqual((INT_PTR)0, views.GetSize());
         }
 
 #pragma endregion
@@ -167,7 +176,10 @@ namespace CProMoModelTests
             auto* blockClone = dynamic_cast<CProMoModel*>(clone.get());
             Assert::IsNotNull(blockClone);
 
-            Assert::AreEqual((INT_PTR)0, blockClone->GetViews()->GetSize());
+            CObArray views;
+            blockClone->GetViews(views);
+
+            Assert::AreEqual((INT_PTR)0, views.GetSize());
         }
 
         TEST_METHOD(Copy_WhenCalled_CopyPropertyValues)
@@ -307,11 +319,15 @@ namespace CProMoModelTests
             CProMoModelTestStub model;
             CProMoLabel* label = NULL;
             model.CreateProperties();
-            model.RecreateLabels();
+
+            CObArray labels;
+            model.RecreateLabels(labels);
+            labels.RemoveAll();
+            model.GetLabels(labels);
             
-            Assert::AreEqual((INT_PTR)1, model.GetLabels()->GetSize());
+            Assert::AreEqual((INT_PTR)1, labels.GetSize());
             
-            label = dynamic_cast<CProMoLabel*>(model.GetLabels()->GetAt(0));
+            label = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
 
             Assert::IsNotNull(label);
             Assert::AreEqual(CString("root.child"), label->GetPropertyName());
@@ -322,7 +338,8 @@ namespace CProMoModelTests
             CProMoModelTestStub model;
             CProMoLabel* label = NULL;
             model.CreateProperties();
-            model.RecreateLabels();
+            CObArray labels;
+            model.RecreateLabels(labels);
 
             label = dynamic_cast<CProMoLabel*>(model.GetLabel(CString("root.child")));
 

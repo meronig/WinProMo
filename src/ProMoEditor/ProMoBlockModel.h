@@ -25,16 +25,16 @@ public:
 	virtual CProMoModel* Clone();
 	
 	// Parent-child block links
-	virtual CObArray* GetSubBlocks();
+	virtual void GetSubBlocks(CObArray& blockList) const;
 	virtual CProMoBlockModel* GetParentBlock() const;
 	virtual BOOL Contains(CProMoBlockModel* block, BOOL recursive);
 	virtual BOOL CanBeNestedBy(CProMoBlockModel* block);
 
 	// Outgoing edge links
-	virtual CObArray* GetOutgoingEdges();
+	virtual void GetOutgoingEdges(CObArray& edgeList) const;
 	
 	// Incoming edge links
-	virtual CObArray* GetIncomingEdges();
+	virtual void GetIncomingEdges(CObArray& edgeList) const;
 	
 	// Model-view links
 	virtual CProMoBlockView* GetMainView() const;
@@ -47,6 +47,7 @@ protected:
 	CObArray m_outgoingEdges;
 	CObArray m_incomingEdges;
 	CProMoBlockModel* m_parentBlock;
+	unsigned int m_attachmentType;
 
 	// Parent-child block links
 	virtual void LinkSubBlock(CProMoBlockModel* subblock);

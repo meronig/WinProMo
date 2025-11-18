@@ -146,7 +146,7 @@ namespace CIntersectionHelperTests
             CDoublePoint inside(50, 25);
             CDoublePoint outside(50, -50);
 
-            CDoublePoint result = CIntersectionHelper::SegmentIntersectsPolygon(inside, outside, bounds, &vertices);
+            CDoublePoint result = CIntersectionHelper::SegmentIntersectsPolygon(inside, outside, bounds, vertices);
 
             Assert::IsTrue(result.x != -1 && result.y != -1);
 
@@ -162,7 +162,7 @@ namespace CIntersectionHelperTests
             CDoublePoint inside(50, 50);
             CDoublePoint outside(150, 50);
 
-            CDoublePoint result = CIntersectionHelper::SegmentIntersectsPolygon(inside, outside, bounds, &vertices);
+            CDoublePoint result = CIntersectionHelper::SegmentIntersectsPolygon(inside, outside, bounds, vertices);
 
             Assert::AreEqual(-1.0, result.x);
             Assert::AreEqual(-1.0, result.y);

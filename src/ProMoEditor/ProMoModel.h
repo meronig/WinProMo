@@ -32,7 +32,7 @@ public:
 
 
 	// Model-view links
-	virtual CObArray* GetViews();
+	virtual void GetViews(CObArray& viewList) const;
 
 	virtual BOOL	FromString(const CString& str);
 	virtual CString	Export(UINT format = 0) const;
@@ -60,9 +60,9 @@ public:
 	static CString GetNameFromString(const CString& str);
 
 	// Labels
-	virtual CObArray* GetLabels();
+	virtual void GetLabels(CObArray& labelList) const;
 	virtual CProMoLabel* GetLabel(CString property);
-	virtual CObArray* RecreateLabels();
+	virtual void RecreateLabels(CObArray& labelList);
 	
 
 protected:
