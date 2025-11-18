@@ -1622,6 +1622,8 @@ CString CProMoBlockView::GetFontName() const
    ============================================================*/
 {
 	CString fontName;
+	BOOL hasValue = FALSE;
+
 	if (m_blockModel) {
 		CObArray* labels = m_blockModel->GetLabels();
 		if (labels) {
@@ -1631,8 +1633,9 @@ CString CProMoBlockView::GetFontName() const
 					continue;
 				}
 				CString currValue = label->GetFontName();
-				if (fontName.IsEmpty()) {
+				if (!hasValue) {
 					fontName = currValue;
+					hasValue = TRUE;
 				}
 				else if (fontName != currValue ) {
 					return CString();
@@ -1657,6 +1660,8 @@ unsigned int CProMoBlockView::GetFontSize() const
    ============================================================*/
 {
 	unsigned int fontSize = 0;
+	BOOL hasValue = FALSE;
+	
 	if (m_blockModel) {
 		CObArray* labels = m_blockModel->GetLabels();
 		if (labels) {
@@ -1666,8 +1671,9 @@ unsigned int CProMoBlockView::GetFontSize() const
 					continue;
 				}
 				unsigned int currValue = label->GetFontSize();
-				if (fontSize == 0) {
+				if (!hasValue) {
 					fontSize = currValue;
+					hasValue = TRUE;
 				}
 				else if (fontSize != currValue) {
 					return 0;
@@ -1692,6 +1698,8 @@ unsigned int CProMoBlockView::GetFontWeight() const
    ============================================================*/
 {
 	unsigned int fontWeight = 0;
+	BOOL hasValue = FALSE;
+
 	if (m_blockModel) {
 		CObArray* labels = m_blockModel->GetLabels();
 		if (labels) {
@@ -1701,8 +1709,9 @@ unsigned int CProMoBlockView::GetFontWeight() const
 					continue;
 				}
 				unsigned int currValue = label->GetFontWeight();
-				if (fontWeight == 0) {
+				if (!hasValue) {
 					fontWeight = currValue;
+					hasValue = TRUE;
 				}
 				else if (fontWeight != currValue) {
 					return 0;
@@ -1846,6 +1855,8 @@ COLORREF CProMoBlockView::GetTextColor() const
    ============================================================*/
 {
 	COLORREF textColor = RGB(0, 0, 0);
+	BOOL hasValue = FALSE;
+
 	if (m_blockModel) {
 		CObArray* labels = m_blockModel->GetLabels();
 		if (labels) {
@@ -1855,8 +1866,9 @@ COLORREF CProMoBlockView::GetTextColor() const
 					continue;
 				}
 				COLORREF currValue = label->GetTextColor();
-				if (textColor == RGB(0, 0, 0)) {
+				if (!hasValue) {
 					textColor = currValue;
+					hasValue = TRUE;
 				}
 				else if (textColor != currValue) {
 					return RGB(0,0,0);
@@ -1896,6 +1908,8 @@ unsigned int CProMoBlockView::GetTextHorizontalAlignment() const
    ============================================================*/
 {
 	unsigned int alignment = 0;
+	BOOL hasValue = FALSE;
+
 	if (m_blockModel) {
 		CObArray* labels = m_blockModel->GetLabels();
 		if (labels) {
@@ -1905,8 +1919,9 @@ unsigned int CProMoBlockView::GetTextHorizontalAlignment() const
 					continue;
 				}
 				unsigned int currValue = label->GetTextHorizontalAlignment();
-				if (alignment == 0) {
+				if (!hasValue) {
 					alignment = currValue;
+					hasValue = TRUE;
 				}
 				else if (alignment != currValue) {
 					return 0;
@@ -1931,6 +1946,8 @@ unsigned int CProMoBlockView::GetTextVerticalAlignment() const
    ============================================================*/
 {
 	unsigned int alignment = 0;
+	BOOL hasValue = FALSE;
+
 	if (m_blockModel) {
 		CObArray* labels = m_blockModel->GetLabels();
 		if (labels) {
@@ -1940,8 +1957,9 @@ unsigned int CProMoBlockView::GetTextVerticalAlignment() const
 					continue;
 				}
 				unsigned int currValue = label->GetTextVerticalAlignment();
-				if (alignment == 0) {
+				if (!hasValue) {
 					alignment = currValue;
+					hasValue = TRUE;
 				}
 				else if (alignment != currValue) {
 					return 0;
@@ -2007,6 +2025,8 @@ unsigned int CProMoBlockView::GetTextAlignment() const
    ============================================================*/
 {
 	unsigned int alignment = 0;
+	BOOL hasValue = FALSE;
+
 	if (m_blockModel) {
 		CObArray* labels = m_blockModel->GetLabels();
 		if (labels) {
@@ -2016,8 +2036,9 @@ unsigned int CProMoBlockView::GetTextAlignment() const
 					continue;
 				}
 				unsigned int currValue = label->GetTextAlignment();
-				if (alignment == 0) {
+				if (!hasValue) {
 					alignment = currValue;
+					hasValue = TRUE;
 				}
 				else if (alignment != currValue) {
 					return 0;

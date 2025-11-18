@@ -243,7 +243,7 @@ namespace CProMoBlockViewTests
         {
             CProMoBlockView view;
             view.GetBlockModel()->RecreateLabels();
-            unsigned int alignment = DT_VCENTER;
+            unsigned int alignment = DT_LEFT | DT_BOTTOM;
 
             BOOL result = view.SetTextAlignment(alignment);
 

@@ -63,12 +63,20 @@ namespace CProMoEditorTests
         CProMoEdgeView* m_y;
         CProMoEdgeView* m_z;
 
+        CProMoLabel* m_la;
+        CProMoLabel* m_la1;
+        CProMoLabel* m_la2;
+        CProMoLabel* m_lb;
+        CProMoLabel* m_lb1;
+        CProMoLabel* m_lb2;
+        CProMoLabel* m_lx;
+        CProMoLabel* m_lz;
     
     public:
         
         TEST_METHOD_INITIALIZE(SetUp)
         {
-            //Some MFC-related assertions still fail
+            //Some MFC-rem_lated assertions still fail
             WinProMoTestHelpers::BootstrapMFC(); 
             CProMoEntityContainer* c = new CProMoEntityContainer(CString("custom"));
             m_editor.SetDiagramEntityContainer(c);
@@ -152,15 +160,34 @@ namespace CProMoEditorTests
             m_y->SetRect(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect());
             m_z->SetRect(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect());
 
+            m_la = dynamic_cast<CProMoLabel*>(m_a->GetModel()->RecreateLabels()->GetAt(0));
+            m_la1 = dynamic_cast<CProMoLabel*>(m_a1->GetModel()->RecreateLabels()->GetAt(0));
+            m_la2 = dynamic_cast<CProMoLabel*>(m_a2->GetModel()->RecreateLabels()->GetAt(0));
+            m_lb = dynamic_cast<CProMoLabel*>(m_b->GetModel()->RecreateLabels()->GetAt(0));
+            m_lb1 = dynamic_cast<CProMoLabel*>(m_b1->GetModel()->RecreateLabels()->GetAt(0));
+            m_lb2 = dynamic_cast<CProMoLabel*>(m_b2->GetModel()->RecreateLabels()->GetAt(0));
+            m_lx = dynamic_cast<CProMoLabel*>(m_x->GetModel()->RecreateLabels()->GetAt(0));
+            m_lz = dynamic_cast<CProMoLabel*>(m_z->GetModel()->RecreateLabels()->GetAt(0));
+
             c->Add(m_a);
             c->Add(m_a1);
             c->Add(m_a2);
             c->Add(m_b);
             c->Add(m_b1);
             c->Add(m_b2);
+
             c->Add(m_x);
             c->Add(m_y);
             c->Add(m_z);
+
+            c->Add(m_la);
+            c->Add(m_la1);
+            c->Add(m_la2);
+            c->Add(m_lb);
+            c->Add(m_lb1);
+            c->Add(m_lb2);
+            c->Add(m_lx);
+            c->Add(m_lz);
 
         }
 
@@ -345,7 +372,7 @@ namespace CProMoEditorTests
 
             m_editor.Save(result);
             
-            Assert::AreEqual((INT_PTR)26, result.GetSize());
+            Assert::AreEqual((INT_PTR)34, result.GetSize());
 
         }
 
@@ -360,7 +387,7 @@ namespace CProMoEditorTests
 
             m_editor.Cut();
             
-            Assert::AreEqual(7, m_editor.GetDiagramEntityContainer()->GetSize());
+            Assert::AreEqual(13, m_editor.GetDiagramEntityContainer()->GetSize());
             
         }
 
@@ -373,7 +400,7 @@ namespace CProMoEditorTests
             m_editor.Copy();
             m_editor.Paste();
 
-            Assert::AreEqual(12, m_editor.GetDiagramEntityContainer()->GetSize());
+            Assert::AreEqual(20, m_editor.GetDiagramEntityContainer()->GetSize());
 
         }
 
@@ -388,11 +415,11 @@ namespace CProMoEditorTests
 
             m_editor.DeleteAllSelected();
 
-            Assert::AreEqual(5, m_editor.GetDiagramEntityContainer()->GetSize());
+            Assert::AreEqual(9, m_editor.GetDiagramEntityContainer()->GetSize());
 
             m_editor.Undo();
 
-            Assert::AreEqual(9, m_editor.GetDiagramEntityContainer()->GetSize());
+            Assert::AreEqual(17, m_editor.GetDiagramEntityContainer()->GetSize());
 
         }
 
@@ -403,15 +430,15 @@ namespace CProMoEditorTests
 
             m_editor.DeleteAllSelected();
 
-            Assert::AreEqual(5, m_editor.GetDiagramEntityContainer()->GetSize());
+            Assert::AreEqual(9, m_editor.GetDiagramEntityContainer()->GetSize());
 
             m_editor.Undo();
 
-            Assert::AreEqual(9, m_editor.GetDiagramEntityContainer()->GetSize());
+            Assert::AreEqual(17, m_editor.GetDiagramEntityContainer()->GetSize());
 
             m_editor.Redo();
 
-            Assert::AreEqual(5, m_editor.GetDiagramEntityContainer()->GetSize());
+            Assert::AreEqual(9, m_editor.GetDiagramEntityContainer()->GetSize());
 
         }
 
@@ -426,7 +453,7 @@ namespace CProMoEditorTests
             
             m_editor.SelectAll();
 
-            Assert::AreEqual(9, m_editor.GetSelectCount());
+            Assert::AreEqual(17, m_editor.GetSelectCount());
 
         }
         
@@ -456,18 +483,16 @@ namespace CProMoEditorTests
         }
 
         TEST_METHOD(DeselectInvalidElements_WhenInvoked_DeselectLabels) {
-            CProMoLabel* la = dynamic_cast<CProMoLabel*>(m_a->GetModel()->RecreateLabels()->GetAt(0));
-            CProMoLabel* la2 = dynamic_cast<CProMoLabel*>(m_a2->GetModel()->RecreateLabels()->GetAt(0));
             
             m_a->Select(TRUE);
             m_a2->Select(TRUE);
-            la->Select(TRUE);
-            la2->Select(TRUE);
+            m_la->Select(TRUE);
+            m_la2->Select(TRUE);
 
             m_editor.DeselectInvalidElements();
             
-            Assert::IsFalse(la2->IsSelected());
-            Assert::IsFalse(la->IsSelected());
+            Assert::IsFalse(m_la2->IsSelected());
+            Assert::IsFalse(m_la->IsSelected());
             
         }
 
@@ -504,6 +529,41 @@ namespace CProMoEditorTests
             Assert::IsTrue(m_a2->IsSelected());
         }
 
+        TEST_METHOD(IsAnyLabelSelected_WhenLabelSelected_ReturnTrue) {
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+
+            Assert::IsFalse(m_editor.IsAnyLabelSelected());
+
+            m_la->Select(TRUE);
+
+            Assert::IsTrue(m_editor.IsAnyLabelSelected());
+
+        }
+
+        TEST_METHOD(IsAnyBlockSelected_WhenBlockSelected_ReturnTrue) {
+            m_la->Select(TRUE);
+            m_x->Select(TRUE);
+
+            Assert::IsFalse(m_editor.IsAnyBlockSelected());
+
+            m_a->Select(TRUE);
+
+            Assert::IsTrue(m_editor.IsAnyBlockSelected());
+
+        }
+
+        TEST_METHOD(IsAnyEdgeSelected_WhenEdgeSelected_ReturnTrue) {
+            m_a->Select(TRUE);
+            m_la->Select(TRUE);
+            
+            Assert::IsFalse(m_editor.IsAnyEdgeSelected());
+
+            m_x->Select(TRUE);
+
+            Assert::IsTrue(m_editor.IsAnyEdgeSelected());
+
+        }
 #pragma endregion
 
 #pragma region TargetTests
@@ -678,6 +738,440 @@ namespace CProMoEditorTests
             Assert::AreEqual(oldRect.left, m_z->GetLeft());
             Assert::AreEqual(oldRect.top, m_z->GetTop());
             Assert::AreEqual(oldRect.top - 50 , m_z->GetBottom());
+        }
+
+#pragma endregion
+
+#pragma region FormattingTests
+        TEST_METHOD(SetFontName_ValidName_SetsFontName)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            CString expected = _T("Arial");
+
+            // Act
+            m_editor.SetFontName(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetFontName());
+            Assert::AreEqual(expected, m_a->GetFontName());
+            Assert::AreEqual(expected, m_x->GetFontName());
+            Assert::AreEqual(expected, m_la->GetFontName());
+            Assert::AreEqual(expected, m_lx->GetFontName());
+            Assert::AreEqual(expected, m_lb->GetFontName());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetFontName());
+
+        }
+
+        TEST_METHOD(SetFontSize_ValidSize_SetsFontSize)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = 14;
+
+            // Act
+            m_editor.SetFontSize(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetFontSize());
+            Assert::AreEqual(expected, m_a->GetFontSize());
+            Assert::AreEqual(expected, m_x->GetFontSize());
+            Assert::AreEqual(expected, m_la->GetFontSize());
+            Assert::AreEqual(expected, m_lx->GetFontSize());
+            Assert::AreEqual(expected, m_lb->GetFontSize());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetFontSize());
+        }
+
+        TEST_METHOD(SetFontWeight_ValidWeight_SetsFontWeight)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = FW_BOLD;
+
+            // Act
+            m_editor.SetFontWeight(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetFontWeight());
+            Assert::AreEqual(expected, m_a->GetFontWeight());
+            Assert::AreEqual(expected, m_x->GetFontWeight());
+            Assert::AreEqual(expected, m_la->GetFontWeight());
+            Assert::AreEqual(expected, m_lx->GetFontWeight());
+            Assert::AreEqual(expected, m_lb->GetFontWeight());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetFontWeight());
+        }
+
+        TEST_METHOD(SetFontItalic_True_SetsItalic)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            BOOL expected = TRUE;
+
+            // Act
+            m_editor.SetFontItalic(expected);
+
+            // Assert
+            Assert::IsTrue(m_editor.IsFontItalic());
+            Assert::IsTrue(m_a->IsFontItalic());
+            Assert::IsTrue(m_x->IsFontItalic());
+            Assert::IsTrue(m_la->IsFontItalic());
+            Assert::IsTrue(m_lx->IsFontItalic());
+            Assert::IsTrue(m_lb->IsFontItalic());
+            
+            m_a2->Select(TRUE);
+            Assert::IsFalse(m_editor.IsFontItalic());
+        }
+
+        TEST_METHOD(SetFontUnderline_True_SetsUnderline)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            BOOL expected = TRUE;
+
+            // Act
+            m_editor.SetFontUnderline(expected);
+
+            // Assert
+            Assert::IsTrue(m_editor.IsFontUnderline());
+            Assert::IsTrue(m_a->IsFontUnderline());
+            Assert::IsTrue(m_x->IsFontUnderline());
+            Assert::IsTrue(m_la->IsFontUnderline());
+            Assert::IsTrue(m_lx->IsFontUnderline());
+            Assert::IsTrue(m_lb->IsFontUnderline());
+
+            m_a2->Select(TRUE);
+            Assert::IsFalse(m_editor.IsFontUnderline());
+        }
+
+        TEST_METHOD(SetFontStrikeOut_True_SetsStrikeOut)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            BOOL expected = TRUE;
+
+            // Act
+            m_editor.SetFontStrikeOut(expected);
+
+            // Assert
+            Assert::IsTrue(m_editor.IsFontStrikeOut());
+            Assert::IsTrue(m_a->IsFontStrikeOut());
+            Assert::IsTrue(m_x->IsFontStrikeOut());
+            Assert::IsTrue(m_la->IsFontStrikeOut());
+            Assert::IsTrue(m_lx->IsFontStrikeOut());
+            Assert::IsTrue(m_lb->IsFontStrikeOut());
+
+            m_a2->Select(TRUE);
+            Assert::IsFalse(m_editor.IsFontStrikeOut());
+        }
+
+        TEST_METHOD(SetFontColor_ValidColor_SetsColor)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            COLORREF expected = RGB(255, 0, 0);
+
+            // Act
+            m_editor.SetTextColor(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetTextColor());
+            Assert::AreEqual(expected, m_a->GetTextColor());
+            Assert::AreEqual(expected, m_x->GetTextColor());
+            Assert::AreEqual(expected, m_la->GetTextColor());
+            Assert::AreEqual(expected, m_lx->GetTextColor());
+            Assert::AreEqual(expected, m_lb->GetTextColor());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetTextColor());
+        }
+
+        TEST_METHOD(SetBkColor_ValidColor_SetsColor)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            COLORREF expected = RGB(255, 0, 0);
+
+            // Act
+            m_editor.SetBkColor(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetBkColor());
+            Assert::AreEqual(expected, m_a->GetBkColor());
+            Assert::AreEqual(expected, m_x->GetBkColor());
+            Assert::AreEqual(expected, m_lb->GetBkColor());
+
+            m_la->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetBkColor());
+        }
+
+        TEST_METHOD(SetBkMode_ValidMode_SetsBkMode)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = OPAQUE;
+
+            // Act
+            m_editor.SetBkMode(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetBkMode());
+            Assert::AreEqual(expected, m_a->GetBkMode());
+            Assert::AreEqual(expected, m_x->GetBkMode());
+            Assert::AreEqual(expected, m_lb->GetBkMode());
+
+            m_la->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetBkMode());
+        }
+
+        TEST_METHOD(SetTextAlignment_ValidValue_SetsAlignment)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = DT_LEFT | DT_BOTTOM;
+
+            // Act
+            m_editor.SetTextAlignment(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetTextAlignment());
+            Assert::AreEqual(expected, m_a->GetTextAlignment());
+            Assert::AreEqual(expected, m_x->GetTextAlignment());
+            Assert::AreEqual(expected, m_la->GetTextAlignment());
+            Assert::AreEqual(expected, m_lx->GetTextAlignment());
+            Assert::AreEqual(expected, m_lb->GetTextAlignment());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetTextAlignment());
+        }
+
+        TEST_METHOD(SetTextHorizontalAlignment_ValidValue_SetsAlignment)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = DT_RIGHT;
+
+            // Act
+            m_editor.SetTextHorizontalAlignment(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetTextHorizontalAlignment());
+            Assert::AreEqual(expected, m_a->GetTextHorizontalAlignment());
+            Assert::AreEqual(expected, m_x->GetTextHorizontalAlignment());
+            Assert::AreEqual(expected, m_la->GetTextHorizontalAlignment());
+            Assert::AreEqual(expected, m_lx->GetTextHorizontalAlignment());
+            Assert::AreEqual(expected, m_lb->GetTextHorizontalAlignment());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetTextHorizontalAlignment());
+        }
+
+        TEST_METHOD(SetTextVerticalAlignment_ValidValue_SetsAlignment)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = DT_BOTTOM;
+
+            // Act
+            m_editor.SetTextVerticalAlignment(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetTextVerticalAlignment());
+            Assert::AreEqual(expected, m_a->GetTextVerticalAlignment());
+            Assert::AreEqual(expected, m_x->GetTextVerticalAlignment());
+            Assert::AreEqual(expected, m_la->GetTextVerticalAlignment());
+            Assert::AreEqual(expected, m_lx->GetTextVerticalAlignment());
+            Assert::AreEqual(expected, m_lb->GetTextVerticalAlignment());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetTextVerticalAlignment());
+        }
+
+        TEST_METHOD(SetTextAlignmentFlag_ValidValue_SetsAlignment)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = DT_WORDBREAK;
+
+            // Act
+            m_editor.SetTextAlignmentFlag(expected, TRUE);
+
+            // Assert
+            Assert::IsTrue(m_editor.HasTextAlignmentFlag(expected));
+            Assert::IsTrue(m_a->HasTextAlignmentFlag(expected));
+            Assert::IsTrue(m_x->HasTextAlignmentFlag(expected));
+            Assert::IsTrue(m_la->HasTextAlignmentFlag(expected));
+            Assert::IsTrue(m_lx->HasTextAlignmentFlag(expected));
+            Assert::IsTrue(m_lb->HasTextAlignmentFlag(expected));
+
+            m_a2->Select(TRUE);
+            Assert::IsFalse(m_editor.HasTextAlignmentFlag(expected));
+        }
+
+        TEST_METHOD(SetLineColor_ValidColor_SetsColor)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            COLORREF expected = RGB(255, 0, 0);
+
+            // Act
+            m_editor.SetLineColor(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetLineColor());
+            Assert::AreEqual(expected, m_a->GetLineColor());
+            Assert::AreEqual(expected, m_x->GetLineColor());
+            
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetLineColor());
+        }
+
+        TEST_METHOD(SetLineWidth_ValidWidth_SetsWidth)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = 3;
+
+            // Act
+            m_editor.SetLineWidth(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetLineWidth());
+            Assert::AreEqual(expected, m_a->GetLineWidth());
+            Assert::AreEqual(expected, m_x->GetLineWidth());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetLineWidth());
+        }
+
+        TEST_METHOD(SetLineStyle_ValidStyle_SetsStyle)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = PS_DASHDOT;
+
+            // Act
+            m_editor.SetLineStyle(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetLineStyle());
+            Assert::AreEqual(expected, m_a->GetLineStyle());
+            Assert::AreEqual(expected, m_x->GetLineStyle());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetLineStyle());
+        }
+
+        TEST_METHOD(SetFillColor_ValidColor_SetsColor)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            COLORREF expected = RGB(255, 0, 0);
+
+            // Act
+            m_editor.SetFillColor(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetFillColor());
+            Assert::AreEqual(expected, m_a->GetFillColor());
+
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetFillColor());
+        }
+
+        TEST_METHOD(SetFillPattern_WhenInvoked_SetsPattern)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            BOOL expected = TRUE;
+
+            // Act
+            m_editor.SetFillPattern(expected);
+
+            // Assert
+            Assert::IsTrue(m_editor.IsFillPattern());
+            Assert::IsTrue(m_a->IsFillPattern());
+            
+            m_a2->Select(TRUE);
+            Assert::IsFalse(m_editor.IsFillPattern());
+        }
+
+        TEST_METHOD(SetFillStyle_ValidStyle_SetsStyle)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            unsigned int expected = HS_HORIZONTAL;
+
+            // Act
+            m_editor.SetFillStyle(expected);
+
+            // Assert
+            Assert::AreEqual(expected, m_editor.GetFillStyle());
+            Assert::AreEqual(expected, m_a->GetFillStyle());
+            
+            m_a2->Select(TRUE);
+            Assert::AreNotEqual(expected, m_editor.GetFillStyle());
+        }
+
+#pragma endregion
+
+#pragma region LockingTests
+
+        TEST_METHOD(IsLocked_IfLocked_ReturnTrue) {
+            m_a->Select(TRUE);
+
+            Assert::IsFalse(m_editor.IsLocked(LOCK_FONTSIZE));
+
+            m_a->SetLock(LOCK_FONTNAME);
+
+            Assert::IsFalse(m_editor.IsLocked(LOCK_FONTSIZE));
+
+            m_a->SetLock(LOCK_FONTSIZE);
+
+            Assert::IsTrue(m_editor.IsLocked(LOCK_FONTSIZE));
         }
 
 #pragma endregion

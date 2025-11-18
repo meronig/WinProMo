@@ -2200,15 +2200,17 @@ CString CProMoEditor::GetFontName() const
    ============================================================*/
 {
 	CString fontName;
-	
+	BOOL hasValue = FALSE;
+
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
 		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
 			CString currValue = entity->GetFontName();
-			if (fontName.IsEmpty()) {
+			if (!hasValue) {
 				fontName = currValue;
+				hasValue = TRUE;
 			}
 			else if (fontName != currValue) {
 				return CString();
@@ -2234,15 +2236,17 @@ unsigned int CProMoEditor::GetFontSize() const
    ============================================================*/
 {
 	unsigned int fontSize = 0;
-	
+	BOOL hasValue = FALSE;
+
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
 		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
 			unsigned int currValue = entity->GetFontSize();
-			if (fontSize == 0) {
+			if (!hasValue) {
 				fontSize = currValue;
+				hasValue = TRUE;
 			}
 			else if (fontSize != currValue) {
 				return 0;
@@ -2268,15 +2272,17 @@ unsigned int CProMoEditor::GetFontWeight() const
    ============================================================*/
 {
 	unsigned int fontWeight = 0;
-	
+	BOOL hasValue = FALSE;
+
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
 		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
 			unsigned int currValue = entity->GetFontWeight();
-			if (fontWeight == 0) {
+			if (!hasValue) {
 				fontWeight = currValue;
+				hasValue = TRUE;
 			}
 			else if (fontWeight != currValue) {
 				return 0;
@@ -2412,15 +2418,17 @@ COLORREF CProMoEditor::GetTextColor() const
    ============================================================*/
 {
 	COLORREF textColor = RGB(0, 0, 0);
-	
+	BOOL hasValue = FALSE;
+
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
 		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
 			unsigned int currValue = entity->GetTextColor();
-			if (textColor == RGB(0, 0, 0)) {
+			if (!hasValue) {
 				textColor = currValue;
+				hasValue = TRUE;
 			}
 			else if (textColor != currValue) {
 				return RGB(0, 0, 0);
@@ -2445,6 +2453,7 @@ COLORREF CProMoEditor::GetBkColor() const
    ============================================================*/
 {
 	COLORREF bkColor = RGB(0, 0, 0);
+	BOOL hasValue = FALSE;
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
@@ -2452,8 +2461,9 @@ COLORREF CProMoEditor::GetBkColor() const
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
 			unsigned int currValue = entity->GetBkColor();
-			if (bkColor == RGB(0, 0, 0)) {
+			if (!hasValue) {
 				bkColor = currValue;
+				hasValue = TRUE;
 			}
 			else if (bkColor != currValue) {
 				return RGB(0, 0, 0);
@@ -2479,6 +2489,7 @@ unsigned int CProMoEditor::GetTextHorizontalAlignment() const
    ============================================================*/
 {
 	unsigned int alignment = 0;
+	BOOL hasValue = FALSE;
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
@@ -2486,8 +2497,9 @@ unsigned int CProMoEditor::GetTextHorizontalAlignment() const
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
 			unsigned int currValue = entity->GetTextHorizontalAlignment();
-			if (alignment == 0) {
+			if (!hasValue) {
 				alignment = currValue;
+				hasValue = TRUE;
 			}
 			else if (alignment != currValue) {
 				return 0;
@@ -2513,6 +2525,7 @@ unsigned int CProMoEditor::GetTextVerticalAlignment() const
    ============================================================*/
 {
 	unsigned int alignment = 0;
+	BOOL hasValue = FALSE;
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
@@ -2520,8 +2533,9 @@ unsigned int CProMoEditor::GetTextVerticalAlignment() const
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
 			unsigned int currValue = entity->GetTextVerticalAlignment();
-			if (alignment == 0) {
+			if (!hasValue) {
 				alignment = currValue;
+				hasValue = TRUE;
 			}
 			else if (alignment != currValue) {
 				return 0;
@@ -2586,15 +2600,17 @@ unsigned int CProMoEditor::GetTextAlignment() const
    ============================================================*/
 {
 	unsigned int alignment = 0;
-	
+	BOOL hasValue = FALSE;
+
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
 		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
 			unsigned int currValue = entity->GetTextAlignment();
-			if (alignment == 0) {
+			if (!hasValue) {
 				alignment = currValue;
+				hasValue = TRUE;
 			}
 			else if (alignment != currValue) {
 				return 0;
@@ -2619,15 +2635,17 @@ unsigned int CProMoEditor::GetBkMode() const
    ============================================================*/
 {
 	unsigned int bkMode = TRANSPARENT;
-	
+	BOOL hasValue = FALSE;
+
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
 		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
 		if (selObj && selObj->IsSelected()) {
 			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj); 
 			unsigned int currValue = entity->GetBkMode();
-			if (bkMode == TRANSPARENT) {
+			if (!hasValue) {
 				bkMode = currValue;
+				hasValue = TRUE;
 			}
 			else if (bkMode != currValue) {
 				return TRANSPARENT;
@@ -2652,6 +2670,7 @@ COLORREF CProMoEditor::GetLineColor() const
    ============================================================*/
 {
 	COLORREF lineColor = RGB(0, 0, 0);
+	BOOL hasValue = FALSE;
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
@@ -2667,8 +2686,9 @@ COLORREF CProMoEditor::GetLineColor() const
 				currValue = edge->GetLineColor();
 			}
 			if (block || edge) {
-				if (lineColor == RGB(0, 0, 0)) {
+				if (!hasValue) {
 					lineColor = currValue;
+					hasValue = TRUE;
 				}
 				else if (lineColor != currValue) {
 					return RGB(0, 0, 0);
@@ -2694,6 +2714,7 @@ unsigned int CProMoEditor::GetLineWidth() const
    ============================================================*/
 {
 	unsigned int lineWidth = 0;
+	BOOL hasValue = FALSE;
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
@@ -2709,8 +2730,9 @@ unsigned int CProMoEditor::GetLineWidth() const
 				currValue = edge->GetLineWidth();
 			}
 			if (block || edge) {
-				if (lineWidth == 0) {
+				if (!hasValue) {
 					lineWidth = currValue;
+					hasValue = TRUE;
 				}
 				else if (lineWidth != currValue) {
 					return 0;
@@ -2736,6 +2758,7 @@ unsigned int CProMoEditor::GetLineStyle() const
    ============================================================*/
 {
 	unsigned int lineStyle = 0;
+	BOOL hasValue = FALSE;
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
@@ -2751,8 +2774,9 @@ unsigned int CProMoEditor::GetLineStyle() const
 				currValue = edge->GetLineStyle();
 			}
 			if (block || edge) {
-				if (lineStyle == 0) {
+				if (!hasValue) {
 					lineStyle = currValue;
+					hasValue = TRUE;
 				}
 				else if (lineStyle != currValue) {
 					return 0;
@@ -2778,6 +2802,7 @@ COLORREF CProMoEditor::GetFillColor() const
    ============================================================*/
 {
 	COLORREF fillColor = RGB(0, 0, 0);
+	BOOL hasValue = FALSE;
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
@@ -2786,8 +2811,9 @@ COLORREF CProMoEditor::GetFillColor() const
 			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
 			if (block) {
 				COLORREF currValue = block->GetFillColor();
-				if (fillColor == RGB(0, 0, 0)) {
+				if (!hasValue) {
 					fillColor = currValue;
+					hasValue = TRUE;
 				}
 				else if (fillColor != currValue) {
 					return RGB(0, 0, 0);
@@ -2852,7 +2878,8 @@ unsigned int CProMoEditor::GetFillStyle() const
 
    ============================================================*/
 {
-	unsigned int fillStyle = 0;
+	unsigned int fillStyle = HS_CROSS;
+	BOOL hasValue = FALSE;
 
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	for (int i = 0; i < GetObjectCount(); i++) {
@@ -2861,11 +2888,12 @@ unsigned int CProMoEditor::GetFillStyle() const
 			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(selObj);
 			if (block) {
 				unsigned int currValue = block->GetFillStyle();
-				if (fillStyle == 0) {
+				if (!hasValue) {
 					fillStyle = currValue;
+					hasValue = TRUE;
 				}
 				else if (fillStyle != currValue) {
-					return 0;
+					return HS_CROSS;
 				}
 			}
 		}

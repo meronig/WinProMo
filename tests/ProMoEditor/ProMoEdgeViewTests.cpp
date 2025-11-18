@@ -227,7 +227,7 @@ namespace CProMoEdgeViewTests
         {
             CProMoEdgeView view;
             view.GetEdgeModel()->RecreateLabels();
-            unsigned int alignment = DT_VCENTER;
+            unsigned int alignment = DT_LEFT | DT_BOTTOM;
 
             BOOL result = view.SetTextAlignment(alignment);
 
