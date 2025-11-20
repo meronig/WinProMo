@@ -61,7 +61,7 @@ public:
 
 	// Labels
 	virtual void GetLabels(CObArray& labelList) const;
-	virtual CProMoLabel* GetLabel(CString property);
+	virtual CProMoLabel* GetLabel(CString property) const;
 	virtual void RecreateLabels(CObArray& labelList);
 	
 

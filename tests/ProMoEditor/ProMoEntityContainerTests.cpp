@@ -81,7 +81,7 @@ namespace CProMoEntityContainerTests
             CProMoEntityContainer c;
             CProMoBlockView* parent = new CProMoBlockView();
             CProMoBlockView* child = new CProMoBlockView();
-            child->SetParentBlock(parent);
+            parent->LinkSubBlock(child);
 
             c.Add(parent);
             c.Add(child);
@@ -163,11 +163,11 @@ namespace CProMoEntityContainerTests
 
             CProMoLabel* l = new CProMoLabel();
             
-            a1->SetParentBlock(a);
-            a2->SetParentBlock(a);
-            b1->SetParentBlock(b);
-            b2->SetParentBlock(b);
-
+            a->LinkSubBlock(a1);
+            a->LinkSubBlock(a2);
+            b->LinkSubBlock(b1);
+            b->LinkSubBlock(b2);
+            
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
@@ -299,9 +299,9 @@ namespace CProMoEntityContainerTests
             c.Add(a);
             c.Add(a1);
             c.Add(a2);
-            a1->SetParentBlock(a);
-            a2->SetParentBlock(a);
-
+            a->LinkSubBlock(a1);
+            a->LinkSubBlock(a2);
+            
             CObArray labels;
             a->GetModel()->RecreateLabels(labels);
             CProMoLabel* la = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
@@ -342,8 +342,8 @@ namespace CProMoEntityContainerTests
             c.Add(z);
             c.Add(b2);
             c.Add(b);
-            b1->SetParentBlock(b);
-            b2->SetParentBlock(b);
+            b->LinkSubBlock(b1);
+            b->LinkSubBlock(b2);
             z->SetSource(b);
             z->SetDestination(a2);
 
@@ -398,8 +398,8 @@ namespace CProMoEntityContainerTests
             c.Add(a);
             c.Add(a1);
             c.Add(a2);
-            a1->SetParentBlock(a);
-            a2->SetParentBlock(a);
+            a->LinkSubBlock(a1);
+            a->LinkSubBlock(a2);
 
             CObArray labels;
             a->GetModel()->RecreateLabels(labels);
@@ -441,8 +441,8 @@ namespace CProMoEntityContainerTests
             c.Add(z);
             c.Add(b2);
             c.Add(b);
-            b1->SetParentBlock(b);
-            b2->SetParentBlock(b);
+            b->LinkSubBlock(b1);
+            b->LinkSubBlock(b2);
             z->SetSource(b);
             z->SetDestination(a2);
 
@@ -714,10 +714,10 @@ namespace CProMoEntityContainerTests
             CProMoEdgeView* y = new CProMoEdgeView();
             CProMoEdgeView* z = new CProMoEdgeView();
 
-            a1->SetParentBlock(a);
-            a2->SetParentBlock(a);
-            b1->SetParentBlock(b);
-            b2->SetParentBlock(b);
+            a->LinkSubBlock(a1);
+            a->LinkSubBlock(a2);
+            b->LinkSubBlock(b1);
+            b->LinkSubBlock(b2);
 
             x->SetSource(a);
             x->SetDestination(y);

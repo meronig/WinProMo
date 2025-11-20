@@ -397,7 +397,7 @@ void CProMoLabel::SetFitTitle(BOOL hasFitTitle)
 	m_fitTitle = hasFitTitle;
 }
 
-BOOL CProMoLabel::HasFitTitle()
+BOOL CProMoLabel::HasFitTitle() const
 /* ============================================================
 	Function :		CProMoLabel::HasFitTitle
 	Description :	Returns if the label must fit the title
@@ -429,7 +429,7 @@ void CProMoLabel::SetFitView(BOOL hasFitView)
 	m_fitView = hasFitView;
 }
 
-BOOL CProMoLabel::HasFitView()
+BOOL CProMoLabel::HasFitView() const
 /* ============================================================
 	Function :		CProMoLabel::SetFitView
 	Description :	Returns if the view for the object 

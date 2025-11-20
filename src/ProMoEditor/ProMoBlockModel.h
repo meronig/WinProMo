@@ -26,9 +26,14 @@ public:
 	
 	// Parent-child block links
 	virtual void GetSubBlocks(CObArray& blockList) const;
+	virtual BOOL CanBeSubBlockOf(CProMoBlockModel* block) const;
+	virtual BOOL HasSubBlock(CProMoBlockModel* block) const;
+	virtual BOOL IsSubBlock() const;
+	virtual void GetBoundaryBlocks(CObArray& blockList, unsigned int alignment) const;
+	virtual BOOL CanBeBoundaryOf(CProMoBlockModel* block, unsigned int alignment) const;
+	virtual BOOL HasBoundaryBlock(CProMoBlockModel* block) const;
+	virtual BOOL IsBoundaryBlock() const;
 	virtual CProMoBlockModel* GetParentBlock() const;
-	virtual BOOL Contains(CProMoBlockModel* block, BOOL recursive);
-	virtual BOOL CanBeNestedBy(CProMoBlockModel* block);
 
 	// Outgoing edge links
 	virtual void GetOutgoingEdges(CObArray& edgeList) const;
@@ -50,10 +55,11 @@ protected:
 	unsigned int m_attachmentType;
 
 	// Parent-child block links
-	virtual void LinkSubBlock(CProMoBlockModel* subblock);
-	virtual void UnlinkSubBlock(CProMoBlockModel* subblock);
-	virtual void UnlinkAllSubBlocks();
-	virtual void SetParentBlock(CProMoBlockModel* parent);
+	virtual BOOL Contains(CProMoBlockModel* block, BOOL recursive) const;
+	virtual void LinkChildBlock(CProMoBlockModel* subblock, unsigned int attachment);
+	virtual void UnlinkChildBlock(CProMoBlockModel* subblock);
+	virtual void UnlinkAllChildBlocks();
+	virtual void SetParentBlock(CProMoBlockModel* parent, unsigned int attachment);
 	
 	// Outgoing edge links
 	virtual void LinkOutgoingEdge(CProMoEdgeModel* edge);

@@ -22,8 +22,8 @@ public:
 	virtual ~CProMoEntityContainer();
 
 	virtual void Reorder();
-	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
-	virtual CProMoBlockView* GetTarget();
+	virtual void SetTarget(CProMoBlockView* obj, unsigned int attachment);
+	virtual CProMoBlockView* GetTarget() const;
 
 	virtual void ReplicateRelations(const CObArray& source, CObArray& destination);
 	virtual void Load(const CStringArray& stra, CProMoControlFactory& fact);

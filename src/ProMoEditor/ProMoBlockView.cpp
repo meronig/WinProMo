@@ -77,7 +77,7 @@ CProMoBlockView::CProMoBlockView()
 
 	CString title;
 	SetModel(new CProMoBlockModel());
-	m_target = FALSE;
+	m_targetAttachment = DEHT_NONE;
 	m_visible = TRUE;
 
 	SetName(CProMoNameFactory::GetID());
@@ -197,6 +197,121 @@ void CProMoBlockView::DrawShape(CDC* dc, CRect& rect)
 	
 }
 
+int CProMoBlockView::GetHitCode(CPoint point) const
+/* ============================================================
+	Function :		CProMoBlockView::GetHitCode
+	Description :	Returns the hit point constant for "point".
+	Access :		Public
+
+	Return :		int				-	The hit point,
+										"DEHT_NONE" if none.
+	Parameters :	CPoint point	-	The point to check
+
+	Usage :			Call to see in what part of the object point
+					lies. The hit point can be one of the following:
+						"DEHT_NONE" No hit-point
+						"DEHT_BODY" Inside object body
+						"DEHT_TOPLEFT" Top-left corner
+						"DEHT_TOPMIDDLE" Middle top-side
+						"DEHT_TOPRIGHT" Top-right corner
+						"DEHT_BOTTOMLEFT" Bottom-left corner
+						"DEHT_BOTTOMMIDDLE" Middle bottom-side
+						"DEHT_BOTTOMRIGHT" Bottom-right corner
+						"DEHT_LEFTMIDDLE" Middle left-side
+						"DEHT_RIGHTMIDDLE" Middle right-side
+
+   ============================================================*/
+{
+	return CDiagramEntity::GetHitCode(point);
+}
+
+int CProMoBlockView::GetHitCode(const CPoint& point, const CRect& rect) const
+/* ============================================================
+	Function :		CProMoBlockView::GetHitCode
+	Description :	Returns the hit point constant for "point"
+					assuming the object rectangle "rect".
+	Access :		Public
+
+	Return :		int				-	The hit point,
+										"DEHT_NONE" if none.
+	Parameters :	CPoint point	-	The point to check
+					CRect rect		-	The rect to check
+
+	Usage :			Call to see in what part of the object point
+					lies. The hit point can be one of the following:
+						"DEHT_NONE" No hit-point
+						"DEHT_BODY" Inside object body
+						"DEHT_TOPLEFT" Top-left corner
+						"DEHT_BOTTOMRIGHT" Bottom-right corner
+						"DEHT_CENTER" Center of the object body
+							(i.e., in the middle of the line)
+
+   ============================================================*/
+{
+	int result = CDiagramEntity::GetHitCode(point, rect);
+	// the result is a specific selection marker
+	if (result != DEHT_NONE && result != DEHT_BODY)
+		return result;
+
+	CRect rectTest;
+
+	rectTest = GetSelectionMarkerRect(DEHT_TOP, rect);
+	if (rectTest.PtInRect(point))
+		result = DEHT_TOP;
+
+	return result;
+}
+
+CRect CProMoBlockView::GetSelectionMarkerRect(UINT marker, CRect rect) const
+/* ============================================================
+	Function :		CProMoBlockView::GetSelectionMarkerRect
+	Description :	Gets the selection marker rectangle for
+					marker, given the true object rectangle
+					"rect".
+	Access :		Protected
+
+
+	Return :		CRect		-	The marker rectangle
+	Parameters :	UINT marker	-	The marker type ("DEHT_"-
+									constants defined in
+									DiargramEntity.h)
+					CRect rect	-	The object rectangle
+
+	Usage :			"marker" can be one of the following:
+						"DEHT_NONE" No hit-point
+						"DEHT_BODY" Inside object body
+						"DEHT_TOPLEFT" Top-left corner
+						"DEHT_TOPMIDDLE" Middle top-side
+						"DEHT_TOPRIGHT" Top-right corner
+						"DEHT_BOTTOMLEFT" Bottom-left corner
+						"DEHT_BOTTOMMIDDLE" Middle bottom-side
+						"DEHT_BOTTOMRIGHT" Bottom-right corner
+						"DEHT_LEFTMIDDLE" Middle left-side
+						"DEHT_RIGHTMIDDLE" Middle right-side
+						"DEHT_CENTER" Center of the object body
+							(i.e., in the middle of the line)
+
+   ============================================================*/
+{
+	CRect rectMarker;
+	int horz = GetMarkerSize().cx / 2;
+	int vert = GetMarkerSize().cy / 2;
+
+	switch (marker)
+	{
+	case DEHT_TOP:
+		rectMarker.SetRect(rect.left - horz,
+			rect.top - vert,
+			rect.right + horz,
+			rect.top + vert);
+		break;
+	default:
+		rectMarker = CDiagramEntity::GetSelectionMarkerRect(marker, rect);
+	}
+	return rectMarker;
+}
+
+
 void CProMoBlockView::Highlight(CDC* dc, CRect rect)
 /* ============================================================
 	Function :		CProMoBlockView::Highlight
@@ -224,8 +339,7 @@ void CProMoBlockView::Highlight(CDC* dc, CRect rect)
 	}
 }
 
-
-BOOL CProMoBlockView::IsTarget()
+BOOL CProMoBlockView::IsTarget() const
 /* ============================================================
 	Function :		CProMoBlockView::IsTarget
 	Description :	Returns if the block is the target of the
@@ -239,10 +353,10 @@ BOOL CProMoBlockView::IsTarget()
 
    ============================================================*/
 {
-	return m_target;
+	return (m_targetAttachment!=DEHT_NONE);
 }
 
-void CProMoBlockView::SetTarget(BOOL isTarget)
+void CProMoBlockView::SetTarget(unsigned int attachment)
 /* ============================================================
 	Function :		CProMoBlockView::SetTarget
 	Description :	Makes the current block a target for the
@@ -251,12 +365,13 @@ void CProMoBlockView::SetTarget(BOOL isTarget)
 	Access :		Public
 
 	Return :		void
-	Parameters :	BOOL isTarget	-	"TRUE" if the block 
-										should be the target
+	Parameters :	unsigned int attachment	-	The type of
+												attachment for
+												the dragged block
 
    ============================================================*/
 {
-	m_target = isTarget;
+	m_targetAttachment = attachment;
 }
 
 void CProMoBlockView::SetLockedProportions(BOOL hasLockedProportions)
@@ -276,7 +391,7 @@ void CProMoBlockView::SetLockedProportions(BOOL hasLockedProportions)
 	m_lockProportions = hasLockedProportions;
 }
 
-BOOL CProMoBlockView::HasLockedProportions()
+BOOL CProMoBlockView::HasLockedProportions() const
 /* ============================================================
 	Function :		CProMoBlockView::HasLockedProportions
 	Description :	Returns if the proportions of the block are
@@ -465,17 +580,6 @@ void CProMoBlockView::SetTitle(CString title)
 
    ============================================================*/
 {
-	/*if (m_fitTitle) {
-		CFont font;
-		double zoom = GetZoom();
-		if (zoom == 0) {
-			zoom = 1.0;
-		}
-		font.CreateFont(-round(12.0 * zoom), 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, _T("Courier New"));
-		m_titleRect = ComputeTextRect(title, font);
-
-	}*/
-
 	CDiagramEntity::SetTitle(title);
 
 	CDiagramEntity::SetRect(GetRect());
@@ -695,6 +799,148 @@ CProMoBlockModel* CProMoBlockView::GetBlockModel() const
    ============================================================*/
 {
 	return m_blockModel;
+}
+
+void CProMoBlockView::LinkSubBlock(CProMoBlockView* block)
+/* ============================================================
+	Function :		CProMoBlockView::LinkSubBlock
+	Description :	Makes the block being passed as input
+					parameter a subblock of this block. A 
+					subblock is a block that is contained by
+					this block.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoBlockModel* block	-	the block that
+												should be
+												a subblock
+
+   ============================================================*/
+{
+	if (m_blockModel) {
+		m_blockModel->LinkChildBlock(block->m_blockModel, DEHT_BODY);
+	}
+}
+
+void CProMoBlockView::UnlinkSubBlock(CProMoBlockView* block)
+/* ============================================================
+	Function :		CProMoBlockModel::UnlinkSubBlock
+	Description :	Removes the block being passed as input
+					parameter from the subblocks of this block
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoBlockModel* block	-	the block that
+												should be
+												removed
+
+   ============================================================*/
+{
+	if (m_blockModel) {
+		m_blockModel->UnlinkChildBlock(block->m_blockModel);
+	}
+}
+
+void CProMoBlockView::UnlinkFromParent()
+/* ============================================================
+	Function :		CProMoBlockView::UnlinkFromParent
+
+	Description :	Makes this block no longer linked to another
+					block, neither as subblock nor as boundary
+					block.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (m_blockModel) {
+		if (m_blockModel) {
+			m_blockModel->SetParentBlock(NULL, DEHT_NONE);
+		}
+	}
+}
+
+void CProMoBlockView::UnlinkAllSubBlocks()
+/* ============================================================
+	Function :		CProMoBlockView::UnlinkAllSubBlocks
+	Description :	Removes all the subblocks of this block
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (m_blockModel) {
+		CObArray subblocks;
+		m_blockModel->GetSubBlocks(subblocks);
+		for (unsigned int i = 0; i < subblocks.GetSize(); i++) {
+			m_blockModel->UnlinkChildBlock(dynamic_cast<CProMoBlockModel*>(subblocks.GetAt(i)));
+		}
+	}
+}
+
+void CProMoBlockView::LinkBoundaryBlock(CProMoBlockView* block, unsigned int attachment)
+/* ============================================================
+	Function :		CProMoBlockView::LinkBoundaryBlock
+	Description :	Makes the block being passed as input
+					parameter a boundary block of this block. A
+					boundary block is a block that lies on the
+					boundary of this block.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoBlockModel* block	-	the block that
+												should be
+												a boundary block
+
+   ============================================================*/
+{
+	if (m_blockModel) {
+		m_blockModel->LinkChildBlock(block->GetBlockModel(), attachment);
+	}
+}
+
+void CProMoBlockView::UnlinkBoundaryBlock(CProMoBlockView* block)
+/* ============================================================
+	Function :		CProMoBlockModel::UnlinkBoundaryBlock
+	Description :	Removes the block being passed as input
+					parameter from the boundary blocks of this
+					block
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoBlockModel* block	-	the block that
+												should be
+												removed
+
+   ============================================================*/
+{
+	if (m_blockModel) {
+		m_blockModel->UnlinkChildBlock(block->GetBlockModel());
+	}
+}
+
+void CProMoBlockView::UnlinkAllBoundaryBlocks()
+/* ============================================================
+	Function :		CProMoBlockView::UnlinkAllSubBlocks
+	Description :	Removes all the boundary blocks of this block
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (m_blockModel) {
+		CObArray blocks;
+		m_blockModel->GetBoundaryBlocks(blocks, DEHT_BODY);
+		for (unsigned int i = 0; i < blocks.GetSize(); i++) {
+			m_blockModel->UnlinkChildBlock(dynamic_cast<CProMoBlockModel*>(blocks.GetAt(i)));
+		}
+	}
 }
 
 CProMoModel* CProMoBlockView::GetModel() const
@@ -1257,67 +1503,6 @@ CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str, CProMoMode
 
 }
 
-void CProMoBlockView::SetParentBlock(CProMoBlockView* parent)
-/* ============================================================
-	Function :		CProMoBlockView::SetParentBlock
-	Description :	Makes the block being passed as input
-					parameter the parent of this block
-	Access :		Public
-
-	Return :		void
-	Parameters :	CProMoBlockView* block	-	the block that
-												should be the
-												parent block
-
-   ============================================================*/
-{
-	if (m_blockModel) {
-		if (parent) {
-			CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(parent->GetModel());
-			m_blockModel->SetParentBlock(blockModel);
-		}
-		else {
-			m_blockModel->SetParentBlock(NULL);
-		}
-	}
-}
-
-CProMoBlockView* CProMoBlockView::GetParentBlock() const
-/* ============================================================
-	Function :		CProMoBlockView::GetParentBlock
-	Description :	Returns a pointer to the parent block
-	Access :		Public
-
-	Return :		CProMoBlockView*	-	A pointer to the 
-											parent block
-	Parameters :	none
-
-   ============================================================*/
-{
-	if (m_blockModel) {
-		if (m_blockModel->GetParentBlock()) {
-			return m_blockModel->GetParentBlock()->GetMainView();
-		}
-	}
-	return NULL;
-}
-
-void CProMoBlockView::UnlinkAllSubBlocks()
-/* ============================================================
-	Function :		CProMoBlockView::UnlinkAllSubBlocks
-	Description :	Removes all the children of this block
-	Access :		Public
-
-	Return :		void
-	Parameters :	none
-
-   ============================================================*/
-{
-	if (m_blockModel) {
-		m_blockModel->UnlinkAllSubBlocks();
-	}
-}
-
 CString CProMoBlockView::GetModelFromString(const CString& str)
 /* ============================================================
 	Function :		CProMoBlockView::GetModelFromString
@@ -1398,7 +1583,7 @@ void CProMoBlockView::OnLabelChanged(CProMoLabel* label)
 	}
 }
 
-BOOL CProMoBlockView::IsFitCompatible(UINT shapeAnchor, UINT labelAnchor)
+BOOL CProMoBlockView::IsFitCompatible(UINT shapeAnchor, UINT labelAnchor) const
 /* ============================================================
 	Function :		CProMoBlockView::IsFitCompatible
 	Description :	Checks if the anchoring point of the view

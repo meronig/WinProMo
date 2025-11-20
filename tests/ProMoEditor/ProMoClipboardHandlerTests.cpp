@@ -48,11 +48,11 @@ namespace CProMoClipboardHandlerTests
             CProMoEdgeView* y = new CProMoEdgeView();
             CProMoEdgeView* z = new CProMoEdgeView();
 
-            a1->SetParentBlock(a);
-            a2->SetParentBlock(a);
-            b1->SetParentBlock(b);
-            b2->SetParentBlock(b);
-            
+            a->LinkSubBlock(a1);
+            a->LinkSubBlock(a2);
+            b->LinkSubBlock(b1);
+            b->LinkSubBlock(b2);
+
             x->SetSource(a);
             x->SetDestination(y);
             y->SetDestination(b1);
@@ -104,10 +104,10 @@ namespace CProMoClipboardHandlerTests
             CProMoEdgeView* y = new CProMoEdgeView();
             CProMoEdgeView* z = new CProMoEdgeView();
 
-            a1->SetParentBlock(a);
-            a2->SetParentBlock(a);
-            b1->SetParentBlock(b);
-            b2->SetParentBlock(b);
+            a->LinkSubBlock(a1);
+            a->LinkSubBlock(a2);
+            b->LinkSubBlock(b1);
+            b->LinkSubBlock(b2);
 
             x->SetSource(a);
             x->SetDestination(y);

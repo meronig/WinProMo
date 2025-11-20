@@ -957,7 +957,7 @@ void CProMoModel::GetLabels(CObArray& labelList) const
 	labelList.Append(m_labels);
 }
 
-CProMoLabel* CProMoModel::GetLabel(CString property)
+CProMoLabel* CProMoModel::GetLabel(CString property) const
 /* ============================================================
 	Function :		CProMoModel::GetLabel
 	Description :	Returns a pointer to the label displaying

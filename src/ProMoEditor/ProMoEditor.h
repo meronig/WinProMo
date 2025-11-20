@@ -80,14 +80,15 @@ protected:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
 	// Private helpers
 	virtual void ResetTarget();
-	virtual void SetTarget(CProMoBlockView* obj, BOOL select);
+	virtual void SetTarget(CProMoBlockView* obj, unsigned int attachment);
 	virtual void NestSelectedBlock(CProMoBlockView* parentBlock);
 	virtual void SplitSelectedEdge();
 	virtual void CreateLabels();
 	virtual void ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock);
 	virtual void ConnectSelectedEdgeToDestination(CProMoBlockView* sourceBlock);
+	//REVISE below
 	virtual CProMoBlockView* GetTargetBlock(CPoint point);
-	virtual CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards);
+	virtual CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards) const;
 	virtual void DeselectChildBlocks(CProMoBlockView* block);
 	virtual void SelectChildBlocks(CProMoBlockView* block);
 	virtual void DeselectInvalidElements();

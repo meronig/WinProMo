@@ -51,7 +51,7 @@ CProMoClipboardHandler::~CProMoClipboardHandler()
 
 }
 
-CString CProMoClipboardHandler::GetModelType()
+CString CProMoClipboardHandler::GetModelType() const
 /* ============================================================
 	Function :		CProMoClipboardHandler::GetModelType
 	Description :	Returns a string representation of the

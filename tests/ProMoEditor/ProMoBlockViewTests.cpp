@@ -626,7 +626,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub child;
             child.SetRect(10, 10, 50, 120); // bottom protrudes
 
-            child.SetParentBlock(&parent);
+            parent.LinkSubBlock(&child);
 
             parent.AutoResize();
 
@@ -643,7 +643,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub child;
             child.SetRect(10, 10, 140, 50); // right protrudes
 
-            child.SetParentBlock(&parent);
+            parent.LinkSubBlock(&child);
 
             parent.AutoResize();
 
@@ -660,7 +660,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub child;
             child.SetRect(10, -20, 50, 50); // top protrudes
 
-            child.SetParentBlock(&parent);
+            parent.LinkSubBlock(&child);
 
             parent.AutoResize();
 
@@ -677,7 +677,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub child;
             child.SetRect(-30, 10, 50, 50); // left protrudes
 
-            child.SetParentBlock(&parent);
+            parent.LinkSubBlock(&child);
 
             parent.AutoResize();
 
@@ -694,12 +694,12 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub parent;
             parent.SetRect(10, 10, 80, 80);
 
-            parent.SetParentBlock(&grandParent);
+            grandParent.LinkSubBlock(&parent);
 
             CProMoBlockViewTestStub child;
             child.SetRect(10, 10, 200, 50); // right protrudes
 
-            child.SetParentBlock(&parent);
+            parent.LinkSubBlock(&child);
 
             parent.AutoResize();
 
@@ -731,7 +731,7 @@ namespace CProMoBlockViewTests
             // Add a child block
             CProMoBlockView child;
             child.SetRect(150, 50, 250, 120);
-            child.SetParentBlock(&parent);
+            parent.LinkSubBlock(&child);
             
             // Act
             parent.AutoResize(); // indirectly calls RecomputeIntersectionLinks
@@ -770,7 +770,7 @@ namespace CProMoBlockViewTests
             for (auto& child : children)
             {
                 child.SetRect(100, 50, 250, 120);
-                child.SetParentBlock(&parent);
+                parent.LinkSubBlock(&child);
             }
 
             // Act
@@ -991,14 +991,14 @@ namespace CProMoBlockViewTests
             child.SetTarget(TRUE);
             child.SetRect(0, 0, 150, 80);
             child.SetTitle(CString("Child"));
-            child.SetParentBlock(&parent);
+            parent.LinkSubBlock(&child);
             child.SetShape(SHAPE_ELLIPSE);
 
             CProMoBlockViewTestStub unrelated;
             unrelated.SetTarget(TRUE);
             unrelated.SetRect(300, 300, 350, 380);
             unrelated.SetTitle(CString("Unrelated"));
-            unrelated.SetParentBlock(&parent);
+            parent.LinkSubBlock(&unrelated);
             unrelated.SetShape(SHAPE_POLYGON);
 
             unrelated.AddVertex(CDoublePoint(0, 0));

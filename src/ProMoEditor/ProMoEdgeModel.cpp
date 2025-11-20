@@ -197,7 +197,7 @@ CProMoBlockModel* CProMoEdgeModel::GetDestination() const
 }
 
 
-BOOL CProMoEdgeModel::CanConnectSource(CProMoBlockModel* source)
+BOOL CProMoEdgeModel::CanConnectSource(CProMoBlockModel* source) const
 /* ============================================================
 	Function :		CProMoEdgeModel::CanConnectSource
 	Description :	Returns if the object being passed as input
@@ -220,7 +220,7 @@ BOOL CProMoEdgeModel::CanConnectSource(CProMoBlockModel* source)
 	return FALSE;
 }
 
-BOOL CProMoEdgeModel::CanConnectDestination(CProMoBlockModel* destination)
+BOOL CProMoEdgeModel::CanConnectDestination(CProMoBlockModel* destination) const
 /* ============================================================
 	Function :		CProMoEdgeModel::CanConnectDestination
 	Description :	Returns if the object being passed as input
@@ -247,7 +247,7 @@ BOOL CProMoEdgeModel::CanConnectDestination(CProMoBlockModel* destination)
 	return FALSE;
 }
 
-CProMoEdgeView* CProMoEdgeModel::GetLastSegment()
+CProMoEdgeView* CProMoEdgeModel::GetLastSegment() const
 /* ============================================================
 	Function :		CProMoEdgeModel::GetLastSegment
 	Description :	Returns a pointer to the view for this edge
@@ -276,7 +276,7 @@ CProMoEdgeView* CProMoEdgeModel::GetLastSegment()
 	return NULL;
 }
 
-CProMoEdgeView* CProMoEdgeModel::GetFirstSegment()
+CProMoEdgeView* CProMoEdgeModel::GetFirstSegment() const
 /* ============================================================
 	Function :		CProMoEdgeModel::GetFirstSegment
 	Description :	Returns a pointer to the view for this edge

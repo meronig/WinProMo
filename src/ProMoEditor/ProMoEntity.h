@@ -11,6 +11,10 @@
 #include "ProMoModel.h"
 
 #define DEHT_CENTER		10
+#define DEHT_TOP		11
+#define DEHT_BOTTOM		12
+#define DEHT_LEFT		13
+#define DEHT_RIGHT		14
 
 #define LOCK_FONTNAME			0x0001
 #define LOCK_FONTSIZE			0x0002

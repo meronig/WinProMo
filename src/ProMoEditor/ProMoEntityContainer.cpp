@@ -115,10 +115,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 				}
 			}
 			// disconnect block from parent
-			if (((CProMoBlockModel*)block->GetModel())->GetParentBlock()) {
-				//remove from parent
-				block->SetParentBlock(NULL);
-			}
+			block->UnlinkFromParent();
 			// identify labels
 			block->GetModel()->GetLabels(labels);
 			
@@ -189,8 +186,8 @@ void CProMoEntityContainer::ReplicateRelations(const CObArray& source, CObArray&
 			if (blockView && newBlockView) {
 				//preserve block nesting
 				if (connectedBlockView && newConnectedBlockView) {
-					if (blockView->GetParentBlock() == connectedBlockView) {
-						newBlockView->SetParentBlock(newConnectedBlockView);
+					if (connectedBlockView->GetBlockModel()->HasSubBlock(blockView->GetBlockModel())) {
+						newConnectedBlockView->LinkSubBlock(newBlockView);
 					}
 				}
 				//preserve links between blocks and labels
@@ -496,7 +493,7 @@ void CProMoEntityContainer::Reorder()
 		if (obj) {
 			CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(obj);
 			if (blockView) {
-				if (((CProMoBlockModel*)blockView->GetModel())->GetParentBlock() == NULL) {
+				if (!((CProMoBlockModel*)blockView->GetModel())->IsSubBlock()) {
 					ReorderR(blockView, newOrder);
 				}
 			}
@@ -530,7 +527,7 @@ void CProMoEntityContainer::Reorder()
 
 }
 
-void CProMoEntityContainer::SetTarget(CProMoBlockView* obj, BOOL select)
+void CProMoEntityContainer::SetTarget(CProMoBlockView* obj, unsigned int attachment)
 /* ============================================================
 	Function :		CProMoEntityContainer::SetTarget
 	Description :	Makes the block being passed as input a 
@@ -542,17 +539,17 @@ void CProMoEntityContainer::SetTarget(CProMoBlockView* obj, BOOL select)
 	Return :		void
 	Parameters :	CProMoBlockView* obj	-	Pointer to the
 												block
-					BOOL select				-	"TRUE" if the 
-												block should be 
-												the target
+					unsigned int attachment	-	The type of
+												attachment for
+												the dragged block
 
    ============================================================*/
 {
 	if (obj)
-		obj->SetTarget(select);
+		obj->SetTarget(attachment);
 }
 
-CProMoBlockView* CProMoEntityContainer::GetTarget()
+CProMoBlockView* CProMoEntityContainer::GetTarget() const
 /* ============================================================
 	Function :		CProMoEntityContainer::GetTarget
 	Description :	Returns a pointer to the block that is the
@@ -1026,7 +1023,7 @@ void CProMoEntityContainer::LinkModels(const CStringArray& stra, const CObArray&
 
 				CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
 				if (parent && blockModel->GetMainView()) {
-					blockModel->GetMainView()->SetParentBlock(parent->GetMainView());
+					parent->GetMainView()->LinkSubBlock(blockModel->GetMainView());
 				}
 						
 			}

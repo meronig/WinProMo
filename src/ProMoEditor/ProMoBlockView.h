@@ -36,19 +36,26 @@ public:
 	static CString GetModelFromString(const CString& str);
 	static CString GetNameFromString(const CString& str);
 		
-	virtual BOOL IsTarget();
-	virtual void SetTarget(BOOL isTarget);
+	virtual BOOL IsTarget() const;
+	virtual void SetTarget(unsigned int attachment);
 	
 	virtual void SetLockedProportions(BOOL hasLockedProportions);
-	virtual BOOL HasLockedProportions();
+	virtual BOOL HasLockedProportions() const;
 
 	virtual CProMoBlockModel* GetBlockModel() const;
 
 	// Parent-child block links
-	virtual void SetParentBlock(CProMoBlockView* parent);
-	virtual CProMoBlockView* GetParentBlock() const;
+	virtual void LinkSubBlock(CProMoBlockView* block);
+	virtual void UnlinkSubBlock(CProMoBlockView* block);
 	virtual void UnlinkAllSubBlocks();
-
+	
+	virtual void LinkBoundaryBlock(CProMoBlockView* block, unsigned int attachment);
+	virtual void UnlinkBoundaryBlock(CProMoBlockView* block);
+	virtual void UnlinkAllBoundaryBlocks();
+	
+	virtual void UnlinkFromParent();
+	
+	
 	virtual CPoint GetIntersection(CPoint innerPoint, CPoint outerPoint);
 
 	virtual COLORREF GetFillColor() const;
@@ -61,7 +68,7 @@ public:
 	
 
 protected:
-	BOOL m_target;
+	unsigned int m_targetAttachment;
 	CProMoBlockModel* m_blockModel;
 
 	virtual void RecomputeIntersectionLinks();
@@ -77,7 +84,7 @@ protected:
 	virtual void DrawShape(CDC* dc, CRect& rect);
 	virtual void Highlight(CDC* dc, CRect rect);
 	
-	virtual BOOL IsFitCompatible(UINT shapeAnchor, UINT labelAnchor);
+	virtual BOOL IsFitCompatible(UINT shapeAnchor, UINT labelAnchor) const;
 	virtual void AdjustToLabel(CProMoLabel* label);
 	
 
@@ -162,6 +169,8 @@ public:
 	static	CDiagramEntity* CreateFromString(const CString& str);
 
 	virtual void Draw(CDC* dc, CRect rect);
+	virtual int		GetHitCode(CPoint point) const;
+	virtual int		GetHitCode(const CPoint& point, const CRect& rect) const;
 
 	virtual void	ShowPopup(CPoint point, CWnd* parent);
 
@@ -179,6 +188,8 @@ protected:
 	virtual CString				GetDefaultGetString() const;
 	virtual CString				GetHeaderFromString(CString& str);
 	virtual BOOL				GetDefaultFromString(CString& str);
+
+	virtual CRect	GetSelectionMarkerRect(UINT marker, CRect rect) const;
 
 
 };

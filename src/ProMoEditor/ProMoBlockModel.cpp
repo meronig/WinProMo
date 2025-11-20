@@ -62,8 +62,8 @@ CProMoBlockModel::~CProMoBlockModel()
 {
 	UnlinkAllIncomingEdges();
 	UnlinkAllOutgoingEdges();
-	UnlinkAllSubBlocks();
-	SetParentBlock(NULL);
+	UnlinkAllChildBlocks();
+	SetParentBlock(NULL,DEHT_BODY);
 }
 
 CProMoModel* CProMoBlockModel::Clone() {
@@ -82,10 +82,10 @@ CProMoModel* CProMoBlockModel::Clone() {
 	return obj;
 }
 
-BOOL CProMoBlockModel::CanBeNestedBy(CProMoBlockModel* block)
+BOOL CProMoBlockModel::CanBeSubBlockOf(CProMoBlockModel* block) const
 /* ============================================================
-	Function :		CProMoBlockModel::CanBeNestedBy
-	Description :	Returns if this block can be nested by the
+	Function :		CProMoBlockModel::CanBeSubBlockOf
+	Description :	Returns if this block can be a subblock of the
 					block being passed as input	parameter.
 					Override to implement diagram-specific logic.
 	Access :		Public
@@ -108,9 +108,190 @@ BOOL CProMoBlockModel::CanBeNestedBy(CProMoBlockModel* block)
 	return TRUE;
 }
 
-void CProMoBlockModel::LinkSubBlock(CProMoBlockModel* block)
+void CProMoBlockModel::GetSubBlocks(CObArray& subblocks) const
 /* ============================================================
-	Function :		CProMoBlockModel::LinkSubBlock
+	Function :		CProMoBlockModel::GetSubBlocks
+	Description :	Returns the subblocks for this node. A
+					subblock is a child block that is not
+					attached to the boundary of the parent block
+	Access :		Public
+
+	Return :		void
+	Parameters :	CObArray subblocks	-	A CObArray to store the
+											subblocks
+
+   ============================================================*/
+{
+	for (int i = 0; i < m_subblocks.GetSize(); i++) {
+		CProMoBlockModel* child = dynamic_cast<CProMoBlockModel*>(this->m_subblocks.GetAt(i));
+		if (child && child->m_attachmentType == DEHT_BODY) {
+			subblocks.Add(child);
+		}
+	}
+}
+
+BOOL CProMoBlockModel::HasSubBlock(CProMoBlockModel* block) const
+/* ============================================================
+	Function :		CProMoBlockModel::HasSubBlock
+	Description :	Returns whether the block being passed is a
+					subblock of this block. A subblock is a child
+					block that is not attached to the boundary of
+					the parent block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the 
+												block is a 
+												subblock	
+	Parameters :	CProMoBlockModel* block	-	The block that
+												should be
+												checked
+
+   ============================================================*/
+{
+	if (Contains(block, FALSE) && block->IsSubBlock()) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+BOOL CProMoBlockModel::IsSubBlock() const
+/* ============================================================
+	Function :		CProMoBlockModel::IsSubBlock
+	Description :	Returns whether the current block is a
+					subblock. A subblock is a child
+					block that is not attached to the boundary of
+					a parent block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												block is a
+												subblock
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (m_parentBlock != NULL && m_attachmentType == DEHT_BODY) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void CProMoBlockModel::GetBoundaryBlocks(CObArray& blockList, unsigned int alignment) const
+/* ============================================================
+	Function :		CProMoBlockModel::GetBoundaryBlocks
+	Description :	Returns the boundary blocks for this node. A
+					boundary block is a child block that is
+					attached to the boundary of the parent block
+	Access :		Public
+
+	Return :		void
+	Parameters :	CObArray blockList		-	A CObArray to 
+												store the
+												boundary blocks
+					unsigned int alignment	-	the alignment
+												type of the
+												boundary blocks
+												to be returned.
+												If DEHT_BODY is
+												passed, all
+												boundary blocks
+												are returned
+
+   ============================================================*/
+{
+	for (int i = 0; i < m_subblocks.GetSize(); i++) {
+		CProMoBlockModel* child = dynamic_cast<CProMoBlockModel*>(this->m_subblocks.GetAt(i));
+
+		if (child && child->m_attachmentType != DEHT_BODY) {
+			if (alignment == DEHT_BODY || alignment == child->m_attachmentType) {
+				blockList.Add(child);
+			}
+		}
+	}
+}
+
+BOOL CProMoBlockModel::CanBeBoundaryOf(CProMoBlockModel* block, unsigned int alignment) const
+/* ============================================================
+	Function :		CProMoBlockModel::CanBeBoundaryOf
+	Description :	Returns if this block can be a boundary 
+					block of the block being passed as input 
+					parameter.
+					Override to implement diagram-specific logic.
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												block can be
+												a boundary
+												block
+	Parameters :	CProMoBlockModel* block	-	the block that
+												should have
+												this block as
+												boundary
+					unsigned int alignment	-	the type of
+												attachment for
+												the boundary
+												block
+
+   ============================================================*/
+{
+	if (this == block) {
+		return FALSE;
+	}
+	if (Contains(block, TRUE)) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+BOOL CProMoBlockModel::HasBoundaryBlock(CProMoBlockModel* block) const
+/* ============================================================
+	Function :		CProMoBlockModel::HasBoundaryBlock
+	Description :	Returns whether the block being passed is a
+					boundary block of this block. A boundary 
+					block is a child block that is attached to 
+					the boundary of the parent block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												block is a
+												boundary block
+	Parameters :	CProMoBlockModel* block	-	The block that
+												should be
+												checked
+
+   ============================================================*/
+{
+	if (Contains(block, FALSE) && block->IsBoundaryBlock()) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+BOOL CProMoBlockModel::IsBoundaryBlock() const
+/* ============================================================
+	Function :		CProMoBlockModel::IsBoundaryBlock
+	Description :	Returns whether the current block is a
+					boundary block. A boundary block is a child
+					block that is attached to the boundary of
+					a parent block
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												block is a
+												boundary block
+	Parameters :	none
+
+   ============================================================*/
+{
+	if (m_parentBlock && m_attachmentType != DEHT_BODY && m_attachmentType != DEHT_NONE) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void CProMoBlockModel::LinkChildBlock(CProMoBlockModel* block, unsigned int attachment)
+/* ============================================================
+	Function :		CProMoBlockModel::LinkChildBlock
 	Description :	Makes the block being passed as input 
 					parameter a child of this block
 	Access :		Protected
@@ -119,27 +300,47 @@ void CProMoBlockModel::LinkSubBlock(CProMoBlockModel* block)
 	Parameters :	CProMoBlockModel* block	-	the block that
 												should be
 												a child block
+					unsigned int attachment	-	the type of
+												attachment for
+												the child block
 
    ============================================================*/
 {
+	//check if a circular nesting dependency would be created
 	if (block->Contains(this, TRUE)) {
-		ASSERT(FALSE);
-		//better to throw an exception
+		return;
+	}
+
+	//check if the block can be a subblock of this block
+	if (attachment == DEHT_BODY && !block->CanBeSubBlockOf(this)) {
+		return;
+	}
+
+	//check if the block can be a boundary of this block
+	if (attachment != DEHT_BODY && !block->CanBeBoundaryOf(this, attachment)) {
+		return;
+	}
+
+	// Block is already linked
+	if (Contains(block, FALSE)) {
+		block->m_attachmentType = attachment;
 		return;
 	}
 
 	m_subblocks.Add(block);
+	
+	if (block->m_parentBlock != NULL) {
+		block->m_parentBlock->UnlinkChildBlock(block);
+	}
+	block->m_attachmentType = attachment;
+	block->m_parentBlock = this;
 	CustomizeLabels();
 
-	if (block->m_parentBlock != NULL) {
-		block->m_parentBlock->UnlinkSubBlock(block);
-	}
-	block->m_parentBlock = this;
 }
 
-void CProMoBlockModel::UnlinkSubBlock(CProMoBlockModel* subblock)
+void CProMoBlockModel::UnlinkChildBlock(CProMoBlockModel* subblock)
 /* ============================================================
-	Function :		CProMoBlockModel::UnlinkSubBlock
+	Function :		CProMoBlockModel::UnlinkChildBlock
 	Description :	Removes the block being passed as input 
 					parameter from the children of this block
 	Access :		Protected
@@ -151,19 +352,20 @@ void CProMoBlockModel::UnlinkSubBlock(CProMoBlockModel* subblock)
 
    ============================================================*/
 {
-	for (int i = 0; i < m_subblocks.GetSize(); i++) {
+	for (int i = m_subblocks.GetSize() - 1; i >= 0; i--) {
 		if (m_subblocks.GetAt(i) == subblock) {
-			m_subblocks.RemoveAt(i);
 			subblock->m_parentBlock = NULL;
+			subblock->m_attachmentType = DEHT_NONE;
+			m_subblocks.RemoveAt(i);
 		}
 	}
 	CustomizeLabels();
 
 }
 
-void CProMoBlockModel::UnlinkAllSubBlocks()
+void CProMoBlockModel::UnlinkAllChildBlocks()
 /* ============================================================
-	Function :		CProMoBlockModel::UnlinkAllSubBlocks
+	Function :		CProMoBlockModel::UnlinkAllChildBlocks
 	Description :	Removes all the children of this block
 	Access :		Protected
 
@@ -172,38 +374,19 @@ void CProMoBlockModel::UnlinkAllSubBlocks()
 
    ============================================================*/
 {
-	for (int i = 0; i < m_subblocks.GetSize(); i++) {
+	for (int i = m_subblocks.GetSize() - 1; i >= 0; i--) {
 		CProMoBlockModel* child = dynamic_cast<CProMoBlockModel*>(this->m_subblocks.GetAt(i));
 		if (child) {
 			child->m_parentBlock = NULL;
+			child->m_attachmentType = DEHT_NONE;
+			m_subblocks.RemoveAt(i);
 		}
 	}
-	this->m_subblocks.RemoveAll();
 	CustomizeLabels();
 
 }
 
-void CProMoBlockModel::GetSubBlocks(CObArray& subblocks) const
-/* ============================================================
-	Function :		CProMoBlockModel::GetSubBlocks
-	Description :	Returns the child blocks
-	Access :		Public
-
-	Return :		void
-	Parameters :	CObArray	-	A CObArray to store the child 
-									blocks
-
-   ============================================================*/
-{
-	for (int i = 0; i < m_subblocks.GetSize(); i++) {
-		CProMoBlockModel* child = dynamic_cast<CProMoBlockModel*>(this->m_subblocks.GetAt(i));
-		if (child) {
-			subblocks.Add(child);
-		}
-	}
-}
-
-void CProMoBlockModel::SetParentBlock(CProMoBlockModel* parent)
+void CProMoBlockModel::SetParentBlock(CProMoBlockModel* parent, unsigned int attachment)
 /* ============================================================
 	Function :		CProMoBlockModel::SetParentBlock
 	Description :	Makes the block being passed as input
@@ -214,17 +397,25 @@ void CProMoBlockModel::SetParentBlock(CProMoBlockModel* parent)
 	Parameters :	CProMoBlockModel* block	-	the block that
 												should be the
 												parent block
+					unsigned int attachment	-	the type of
+												attachment for
+												the current block
 
    ============================================================*/
 {
+	if (parent == m_parentBlock) {
+		m_attachmentType = attachment;
+		return;
+	}
 	if (parent != NULL) {
-		parent->LinkSubBlock(this);
+		parent->LinkChildBlock(this, attachment);
 	}
 	else {
 		if (this->m_parentBlock != NULL) {
-			this->m_parentBlock->UnlinkSubBlock(this);
+			this->m_parentBlock->UnlinkChildBlock(this);
 		}
 		this->m_parentBlock = NULL;
+		this->m_attachmentType = DEHT_NONE;
 	}
 	CustomizeLabels();
 
@@ -269,12 +460,12 @@ CString CProMoBlockModel::GetParentFromString(const CString& str)
 	return parentName;
 }
 
-BOOL CProMoBlockModel::Contains(CProMoBlockModel* block, BOOL recursive)
+BOOL CProMoBlockModel::Contains(CProMoBlockModel* block, BOOL recursive) const
 	/* ============================================================
 	Function :		CProMoBlockModel::Contains
 	Description :	Returns if the block being passed as input
 					parameter is a (grand)child of this block
-	Access :		Public
+	Access :		Protected
 
 	Return :		BOOL					-	"TRUE" if the 
 												block is a

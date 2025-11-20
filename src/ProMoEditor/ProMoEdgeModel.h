@@ -27,15 +27,15 @@ public:
 
     // Source links
     virtual CProMoBlockModel* GetSource() const;
-    virtual BOOL CanConnectSource(CProMoBlockModel* source);
+    virtual BOOL CanConnectSource(CProMoBlockModel* source) const;
 
     // Destination links
     virtual CProMoBlockModel* GetDestination() const;
-    virtual BOOL CanConnectDestination(CProMoBlockModel* destination);
+    virtual BOOL CanConnectDestination(CProMoBlockModel* destination) const;
 
     // Model-view links
-    virtual CProMoEdgeView* GetLastSegment();
-    virtual CProMoEdgeView* GetFirstSegment();
+    virtual CProMoEdgeView* GetLastSegment() const;
+    virtual CProMoEdgeView* GetFirstSegment() const;
 
     static CString GetSourceFromString(const CString& str);
     static CString GetDestinationFromString(const CString& str);

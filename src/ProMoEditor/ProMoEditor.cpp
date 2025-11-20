@@ -189,7 +189,7 @@ void CProMoEditor::SaveObjects(CStringArray& stra)
 }
 
 
-CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point) 
+CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 /* ============================================================
 	Function :		CProMoEditor::GetTargetBlock
 	Description :	Gets the topmost block that contains the
@@ -217,7 +217,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 						// new block
 						CProMoBlockView* newObj = dynamic_cast<CProMoBlockView*>(GetDrawingObject());
 						if (newObj) {
-							if (((CProMoBlockModel*)newObj->GetModel())->CanBeNestedBy((CProMoBlockModel*)currObj->GetModel())) {
+							if (((CProMoBlockModel*)newObj->GetModel())->CanBeSubBlockOf((CProMoBlockModel*)currObj->GetModel())) {
 								return currObj;
 							}
 						}
@@ -239,7 +239,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 							if (selObj) {
 								if (selObj->IsSelected()) {
 									noSelectedBlocks = FALSE;
-									if (!(((CProMoBlockModel*)selObj->GetModel())->CanBeNestedBy((CProMoBlockModel*)currObj->GetModel()))) {
+									if (!(((CProMoBlockModel*)selObj->GetModel())->CanBeSubBlockOf((CProMoBlockModel*)currObj->GetModel()))) {
 										isValid = FALSE;
 										break;
 									}
@@ -274,7 +274,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 	return NULL;
 }
 
-CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL backwards)
+CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL backwards) const
 /* ============================================================
 	Function :		CProMoEditor::GetConnectedBlock
 	Description :	Gets the block that is connected to the
@@ -607,7 +607,7 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 		ScreenToVirtual(target);
 		CProMoBlockView* targetBlock = GetTargetBlock(target);
 		if (targetBlock) {
-			targetBlock->SetTarget(TRUE);
+			targetBlock->SetTarget(DEHT_BODY);
 		}
 		
 		SetRedraw(TRUE);
@@ -987,7 +987,7 @@ void CProMoEditor::DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) co
 		CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 		CProMoBlockView* child = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
 		if (child) {
-			if (((CProMoBlockModel*)block->GetModel())->Contains((CProMoBlockModel*)child->GetModel(), FALSE)) {
+			if (((CProMoBlockModel*)block->GetModel())->HasSubBlock((CProMoBlockModel*)child->GetModel())) {
 				DrawObjectsR(child, dc, zoom);
 			}
 		}
@@ -1033,12 +1033,12 @@ void CProMoEditor::ResetTarget()
 		CProMoBlockView* obj;
 		for (int i = 0; i < objs->GetSize(); i++) {
 			obj = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
-			SetTarget(obj, FALSE);
+			SetTarget(obj, DEHT_NONE);
 		}
 	}
 }
 
-void CProMoEditor::SetTarget(CProMoBlockView* obj, BOOL select)
+void CProMoEditor::SetTarget(CProMoBlockView* obj, unsigned int attachment)
 /* ============================================================
 	Function :		CProMoEditor::SetTarget
 	Description :	Makes the block being passed as input a
@@ -1050,16 +1050,16 @@ void CProMoEditor::SetTarget(CProMoBlockView* obj, BOOL select)
 	Return :		void
 	Parameters :	CProMoBlockView* obj	-	Pointer to the
 												block
-					BOOL select				-	"TRUE" if the
-												block should be
-												the target
+					unsigned int attachment	-	The type of
+												attachment for
+												the dragged block
 
    ============================================================*/
 {
 	if (obj) {
 		CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 		if (objs) {
-			objs->SetTarget(obj, select);
+			objs->SetTarget(obj, attachment);
 		}
 	}
 
@@ -1091,15 +1091,12 @@ void CProMoEditor::NestSelectedBlock(CProMoBlockView* parentBlock)
 			if (selObj->IsSelected()) {
 				//check which is the object being dropped, if any
 				if (parentBlock) {
-					if (((CProMoBlockModel*)selObj->GetModel())->GetParentBlock() != (CProMoBlockModel*)parentBlock->GetModel()) {
-						// Set the parent to be that object
-						selObj->SetParentBlock(parentBlock);
-					}
+					parentBlock->LinkSubBlock(selObj);
 				}
 				else
 				{
 					//no object got hit, then the selected one has no parent
-					selObj->SetParentBlock(NULL);
+					selObj->UnlinkFromParent();
 				}
 			}
 		}

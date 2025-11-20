@@ -8,17 +8,21 @@
 class CProMoBlockModelTestStub : public CProMoBlockModel
 {
 public:
-    void LinkSubBlock(CProMoBlockModel* subblock) {
-        CProMoBlockModel::LinkSubBlock(subblock);
+    void LinkChildBlock(CProMoBlockModel* subblock, unsigned int attachment) {
+        CProMoBlockModel::LinkChildBlock(subblock, attachment);
     }
-    void UnlinkSubBlock(CProMoBlockModel* subblock) {
-        CProMoBlockModel::UnlinkSubBlock(subblock);
+    void UnlinkChildBlock(CProMoBlockModel* subblock) {
+        CProMoBlockModel::UnlinkChildBlock(subblock);
     }
-    void UnlinkAllSubBlocks() {
-        CProMoBlockModel::UnlinkAllSubBlocks();
+    void UnlinkAllChildBlocks() {
+        CProMoBlockModel::UnlinkAllChildBlocks();
     }
-    void SetParentBlock(CProMoBlockModel* parent) {
-        CProMoBlockModel::SetParentBlock(parent);
+    void SetParentBlock(CProMoBlockModel* parent, unsigned int attachment) {
+        CProMoBlockModel::SetParentBlock(parent, attachment);
+    }
+
+    BOOL Contains(CProMoBlockModel* block, BOOL recursive) const {
+        return CProMoBlockModel::Contains(block, recursive);
     }
 
     void LinkOutgoingEdge(CProMoEdgeModel* edge) {
@@ -68,8 +72,8 @@ namespace CProMoBlockModelTests
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub child;
 
-            parent.LinkSubBlock(&child);
-
+            parent.LinkChildBlock(&child, DEHT_BODY);
+            
             CObArray subBlocks;
             parent.GetSubBlocks(subBlocks);
 
@@ -83,8 +87,8 @@ namespace CProMoBlockModelTests
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub child;
 
-            parent.LinkSubBlock(&child);
-            parent.UnlinkSubBlock(&child);
+            parent.LinkChildBlock(&child, DEHT_BODY);
+            parent.UnlinkChildBlock(&child);
 
             CObArray subBlocks;
             parent.GetSubBlocks(subBlocks);
@@ -98,10 +102,10 @@ namespace CProMoBlockModelTests
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub c1, c2;
 
-            parent.LinkSubBlock(&c1);
-            parent.LinkSubBlock(&c2);
+            parent.LinkChildBlock(&c1, DEHT_BODY);
+            parent.LinkChildBlock(&c2, DEHT_BODY);
 
-            parent.UnlinkAllSubBlocks();
+            parent.UnlinkAllChildBlocks();
 
             CObArray subBlocks;
             parent.GetSubBlocks(subBlocks);
@@ -115,8 +119,8 @@ namespace CProMoBlockModelTests
         {
             CProMoBlockModelTestStub root, mid, leaf;
 
-            root.LinkSubBlock(&mid);
-            mid.LinkSubBlock(&leaf);
+            root.LinkChildBlock(&mid, DEHT_BODY);
+            mid.LinkChildBlock(&leaf, DEHT_BODY);
 
             Assert::IsTrue(root.Contains(&leaf, TRUE));
         }
@@ -125,30 +129,30 @@ namespace CProMoBlockModelTests
         {
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub child;
-            Assert::IsTrue(child.CanBeNestedBy(&parent));
+            Assert::IsTrue(child.CanBeSubBlockOf(&parent));
         }
 
         TEST_METHOD(CanBeNestedBy_WhenParentIsSame_ReturnsFalse)
         {
             CProMoBlockModelTestStub block;
-            Assert::IsFalse(block.CanBeNestedBy(&block));
+            Assert::IsFalse(block.CanBeSubBlockOf(&block));
         }
         
         TEST_METHOD(CanBeNestedBy_WhenCircularDependency_ReturnsFalse)
         {
             CProMoBlockModelTestStub root, mid, leaf;
 
-            root.LinkSubBlock(&mid);
-            mid.LinkSubBlock(&leaf);
+            root.LinkChildBlock(&mid, DEHT_BODY);
+            mid.LinkChildBlock(&leaf, DEHT_BODY);
             
-            Assert::IsFalse(root.CanBeNestedBy(&leaf));
+            Assert::IsFalse(root.CanBeSubBlockOf(&leaf));
         }
         TEST_METHOD(SetParentBlock_WhenBlockHasNoParent_SetParent)
         {
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub child;
 
-            child.SetParentBlock(&parent);
+            child.SetParentBlock(&parent, DEHT_BODY);
 
             CObArray subBlocks;
             parent.GetSubBlocks(subBlocks);
@@ -163,8 +167,8 @@ namespace CProMoBlockModelTests
             CProMoBlockModelTestStub newParent;
             CProMoBlockModelTestStub child;
 
-            child.SetParentBlock(&oldParent);
-            child.SetParentBlock(&newParent);
+            child.SetParentBlock(&oldParent, DEHT_BODY);
+            child.SetParentBlock(&newParent, DEHT_BODY);
 
             CObArray oldSubBlocks;
             oldParent.GetSubBlocks(oldSubBlocks);
@@ -173,6 +177,7 @@ namespace CProMoBlockModelTests
             newParent.GetSubBlocks(newSubBlocks);
 
             Assert::AreEqual((INT_PTR)0, oldSubBlocks.GetSize());
+            Assert::AreEqual((INT_PTR)1, newSubBlocks.GetSize());
             TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)newSubBlocks.GetAt(0));
         }
 
@@ -181,8 +186,8 @@ namespace CProMoBlockModelTests
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub child;
 
-            child.SetParentBlock(&parent);
-            child.SetParentBlock(NULL);
+            child.SetParentBlock(&parent, DEHT_BODY);
+            child.SetParentBlock(NULL, DEHT_BODY);
 
             CObArray subBlocks;
             parent.GetSubBlocks(subBlocks);
@@ -352,7 +357,7 @@ namespace CProMoBlockModelTests
             
             parent.SetName(CString("Parent"));
             child.SetName(CString("Child"));
-            child.SetParentBlock(&parent);
+            child.SetParentBlock(&parent, DEHT_BODY);
 
             parentString = parent.GetString();
             childString = child.GetString();
@@ -420,7 +425,7 @@ namespace CProMoBlockModelTests
         {
             CProMoBlockModelTestStub model;
             CProMoBlockModelTestStub child;
-            model.LinkSubBlock(&child);
+            model.LinkChildBlock(&child, DEHT_BODY);
 
             std::unique_ptr<CProMoModel> clone(model.Clone());
 

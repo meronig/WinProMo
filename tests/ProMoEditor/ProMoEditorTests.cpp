@@ -93,11 +93,11 @@ namespace CProMoEditorTests
             m_y = new CProMoEdgeView();
             m_z = new CProMoEdgeView();
 
-            m_a1->SetParentBlock(m_a);
-            m_a2->SetParentBlock(m_a);
-            m_b1->SetParentBlock(m_b);
-            m_b2->SetParentBlock(m_b);
-            
+            m_a->LinkSubBlock(m_a1);
+            m_a->LinkSubBlock(m_a2);
+            m_b->LinkSubBlock(m_b1);
+            m_b->LinkSubBlock(m_b2);
+
             m_x->SetSource(m_a);
             m_x->SetDestination(m_y);
             m_y->SetDestination(m_b1);
@@ -678,7 +678,7 @@ namespace CProMoEditorTests
 
             m_editor.HandleSelectedElements(m_a, TRUE);
 
-            TestHelpers::PointerAssert::AreEqual(m_a, m_b->GetParentBlock());
+            TestHelpers::PointerAssert::AreEqual(m_a->GetBlockModel(), m_b->GetBlockModel()->GetParentBlock());
         }
 
         TEST_METHOD(HandleSelectedElements_WhenCreatingNewEdge_ChangeSource) {
@@ -698,7 +698,7 @@ namespace CProMoEditorTests
             m_editor.SetInteractMode(MODE_MOVING, NULL);
             m_editor.HandleSelectedElements(m_a, FALSE);
 
-            TestHelpers::PointerAssert::AreEqual(m_a, m_b->GetParentBlock());
+            TestHelpers::PointerAssert::AreEqual(m_a->GetBlockModel(), m_b->GetBlockModel()->GetParentBlock());
         }
         TEST_METHOD(HandleSelectedElements_WhenResizingEdgeCenter_SplitEdge) {
             m_z->Select(TRUE);

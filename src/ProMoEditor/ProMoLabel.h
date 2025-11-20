@@ -38,10 +38,10 @@ public:
 	virtual CProMoProperty* GetProperty() const;
 
 	virtual void SetFitTitle(BOOL hasFitTitle);
-	virtual BOOL HasFitTitle();
+	virtual BOOL HasFitTitle() const;
 
 	virtual void SetFitView(BOOL hasFitView);
-	virtual BOOL HasFitView();
+	virtual BOOL HasFitView() const;
 
 	virtual CDoubleRect GetTitleRect() const;
 	

@@ -12,8 +12,6 @@
 #include "ProMoBlockView.h"
 #include "ProMoView.h"
 
-#define DEHT_CENTER		10
-
 class AFX_EXT_CLASS CProMoEdgeView :
     public CDiagramLine, public IProMoView
 {

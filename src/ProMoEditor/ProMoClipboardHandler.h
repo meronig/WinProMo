@@ -17,7 +17,7 @@ public:
 	CProMoClipboardHandler();
 	virtual ~CProMoClipboardHandler();
 
-	virtual CString GetModelType();
+	virtual CString GetModelType() const;
 
 // Overrides
 	virtual void	Copy( CDiagramEntity* obj );
