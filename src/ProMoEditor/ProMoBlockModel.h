@@ -33,6 +33,7 @@ public:
 	virtual BOOL CanBeBoundaryOf(CProMoBlockModel* block, unsigned int alignment) const;
 	virtual BOOL HasBoundaryBlock(CProMoBlockModel* block) const;
 	virtual BOOL IsBoundaryBlock() const;
+	virtual unsigned int GetBoundaryAttachment() const;
 	virtual CProMoBlockModel* GetParentBlock() const;
 
 	// Outgoing edge links

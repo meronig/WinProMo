@@ -189,15 +189,14 @@ void CProMoEditor::SaveObjects(CStringArray& stra)
 }
 
 
-CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
+void CProMoEditor::SetTarget(CPoint point)
 /* ============================================================
-	Function :		CProMoEditor::GetTargetBlock
-	Description :	Gets the topmost block that contains the
-					input point
+	Function :		CProMoEditor::SetTarget
+	Description :	Sets the topmost block that contains the
+					input point as target block.
 	Access :		Protected
 
-	Return :		CProMoBlockView*	-	Pointer to the target
-											block
+	Return :		void
 	Parameters :	CPoint point		-	Point to identify the 
 											target block
 
@@ -209,7 +208,7 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 
 		if (currObj) {
 			int hitCode = currObj->GetHitCode(point);
-			if (hitCode == DEHT_BODY) {
+			if (hitCode != DEHT_NONE) {
 				// We found the object that was clicked
 				if (!currObj->IsSelected()) {
 					//drawing a new element
@@ -217,15 +216,21 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 						// new block
 						CProMoBlockView* newObj = dynamic_cast<CProMoBlockView*>(GetDrawingObject());
 						if (newObj) {
-							if (((CProMoBlockModel*)newObj->GetModel())->CanBeSubBlockOf((CProMoBlockModel*)currObj->GetModel())) {
-								return currObj;
+							if (hitCode == DEHT_BODY && ((CProMoBlockModel*)newObj->GetModel())->CanBeSubBlockOf((CProMoBlockModel*)currObj->GetModel())) {
+								SetTarget(currObj, hitCode);
+								break;
+							}
+							if (hitCode != DEHT_BODY && ((CProMoBlockModel*)newObj->GetModel())->CanBeBoundaryOf((CProMoBlockModel*)currObj->GetModel(), hitCode)) {
+								SetTarget(currObj, hitCode);
+								break;
 							}
 						}
 						// new edge
 						CProMoEdgeView* newEdge = dynamic_cast<CProMoEdgeView*>(GetDrawingObject());
 						if (newEdge) {
 							if (((CProMoEdgeModel*)newEdge->GetModel())->CanConnectSource((CProMoBlockModel*)currObj->GetModel())) {
-								return currObj;
+								SetTarget(currObj, DEHT_BODY);
+								break;
 							}
 						}
 					}
@@ -239,7 +244,11 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 							if (selObj) {
 								if (selObj->IsSelected()) {
 									noSelectedBlocks = FALSE;
-									if (!(((CProMoBlockModel*)selObj->GetModel())->CanBeSubBlockOf((CProMoBlockModel*)currObj->GetModel()))) {
+									if (hitCode == DEHT_BODY && !(((CProMoBlockModel*)selObj->GetModel())->CanBeSubBlockOf((CProMoBlockModel*)currObj->GetModel()))) {
+										isValid = FALSE;
+										break;
+									}
+									if (hitCode != DEHT_BODY && !(((CProMoBlockModel*)selObj->GetModel())->CanBeBoundaryOf((CProMoBlockModel*)currObj->GetModel(), hitCode))) {
 										isValid = FALSE;
 										break;
 									}
@@ -247,7 +256,8 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 							}
 						}
 						if (isValid && !noSelectedBlocks) {
-							return currObj;
+							SetTarget(currObj, hitCode);
+							break;
 						}
 					}
 					//resizing (moving) edges
@@ -257,12 +267,14 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 						if (edge) {
 							if (GetSubMode() == DEHT_BOTTOMRIGHT) {
 								if (((CProMoEdgeModel*)edge->GetModel())->CanConnectDestination((CProMoBlockModel*)currObj->GetModel())) {
-									return currObj;
+									SetTarget(currObj, DEHT_BODY);
+									break;
 								}
 							}
 							else if (GetSubMode() == DEHT_TOPLEFT) {
 								if (((CProMoEdgeModel*)edge->GetModel())->CanConnectSource((CProMoBlockModel*)currObj->GetModel())) {
-									return currObj;
+									SetTarget(currObj, DEHT_BODY);
+									break;
 								}
 							}
 						}
@@ -271,7 +283,6 @@ CProMoBlockView* CProMoEditor::GetTargetBlock(CPoint point)
 			}
 		}
 	}
-	return NULL;
 }
 
 CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL backwards) const
@@ -313,11 +324,11 @@ CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL back
 	return NULL;
 }
 
-void CProMoEditor::DeselectChildBlocks(CProMoBlockView* block)
+void CProMoEditor::DeselectSubBlocks(CProMoBlockView* block)
 /* ============================================================
-	Function :		CProMoEditor::DeselectChildBlocks
+	Function :		CProMoEditor::DeselectSubBlocks
 	Description :	Recursively deselects all blocks that are 
-					children of the input block.
+					subblocks of the input block.
 	Access :		Protected
 
 
@@ -336,16 +347,44 @@ void CProMoEditor::DeselectChildBlocks(CProMoBlockView* block)
 		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 		if (subBlock) {
 			subBlock->GetMainView()->Select(FALSE);
-			DeselectChildBlocks(subBlock->GetMainView());
+			DeselectSubBlocks(subBlock->GetMainView());
 		}
 	}
 }
 
-void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
+void CProMoEditor::DeselectBoundaryBlocks(CProMoBlockView* block)
 /* ============================================================
-	Function :		CProMoEditor::DeselectChildBlocks
+	Function :		CProMoEditor::DeselectBoundaryBlocks
+	Description :	Recursively deselects all blocks that are
+					boundary blocks of the input block.
+	Access :		Protected
+
+
+	Return :		void
+	Parameters :	CProMoBlockView* block	-	Pointer to the
+												block
+
+   ============================================================*/
+{
+	ASSERT(block->GetModel() != NULL);
+	CProMoBlockModel* model = (CProMoBlockModel*)block->GetModel();
+	CObArray childBlocks;
+	model->GetBoundaryBlocks(childBlocks, DEHT_BODY);
+
+	for (int i = 0; i < childBlocks.GetSize(); i++) {
+		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
+		if (subBlock) {
+			subBlock->GetMainView()->Select(FALSE);
+			DeselectBoundaryBlocks(subBlock->GetMainView());
+		}
+	}
+}
+
+void CProMoEditor::SelectBoundaryBlocks(CProMoBlockView* block)
+/* ============================================================
+	Function :		CProMoEditor::SelectBoundaryBlocks
 	Description :	Recursively selects all blocks that are 
-					children of the input block.
+					boundary blocks of the input block.
 	Access :		Protected
 
 
@@ -363,7 +402,7 @@ void CProMoEditor::SelectChildBlocks(CProMoBlockView* block)
 		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 		if (subBlock) {
 			subBlock->GetMainView()->Select(TRUE);
-			SelectChildBlocks(subBlock->GetMainView());
+			SelectBoundaryBlocks(subBlock->GetMainView());
 		}
 	}
 }
@@ -515,7 +554,8 @@ void CProMoEditor::DeselectInvalidElements()
 		selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(j));
 		if (selObj) {
 			if (selObj->IsSelected()) {
-				DeselectChildBlocks(selObj);
+				DeselectSubBlocks(selObj);
+				DeselectBoundaryBlocks(selObj);
 				DeselectLabels(selObj);
 			}
 		}
@@ -605,9 +645,42 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 
 		CPoint target = point;
 		ScreenToVirtual(target);
-		CProMoBlockView* targetBlock = GetTargetBlock(target);
-		if (targetBlock) {
-			targetBlock->SetTarget(DEHT_BODY);
+
+		BOOL detached = TRUE;
+
+		CProMoBlockView* selectedObject = dynamic_cast<CProMoBlockView*>(GetSelectedObject());
+		if (selectedObject) {
+			if (selectedObject->GetBlockModel()->GetParentBlock() && selectedObject->GetBlockModel()->IsBoundaryBlock()) {
+				CProMoBlockView* parentView = selectedObject->GetBlockModel()->GetParentBlock()->GetMainView();
+				CRect intersect;
+				CRect boundaryRect = parentView->GetRect();
+				unsigned int boundaryAttachment = selectedObject->GetBlockModel()->GetBoundaryAttachment();
+
+				switch (boundaryAttachment) {
+				case DEHT_TOP:
+					boundaryRect.bottom = boundaryRect.top + GetMarkerSize().cx / 2;
+					break;
+				case DEHT_BOTTOM:
+					boundaryRect.top = boundaryRect.bottom - GetMarkerSize().cx / 2;
+					break;
+				case DEHT_LEFT:
+					boundaryRect.right = boundaryRect.left + GetMarkerSize().cy / 2;
+					break;
+				case DEHT_RIGHT:
+					boundaryRect.left = boundaryRect.right - GetMarkerSize().cy / 2;
+					break;
+				}
+
+				intersect.IntersectRect(selectedObject->GetRect(), boundaryRect);
+				if (!intersect.IsRectEmpty()) {
+					detached = FALSE;
+					SetTarget(parentView, boundaryAttachment);
+				}
+			}
+		}
+
+		if (detached) {
+			SetTarget(target);
 		}
 		
 		SetRedraw(TRUE);
@@ -684,8 +757,7 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 	BOOL goon = TRUE;
 	int count = 0;
 	CDiagramEntityContainer* objs = GetDiagramEntityContainer();
-	CProMoBlockView* target = NULL;
-
+	
 	if (IsDrawing()) {
 
 		//by default, where we click is topleft for a line
@@ -697,7 +769,7 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 			ResetTarget();
 			CPoint virtpoint = point;
 			ScreenToVirtual(virtpoint);
-			target = GetTargetBlock(virtpoint);
+			SetTarget(virtpoint);
 
 		}
 	}
@@ -705,7 +777,7 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 	// Create a new element as usual
 	CDiagramEditor::OnLButtonDown(nFlags, point);
 	
-	HandleSelectedElements(target, TRUE);
+	HandleSelectedElements(GetTarget(), TRUE);
 		
 }
 
@@ -729,9 +801,7 @@ void CProMoEditor::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	OnMouseMove(nFlags, point);
 	
-	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
-
-	HandleSelectedElements(objs->GetTarget(), FALSE);
+	HandleSelectedElements(GetTarget(), FALSE);
 	
 	//reset target, so that blocks appear as normal
 	ResetTarget();
@@ -1033,7 +1103,9 @@ void CProMoEditor::ResetTarget()
 		CProMoBlockView* obj;
 		for (int i = 0; i < objs->GetSize(); i++) {
 			obj = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
-			SetTarget(obj, DEHT_NONE);
+			if (obj) {
+				obj->SetTarget(DEHT_NONE);
+			}
 		}
 	}
 }
@@ -1056,6 +1128,7 @@ void CProMoEditor::SetTarget(CProMoBlockView* obj, unsigned int attachment)
 
    ============================================================*/
 {
+	ResetTarget();
 	if (obj) {
 		CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 		if (objs) {
@@ -1065,11 +1138,31 @@ void CProMoEditor::SetTarget(CProMoBlockView* obj, unsigned int attachment)
 
 }
 
-void CProMoEditor::NestSelectedBlock(CProMoBlockView* parentBlock)
+CProMoBlockView* CProMoEditor::GetTarget() const
 /* ============================================================
-	Function :		CProMoEditor::NestNewBlock
-	Description :	Nests the currently selected block (if any)
-					inside a parent block
+	Function :		CProMoEditor::GetTarget
+	Description :	Returns the current target block for
+					the current drawing operation.
+	Access :		Protected
+
+	Return :		CProMoBlockView* obj	-	Pointer to the
+												target block
+	Parameters :	none
+
+   ============================================================*/
+{
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	if (objs) {
+		return objs->GetTarget();
+	}
+	return NULL;
+}
+
+void CProMoEditor::AttachSelectedBlock(CProMoBlockView* parentBlock)
+/* ============================================================
+	Function :		CProMoEditor::AttachSelectedBlock
+	Description :	Attaches the currently selected block (if any)
+					to a parent block
 	Access :		Protected
 
 	Return :		void
@@ -1091,7 +1184,12 @@ void CProMoEditor::NestSelectedBlock(CProMoBlockView* parentBlock)
 			if (selObj->IsSelected()) {
 				//check which is the object being dropped, if any
 				if (parentBlock) {
-					parentBlock->LinkSubBlock(selObj);
+					if (parentBlock->GetTargetAttachment() == DEHT_BODY) {
+						parentBlock->LinkSubBlock(selObj);
+					}
+					else if (parentBlock->GetTargetAttachment() != DEHT_NONE) {
+						parentBlock->LinkBoundaryBlock(selObj, parentBlock->GetTargetAttachment());
+					}
 				}
 				else
 				{
@@ -1274,7 +1372,7 @@ void CProMoEditor::PrepareForAlignment()
 		selObj = dynamic_cast<CProMoBlockView*>(objs->GetAt(i));
 		if (selObj) {
 			if (selObj->IsSelected()) {
-				DeselectChildBlocks(selObj);
+				DeselectSubBlocks(selObj);
 			}
 		}
 		selEdge = dynamic_cast<CProMoEdgeView*>(objs->GetAt(i));
@@ -1387,13 +1485,18 @@ void CProMoEditor::HandleSelectedElements(CProMoBlockView* target, BOOL isNew)
 {
 	
 	if (isNew && target) {
-		NestSelectedBlock(target);
+		AttachSelectedBlock(target);
 		ConnectSelectedEdgeToSource(target);
-	} else {
-		
+	} 
+	
+	if (isNew) {
+		CreateLabels();
+	}
+	else {
+
 		if (GetInteractMode() == MODE_MOVING) {
 
-			NestSelectedBlock(target);
+			AttachSelectedBlock(target);
 
 		}
 
@@ -1408,11 +1511,7 @@ void CProMoEditor::HandleSelectedElements(CProMoBlockView* target, BOOL isNew)
 				SplitSelectedEdge();
 			}
 		}
-		
-	}
-	
-	if (isNew) {
-		CreateLabels();
+
 	}
 }
 

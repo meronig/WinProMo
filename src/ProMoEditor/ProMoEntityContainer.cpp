@@ -448,19 +448,38 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 	block->GetModel()->GetLabels(labels);
 	newOrder.Append(labels);
 	
-	CObArray subBlockModels;
-	
-	((CProMoBlockModel*)block->GetModel())->GetSubBlocks(subBlockModels);
 
 	int max = GetSize();
 
+	// check for subblocks
+	CObArray subBlockModels;
+	
+	((CProMoBlockModel*)block->GetModel())->GetSubBlocks(subBlockModels);
+	
 	for (int t = 0; t < max; t++) {
-		CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(GetAt(t));
-		if (blockView) {
+		CProMoBlockView* subBlockView = dynamic_cast<CProMoBlockView*>(GetAt(t));
+		if (subBlockView) {
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {
 				CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
-				if (blockView == subBlockModel->GetMainView()) {
-					ReorderR(blockView, newOrder);
+				if (subBlockView == subBlockModel->GetMainView()) {
+					ReorderR(subBlockView, newOrder);
+				}
+			}
+		}
+	}
+
+	// check for boundary blocks
+	CObArray boundaryBlockModels;
+
+	((CProMoBlockModel*)block->GetModel())->GetBoundaryBlocks(boundaryBlockModels, DEHT_BODY);
+
+	for (int t = 0; t < max; t++) {
+		CProMoBlockView* boundaryBlockView = dynamic_cast<CProMoBlockView*>(GetAt(t));
+		if (boundaryBlockView) {
+			for (int i = 0; i < boundaryBlockModels.GetSize(); i++) {
+				CProMoBlockModel* boundaryBlockModel = dynamic_cast<CProMoBlockModel*>(boundaryBlockModels.GetAt(i));
+				if (boundaryBlockView == boundaryBlockModel->GetMainView()) {
+					ReorderR(boundaryBlockView, newOrder);
 				}
 			}
 		}
@@ -493,7 +512,7 @@ void CProMoEntityContainer::Reorder()
 		if (obj) {
 			CProMoBlockView* blockView = dynamic_cast<CProMoBlockView*>(obj);
 			if (blockView) {
-				if (!((CProMoBlockModel*)blockView->GetModel())->IsSubBlock()) {
+				if (!((CProMoBlockModel*)blockView->GetModel())->IsSubBlock() && !((CProMoBlockModel*)blockView->GetModel())->IsBoundaryBlock()) {
 					ReorderR(blockView, newOrder);
 				}
 			}

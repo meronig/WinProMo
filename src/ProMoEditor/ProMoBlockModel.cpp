@@ -289,6 +289,22 @@ BOOL CProMoBlockModel::IsBoundaryBlock() const
 	return FALSE;
 }
 
+unsigned int CProMoBlockModel::GetBoundaryAttachment() const
+/* ============================================================
+	Function :		CProMoBlockModel::GetBoundaryAttachment
+	Description :	Returns the attachment type of this block
+					when it is a boundary block
+	Access :		Public
+
+	Return :		unsigned int			-	The attachment
+												type
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_attachmentType;
+}
+
 void CProMoBlockModel::LinkChildBlock(CProMoBlockModel* block, unsigned int attachment)
 /* ============================================================
 	Function :		CProMoBlockModel::LinkChildBlock
@@ -335,7 +351,6 @@ void CProMoBlockModel::LinkChildBlock(CProMoBlockModel* block, unsigned int atta
 	block->m_attachmentType = attachment;
 	block->m_parentBlock = this;
 	CustomizeLabels();
-
 }
 
 void CProMoBlockModel::UnlinkChildBlock(CProMoBlockModel* subblock)

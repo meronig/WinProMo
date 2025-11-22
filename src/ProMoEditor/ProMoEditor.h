@@ -80,17 +80,16 @@ protected:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
 	// Private helpers
 	virtual void ResetTarget();
+	virtual CProMoBlockView* GetTarget() const;
+	virtual void SetTarget(CPoint point);
 	virtual void SetTarget(CProMoBlockView* obj, unsigned int attachment);
-	virtual void NestSelectedBlock(CProMoBlockView* parentBlock);
+	virtual void AttachSelectedBlock(CProMoBlockView* parentBlock);
 	virtual void SplitSelectedEdge();
 	virtual void CreateLabels();
 	virtual void ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock);
 	virtual void ConnectSelectedEdgeToDestination(CProMoBlockView* sourceBlock);
-	//REVISE below
-	virtual CProMoBlockView* GetTargetBlock(CPoint point);
 	virtual CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards) const;
-	virtual void DeselectChildBlocks(CProMoBlockView* block);
-	virtual void SelectChildBlocks(CProMoBlockView* block);
+	virtual void SelectBoundaryBlocks(CProMoBlockView* block);
 	virtual void DeselectInvalidElements();
 	virtual void PrepareForAlignment();
 	virtual void AutoResizeAll();
@@ -98,7 +97,9 @@ protected:
 	virtual void HandleSelectedElements(CProMoBlockView* target, BOOL isNew);
 	virtual void HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point);
 	virtual void DeselectLabels(CProMoBlockView* block);
-	
+	virtual void DeselectSubBlocks(CProMoBlockView* block);
+	virtual void DeselectBoundaryBlocks(CProMoBlockView* block);
+
 // Overrides:
 public:
 	// Visuals

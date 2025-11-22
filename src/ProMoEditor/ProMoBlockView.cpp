@@ -219,6 +219,10 @@ int CProMoBlockView::GetHitCode(CPoint point) const
 						"DEHT_BOTTOMRIGHT" Bottom-right corner
 						"DEHT_LEFTMIDDLE" Middle left-side
 						"DEHT_RIGHTMIDDLE" Middle right-side
+						"DEHT_TOP" Top-side
+						"DEHT_BOTTOM" Bottom-side
+						"DEHT_LEFT" :Left-side
+						"DEHT_RIGHT" Right-side
 
    ============================================================*/
 {
@@ -242,9 +246,17 @@ int CProMoBlockView::GetHitCode(const CPoint& point, const CRect& rect) const
 						"DEHT_NONE" No hit-point
 						"DEHT_BODY" Inside object body
 						"DEHT_TOPLEFT" Top-left corner
+						"DEHT_TOPMIDDLE" Middle top-side
+						"DEHT_TOPRIGHT" Top-right corner
+						"DEHT_BOTTOMLEFT" Bottom-left corner
+						"DEHT_BOTTOMMIDDLE" Middle bottom-side
 						"DEHT_BOTTOMRIGHT" Bottom-right corner
-						"DEHT_CENTER" Center of the object body
-							(i.e., in the middle of the line)
+						"DEHT_LEFTMIDDLE" Middle left-side
+						"DEHT_RIGHTMIDDLE" Middle right-side
+						"DEHT_TOP" Top-side
+						"DEHT_BOTTOM" Bottom-side
+						"DEHT_LEFT" :Left-side
+						"DEHT_RIGHT" Right-side
 
    ============================================================*/
 {
@@ -258,6 +270,18 @@ int CProMoBlockView::GetHitCode(const CPoint& point, const CRect& rect) const
 	rectTest = GetSelectionMarkerRect(DEHT_TOP, rect);
 	if (rectTest.PtInRect(point))
 		result = DEHT_TOP;
+
+	rectTest = GetSelectionMarkerRect(DEHT_BOTTOM, rect);
+	if (rectTest.PtInRect(point))
+		result = DEHT_BOTTOM;
+
+	rectTest = GetSelectionMarkerRect(DEHT_LEFT, rect);
+	if (rectTest.PtInRect(point))
+		result = DEHT_LEFT;
+
+	rectTest = GetSelectionMarkerRect(DEHT_RIGHT, rect);
+	if (rectTest.PtInRect(point))
+		result = DEHT_RIGHT;
 
 	return result;
 }
@@ -288,8 +312,10 @@ CRect CProMoBlockView::GetSelectionMarkerRect(UINT marker, CRect rect) const
 						"DEHT_BOTTOMRIGHT" Bottom-right corner
 						"DEHT_LEFTMIDDLE" Middle left-side
 						"DEHT_RIGHTMIDDLE" Middle right-side
-						"DEHT_CENTER" Center of the object body
-							(i.e., in the middle of the line)
+						"DEHT_TOP" Top-side
+						"DEHT_BOTTOM" Bottom-side
+						"DEHT_LEFT" :Left-side
+						"DEHT_RIGHT" Right-side
 
    ============================================================*/
 {
@@ -304,6 +330,24 @@ CRect CProMoBlockView::GetSelectionMarkerRect(UINT marker, CRect rect) const
 			rect.top - vert,
 			rect.right + horz,
 			rect.top + vert);
+		break;
+	case DEHT_BOTTOM:
+		rectMarker.SetRect(rect.left - horz,
+			rect.bottom - vert,
+			rect.right + horz,
+			rect.bottom + vert);
+		break;
+	case DEHT_LEFT:
+		rectMarker.SetRect(rect.left - horz,
+			rect.top - vert,
+			rect.left + horz,
+			rect.bottom + vert);
+		break;
+	case DEHT_RIGHT:
+		rectMarker.SetRect(rect.right - horz,
+			rect.top - vert,
+			rect.right + horz,
+			rect.bottom + vert);
 		break;
 	default:
 		rectMarker = CDiagramEntity::GetSelectionMarkerRect(marker, rect);
@@ -333,9 +377,32 @@ void CProMoBlockView::Highlight(CDC* dc, CRect rect)
 	if (IsTarget()) {
 		CPen p;
 		p.CreatePen(PS_SOLID, 3, RGB(255, 0, 0));
-		dc->SelectObject(&p);
-		dc->SelectStockObject(NULL_BRUSH);
-		dc->Rectangle(rect);
+		CPen* pOldPen = dc->SelectObject(&p);
+		CGdiObject* pOldBrush = dc->SelectStockObject(NULL_BRUSH);
+
+		CRect highlightRect;
+
+		switch (m_targetAttachment) {
+			case DEHT_BODY:
+				highlightRect = rect;
+				break;
+			case DEHT_TOP:
+				highlightRect = GetSelectionMarkerRect(DEHT_TOP, rect);
+				break;
+			case DEHT_BOTTOM:
+				highlightRect = GetSelectionMarkerRect(DEHT_BOTTOM, rect);
+				break;
+			case DEHT_LEFT:
+				highlightRect = GetSelectionMarkerRect(DEHT_LEFT, rect);
+				break;
+			case DEHT_RIGHT:
+				highlightRect = GetSelectionMarkerRect(DEHT_RIGHT, rect);
+				break;
+		}
+		dc->Rectangle(highlightRect);
+
+		dc->SelectObject(pOldBrush);
+		dc->SelectObject(pOldPen);
 	}
 }
 
@@ -354,6 +421,23 @@ BOOL CProMoBlockView::IsTarget() const
    ============================================================*/
 {
 	return (m_targetAttachment!=DEHT_NONE);
+}
+
+unsigned int CProMoBlockView::GetTargetAttachment() const
+/* ============================================================
+	Function :		CProMoBlockView::IsTarget
+	Description :	Returns the type of attachment for the
+					current drawing operation (e.g., when 
+					dragging another object over it)
+	Access :		Public
+
+	Return :		unsigned int	-	The type of attachment
+										for the dragged block
+	Parameters :	none
+
+   ============================================================*/
+{
+	return m_targetAttachment;
 }
 
 void CProMoBlockView::SetTarget(unsigned int attachment)
@@ -651,6 +735,8 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 		double deltaY = GetTop() - top;
 		double deltaX = GetLeft() - left;
 
+		// SubBlocks
+
 		if (deltaX != 0 || deltaY != 0) {
 			CObArray childBlocks;
 			m_blockModel->GetSubBlocks(childBlocks);
@@ -667,6 +753,25 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 					}
 				}
 			}
+
+
+			//TODO: generalize to all possible boundary positions
+			CObArray boundaryBlocks;
+			m_blockModel->GetBoundaryBlocks(boundaryBlocks, DEHT_BODY);
+
+			for (i = 0; i < boundaryBlocks.GetSize(); i++) {
+				CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(i));
+				if (childModel) {
+					CProMoBlockView* childView = childModel->GetMainView();
+					if (childView) {
+						//move child nodes that are not selected (otherwise they will be moved twice)
+						if (!childView->IsSelected()) {
+							childView->SetRect(childView->GetLeft() - deltaX, childView->GetTop() - deltaY, childView->GetRight() - deltaX, childView->GetBottom() - deltaY);
+						}
+					}
+				}
+			}
+
 		}
 
 	}
@@ -898,8 +1003,9 @@ void CProMoBlockView::LinkBoundaryBlock(CProMoBlockView* block, unsigned int att
 
    ============================================================*/
 {
-	if (m_blockModel) {
+	if (m_blockModel && block) {
 		m_blockModel->LinkChildBlock(block->GetBlockModel(), attachment);
+		Reposition();
 	}
 }
 
@@ -1748,8 +1854,9 @@ void CProMoBlockView::Reposition()
 {
 	CObArray labels;
 	m_blockModel->GetLabels(labels);
+	int i = 0;
 
-	for (int i = 0; i < labels.GetSize(); i++) {
+	for (i = 0; i < labels.GetSize(); i++) {
 		CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
 		if (label) {
 			//reposition labels
@@ -1758,6 +1865,42 @@ void CProMoBlockView::Reposition()
 			}
 		}
 	}
+
+	CObArray blocks;
+	m_blockModel->GetBoundaryBlocks(blocks, DEHT_BODY);
+
+	for (i = 0; i < blocks.GetSize(); i++) {
+		CProMoBlockModel* block = dynamic_cast<CProMoBlockModel*>(blocks.GetAt(i));
+		if (block) {
+			CProMoBlockView* view = block->GetMainView();
+			if (view) {
+				CRect blockRect = view->GetRect();
+				double blockHeight = blockRect.Height();
+				double blockWidth = blockRect.Width();
+				switch (block->m_attachmentType) {
+				case DEHT_TOP:
+					blockRect.top = GetTop() - (blockHeight / 2);
+					blockRect.bottom = GetTop() + (blockHeight / 2);
+					break;
+				case DEHT_BOTTOM:
+					blockRect.top = GetBottom() - (blockHeight / 2);
+					blockRect.bottom = GetBottom() + (blockHeight / 2);
+					break;
+				case DEHT_LEFT:
+					blockRect.left = GetLeft() - (blockWidth / 2);
+					blockRect.right = GetLeft() + (blockWidth / 2);
+					break;
+				case DEHT_RIGHT:
+					blockRect.left = GetRight() - (blockWidth / 2);
+					blockRect.right = GetRight() + (blockWidth / 2);
+					break;
+				}
+				view->SetRect(blockRect);
+			}
+		}
+	}
+
+
 }
 
 BOOL CProMoBlockView::IsLocked(const unsigned int& flag) const

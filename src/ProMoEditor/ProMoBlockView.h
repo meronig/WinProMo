@@ -37,6 +37,7 @@ public:
 	static CString GetNameFromString(const CString& str);
 		
 	virtual BOOL IsTarget() const;
+	virtual unsigned int GetTargetAttachment() const;
 	virtual void SetTarget(unsigned int attachment);
 	
 	virtual void SetLockedProportions(BOOL hasLockedProportions);
@@ -44,7 +45,6 @@ public:
 
 	virtual CProMoBlockModel* GetBlockModel() const;
 
-	// Parent-child block links
 	virtual void LinkSubBlock(CProMoBlockView* block);
 	virtual void UnlinkSubBlock(CProMoBlockView* block);
 	virtual void UnlinkAllSubBlocks();
