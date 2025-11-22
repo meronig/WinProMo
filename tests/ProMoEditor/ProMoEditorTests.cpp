@@ -10,16 +10,17 @@
 class CProMoEditorTestStub : public CProMoEditor {
 public:
     CProMoBlockView* GetTargetBlock(CPoint point) {
-        return CProMoEditor::GetTargetBlock(point);
+        //TODO: update
+        return NULL; // CProMoEditor::GetTargetBlock(point);
     }
     CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards) {
         return CProMoEditor::GetConnectedBlock(line, backwards);
     }
-    void DeselectChildBlocks(CProMoBlockView* block) {
-        CProMoEditor::DeselectChildBlocks(block);
+    void DeselectSubBlocks(CProMoBlockView* block) {
+        CProMoEditor::DeselectSubBlocks(block);
     }
-    void SelectChildBlocks(CProMoBlockView* block) {
-        CProMoEditor::SelectChildBlocks(block);
+    void SelectBoundaryBlocks(CProMoBlockView* block) {
+        CProMoEditor::SelectBoundaryBlocks(block);
     }
     void DeselectInvalidElements() {
         CProMoEditor::DeselectInvalidElements();
@@ -538,7 +539,7 @@ namespace CProMoEditorTests
             m_a1->Select(TRUE);
             m_a->Select(TRUE);
 
-            m_editor.DeselectChildBlocks(m_a);
+            m_editor.DeselectSubBlocks(m_a);
             Assert::IsFalse(m_a1->IsSelected());
             Assert::IsFalse(m_a2->IsSelected());
             Assert::IsTrue(m_a->IsSelected());
@@ -547,7 +548,7 @@ namespace CProMoEditorTests
         TEST_METHOD(SelectChildBlocks_WhenInvoked_SelectChildBlocks) {
             m_a1->Select(TRUE);
             
-            m_editor.SelectChildBlocks(m_a);
+            m_editor.SelectBoundaryBlocks(m_a);
             Assert::IsFalse(m_a->IsSelected());
             Assert::IsTrue(m_a1->IsSelected());
             Assert::IsTrue(m_a2->IsSelected());
