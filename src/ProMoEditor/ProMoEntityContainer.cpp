@@ -1049,11 +1049,13 @@ void CProMoEntityContainer::LinkModels(const CStringArray& stra, const CObArray&
 
 				CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
 				if (parent && blockModel->GetMainView()) {
-					if (attachment == DEHT_BODY) {
-						parent->GetMainView()->LinkSubBlock(blockModel->GetMainView());
-					}
-					else {
-						parent->GetMainView()->LinkBoundaryBlock(blockModel->GetMainView(), attachment);
+					if (attachment != DEHT_NONE) {
+						if (attachment == DEHT_BODY) {
+							parent->GetMainView()->LinkSubBlock(blockModel->GetMainView());
+						}
+						else {
+							parent->GetMainView()->LinkBoundaryBlock(blockModel->GetMainView(), attachment);
+						}
 					}
 				}
 						
