@@ -588,22 +588,94 @@ namespace CProMoBlockViewTests
 
 #pragma endregion
 
+#pragma region HitCode
+
+        TEST_METHOD(GetHitCode_WhenTopPassed_ReturnsCorrectConstant)
+        {
+            CProMoBlockView view;
+
+            int code = view.GetHitCode(CPoint(5, 0), CRect(0, 0, 20, 20));
+
+            Assert::AreEqual(DEHT_TOP, code);
+        }
+
+        TEST_METHOD(GetHitCode_WhenBottomPassed_ReturnsCorrectConstant)
+        {
+            CProMoBlockView view;
+
+            int code = view.GetHitCode(CPoint(5, 20), CRect(0, 0, 20, 20));
+
+            Assert::AreEqual(DEHT_BOTTOM, code);
+        }
+
+        TEST_METHOD(GetHitCode_WhenLeftPassed_ReturnsCorrectConstant)
+        {
+            CProMoBlockView view;
+
+            int code = view.GetHitCode(CPoint(0, 5), CRect(0, 0, 20, 20));
+
+            Assert::AreEqual(DEHT_LEFT, code);
+        }
+
+        TEST_METHOD(GetHitCode_WhenRightPassed_ReturnsCorrectConstant)
+        {
+            CProMoBlockView view;
+
+            int code = view.GetHitCode(CPoint(20, 5), CRect(0, 0, 20, 20));
+
+            Assert::AreEqual(DEHT_RIGHT, code);
+        }
+
+        TEST_METHOD(GetHitCode_WhenTopLeftPassed_ReturnsCorrectConstant)
+        {
+            CProMoBlockView view;
+
+            int code = view.GetHitCode(CPoint(0, 0), CRect(0, 0, 20, 20));
+
+            Assert::AreEqual(DEHT_TOPLEFT, code);
+        }
+
+        TEST_METHOD(GetHitCode_WhenInside_ReturnsCorrectConstant)
+        {
+            CProMoBlockView view;
+
+            int code = view.GetHitCode(CPoint(15, 15), CRect(0, 0, 20, 20));
+
+            Assert::AreEqual(DEHT_BODY, code);
+        }
+
+#pragma endregion
+
 #pragma region Geometry
 
-        TEST_METHOD(SetRect_WhenCRectPassed_UpdatesCoordinates)
+        TEST_METHOD(SetRect_WhenCRectPassed_MovesBoundaryBlocks)
         {
             CProMoBlockViewTestStub view;
-            CRect rect(10, 20, 210, 120);
+            CRect rect(10, 20, 210, 220);
+
+            CProMoBlockViewTestStub boundaryT, boundaryB, boundaryL, boundaryR;
+            CRect boundaryRect(0, 0, 150, 40);
+
+            boundaryT.SetRect(boundaryRect);
+            boundaryB.SetRect(boundaryRect);
+            boundaryL.SetRect(boundaryRect);
+            boundaryR.SetRect(boundaryRect);
+
+            view.LinkBoundaryBlock(&boundaryT, DEHT_TOP);
+            view.LinkBoundaryBlock(&boundaryB, DEHT_BOTTOM);
+            view.LinkBoundaryBlock(&boundaryL, DEHT_LEFT);
+            view.LinkBoundaryBlock(&boundaryR, DEHT_RIGHT);
 
             view.SetRect(rect);
 
-            Assert::AreEqual(10.0, view.GetLeft());
-            Assert::AreEqual(20.0, view.GetTop());
-            Assert::AreEqual(210.0, view.GetRight());
-            Assert::AreEqual(120.0, view.GetBottom());
+            Assert::AreEqual(rect, view.GetRect());
+            Assert::AreEqual(CRect(10,0,160,40), boundaryT.GetRect());
+            Assert::AreEqual(CRect(10,200,160,240), boundaryB.GetRect());
+            Assert::AreEqual(CRect(-65,20,85,60), boundaryL.GetRect());
+            Assert::AreEqual(CRect(135,20,285,60), boundaryR.GetRect());
         }
 
-        TEST_METHOD(SetRect_WhenCoordinatesPassed_UpdatesCoordinates)
+        TEST_METHOD(SetRect_WhenCoordinatesPassed_UpdatesPosition)
         {
             CProMoBlockViewTestStub view;
             view.SetRect(5.0, 15.0, 155.0, 65.0);
@@ -994,8 +1066,31 @@ namespace CProMoBlockViewTests
             parent.LinkSubBlock(&child);
             child.SetShape(SHAPE_ELLIPSE);
 
+            CProMoBlockViewTestStub boundaryR;
+            boundaryR.SetRect(150, 25, 250, 75);
+            boundaryR.SetTitle(CString("Boundary"));
+            parent.LinkBoundaryBlock(&boundaryR, DEHT_RIGHT);
+            boundaryR.SetShape(SHAPE_ELLIPSE);
+            
+            CProMoBlockViewTestStub boundaryL;
+            boundaryL.SetRect(150, 25, 250, 75);
+            boundaryL.SetTitle(CString("Boundary"));
+            parent.LinkBoundaryBlock(&boundaryL, DEHT_LEFT);
+            boundaryL.SetShape(SHAPE_ELLIPSE);
+
+            CProMoBlockViewTestStub boundaryT;
+            boundaryT.SetRect(150, 25, 250, 75);
+            boundaryT.SetTitle(CString("Boundary"));
+            parent.LinkBoundaryBlock(&boundaryT, DEHT_TOP);
+            boundaryT.SetShape(SHAPE_ELLIPSE);
+
+            CProMoBlockViewTestStub boundaryB;
+            boundaryB.SetRect(150, 25, 250, 75);
+            boundaryB.SetTitle(CString("Boundary"));
+            parent.LinkBoundaryBlock(&boundaryB, DEHT_BOTTOM);
+            boundaryB.SetShape(SHAPE_ELLIPSE);
+
             CProMoBlockViewTestStub unrelated;
-            unrelated.SetTarget(TRUE);
             unrelated.SetRect(300, 300, 350, 380);
             unrelated.SetTitle(CString("Unrelated"));
             parent.LinkSubBlock(&unrelated);
@@ -1009,14 +1104,18 @@ namespace CProMoBlockViewTests
             CDC memDC;
             CBitmap bmp;
             memDC.CreateCompatibleDC(NULL);
-            bmp.CreateCompatibleBitmap(&memDC, 200, 100);
+            bmp.CreateCompatibleBitmap(&memDC, 400, 400);
             memDC.SelectObject(&bmp);
 
-            CRect rect(0, 0, 200, 100);
+            CRect rect(0, 0, 400, 400);
 
             // Act / Assert: should not crash
             parent.Draw(&memDC, rect);
             child.Draw(&memDC, rect);
+            boundaryL.Draw(&memDC, rect);
+            boundaryR.Draw(&memDC, rect);
+            boundaryT.Draw(&memDC, rect);
+            boundaryB.Draw(&memDC, rect);
             unrelated.Draw(&memDC, rect);
         }
 

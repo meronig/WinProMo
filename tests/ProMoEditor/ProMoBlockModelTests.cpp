@@ -80,6 +80,9 @@ namespace CProMoBlockModelTests
             Assert::AreEqual((INT_PTR)1, subBlocks.GetSize());
             TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)subBlocks.GetAt(0));
             TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&parent, child.GetParentBlock());
+
+            Assert::IsTrue(child.IsSubBlock());
+            Assert::IsTrue(parent.HasSubBlock(&child));
         }
 
         TEST_METHOD(UnlinkSubBlock_WhenBlockPresent_RemovesFromList)
@@ -95,6 +98,9 @@ namespace CProMoBlockModelTests
 
             Assert::AreEqual((INT_PTR)0, subBlocks.GetSize());
             TestHelpers::PointerAssert::IsNull(child.GetParentBlock());
+
+            Assert::IsFalse(child.IsSubBlock());
+            Assert::IsFalse(parent.HasSubBlock(&child));
         }
 
         TEST_METHOD(UnlinkAllSubBlocks_WhenMultipleBlocks_LinkArrayIsCleared)
@@ -113,6 +119,11 @@ namespace CProMoBlockModelTests
             Assert::AreEqual((INT_PTR)0, subBlocks.GetSize());
             TestHelpers::PointerAssert::IsNull(c1.GetParentBlock());
             TestHelpers::PointerAssert::IsNull(c2.GetParentBlock());
+
+            Assert::IsFalse(c1.IsSubBlock());
+            Assert::IsFalse(c2.IsSubBlock());
+            Assert::IsFalse(parent.HasSubBlock(&c1));
+            Assert::IsFalse(parent.HasSubBlock(&c2));
         }
 
         TEST_METHOD(Contains_WhenRecursiveCheck_ReturnsTrueForDeepNesting)
@@ -125,20 +136,20 @@ namespace CProMoBlockModelTests
             Assert::IsTrue(root.Contains(&leaf, TRUE));
         }
 
-        TEST_METHOD(CanBeNestedBy_WhenNoParentSame_ReturnsTrue)
+        TEST_METHOD(CanBeSubBlockOf_WhenNoParentSame_ReturnsTrue)
         {
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub child;
             Assert::IsTrue(child.CanBeSubBlockOf(&parent));
         }
 
-        TEST_METHOD(CanBeNestedBy_WhenParentIsSame_ReturnsFalse)
+        TEST_METHOD(CanBeSubBlockOf_WhenParentIsSame_ReturnsFalse)
         {
             CProMoBlockModelTestStub block;
             Assert::IsFalse(block.CanBeSubBlockOf(&block));
         }
         
-        TEST_METHOD(CanBeNestedBy_WhenCircularDependency_ReturnsFalse)
+        TEST_METHOD(CanBeSubBlockOf_WhenCircularDependency_ReturnsFalse)
         {
             CProMoBlockModelTestStub root, mid, leaf;
 
@@ -159,6 +170,10 @@ namespace CProMoBlockModelTests
 
             Assert::AreEqual((INT_PTR)1, subBlocks.GetSize());
             TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)subBlocks.GetAt(0));
+
+            Assert::IsTrue(child.IsSubBlock());
+            Assert::IsTrue(parent.HasSubBlock(&child));
+
         }
 
         TEST_METHOD(SetParentBlock_WhenBlockHasParent_ChangeParent)
@@ -179,6 +194,11 @@ namespace CProMoBlockModelTests
             Assert::AreEqual((INT_PTR)0, oldSubBlocks.GetSize());
             Assert::AreEqual((INT_PTR)1, newSubBlocks.GetSize());
             TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)newSubBlocks.GetAt(0));
+
+            Assert::IsTrue(child.IsSubBlock());
+            Assert::IsTrue(newParent.HasSubBlock(&child));
+            Assert::IsFalse(oldParent.HasSubBlock(&child));
+
         }
 
         TEST_METHOD(SetParentBlock_WhenNullIsPassed_RemoveParent)
@@ -194,6 +214,179 @@ namespace CProMoBlockModelTests
 
             Assert::AreEqual((INT_PTR)0, subBlocks.GetSize());
             TestHelpers::PointerAssert::IsNull(child.GetParentBlock());
+
+            Assert::IsFalse(child.IsSubBlock());
+            Assert::IsFalse(parent.HasSubBlock(&child));
+        }
+
+        TEST_METHOD(SetParentBlock_WhenCircularDependency_DoNothing)
+        {
+            CProMoBlockModelTestStub root, mid, leaf;
+
+            root.LinkChildBlock(&mid, DEHT_BODY);
+            mid.LinkChildBlock(&leaf, DEHT_BODY);
+            leaf.LinkChildBlock(&root, DEHT_BODY);
+
+            Assert::IsFalse(root.IsSubBlock());
+            Assert::IsFalse(leaf.HasSubBlock(&root));
+        }
+
+#pragma endregion
+
+#pragma region BoundaryTests
+
+        TEST_METHOD(LinkBoundaryBlock_WhenNewBlockAdded_BoundaryBlockAppearsInList)
+        {
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
+
+            parent.LinkChildBlock(&child, DEHT_TOP);
+
+            CObArray subBlocks;
+            parent.GetBoundaryBlocks(subBlocks, DEHT_TOP);
+
+            Assert::AreEqual((INT_PTR)1, subBlocks.GetSize());
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)subBlocks.GetAt(0));
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&parent, child.GetParentBlock());
+
+            Assert::IsTrue(child.IsBoundaryBlock());
+            Assert::IsTrue(parent.HasBoundaryBlock(&child));
+        }
+
+        TEST_METHOD(LinkBoundaryBlock_WhenBlockIsSubBlock_BoundaryBlockAppearsInList)
+        {
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
+
+            parent.LinkChildBlock(&child, DEHT_BODY);
+            parent.LinkChildBlock(&child, DEHT_LEFT);
+
+            CObArray subBlocks;
+            parent.GetBoundaryBlocks(subBlocks, DEHT_LEFT);
+
+            Assert::AreEqual((INT_PTR)1, subBlocks.GetSize());
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)subBlocks.GetAt(0));
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&parent, child.GetParentBlock());
+
+            Assert::IsTrue(child.IsBoundaryBlock());
+            Assert::IsTrue(parent.HasBoundaryBlock(&child));
+
+            subBlocks.RemoveAll();
+            parent.GetSubBlocks(subBlocks);
+
+            Assert::AreEqual((INT_PTR)0, subBlocks.GetSize());
+            Assert::IsFalse(child.IsSubBlock());
+            Assert::IsFalse(parent.HasSubBlock(&child));
+
+        }
+
+        TEST_METHOD(UnlinkBoundaryBlock_WhenBlockPresent_RemovesFromList)
+        {
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
+
+            parent.LinkChildBlock(&child, DEHT_TOP);
+            parent.UnlinkChildBlock(&child);
+
+            CObArray subBlocks;
+            parent.GetBoundaryBlocks(subBlocks, DEHT_TOP);
+
+            Assert::AreEqual((INT_PTR)0, subBlocks.GetSize());
+            TestHelpers::PointerAssert::IsNull(child.GetParentBlock());
+
+            Assert::IsFalse(child.IsBoundaryBlock());
+            Assert::IsFalse(parent.HasBoundaryBlock(&child));
+        }
+
+        TEST_METHOD(CanBeBoundaryOf_WhenNoParentSame_ReturnsTrue)
+        {
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
+            Assert::IsTrue(child.CanBeBoundaryOf(&parent, DEHT_TOP));
+        }
+
+        TEST_METHOD(CanBeBoundaryOf_WhenParentIsSame_ReturnsFalse)
+        {
+            CProMoBlockModelTestStub block;
+            Assert::IsFalse(block.CanBeBoundaryOf(&block, DEHT_TOP));
+        }
+
+        TEST_METHOD(CanBeBoundaryOf_WhenCircularDependency_ReturnsFalse)
+        {
+            CProMoBlockModelTestStub root, mid, leaf;
+
+            root.LinkChildBlock(&mid, DEHT_TOP);
+            mid.LinkChildBlock(&leaf, DEHT_LEFT);
+
+            Assert::IsFalse(root.CanBeBoundaryOf(&leaf, DEHT_TOP));
+        }
+        TEST_METHOD(SetParentBlock_WhenBlockHasNoParent_SetParentAsBounday)
+        {
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
+
+            child.SetParentBlock(&parent, DEHT_BOTTOM);
+
+            CObArray subBlocks;
+            parent.GetBoundaryBlocks(subBlocks, DEHT_BOTTOM);
+
+            Assert::AreEqual((INT_PTR)1, subBlocks.GetSize());
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)subBlocks.GetAt(0));
+
+            Assert::IsTrue(child.IsBoundaryBlock());
+            Assert::IsTrue(parent.HasBoundaryBlock(&child));
+        }
+
+        TEST_METHOD(SetParentBlock_WhenBlockHasParent_ChangeParentAsBoundary)
+        {
+            CProMoBlockModelTestStub oldParent;
+            CProMoBlockModelTestStub newParent;
+            CProMoBlockModelTestStub child;
+
+            child.SetParentBlock(&oldParent, DEHT_BODY);
+            child.SetParentBlock(&newParent, DEHT_LEFT);
+
+            CObArray oldSubBlocks;
+            oldParent.GetSubBlocks(oldSubBlocks);
+
+            CObArray newSubBlocks;
+            newParent.GetBoundaryBlocks(newSubBlocks, DEHT_LEFT);
+
+            Assert::AreEqual((INT_PTR)0, oldSubBlocks.GetSize());
+            Assert::AreEqual((INT_PTR)1, newSubBlocks.GetSize());
+            TestHelpers::PointerAssert::AreEqual((CProMoBlockModel*)&child, (CProMoBlockModel*)newSubBlocks.GetAt(0));
+
+            Assert::IsTrue(child.IsBoundaryBlock());
+            Assert::IsTrue(newParent.HasBoundaryBlock(&child));
+            Assert::IsFalse(oldParent.HasBoundaryBlock(&child));
+        }
+
+        TEST_METHOD(SetParentBlock_WhenNullIsPassed_RemoveParentAsBoundary)
+        {
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
+
+            child.SetParentBlock(&parent, DEHT_LEFT);
+            child.SetParentBlock(NULL, DEHT_LEFT);
+
+            CObArray subBlocks;
+            parent.GetBoundaryBlocks(subBlocks, DEHT_BODY);
+
+            Assert::AreEqual((INT_PTR)0, subBlocks.GetSize());
+            TestHelpers::PointerAssert::IsNull(child.GetParentBlock());
+
+            Assert::IsFalse(child.IsBoundaryBlock());
+            Assert::IsFalse(parent.HasBoundaryBlock(&child));
+        }
+
+        TEST_METHOD(GetBoundaryAttachment_WhenInvoked_GetAttachmentType)
+        {
+            CProMoBlockModelTestStub parent;
+            CProMoBlockModelTestStub child;
+
+            child.SetParentBlock(&parent, DEHT_LEFT);
+            
+            Assert::AreEqual(DEHT_LEFT, (int)child.GetBoundaryAttachment());
         }
 
 #pragma endregion

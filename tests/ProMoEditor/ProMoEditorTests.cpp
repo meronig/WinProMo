@@ -36,7 +36,9 @@ public:
     void HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point) {
         CProMoEditor::HandlePostResize(element, nFlags, oldRect, point);
     }
-
+    BOOL RepositionSelectedBoundaryBlock() {
+        return CProMoEditor::RepositionSelectedBoundaryBlock();
+    }
     void SetInteractMode(int interactMode, int subMode) {
         CProMoEditor::SetInteractMode(interactMode, subMode);
     }
@@ -96,7 +98,7 @@ namespace CProMoEditorTests
             m_a->LinkSubBlock(m_a1);
             m_a->LinkSubBlock(m_a2);
             m_b->LinkSubBlock(m_b1);
-            m_b->LinkSubBlock(m_b2);
+            m_b->LinkBoundaryBlock(m_b2, DEHT_BOTTOM);
 
             m_x->SetSource(m_a);
             m_x->SetDestination(m_y);
@@ -243,7 +245,7 @@ namespace CProMoEditorTests
             Assert::AreEqual(CDoubleRect(522.000000, 117.000000, 650.000000, 149.000000).ToCRect(), m_a2->GetRect());
             Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
             Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
-            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 328.000000, 476.000000, 360.000000).ToCRect(), m_b2->GetRect());
             Assert::AreEqual(CDoubleRect(376.000000, 158.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
             Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
             Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 613.000000, 149.000000).ToCRect(), m_z->GetRect());
@@ -260,7 +262,7 @@ namespace CProMoEditorTests
             Assert::AreEqual(CDoubleRect(343.000000, 117.000000, 471.000000, 149.000000).ToCRect(), m_a2->GetRect());
             Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
             Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
-            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 328.000000, 476.000000, 360.000000).ToCRect(), m_b2->GetRect());
             Assert::AreEqual(CDoubleRect(197.000000, 158.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
             Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
             Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 433.000000, 149.000000).ToCRect(), m_z->GetRect());
@@ -277,7 +279,7 @@ namespace CProMoEditorTests
             Assert::AreEqual(CDoubleRect(432.500000, 117.000000, 560.500000, 149.000000).ToCRect(), m_a2->GetRect());
             Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
             Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
-            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 328.000000, 476.000000, 360.000000).ToCRect(), m_b2->GetRect());
             Assert::AreEqual(CDoubleRect(287.000000, 158.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
             Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
             Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 523.000000, 149.000000).ToCRect(), m_z->GetRect());
@@ -294,7 +296,7 @@ namespace CProMoEditorTests
             Assert::AreEqual(CDoubleRect(356.000000, 117.000000, 484.000000, 149.000000).ToCRect(), m_a2->GetRect());
             Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
             Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
-            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 328.000000, 476.000000, 360.000000).ToCRect(), m_b2->GetRect());
             Assert::AreEqual(CDoubleRect(210.000000, 275.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
             Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
             Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect(), m_z->GetRect());
@@ -311,7 +313,7 @@ namespace CProMoEditorTests
             Assert::AreEqual(CDoubleRect(356.000000, 117.000000, 484.000000, 149.000000).ToCRect(), m_a2->GetRect());
             Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
             Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
-            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 328.000000, 476.000000, 360.000000).ToCRect(), m_b2->GetRect());
             Assert::AreEqual(CDoubleRect(210.000000, 349.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
             Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
             Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect(), m_z->GetRect());
@@ -328,7 +330,7 @@ namespace CProMoEditorTests
             Assert::AreEqual(CDoubleRect(356.000000, 117.000000, 484.000000, 149.000000).ToCRect(), m_a2->GetRect());
             Assert::AreEqual(CDoubleRect(324.000000, 238.000000, 492.000000, 344.000000).ToCRect(), m_b->GetRect());
             Assert::AreEqual(CDoubleRect(348.000000, 266.000000, 476.000000, 298.000000).ToCRect(), m_b1->GetRect());
-            Assert::AreEqual(CDoubleRect(348.000000, 303.000000, 476.000000, 335.000000).ToCRect(), m_b2->GetRect());
+            Assert::AreEqual(CDoubleRect(348.000000, 328.000000, 476.000000, 360.000000).ToCRect(), m_b2->GetRect());
             Assert::AreEqual(CDoubleRect(210.000000, 312.000000, 353.000000, 245.000000).ToCRect(), m_x->GetRect());
             Assert::AreEqual(CDoubleRect(353.000000, 245.000000, 348.000000, 266.000000).ToCRect(), m_y->GetRect());
             Assert::AreEqual(CDoubleRect(446.000000, 238.000000, 446.000000, 149.000000).ToCRect(), m_z->GetRect());
@@ -764,6 +766,28 @@ namespace CProMoEditorTests
             Assert::AreEqual(oldRect.left, m_z->GetLeft());
             Assert::AreEqual(oldRect.top, m_z->GetTop());
             Assert::AreEqual(oldRect.top - 50 , m_z->GetBottom());
+        }
+
+        TEST_METHOD(RepositionSelectedBoundaryBlock_IfNotMovedOutsideBoundaryLimit_DoNotDisconnect) {
+            m_b2->Select(TRUE);
+
+            m_editor.SetInteractMode(MODE_MOVING, NULL);
+
+            BOOL result = m_editor.RepositionSelectedBoundaryBlock();
+
+            Assert::IsFalse(result);
+        }
+
+        TEST_METHOD(RepositionSelectedBoundaryBlock_IfMovedOutsideBoundaryLimit_Disconnect) {
+            m_b2->Select(TRUE);
+
+            m_editor.SetInteractMode(MODE_MOVING, NULL);
+
+            m_b2->SetRect(0, 0, 150, 150);
+
+            BOOL result = m_editor.RepositionSelectedBoundaryBlock();
+
+            Assert::IsTrue(result);
         }
 
 #pragma endregion

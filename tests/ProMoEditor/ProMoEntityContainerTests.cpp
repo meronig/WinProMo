@@ -556,7 +556,7 @@ namespace CProMoEntityContainerTests
             diagram.Add(CString("promo_block_view:51,340.000000,266.000000,468.000000,298.000000,,0,49;"));
             diagram.Add(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,,0,391,,452;"));
             diagram.Add(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,,0,391,392,;"));
-            diagram.Add(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,,0,119;"));
+            diagram.Add(CString("promo_block_view:121,340.000000,328.000000,468.000000,360.000000,,0,119;"));
             diagram.Add(CString("promo_block_model:4,,0;"));
             diagram.Add(CString("promo_block_model:30,4,1;"));
             diagram.Add(CString("promo_block_model:72,4,1;"));
@@ -564,7 +564,7 @@ namespace CProMoEntityContainerTests
             diagram.Add(CString("promo_edge_model:522,15,72;"));
             diagram.Add(CString("promo_block_model:49,15,1;"));
             diagram.Add(CString("promo_edge_model:391,4,49;"));
-            diagram.Add(CString("promo_block_model:119,15,1;"));
+            diagram.Add(CString("promo_block_model:119,15,12;"));
             diagram.Add(CString("promo_label:3620,333.000000,105.000000,340.000000,120.000000,,0,4,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:3835,274.000000,135.500000,288.000000,150.500000,,0,30,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:4050,414.000000,130.500000,428.000000,145.500000,,0,72,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
@@ -572,7 +572,7 @@ namespace CProMoEntityContainerTests
             diagram.Add(CString("promo_label:3405,396.500000,238.000000,403.500000,253.000000,,0,15,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:965,186.000000,203.000000,193.000000,218.000000,,0,391,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,-21.000000,-8.500000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:2975,397.000000,274.500000,411.000000,289.500000,,0,49,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:3136,397.000000,311.500000,411.000000,326.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:3136,397.000000,336.500000,411.000000,351.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:1174,97.000000,47.000000,153.000000,62.000000,My Label,0,,,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("property:Title,3,A,4;"));
             diagram.Add(CString("property:Title,3,A1,30;"));
@@ -630,7 +630,7 @@ namespace CProMoEntityContainerTests
             diagram.Add(CString("promo_block_view:51,340.000000,266.000000,468.000000,298.000000,,0,49;"));
             diagram.Add(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,,0,391,,452;"));
             diagram.Add(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,,0,391,392,;"));
-            diagram.Add(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,,0,119;"));
+            diagram.Add(CString("promo_block_view:121,340.000000,328.000000,468.000000,360.000000,,0,119;"));
             diagram.Add(CString("promo_block_model:4,,0;"));
             diagram.Add(CString("promo_block_model:30,4,1;"));
             diagram.Add(CString("promo_block_model:72,4,1;"));
@@ -638,7 +638,7 @@ namespace CProMoEntityContainerTests
             diagram.Add(CString("promo_edge_model:522,15,72;"));
             diagram.Add(CString("promo_block_model:49,15,1;"));
             diagram.Add(CString("promo_edge_model:391,4,49;"));
-            diagram.Add(CString("promo_block_model:119,15,1;"));
+            diagram.Add(CString("promo_block_model:119,15,12;"));
             diagram.Add(CString("promo_label:3620,333.000000,105.000000,340.000000,120.000000,,0,4,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:3835,274.000000,135.500000,288.000000,150.500000,,0,30,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:4050,414.000000,130.500000,428.000000,145.500000,,0,72,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
@@ -646,7 +646,7 @@ namespace CProMoEntityContainerTests
             diagram.Add(CString("promo_label:3405,396.500000,238.000000,403.500000,253.000000,,0,15,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:965,186.000000,203.000000,193.000000,218.000000,,0,391,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,-21.000000,-8.500000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:2975,397.000000,274.500000,411.000000,289.500000,,0,49,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:3136,397.000000,311.500000,411.000000,326.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.Add(CString("promo_label:3136,397.000000,336.500000,411.000000,351.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:1174,97.000000,47.000000,153.000000,62.000000,My Label,0,,,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("property:Title,3,A,4;"));
             diagram.Add(CString("property:Title,3,A1,30;"));
@@ -717,7 +717,7 @@ namespace CProMoEntityContainerTests
             a->LinkSubBlock(a1);
             a->LinkSubBlock(a2);
             b->LinkSubBlock(b1);
-            b->LinkSubBlock(b2);
+            b->LinkBoundaryBlock(b2, DEHT_BOTTOM);
 
             x->SetSource(a);
             x->SetDestination(y);
@@ -851,7 +851,7 @@ namespace CProMoEntityContainerTests
             diagram.AddTail(CString("promo_block_view:51,340.000000,266.000000,468.000000,298.000000,,0,49,0,-1,1,0,1,0,16777215,0,4;"));
             diagram.AddTail(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,,0,391,,452,0,-1,1,0,1,0;"));
             diagram.AddTail(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,,0,391,392,,0,-1,1,0,1,0;"));
-            diagram.AddTail(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,,0,119,0,-1,1,0,1,0,16777215,0,4;"));
+            diagram.AddTail(CString("promo_block_view:121,340.000000,328.000000,468.000000,360.000000,,0,119,0,-1,1,0,1,0,16777215,0,4;"));
             diagram.AddTail(CString("promo_block_model:4,,0;"));
             diagram.AddTail(CString("promo_block_model:30,4,1;"));
             diagram.AddTail(CString("promo_block_model:72,4,1;"));
@@ -859,7 +859,7 @@ namespace CProMoEntityContainerTests
             diagram.AddTail(CString("promo_edge_model:522,15,72;"));
             diagram.AddTail(CString("promo_block_model:49,15,1;"));
             diagram.AddTail(CString("promo_edge_model:391,4,49;"));
-            diagram.AddTail(CString("promo_block_model:119,15,1;"));
+            diagram.AddTail(CString("promo_block_model:119,15,12;"));
 
             diagram.AddTail(CString("property:Title,3,A,4;"));
             diagram.AddTail(CString("property:Title,3,A1,30;"));
@@ -875,7 +875,7 @@ namespace CProMoEntityContainerTests
             diagram.AddTail(CString("promo_label:1002,414.000000,130.500000,428.000000,145.500000,,0,72,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1003,396.500000,238.000000,403.500000,253.000000,,0,15,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1004,397.000000,274.500000,411.000000,289.500000,,0,49,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.AddTail(CString("promo_label:1005,397.000000,311.500000,411.000000,326.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.AddTail(CString("promo_label:1005,397.000000,336.500000,411.000000,351.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1006,207.000000,211.500000,214.000000,226.500000,,0,391,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1007,439.000000,188.500000,446.000000,203.500000,,0,522,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
 
