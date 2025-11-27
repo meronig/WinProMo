@@ -362,8 +362,8 @@ namespace CProMoBlockModelTests
             parentString = parent.GetString();
             childString = child.GetString();
             
-            Assert::AreEqual(CString("promo_block_model:Parent,;"), parentString);
-            Assert::AreEqual(CString("promo_block_model:Child,Parent;"), childString);
+            Assert::AreEqual(CString("promo_block_model:Parent,,0;"), parentString);
+            Assert::AreEqual(CString("promo_block_model:Child,Parent,1;"), childString);
             
         }
 
@@ -372,11 +372,11 @@ namespace CProMoBlockModelTests
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub child;
 
-            parent.CreateFromString(CString("promo_block_model:Parent,;"));
+            parent.CreateFromString(CString("promo_block_model:Parent,,0;"));
 
             Assert::AreEqual(CString("promo_block_model"), parent.GetType());
             
-            child.CreateFromString(CString("promo_block_model:Child,Parent;"));
+            child.CreateFromString(CString("promo_block_model:Child,Parent,1;"));
 
             Assert::AreEqual(CString("promo_block_model"), child.GetType());
 
@@ -387,11 +387,11 @@ namespace CProMoBlockModelTests
             CProMoBlockModelTestStub parent;
             CProMoBlockModelTestStub child;
 
-            parent.CreateFromString(CString("promo_block_model:Parent,,Extra1,Extra2;"));
+            parent.CreateFromString(CString("promo_block_model:Parent,,0,Extra1,Extra2;"));
 
             Assert::AreEqual(CString("promo_block_model"), parent.GetType());
 
-            child.CreateFromString(CString("promo_block_model:Child,Parent,Extra1,Extra2;"));
+            child.CreateFromString(CString("promo_block_model:Child,Parent,1,Extra1,Extra2;"));
 
             Assert::AreEqual(CString("promo_block_model"), child.GetType());
         }
@@ -411,10 +411,17 @@ namespace CProMoBlockModelTests
         }
 
         TEST_METHOD(GetParentFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
-            CString str1 = CProMoBlockModelTestStub::GetParentFromString(CString("promo_block_model:Parent,;"));
-            CString str2 = CProMoBlockModelTestStub::GetParentFromString(CString("promo_block_model:Child,Parent;"));
+            CString str1 = CProMoBlockModelTestStub::GetParentFromString(CString("promo_block_model:Parent,,0;"));
+            CString str2 = CProMoBlockModelTestStub::GetParentFromString(CString("promo_block_model:Child,Parent,1;"));
             Assert::AreEqual(CString(""), str1);
             Assert::AreEqual(CString("Parent"), str2);
+        }
+
+        TEST_METHOD(GetAttachmentTypeFromString_WhenCorrectStringIsPassed_ExtractsCorrectValue) {
+            int i1 = CProMoBlockModelTestStub::GetAttachmentTypeFromString(CString("promo_block_model:Parent,,0;"));
+            int i2 = CProMoBlockModelTestStub::GetAttachmentTypeFromString(CString("promo_block_model:Child,Parent,1;"));
+            Assert::AreEqual(DEHT_NONE, i1);
+            Assert::AreEqual(DEHT_BODY, i2);
         }
 
 #pragma endregion

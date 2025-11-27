@@ -9,9 +9,8 @@
 
 class CProMoEditorTestStub : public CProMoEditor {
 public:
-    CProMoBlockView* GetTargetBlock(CPoint point) {
-        //TODO: update
-        return NULL; // CProMoEditor::GetTargetBlock(point);
+    void IdentifyTarget(CPoint point) {
+        CProMoEditor::IdentifyTarget(point);
     }
     CProMoBlockView* GetConnectedBlock(CProMoEdgeView* line, BOOL backwards) {
         return CProMoEditor::GetConnectedBlock(line, backwards);
@@ -354,14 +353,14 @@ namespace CProMoEditorTests
             diagram.Add(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,,0,391,,452;"));
             diagram.Add(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,,0,391,392,;"));
             diagram.Add(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,,0,119;"));
-            diagram.Add(CString("promo_block_model:4,;"));
-            diagram.Add(CString("promo_block_model:30,4;"));
-            diagram.Add(CString("promo_block_model:72,4;"));
-            diagram.Add(CString("promo_block_model:15,;"));
+            diagram.Add(CString("promo_block_model:4,,0;"));
+            diagram.Add(CString("promo_block_model:30,4,1;"));
+            diagram.Add(CString("promo_block_model:72,4,1;"));
+            diagram.Add(CString("promo_block_model:15,,0;"));
             diagram.Add(CString("promo_edge_model:522,15,72;"));
-            diagram.Add(CString("promo_block_model:49,15;"));
+            diagram.Add(CString("promo_block_model:49,15,1;"));
             diagram.Add(CString("promo_edge_model:391,4,49;"));
-            diagram.Add(CString("promo_block_model:119,15;"));
+            diagram.Add(CString("promo_block_model:119,15,1;"));
             diagram.Add(CString("promo_label:3620,333.000000,105.000000,340.000000,120.000000,,0,4,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:3835,274.000000,135.500000,288.000000,150.500000,,0,30,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.Add(CString("promo_label:4050,414.000000,130.500000,428.000000,145.500000,,0,72,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
@@ -607,64 +606,58 @@ namespace CProMoEditorTests
             Assert::IsFalse(m_a1->IsTarget());
         }
 
-        TEST_METHOD(GetTargetBlock_WhenMovingBlock_ReturnTopmostBlock) {
+        TEST_METHOD(IdentifyTarget_WhenMovingBlock_SelectTopmostBlock) {
 
 			m_b->Select(TRUE);
             m_editor.SetInteractMode(MODE_MOVING, NULL);
             
-            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400,140));
+            m_editor.IdentifyTarget(CPoint(400,140));
 
-            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+            Assert::IsTrue(m_a2->IsTarget());
         }
 
-        TEST_METHOD(GetTargetBlock_WhenChangingEdgeDest_ReturnTopmostBlock) {
+        TEST_METHOD(IdentifyTarget_WhenChangingEdgeDest_SelectTopmostBlock) {
 
             m_x->Select(TRUE);
 
             m_editor.SetInteractMode(MODE_RESIZING, DEHT_BOTTOMRIGHT);
 
-            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400, 140));
+            m_editor.IdentifyTarget(CPoint(400, 140));
 
-            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+            Assert::IsTrue(m_a2->IsTarget());
         }
 
-        TEST_METHOD(GetTargetBlock_WhenChangingEdgeSource_ReturnTopmostBlock) {
+        TEST_METHOD(IdentifyTarget_WhenChangingEdgeSource_SelectTopmostBlock) {
 
             m_x->Select(TRUE);
 
             m_editor.SetInteractMode(MODE_RESIZING, DEHT_TOPLEFT);
 
-            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400, 140));
+            m_editor.IdentifyTarget(CPoint(400, 140));
 
-            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+            Assert::IsTrue(m_a2->IsTarget());
         }
 
-        TEST_METHOD(GetTargetBlock_WhenCreatingNewBlock_ReturnTopmostBlock) {
+        TEST_METHOD(IdentifyTarget_WhenCreatingNewBlock_SelectTopmostBlock) {
 
             CProMoBlockView* newBlock = new CProMoBlockView;
 
             m_editor.StartDrawingObject(newBlock);
 
-            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400, 140));
+            m_editor.IdentifyTarget(CPoint(400, 140));
 
-            TestHelpers::PointerAssert::AreEqual(m_a2, target);
+            Assert::IsTrue(m_a2->IsTarget());
         }
 
-        TEST_METHOD(GetTargetBlock_WhenCreatingNewEdge_ReturnTopmostBlock) {
+        TEST_METHOD(IdentifyTarget_WhenCreatingNewEdge_SelectTopmostBlock) {
 
             CProMoEdgeView* newEdge = new CProMoEdgeView;
 
             m_editor.StartDrawingObject(newEdge);
 
-            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(400, 140));
+            m_editor.IdentifyTarget(CPoint(400, 140));
 
-            TestHelpers::PointerAssert::AreEqual(m_a2, target);
-        }
-
-        TEST_METHOD(GetTargetBlock_WhenPointOutsideBlock_ReturnNull) {
-            CProMoBlockView* target = m_editor.GetTargetBlock(CPoint(100, 140));
-
-            TestHelpers::PointerAssert::IsNull(target);
+            Assert::IsTrue(m_a2->IsTarget());
         }
 
 #pragma endregion
@@ -676,6 +669,8 @@ namespace CProMoEditorTests
             m_b->Select(TRUE);
 
             m_editor.StartDrawingObject(m_b);
+
+            m_a->SetTarget(DEHT_BODY);
 
             m_editor.HandleSelectedElements(m_a, TRUE);
 
@@ -694,9 +689,13 @@ namespace CProMoEditorTests
         }
 
         TEST_METHOD(HandleSelectedElements_WhenMovingBlock_NestBlock) {
+            
             m_b->Select(TRUE);
 
             m_editor.SetInteractMode(MODE_MOVING, NULL);
+
+            m_a->SetTarget(DEHT_BODY);
+
             m_editor.HandleSelectedElements(m_a, FALSE);
 
             TestHelpers::PointerAssert::AreEqual(m_a->GetBlockModel(), m_b->GetBlockModel()->GetParentBlock());
@@ -713,6 +712,7 @@ namespace CProMoEditorTests
         }
 
         TEST_METHOD(HandleSelectedElements_WhenResizingEdgeTopLeft_ChangeSource) {
+            
             m_x->Select(TRUE);
 
             m_editor.SetInteractMode(MODE_RESIZING, DEHT_TOPLEFT);
@@ -723,6 +723,7 @@ namespace CProMoEditorTests
         }
 
         TEST_METHOD(HandleSelectedElements_WhenResizingEdgeBottomRight_ChangeDestination) {
+            
             m_y->Select(TRUE);
 
             m_editor.SetInteractMode(MODE_RESIZING, DEHT_BOTTOMRIGHT);

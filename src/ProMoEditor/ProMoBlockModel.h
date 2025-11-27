@@ -46,6 +46,7 @@ public:
 	virtual CProMoBlockView* GetMainView() const;
 
 	static CString GetParentFromString(const CString& str);
+	static unsigned int GetAttachmentTypeFromString(const CString& str);
 	
 
 protected:

@@ -78,12 +78,12 @@ public:
 
 protected:
 	virtual void DrawObjectsR(CProMoBlockView* block, CDC* dc, double zoom) const;
-	// Private helpers
 	virtual void ResetTarget();
 	virtual CProMoBlockView* GetTarget() const;
-	virtual void SetTarget(CPoint point);
+	virtual void IdentifyTarget(CPoint point);
 	virtual void SetTarget(CProMoBlockView* obj, unsigned int attachment);
 	virtual void AttachSelectedBlock(CProMoBlockView* parentBlock);
+	virtual BOOL RepositionSelectedBoundaryBlock();
 	virtual void SplitSelectedEdge();
 	virtual void CreateLabels();
 	virtual void ConnectSelectedEdgeToSource(CProMoBlockView* sourceBlock);

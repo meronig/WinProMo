@@ -475,6 +475,31 @@ CString CProMoBlockModel::GetParentFromString(const CString& str)
 	return parentName;
 }
 
+unsigned int CProMoBlockModel::GetAttachmentTypeFromString(const CString& str)
+/* ============================================================
+	Function :		CProMoBlockModel::GetAttachmentTypeFromString
+	Description :	Static factory function that
+					parses a formatted string and extracts the
+					type of attachment for the block to its
+					parent.
+	Access :		Public
+
+	Return :		unsigned int	-	The type of attachment 
+										for the block to its
+										parent
+	Parameters :	CString& str	-	The string to be parsed
+
+   ============================================================*/
+{
+	CTokenizer* tok = CFileParser::Tokenize(str);
+	int attachment = DEHT_NONE;
+	if (tok) {
+		tok->GetAt(2, attachment);
+		delete tok;
+	}
+	return attachment;
+}
+
 BOOL CProMoBlockModel::Contains(CProMoBlockModel* block, BOOL recursive) const
 	/* ============================================================
 	Function :		CProMoBlockModel::Contains
@@ -763,7 +788,7 @@ CString CProMoBlockModel::GetDefaultGetString() const
 
 	}
 
-	str.Format(_T(",%s"), (LPCTSTR)parentString);
+	str.Format(_T(",%s,%i"), (LPCTSTR)parentString, m_attachmentType);
 
 	return result + str;
 

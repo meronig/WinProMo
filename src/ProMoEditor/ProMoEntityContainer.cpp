@@ -184,10 +184,13 @@ void CProMoEntityContainer::ReplicateRelations(const CObArray& source, CObArray&
 			CProMoBlockView* newConnectedBlockView = dynamic_cast<CProMoBlockView*>(destination.GetAt(j));
 				
 			if (blockView && newBlockView) {
-				//preserve block nesting
+				//preserve block nesting and boundary blocks
 				if (connectedBlockView && newConnectedBlockView) {
 					if (connectedBlockView->GetBlockModel()->HasSubBlock(blockView->GetBlockModel())) {
 						newConnectedBlockView->LinkSubBlock(newBlockView);
+					}
+					if (connectedBlockView->GetBlockModel()->HasBoundaryBlock(blockView->GetBlockModel())) {
+						newConnectedBlockView->LinkBoundaryBlock(newBlockView, blockView->GetBlockModel()->GetBoundaryAttachment());
 					}
 				}
 				//preserve links between blocks and labels
@@ -1039,10 +1042,16 @@ void CProMoEntityContainer::LinkModels(const CStringArray& stra, const CObArray&
 			CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, nodeName));
 			if (blockModel) {
 				CString parentName = blockModel->GetParentFromString(str);
+				unsigned int attachment = blockModel->GetAttachmentTypeFromString(str);
 
 				CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
 				if (parent && blockModel->GetMainView()) {
-					parent->GetMainView()->LinkSubBlock(blockModel->GetMainView());
+					if (attachment == DEHT_BODY) {
+						parent->GetMainView()->LinkSubBlock(blockModel->GetMainView());
+					}
+					else {
+						parent->GetMainView()->LinkBoundaryBlock(blockModel->GetMainView(), attachment);
+					}
 				}
 						
 			}

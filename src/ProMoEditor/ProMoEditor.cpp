@@ -189,9 +189,9 @@ void CProMoEditor::SaveObjects(CStringArray& stra)
 }
 
 
-void CProMoEditor::SetTarget(CPoint point)
+void CProMoEditor::IdentifyTarget(CPoint point)
 /* ============================================================
-	Function :		CProMoEditor::SetTarget
+	Function :		CProMoEditor::IdentifyTarget
 	Description :	Sets the topmost block that contains the
 					input point as target block.
 	Access :		Protected
@@ -646,47 +646,63 @@ void CProMoEditor::OnMouseMove(UINT nFlags, CPoint point)
 		CPoint target = point;
 		ScreenToVirtual(target);
 
-		BOOL detached = TRUE;
-
-		CProMoBlockView* selectedObject = dynamic_cast<CProMoBlockView*>(GetSelectedObject());
-		if (selectedObject) {
-			if (selectedObject->GetBlockModel()->GetParentBlock() && selectedObject->GetBlockModel()->IsBoundaryBlock()) {
-				CProMoBlockView* parentView = selectedObject->GetBlockModel()->GetParentBlock()->GetMainView();
-				CRect intersect;
-				CRect boundaryRect = parentView->GetRect();
-				unsigned int boundaryAttachment = selectedObject->GetBlockModel()->GetBoundaryAttachment();
-
-				switch (boundaryAttachment) {
-				case DEHT_TOP:
-					boundaryRect.bottom = boundaryRect.top + GetMarkerSize().cx / 2;
-					break;
-				case DEHT_BOTTOM:
-					boundaryRect.top = boundaryRect.bottom - GetMarkerSize().cx / 2;
-					break;
-				case DEHT_LEFT:
-					boundaryRect.right = boundaryRect.left + GetMarkerSize().cy / 2;
-					break;
-				case DEHT_RIGHT:
-					boundaryRect.left = boundaryRect.right - GetMarkerSize().cy / 2;
-					break;
-				}
-
-				intersect.IntersectRect(selectedObject->GetRect(), boundaryRect);
-				if (!intersect.IsRectEmpty()) {
-					detached = FALSE;
-					SetTarget(parentView, boundaryAttachment);
-				}
-			}
-		}
+		BOOL detached = RepositionSelectedBoundaryBlock();
 
 		if (detached) {
-			SetTarget(target);
+			IdentifyTarget(target);
 		}
 		
 		SetRedraw(TRUE);
 		RedrawWindow();
 	}
 
+}
+
+BOOL CProMoEditor::RepositionSelectedBoundaryBlock()
+/* ============================================================
+	Function :		CProMoEditor::RepositionSelectedBoundaryBlock
+	Description :	Determines if the boundary block being 
+					selected has changed the attachment position,
+					or it has been disconnected from its parent.
+	Access :		Protected
+
+	Return :		BOOL			-	"TRUE" if the selected
+										block has been detached
+	Parameters :	none
+	
+   ============================================================*/
+{
+	CProMoBlockView* selectedObject = dynamic_cast<CProMoBlockView*>(GetSelectedObject());
+	if (selectedObject) {
+		if (selectedObject->GetBlockModel()->GetParentBlock() && selectedObject->GetBlockModel()->IsBoundaryBlock()) {
+			CProMoBlockView* parentView = selectedObject->GetBlockModel()->GetParentBlock()->GetMainView();
+			CRect intersect;
+			CRect boundaryRect = parentView->GetRect();
+			unsigned int boundaryAttachment = selectedObject->GetBlockModel()->GetBoundaryAttachment();
+
+			switch (boundaryAttachment) {
+			case DEHT_TOP:
+				boundaryRect.bottom = boundaryRect.top + GetMarkerSize().cx / 2;
+				break;
+			case DEHT_BOTTOM:
+				boundaryRect.top = boundaryRect.bottom - GetMarkerSize().cx / 2;
+				break;
+			case DEHT_LEFT:
+				boundaryRect.right = boundaryRect.left + GetMarkerSize().cy / 2;
+				break;
+			case DEHT_RIGHT:
+				boundaryRect.left = boundaryRect.right - GetMarkerSize().cy / 2;
+				break;
+			}
+
+			intersect.IntersectRect(selectedObject->GetRect(), boundaryRect);
+			if (!intersect.IsRectEmpty()) {
+				SetTarget(parentView, boundaryAttachment);
+				return FALSE;
+			}
+		}
+	}
+	return TRUE;
 }
 
 void CProMoEditor::HandlePostResize(CDiagramEntity* element, UINT nFlags, CDoubleRect& oldRect, CPoint& point)
@@ -769,7 +785,7 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 			ResetTarget();
 			CPoint virtpoint = point;
 			ScreenToVirtual(virtpoint);
-			SetTarget(virtpoint);
+			IdentifyTarget(virtpoint);
 
 		}
 	}
