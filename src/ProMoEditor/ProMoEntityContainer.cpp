@@ -372,12 +372,13 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 {
 	ASSERT(block->GetModel());
 	newOrder.Add(block);
+	int i = 0;
 	//check for connected incoming edges
 	CObArray edges; 
 	CObArray views;
 	CObArray labels;
 	((CProMoBlockModel*)block->GetModel())->GetIncomingEdges(edges);
-	for (int i = 0; i < edges.GetSize(); i++) {
+	for (i = 0; i < edges.GetSize(); i++) {
 		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges.GetAt(i));
 		if (edgeModel) {
 			views.RemoveAll();
@@ -412,7 +413,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 
 	//check for connected outgoing edges
 	((CProMoBlockModel*)block->GetModel())->GetOutgoingEdges(edges);
-	for (int i = 0; i < edges.GetSize(); i++) {
+	for (i = 0; i < edges.GetSize(); i++) {
 		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(edges.GetAt(i));
 		if (edgeModel) {
 			views.RemoveAll();
@@ -459,7 +460,9 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 	
 	((CProMoBlockModel*)block->GetModel())->GetSubBlocks(subBlockModels);
 	
-	for (int t = 0; t < max; t++) {
+	int t =0;
+
+	for (t = 0; t < max; t++) {
 		CProMoBlockView* subBlockView = dynamic_cast<CProMoBlockView*>(GetAt(t));
 		if (subBlockView) {
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {
@@ -476,7 +479,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 
 	((CProMoBlockModel*)block->GetModel())->GetBoundaryBlocks(boundaryBlockModels, DEHT_BODY);
 
-	for (int t = 0; t < max; t++) {
+	for (t = 0; t < max; t++) {
 		CProMoBlockView* boundaryBlockView = dynamic_cast<CProMoBlockView*>(GetAt(t));
 		if (boundaryBlockView) {
 			for (int i = 0; i < boundaryBlockModels.GetSize(); i++) {

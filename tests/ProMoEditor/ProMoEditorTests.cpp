@@ -42,6 +42,9 @@ public:
     void SetInteractMode(int interactMode, int subMode) {
         CProMoEditor::SetInteractMode(interactMode, subMode);
     }
+    void SplitSelectedEdge() {
+        CProMoEditor::SplitSelectedEdge();
+    }
 };
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
@@ -702,16 +705,6 @@ namespace CProMoEditorTests
 
             TestHelpers::PointerAssert::AreEqual(m_a->GetBlockModel(), m_b->GetBlockModel()->GetParentBlock());
         }
-        TEST_METHOD(HandleSelectedElements_WhenResizingEdgeCenter_SplitEdge) {
-            m_z->Select(TRUE);
-            
-            m_editor.SetInteractMode(MODE_RESIZING, DEHT_CENTER);
-            
-            m_editor.HandleSelectedElements(NULL, FALSE);
-            
-            TestHelpers::PointerAssert::AreNotEqual(m_a2, dynamic_cast<CProMoBlockView*>(m_z->GetDestination()));
-            TestHelpers::PointerAssert::IsNotNull(dynamic_cast<CProMoEdgeView*>(m_z->GetDestination()));
-        }
 
         TEST_METHOD(HandleSelectedElements_WhenResizingEdgeTopLeft_ChangeSource) {
             
@@ -766,6 +759,15 @@ namespace CProMoEditorTests
             Assert::AreEqual(oldRect.left, m_z->GetLeft());
             Assert::AreEqual(oldRect.top, m_z->GetTop());
             Assert::AreEqual(oldRect.top - 50 , m_z->GetBottom());
+        }
+
+        TEST_METHOD(SplitSelectedEdge_WhenInvoked_SplitEdge) {
+            m_z->Select(TRUE);
+
+            m_editor.SplitSelectedEdge();
+
+            TestHelpers::PointerAssert::AreNotEqual(m_a2, dynamic_cast<CProMoBlockView*>(m_z->GetDestination()));
+            TestHelpers::PointerAssert::IsNotNull(dynamic_cast<CProMoEdgeView*>(m_z->GetDestination()));
         }
 
         TEST_METHOD(RepositionSelectedBoundaryBlock_IfNotMovedOutsideBoundaryLimit_DoNotDisconnect) {

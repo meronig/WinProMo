@@ -981,7 +981,7 @@ void CProMoBlockView::UnlinkAllSubBlocks()
 	if (m_blockModel) {
 		CObArray subblocks;
 		m_blockModel->GetSubBlocks(subblocks);
-		for (unsigned int i = 0; i < subblocks.GetSize(); i++) {
+		for (int i = 0; i < subblocks.GetSize(); i++) {
 			m_blockModel->UnlinkChildBlock(dynamic_cast<CProMoBlockModel*>(subblocks.GetAt(i)));
 		}
 	}
@@ -1043,7 +1043,7 @@ void CProMoBlockView::UnlinkAllBoundaryBlocks()
 	if (m_blockModel) {
 		CObArray blocks;
 		m_blockModel->GetBoundaryBlocks(blocks, DEHT_BODY);
-		for (unsigned int i = 0; i < blocks.GetSize(); i++) {
+		for (int i = 0; i < blocks.GetSize(); i++) {
 			m_blockModel->UnlinkChildBlock(dynamic_cast<CProMoBlockModel*>(blocks.GetAt(i)));
 		}
 	}
@@ -1874,7 +1874,7 @@ void CProMoBlockView::Reposition()
 		if (block) {
 			CProMoBlockView* view = block->GetMainView();
 			if (view) {
-				CRect blockRect = view->GetRect();
+				CDoubleRect blockRect = view->GetRect();
 				double blockHeight = blockRect.Height();
 				double blockWidth = blockRect.Width();
 				switch (block->m_attachmentType) {
@@ -1895,7 +1895,7 @@ void CProMoBlockView::Reposition()
 					blockRect.right = GetRight() + (blockWidth / 2);
 					break;
 				}
-				view->SetRect(blockRect);
+				view->SetRect(blockRect.ToCRect());
 			}
 		}
 	}

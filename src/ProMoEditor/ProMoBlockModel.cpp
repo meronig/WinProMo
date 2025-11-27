@@ -340,6 +340,7 @@ void CProMoBlockModel::LinkChildBlock(CProMoBlockModel* block, unsigned int atta
 	// Block is already linked
 	if (Contains(block, FALSE)) {
 		block->m_attachmentType = attachment;
+		CustomizeLabels();
 		return;
 	}
 

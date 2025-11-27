@@ -794,6 +794,10 @@ void CProMoEditor::OnLButtonDown(UINT nFlags, CPoint point)
 	CDiagramEditor::OnLButtonDown(nFlags, point);
 	
 	HandleSelectedElements(GetTarget(), TRUE);
+
+	if (GetInteractMode() == MODE_RESIZING && GetSubMode() == DEHT_CENTER) {
+		SplitSelectedEdge();
+	}
 		
 }
 
@@ -1240,6 +1244,7 @@ void CProMoEditor::SplitSelectedEdge()
 			GetDiagramEntityContainer()->Snapshot();
 			//split the edge into two
 			CProMoEdgeView* newEdge = edge->Split();
+			edge->Select(FALSE);
 			//add new edge
 			AddObject(newEdge);
 			//switch to resizing the old edge
@@ -1523,11 +1528,7 @@ void CProMoEditor::HandleSelectedElements(CProMoBlockView* target, BOOL isNew)
 			else if (GetSubMode() == DEHT_TOPLEFT) {
 				ConnectSelectedEdgeToSource(target);
 			}
-			else if (GetSubMode() == DEHT_CENTER) {
-				SplitSelectedEdge();
-			}
 		}
-
 	}
 }
 
