@@ -60,7 +60,7 @@ CProMoLabel::CProMoLabel()
 
 	CString title;
 	BOOL result;
-	result = title.LoadString(IDS_PROMO_BLOCK);
+	result = title.LoadString(IDS_PROMO_NODE);
 	if (result) {
 		SetTitle(title);
 	}

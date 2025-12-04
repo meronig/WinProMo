@@ -188,12 +188,10 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CanvasSizeDialog.cpp" />
     <ClCompile Include="GeometryUtils\DoublePoint.cpp" />
     <ClCompile Include="FileUtils\FileSerializer.cpp" />
     <ClCompile Include="GeometryUtils\DoubleRect.cpp" />
     <ClCompile Include="GeometryUtils\GeometryHelper.cpp" />
-    <ClCompile Include="GridSizeDialog.cpp" />
     <ClCompile Include="FileUtils\FileParser.cpp" />
     <ClCompile Include="GeometryUtils\IntersectionHelper.cpp" />
     <ClCompile Include="ProMoEditor\ProMoLabel.cpp" />
@@ -209,7 +207,6 @@
     <ClCompile Include="DiagramEditor\Tokenizer.cpp" />
     <ClCompile Include="DiagramEditor\UndoItem.cpp" />
     <ClCompile Include="FileUtils\VariantWrapper.cpp" />
-    <ClCompile Include="WinProMoDocTemplate.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockModel.cpp" />
     <ClCompile Include="ProMoEditor\ProMoBlockView.cpp" />
     <ClCompile Include="ProMoEditor\ProMoClipboardHandler.cpp" />
@@ -222,20 +219,17 @@
     <ClCompile Include="ProMoEditor\ProMoNameFactory.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="WinProMo.cpp" />
-    <ClCompile Include="WinProMoDoc.cpp" />
-    <ClCompile Include="WinProMoView.cpp" />
+    <ClCompile Include="WinProMoCmdHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\WinProMo.rc2" />
     <None Include="WinProMo.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CanvasSizeDialog.h" />
     <ClInclude Include="GeometryUtils\DoublePoint.h" />
     <ClInclude Include="FileUtils\FileSerializer.h" />
     <ClInclude Include="GeometryUtils\DoubleRect.h" />
     <ClInclude Include="GeometryUtils\GeometryHelper.h" />
-    <ClInclude Include="GridSizeDialog.h" />
     <ClInclude Include="FileUtils\FileParser.h" />
     <ClInclude Include="GeometryUtils\IntersectionHelper.h" />
     <ClInclude Include="ProMoEditor\ProMoLabel.h" />
@@ -256,7 +250,6 @@
     <ClInclude Include="FileUtils\VariantWrapper.h" />
     <ClInclude Include="ProMoEditor\ProMoEntity.h" />
     <ClInclude Include="ProMoEditor\ProMoView.h" />
-    <ClInclude Include="WinProMoDocTemplate.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockModel.h" />
     <ClInclude Include="ProMoEditor\ProMoBlockView.h" />
     <ClInclude Include="ProMoEditor\ProMoClipboardHandler.h" />
@@ -269,9 +262,8 @@
     <ClInclude Include="ProMoEditor\ProMoNameFactory.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="WinProMoDoc.h" />
+    <ClInclude Include="WinProMoCmdHandler.h" />
     <ClInclude Include="WinProMoPluginInterface.h" />
-    <ClInclude Include="WinProMoView.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinProMo.rc" />

@@ -24,40 +24,6 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOG 0, 0, 235, 55
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "About DiagramEditorDemo"
-FONT 8, "MS Sans Serif"
-BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "DiagramEditorDemo Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2004",IDC_STATIC,40,25,119,8
-    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
-END
-
-IDD_DIAGRAMEDITORDEMO_DIALOG DIALOGEX 0, 0, 327, 191
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
-EXSTYLE WS_EX_APPWINDOW
-CAPTION "DiagramEditor Demo"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
-BEGIN
-    LTEXT           "Static",IDC_STATIC_PLACEHOLDER,5,5,315,140
-    PUSHBUTTON      "New",IDC_BUTTON_NEW,5,155,45,15
-    PUSHBUTTON      "Draw box",IDC_BUTTON_BOX,50,155,45,15
-    PUSHBUTTON      "Draw line",IDC_BUTTON_LINE,95,155,45,15
-    CONTROL         "Snap to grid",IDC_CHECK_SNAP,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,140,155,45,15
-    CONTROL         "Show grid",IDC_CHECK_SHOW_GRID,"Button",BS_AUTOCHECKBOX | BS_PUSHLIKE | WS_TABSTOP,185,155,45,15
-    PUSHBUTTON      "Paper size",IDC_BUTTON_SIZE,275,155,45,15
-    PUSHBUTTON      "Cut",IDC_BUTTON_CUT,5,170,45,15
-    PUSHBUTTON      "Copy",IDC_BUTTON_COPY,50,170,45,15
-    PUSHBUTTON      "Paste",IDC_BUTTON_PASTE,95,170,45,15
-    PUSHBUTTON      "Undo",IDC_BUTTON_UNDO,140,170,45,15
-    PUSHBUTTON      "Save",IDC_BUTTON_SAVE,185,170,45,15
-    PUSHBUTTON      "Load",IDC_BUTTON_LOAD,230,170,45,15
-    PUSHBUTTON      "Grid size",IDC_BUTTON_GRID_SIZE,230,155,45,15
-    PUSHBUTTON      "Quit",IDCANCEL,275,170,45,15
-END
-
 IDD_DIALOG_PROPERTY_LABEL DIALOGEX 0, 0, 186, 82
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_TOOLWINDOW
@@ -78,32 +44,6 @@ BEGIN
     EDITTEXT        IDC_EDIT_TEXT,5,10,175,15,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "Apply",IDOK,130,30,50,14
     LTEXT           "Text:",IDC_STATIC,5,0,17,8
-END
-
-IDD_DIALOG_CANVAS_SIZE DIALOGEX 0, 0, 152, 55
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Canvas size"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,95,5,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,95,22,50,14
-    LTEXT           "Width:",IDC_STATIC,5,5,25,10
-    LTEXT           "Height:",IDC_STATIC,5,25,25,10
-    EDITTEXT        IDC_EDIT_WIDTH,30,5,55,15,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_HEIGHT,30,25,55,15,ES_AUTOHSCROLL
-END
-
-IDD_DIALOG_GRID_SIZE DIALOG 0, 0, 152, 55
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Grid size"
-FONT 8, "MS Sans Serif"
-BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,95,5,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,95,22,50,14
-    LTEXT           "Width:",IDC_STATIC,5,5,25,10
-    LTEXT           "Height:",IDC_STATIC,5,25,25,10
-    EDITTEXT        IDC_EDIT_WIDTH,30,5,55,15,ES_AUTOHSCROLL
-    EDITTEXT        IDC_EDIT_HEIGHT,30,25,55,15,ES_AUTOHSCROLL
 END
 
 
@@ -153,22 +93,6 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO
 BEGIN
-    IDD_ABOUTBOX, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 228
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 48
-    END
-
-    IDD_DIAGRAMEDITORDEMO_DIALOG, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 320
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 184
-    END
-
     IDD_DIALOG_PROPERTY_LABEL, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -183,14 +107,6 @@ BEGIN
         RIGHTMARGIN, 179
         TOPMARGIN, 7
         BOTTOMMARGIN, 45
-    END
-
-    IDD_DIALOG_CANVAS_SIZE, DIALOG
-    BEGIN
-    END
-
-    IDD_DIALOG_GRID_SIZE, DIALOG
-    BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -232,198 +148,6 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\DiagramEditorDemo.ico"
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Menu
-//
-
-IDR_WPDPLUGIN MENU
-BEGIN
-    POPUP "&File"
-    BEGIN
-        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
-        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
-        MENUITEM "&Close",                      ID_FILE_CLOSE
-        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
-        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
-        MENUITEM SEPARATOR
-        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
-        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
-        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
-        MENUITEM SEPARATOR
-        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1
-        MENUITEM SEPARATOR
-        MENUITEM "E&xit",                       ID_APP_EXIT
-    END
-    POPUP "&Edit"
-    BEGIN
-        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
-        MENUITEM "&Redo\tCtrl+Y",               ID_EDIT_REDO
-        MENUITEM SEPARATOR
-        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
-        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
-        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
-        MENUITEM "Delete\tDel",                 ID_EDIT_DELETE
-        MENUITEM SEPARATOR
-        MENUITEM "Grid size...",                ID_EDIT_GRIDSIZE
-        MENUITEM "Canvas size...",              ID_EDIT_CANVASSIZE
-    END
-    POPUP "&View"
-    BEGIN
-        POPUP "Zoom"
-        BEGIN
-            MENUITEM "400%",                        ID_ZOOM_400
-            MENUITEM "200%",                        ID_ZOOM_200
-            MENUITEM "150%",                        ID_ZOOM_150
-            MENUITEM "100%",                        ID_ZOOM_100
-            MENUITEM "75%",                         ID_ZOOM_75
-            MENUITEM "50%",                         ID_ZOOM_50
-        END
-        MENUITEM SEPARATOR
-        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
-        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
-        MENUITEM "Properties",                  ID_VIEW_PROPERTIES
-        MENUITEM "Element List",                ID_VIEW_ELEMENTLIST
-        MENUITEM SEPARATOR
-        MENUITEM "Grid",                        ID_VIEW_GRID
-        MENUITEM "Page breaks",                 ID_VIEW_PAGEBREAKS
-    END
-    POPUP "&Insert"
-    BEGIN
-        MENUITEM "(dummy)",                     ID_INSERT_
-    END
-    POPUP "F&ormat"
-    BEGIN
-        MENUITEM "&Font...",                    ID_FORMAT_FONT
-        POPUP "&Alignment"
-        BEGIN
-            MENUITEM "&Left",                       ID_ALIGNMENT_LEFT
-            MENUITEM "&Center",                     ID_ALIGNMENT_CENTER
-            MENUITEM "&Right",                      ID_ALIGNMENT_RIGHT
-            MENUITEM SEPARATOR
-            MENUITEM "&Top",                        ID_ALIGNMENT_TOP
-            MENUITEM "&Middle",                     ID_ALIGNMENT_MIDDLE
-            MENUITEM "&Bottom",                     ID_ALIGNMENT_BOTTOM
-            MENUITEM SEPARATOR
-            MENUITEM "&Multiline",                  ID_ALIGNMENT_MULTILINE
-        END
-        MENUITEM SEPARATOR
-        POPUP "&Background"
-        BEGIN
-            MENUITEM "&Color...",                   ID_BACKGROUND_COLOR
-            MENUITEM "&Transparent",                ID_BACKGROUND_TRANSPARENT
-        END
-        POPUP "&Line"
-        BEGIN
-            MENUITEM "&Color...",                   ID_LINE_COLOR
-            POPUP "Width"
-            BEGIN
-                MENUITEM "1 pt",                        ID_WIDTH_1PT
-                MENUITEM "2 pt",                        ID_WIDTH_2PT
-                MENUITEM "4 pt",                        ID_WIDTH_4PT
-            END
-            POPUP "Style"
-            BEGIN
-                MENUITEM "Solid",                       ID_STYLE_SOLID
-                MENUITEM "Dashed",                      ID_STYLE_DASHED
-                MENUITEM "Dotted",                      ID_STYLE_DOTTED
-                MENUITEM "Dash-dotted",                 ID_STYLE_DASHDOTTED
-                MENUITEM "Dot-dash-dotted",             ID_STYLE_DOTDASHDOTTED
-            END
-        END
-        POPUP "&Fill"
-        BEGIN
-            MENUITEM "&Color...",                   ID_FILL_COLOR
-            POPUP "Pattern"
-            BEGIN
-                MENUITEM "Solid",                       ID_PATTERN_SOLID
-                MENUITEM "Horizontal",                  ID_PATTERN_HORIZONTAL
-                MENUITEM "Vertical",                    ID_PATTERN_VERTICAL
-                MENUITEM "Downward hatch",              ID_PATTERN_DIAGONALLEFT
-                MENUITEM "Upward hatch",                ID_PATTERN_DIAGONALRIGHT
-                MENUITEM "Crosshatch",                  ID_PATTERN_CROSSHATCH
-                MENUITEM "Diagonal crosshatch",         ID_PATTERN_DIAGONALCROSSHATCH
-            END
-        END
-    END
-    POPUP "&Arrange"
-    BEGIN
-        MENUITEM "Group",                       ID_ARRANGE_GROUP
-        MENUITEM "Ungroup",                     ID_ARRANGE_UNGROUP
-        MENUITEM SEPARATOR
-        POPUP "Align"
-        BEGIN
-            MENUITEM "Left",                        ID_ALIGN_LEFT
-            MENUITEM "Center",                      ID_ALIGN_CENTER
-            MENUITEM "Right",                       ID_ALIGN_RIGHT
-            MENUITEM SEPARATOR
-            MENUITEM "Top",                         ID_ALIGN_TOP
-            MENUITEM "Middle",                      ID_ALIGN_MIDDLE
-            MENUITEM "Bottom",                      ID_ALIGN_BOTTOM
-        END
-        MENUITEM "Snap to Grid",                ID_ARRANGE_SNAPTOGRID
-    END
-    POPUP "&Window"
-    BEGIN
-        MENUITEM "&New Window",                 ID_WINDOW_NEW
-        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
-        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
-        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
-    END
-    POPUP "&Help"
-    BEGIN
-        MENUITEM "&About WinProMo...",          ID_APP_ABOUT
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Accelerator
-//
-
-IDR_WPDPLUGIN ACCELERATORS
-BEGIN
-    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
-    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
-    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
-    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
-    VK_DELETE,      ID_EDIT_DELETE,         VIRTKEY, NOINVERT
-    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
-    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
-    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
-    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
-    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
-    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
-    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
-    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
-    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
-    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
-    "Y",            ID_EDIT_REDO,           VIRTKEY, CONTROL, NOINVERT
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// AFX_DIALOG_LAYOUT
-//
-
-IDD_DIALOG_CANVAS_SIZE AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
 
 
 /////////////////////////////////////////////////////////////////////////////
