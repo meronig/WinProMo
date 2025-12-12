@@ -188,6 +188,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileUtils\DibHelper.cpp" />
     <ClCompile Include="GeometryUtils\DoublePoint.cpp" />
     <ClCompile Include="FileUtils\FileSerializer.cpp" />
     <ClCompile Include="GeometryUtils\DoubleRect.cpp" />
@@ -226,6 +227,7 @@
     <None Include="WinProMo.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileUtils\DibHelper.h" />
     <ClInclude Include="GeometryUtils\DoublePoint.h" />
     <ClInclude Include="FileUtils\FileSerializer.h" />
     <ClInclude Include="GeometryUtils\DoubleRect.h" />
