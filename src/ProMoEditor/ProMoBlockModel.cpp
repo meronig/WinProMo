@@ -368,7 +368,8 @@ void CProMoBlockModel::UnlinkChildBlock(CProMoBlockModel* subblock)
 
    ============================================================*/
 {
-	for (int i = m_subblocks.GetSize() - 1; i >= 0; i--) {
+	int i = 0;
+	for (i = (int)m_subblocks.GetSize() - 1; i >= 0; i--) {
 		if (m_subblocks.GetAt(i) == subblock) {
 			subblock->m_parentBlock = NULL;
 			subblock->m_attachmentType = DEHT_NONE;
@@ -390,7 +391,8 @@ void CProMoBlockModel::UnlinkAllChildBlocks()
 
    ============================================================*/
 {
-	for (int i = m_subblocks.GetSize() - 1; i >= 0; i--) {
+	int i = 0;
+	for (i = (int)m_subblocks.GetSize() - 1; i >= 0; i--) {
 		CProMoBlockModel* child = dynamic_cast<CProMoBlockModel*>(this->m_subblocks.GetAt(i));
 		if (child) {
 			child->m_parentBlock = NULL;

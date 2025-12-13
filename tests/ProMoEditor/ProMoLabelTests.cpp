@@ -727,7 +727,7 @@ namespace CProMoLabelTests
 
             label.SetFitTitle(FALSE);
             label.SetName(CString("Label"));
-            label.SetTitle(CString("My Label"));
+            label.SetTitle(CString("My Label with a quite long title"));
             label.SetRect(100, 50, 250, 120);
             label.SetFontName(CString("Arial"));
             label.SetFontSize(14);
@@ -763,7 +763,7 @@ namespace CProMoLabelTests
 
             label.Draw(&memDC, rect);
 
-            label.DrawObject(&memDC, 0.5);
+            label.DrawObject(&memDC, 1.0);
 
         }
 

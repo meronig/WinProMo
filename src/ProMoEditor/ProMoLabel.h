@@ -97,7 +97,9 @@ protected:
 	virtual CDoubleRect ComputeTextRect(CDC* dc, double zoom);
 	virtual CDiagramEntity* GetView() const;
 
-	
+	virtual int FindTextWrapPosition(CDC* dc, const CString& text, int start, int maxWidth) const;
+	virtual void DrawMultiLineText(CDC* dc, CDoubleRect& rect, unsigned int& lineCount, BOOL measureOnly);
+
 // Implements
 public:
 	virtual CProMoModel* GetModel() const;
@@ -177,7 +179,7 @@ protected:
 	virtual CString				GetDefaultGetString() const;
 	virtual CString				GetHeaderFromString(CString& str);
 	virtual BOOL				GetDefaultFromString(CString& str);
-
+	
 	
 };
 

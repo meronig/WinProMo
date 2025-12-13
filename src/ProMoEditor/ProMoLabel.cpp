@@ -209,7 +209,27 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 
 		if (!rasterizeText)
 		{
-			dc->DrawText(GetTitle(), actualRect.ToCRect(), m_textAlignment | DT_NOCLIP);
+			if (m_textAlignment & DT_WORDBREAK) {
+				unsigned int lineCount = 0;
+				DrawMultiLineText(dc, actualRect, lineCount, TRUE);
+				DrawMultiLineText(dc, actualRect, lineCount, FALSE);
+			}
+			else {
+				double hPos = actualRect.left;
+				double vPos = actualRect.top;
+				
+				if (m_textAlignment & DT_CENTER)
+					hPos += (actualRect.Width() - m_titleRect.Width() * GetZoom()) / 2;
+				if (m_textAlignment & DT_RIGHT)
+					hPos += (actualRect.Width() - m_titleRect.Width() * GetZoom());
+				if (m_textAlignment & DT_VCENTER)
+					vPos += (actualRect.Height() - m_titleRect.Height() * GetZoom()) / 2;
+				if (m_textAlignment & DT_BOTTOM)
+					vPos += (actualRect.Height() - m_titleRect.Height() * GetZoom());
+				
+				dc->ExtTextOut((int)hPos, (int)vPos, (m_bkMode & OPAQUE) ? ETO_OPAQUE : 0, NULL, GetTitle(), NULL);
+			}
+
 		}
 		else {
 			CDC memDC, maskDC, nullDC;
@@ -253,12 +273,7 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 			maskDC.FillRect(&CRect(0, 0, bmpRect.Width(), bmpRect.Height()), &bgBrush);
 			maskDC.SetTextColor(RGB(0, 0, 0));
 			maskDC.SelectObject(&font);
-			maskDC.DrawText(GetTitle(), &fontRect.ToCRect(), m_textAlignment);
-
-			// Copy bitmap to screen
-			dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
-				&maskDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCAND);
-
+			
 			//prepare memDC
 			CBitmap bmp;
 			bmp.CreateCompatibleBitmap(dc, bmpRect.Width(), bmpRect.Height());
@@ -268,8 +283,20 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 			memDC.SetBkColor(m_bkColor);
 			memDC.SetTextColor(m_textColor);
 			memDC.SelectObject(&font);
-			memDC.DrawText(GetTitle(), &fontRect.ToCRect(), m_textAlignment);
 
+			if (m_textAlignment & DT_WORDBREAK) {
+				unsigned int lineCount = 0;
+				DrawMultiLineText(&maskDC, fontRect, lineCount, TRUE);
+				DrawMultiLineText(&maskDC, fontRect, lineCount, FALSE);
+				DrawMultiLineText(&memDC, fontRect, lineCount, FALSE);
+			}
+			else {
+				maskDC.DrawText(GetTitle(), &fontRect.ToCRect(), m_textAlignment);
+				memDC.DrawText(GetTitle(), &fontRect.ToCRect(), m_textAlignment);
+			}
+			// Copy bitmap to screen
+			dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
+				&maskDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCAND);
 			dc->StretchBlt(rect.left, rect.top, rect.Width(), rect.Height(),
 				&memDC, 0, 0, bmpRect.Width(), bmpRect.Height(), SRCPAINT);
 
@@ -282,6 +309,126 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 		dc->SetBkMode(oldBkMode);
 		dc->SelectObject(pOldFont);
 	}
+}
+
+void CProMoLabel::DrawMultiLineText(CDC* dc, CDoubleRect& rect, unsigned int& lineCount, BOOL measureOnly)
+/* ============================================================
+	Function :		CProMoLabel::DrawMultiLineText
+	Description :	Splits and draws text into multiple lines.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CDC* dc					-	The CDC to draw
+												to.
+					CRect rect				-	The rectangle to 
+												draw in.
+					unsigned int& lineCount -	Number of lines 
+												drawn/measured.
+					BOOL measureOnly		-	If "TRUE", the 
+												function counts
+												the number of 
+												lines to split 
+												the text into 
+												without drawing
+												the text in dc,
+												and stores it
+												in "lineCount".
+
+   ============================================================*/
+{
+	CDC nullDC;
+	nullDC.CreateCompatibleDC(NULL);
+
+	int fontHeight = -round(m_fontSize * GetZoom());
+
+	CFont font;
+	font.CreateFont(fontHeight, 0, 0, 0, m_fontWeight, m_fontItalic, m_fontUnderline, m_fontStrikeOut, 0, 0, 0, 0, 0, m_fontName);
+
+	CFont* pOldFont = nullDC.SelectObject(&font);
+
+	double hPos = rect.left;
+	double vPos = rect.top;
+	double x = hPos;
+	double y = vPos;
+
+	int drawnLines = 0;
+
+	CString text = GetTitle();
+
+	// Normalize line breaks if needed
+	CFileParser::CStringReplace(text, _T("\r\n"), _T("\n"));
+	CFileParser::CStringReplace(text, _T("\r"), _T("\n"));
+
+	int pos = 0;
+	const int len = text.GetLength();
+
+	TEXTMETRIC tm;
+	nullDC.GetTextMetrics(&tm);
+
+	const int lineHeight = tm.tmHeight + tm.tmExternalLeading;
+	const double maxWidth = rect.Width();
+
+	double totalHeight =
+		lineCount * lineHeight;
+
+	if (m_textAlignment & DT_VCENTER)
+		y += (rect.Height() - totalHeight) / 2;
+	if (m_textAlignment & DT_BOTTOM)
+		y += (rect.Height() - totalHeight);
+
+	while (pos < len)
+	{
+		// Explicit newline?
+		if (text[pos] == _T('\n'))
+		{
+			y += lineHeight;
+			++pos;
+			continue;
+		}
+
+		int end = FindTextWrapPosition(&nullDC, text, pos, (int)maxWidth);
+
+		int lineLen = end - pos;
+
+		// Skip trailing spaces
+		while (lineLen > 0 && _istspace(text[pos + lineLen - 1]))
+			--lineLen;
+
+		CSize lineSize = nullDC.GetTextExtent(text.Mid(pos, lineLen));
+
+		if (m_textAlignment & DT_CENTER)
+			x = hPos + (rect.Width() - lineSize.cx) / 2;
+		if (m_textAlignment & DT_RIGHT)
+			x = hPos + (rect.Width() - lineSize.cx);
+
+		if (lineLen > 0 && !measureOnly)
+		{
+			dc->ExtTextOut(
+				(int)x,
+				(int)y,
+				(m_bkMode & OPAQUE) ? ETO_OPAQUE : 0,
+				NULL,
+				text.Mid(pos, lineLen),
+				NULL
+			);
+		}
+
+		drawnLines++;
+
+		// Advance pos
+		pos = end;
+
+		// Skip leading spaces on next line
+		while (pos < len && _istspace(text[pos]) && text[pos] != _T('\n'))
+			++pos;
+
+		y += lineHeight;
+	}
+
+	if (measureOnly)
+		lineCount = drawnLines;
+	
+	nullDC.SelectObject(pOldFont);
 }
 
 void CProMoLabel::ShowPopup(CPoint point, CWnd* parent)
@@ -1910,6 +2057,49 @@ CDiagramEntity* CProMoLabel::GetView() const
 		}
 	}
 	return view;
+}
+
+int CProMoLabel::FindTextWrapPosition(CDC* dc, const CString& text, int start, int maxWidth) const
+/* ============================================================
+	Function :		CProMoLabel::FindTextWrapPosition
+	Description :	Identifies the position to wrap text at.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CDC* dc					-	The CDC to draw
+												to.
+					CString& text			-	The text to
+												wrap.
+					int start				-	Where to start
+												measuring from
+												in "text".
+					int maxWidth			-	The maximum width
+												allowed before
+												wrapping.
+
+   ============================================================*/
+{
+	
+	const int len = text.GetLength();
+	int lastSpace = -1;
+
+	for (int i = start + 1; i <= len; ++i)
+	{
+		CSize sz = dc->GetTextExtent(text.Mid(start, i - start));
+
+		if (sz.cx > maxWidth)
+		{
+			if (lastSpace >= 0)
+				return lastSpace + 1;
+
+			return max(start + 1, i - 1);
+		}
+
+		if (_istspace(text[i - 1]))
+			lastSpace = i - 1;
+	}
+
+	return len;
 }
 
 int CProMoLabel::GetHitCode(const CPoint& point, const CRect& rect) const

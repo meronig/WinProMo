@@ -18,9 +18,10 @@ public:
 	static void EncodeString(CString& str);
 	static void DecodeString(CString& str);
 	static CTokenizer* Tokenize(const CString& str);
+	static void CStringReplace(CString& str, const CString& from, const CString& to);
 
 protected:
-	static void CStringReplace(CString& str, const CString& from, const CString& to);
+	
 };
 
 #endif //_FILEPARSER_H_
