@@ -58,6 +58,9 @@ CProMoLabel::CProMoLabel()
 
 	SetZoom(1.0);
 
+	CVariantWrapper wrapper;
+	m_titleProperty = new CProMoProperty(_T("Title"), PROPTYPE_STRING, wrapper, FALSE, TRUE, TRUE, this);
+
 	CString title;
 	BOOL result;
 	result = title.LoadString(IDS_PROMO_NODE);
@@ -65,12 +68,7 @@ CProMoLabel::CProMoLabel()
 		SetTitle(title);
 	}
 	
-	SetName(CProMoNameFactory::GetID());
-
-	CVariantWrapper wrapper;
-	wrapper.SetString(GetTitle());
-	m_titleProperty = new CProMoProperty(_T("Title"), PROPTYPE_STRING, wrapper, FALSE, TRUE, TRUE, this);
-
+	SetName(CProMoNameFactory::GetID());	
 }
 
 CProMoLabel::~CProMoLabel()
@@ -526,6 +524,9 @@ CProMoProperty* CProMoLabel::GetProperty() const
 	if (m_model) {
 		return m_model->FindProperty(m_property);
 	}
+	CVariantWrapper wrapper;
+	wrapper.SetString(GetTitle());
+	m_titleProperty->SetValue(wrapper);
 	return m_titleProperty;
 }
 
