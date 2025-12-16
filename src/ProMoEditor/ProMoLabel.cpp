@@ -181,7 +181,7 @@ void CProMoLabel::Draw(CDC* dc, CRect rect)
 
 		if (dc)
 		{
-			if (!dc->IsPrinting())  // printers always use vector fonts
+			if (!dc->IsPrinting() && !dc->IsKindOf(RUNTIME_CLASS(CMetaFileDC)))  // printers always use vector fonts
 			{
 				int tech = dc->GetDeviceCaps(TECHNOLOGY);
 				if (tech == DT_RASDISPLAY && GetZoom() != 1.0)

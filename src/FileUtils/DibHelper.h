@@ -46,6 +46,8 @@ public:
     // Copy as CF_DIB to the clipboard (hwnd may be NULL)
     BOOL CopyToClipboard(HWND hwnd = NULL) const;
 
+    HGLOBAL CreateDibGlobalForClipboard() const;
+
 private:
     HBITMAP m_hBitmap;
     void* m_pBits;
@@ -58,7 +60,6 @@ private:
 
     // helper: convert top-down internal pixels to bottom-up buffer for BMP/CF_DIB
     // returns allocated HGLOBAL (caller must GlobalFree) containing BITMAPINFOHEADER + pixel data
-    HGLOBAL CreateDibGlobalForClipboard() const;
 };
 
 #endif //_DIBHELPER_H_

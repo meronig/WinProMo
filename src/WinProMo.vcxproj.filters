@@ -114,6 +114,9 @@
     <ClCompile Include="FileUtils\DibHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ProMoEditor\ProMoRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="WinProMo.def">
@@ -239,6 +242,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileUtils\DibHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProMoEditor\ProMoRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

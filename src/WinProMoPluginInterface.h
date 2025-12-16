@@ -11,6 +11,7 @@
 #include "ProMoEditor/ProMoClipboardHandler.h"
 #include "ProMoEditor/ProMoEntityContainer.h"
 #include "WinProMoCmdHandler.h"
+#include "ProMoEditor/ProMoRenderer.h"
 
 class CWinProMoPluginInterface
 {
@@ -24,6 +25,7 @@ public:
 	virtual CWinProMoCmdHandler* GetCmdHandler() = 0;
 	virtual CProMoEntityContainer* GetContainer() = 0;
 	virtual CProMoControlFactory* GetControlFactory() = 0;
+	virtual CProMoRenderer* GetRenderer() = 0;
 };
 
 class AFX_EXT_CLASS CWinProMoPluginCommand : public CObject

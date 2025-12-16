@@ -33,6 +33,9 @@ public:
 	virtual CDiagramEntity* GetNamedView(const CString& name) const;
 	virtual CString GetModelType() const;
 
+	virtual CSize	GetSelectionTotalSize();
+	virtual CPoint	GetSelectionStartPoint();
+
 protected:
 	CProMoModel* GetNamedModel(const CObArray& array, const CString& name) const;
 	void LoadModels(const CStringArray& stra, CProMoControlFactory& fact, CObArray& models);

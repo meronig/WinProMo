@@ -1251,6 +1251,150 @@ CString CProMoEntityContainer::GetModelType() const
 
 }
 
+CSize CProMoEntityContainer::GetSelectionTotalSize()
+/* ============================================================
+	Function :		CDiagramEntityContainer::GetSelectionTotalSize
+	Description :	Gets the minimum bounding size for the
+					selected objects in the container.
+	Access :
+
+	Return :		CSize	-	Minimum bounding size
+	Parameters :	none
+
+	Usage :			Call to get the screen size of the selected
+					objects in the container.
+
+   ============================================================*/
+{
+	CPoint start = GetStartPoint();
+	double width = 0;
+	double height = 0;
+
+	CDiagramEntity* obj;
+	int count = 0;
+	while ((obj = GetAt(count)))
+	{
+		if (obj->IsSelected()) {
+			width = max(width, obj->GetLeft());
+			width = max(width, obj->GetRight());
+			height = max(height, obj->GetTop());
+			height = max(height, obj->GetBottom());
+
+			CObArray labels;
+
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(obj);
+			if (block) {
+				CObArray boundaryBlocks;
+				block->GetBlockModel()->GetBoundaryBlocks(boundaryBlocks, DEHT_BODY);
+				for (int i = 0; i < boundaryBlocks.GetSize(); i++) {
+					CProMoBlockModel* boundary = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(i));
+					if (boundary) {
+						width = max(width, boundary->GetMainView()->GetLeft());
+						width = max(width, boundary->GetMainView()->GetRight());
+						height = max(height, boundary->GetMainView()->GetTop());
+						height = max(height, boundary->GetMainView()->GetBottom());
+					}
+				}
+			}
+
+			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(obj);
+			if (edge) {
+				edge->GetEdgeModel()->GetLabels(labels);
+			}
+
+
+			for (int i = 0; i < labels.GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+				if (label) {
+					width = max(width, label->GetLeft());
+					width = max(width, label->GetRight());
+					height = max(height, label->GetTop());
+					height = max(height, label->GetBottom());
+				}
+			}
+
+		}
+		count++;
+	}
+
+	return CSize(round(width - start.x), round(height - start.y));
+}
+
+CPoint CProMoEntityContainer::GetSelectionStartPoint()
+/* ============================================================
+	Function :		CDiagramEntityContainer::GetSelectionStartPoint
+	Description :	Gets the starting screen position of the
+					selected objects in the container (normally
+					the	top-left corner of the top-left object).
+	Access :
+
+	Return :		CPoint	-	Top-left position of the
+								objects.
+	Parameters :	none
+
+	Usage :			Call to get the starting point on screen of
+					the selected objects.
+
+   ============================================================*/
+{
+	double startx = 2000.0;
+	double starty = 2000.0;
+
+	CDiagramEntity* obj;
+	int count = 0;
+
+	while ((obj = GetAt(count)))
+	{
+		if (obj->IsSelected()) {
+			startx = min(startx, obj->GetLeft());
+			startx = min(startx, obj->GetRight());
+			starty = min(starty, obj->GetTop());
+			starty = min(starty, obj->GetBottom());
+
+			CObArray labels;
+
+			CProMoBlockView* block = dynamic_cast<CProMoBlockView*>(obj);
+			if (block) {
+				CObArray boundaryBlocks;
+				block->GetBlockModel()->GetBoundaryBlocks(boundaryBlocks, DEHT_BODY);
+				for (int i = 0; i < boundaryBlocks.GetSize(); i++) {
+					CProMoBlockModel* boundary = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(i));
+					if (boundary) {
+						startx = min(startx, boundary->GetMainView()->GetLeft());
+						startx = min(startx, boundary->GetMainView()->GetRight());
+						starty = min(starty, boundary->GetMainView()->GetTop());
+						starty = min(starty, boundary->GetMainView()->GetBottom());
+					}
+				}
+
+				block->GetBlockModel()->GetLabels(labels);
+			}
+
+			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(obj);
+			if (edge) {
+				edge->GetEdgeModel()->GetLabels(labels);
+			}
+
+
+			for (int i = 0; i < labels.GetSize(); i++) {
+				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+				if (label) {
+					startx = min(startx, label->GetLeft());
+					startx = min(startx, label->GetRight());
+					starty = min(starty, label->GetTop());
+					starty = min(starty, label->GetBottom());
+				}
+			}
+
+		}
+
+		count++;
+
+	}
+
+	return CPoint(round(startx), round(starty));
+}
+
 int CProMoEntityContainer::ObjectsInPaste()
 /* ============================================================
 	Function :		CProMoEntityContainer::ObjectsInPaste
