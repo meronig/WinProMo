@@ -10,7 +10,7 @@
 
 #include "ProMoEditor/ProMoClipboardHandler.h"
 #include "ProMoEditor/ProMoEntityContainer.h"
-#include "WinProMoCmdHandler.h"
+#include "ProMoEditor/ProMoCmdHandler.h"
 #include "ProMoEditor/ProMoRenderer.h"
 
 class CWinProMoPluginInterface
@@ -21,8 +21,9 @@ public:
 	virtual CObArray* GetCommands() = 0;
 	virtual const CString GetDocumentType() = 0;
 	virtual const UINT GetDocumentID() = 0;
+	virtual const CString GetDocumentDescr() = 0;
 	virtual void Destroy() = 0;
-	virtual CWinProMoCmdHandler* GetCmdHandler() = 0;
+	virtual CProMoCmdHandler* GetCmdHandler() = 0;
 	virtual CProMoEntityContainer* GetContainer() = 0;
 	virtual CProMoControlFactory* GetControlFactory() = 0;
 	virtual CProMoRenderer* GetRenderer() = 0;

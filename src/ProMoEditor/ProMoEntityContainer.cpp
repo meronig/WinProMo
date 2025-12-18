@@ -1266,7 +1266,7 @@ CSize CProMoEntityContainer::GetSelectionTotalSize()
 
    ============================================================*/
 {
-	CPoint start = GetStartPoint();
+	CPoint start = GetSelectionStartPoint();
 	double width = 0;
 	double height = 0;
 
@@ -1295,6 +1295,8 @@ CSize CProMoEntityContainer::GetSelectionTotalSize()
 						height = max(height, boundary->GetMainView()->GetBottom());
 					}
 				}
+
+				block->GetBlockModel()->GetLabels(labels);
 			}
 
 			CProMoEdgeView* edge = dynamic_cast<CProMoEdgeView*>(obj);

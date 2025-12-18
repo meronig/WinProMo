@@ -85,7 +85,7 @@ void CProMoRenderer::SetScreenResolution(unsigned int res)
 	m_screenRes = res;
 }
 
-void CProMoRenderer::RenderCanvasAsMetafile(CDC& dc, unsigned int zoom)
+void CProMoRenderer::RenderCanvasAsMetafile(CDC& dc, double zoom)
 /* ============================================================
 	Function :		CProMoRenderer::RenderCanvasAsMetafile
 	Description :	Renders the entire canvas as a metafile.
@@ -130,7 +130,7 @@ void CProMoRenderer::RenderCanvasAsRaster(CDibHelper& dib, unsigned int resoluti
 	}
 }
 
-void CProMoRenderer::RenderDiagramAsMetafile(CDC& dc, unsigned int zoom)
+void CProMoRenderer::RenderDiagramAsMetafile(CDC& dc, double zoom)
 /* ============================================================
 	Function :		CProMoRenderer::RenderDiagramAsMetafile
 	Description :	Renders the diagram as a metafile. The
@@ -182,7 +182,7 @@ void CProMoRenderer::RenderDiagramAsRaster(CDibHelper& dib, unsigned int resolut
 	}
 }
 
-void CProMoRenderer::RenderSelectionAsMetafile(CDC& dc, unsigned int zoom)
+void CProMoRenderer::RenderSelectionAsMetafile(CDC& dc, double zoom)
 /* ============================================================
 	Function :		CProMoRenderer::RenderSelectionAsMetafile
 	Description :	Renders the selected objects as a metafile.
@@ -257,9 +257,9 @@ void CProMoRenderer::RenderAsRaster(const CObArray& elements, CDibHelper& dib, u
 
 		const double MAX_DIM = 6000.0;
 
-		unsigned long scaling = resolution / m_screenRes;
-		unsigned long hSize = size.cx;
-		unsigned long vSize = size.cy;
+		double scaling = (double)resolution / (double)m_screenRes;
+		double hSize = size.cx;
+		double vSize = size.cy;
 
 		double maxScaleW = MAX_DIM / hSize;
 		double maxScaleH = MAX_DIM / vSize;
@@ -268,16 +268,21 @@ void CProMoRenderer::RenderAsRaster(const CObArray& elements, CDibHelper& dib, u
 		if (scaling > maxScale)
 			scaling = maxScale;
 
-		dib.Create(size.cx * scaling, size.cy * scaling, 24);
+		int scaledStartX = (int)(start.x * scaling);
+		int scaledStartY = (int)(start.y * scaling);
+		int scaledWidth = (int)(size.cx * scaling);
+		int scaledHeight = (int)(size.cy * scaling);
+		
+		dib.Create(scaledWidth, scaledHeight, 24);
 
 		HBITMAP hOld = (HBITMAP)memDC.SelectObject(dib.GetBitmap());
 
 		memDC.SetMapMode(MM_TEXT);
 		memDC.SetViewportOrg(
-			-LONG(start.x * scaling),
-			-LONG(start.y * scaling));
+			-LONG(scaledStartX),
+			-LONG(scaledStartY));
 
-		memDC.FillSolidRect(start.x * scaling, start.y * scaling, size.cx * scaling, size.cy * scaling, RGB(255, 255, 255));
+		memDC.FillSolidRect(scaledStartX, scaledStartY, scaledWidth, scaledHeight, RGB(255, 255, 255));
 
 		RenderAsMetafile(elements, memDC, scaling, start, size);
 
@@ -290,7 +295,7 @@ void CProMoRenderer::RenderAsRaster(const CObArray& elements, CDibHelper& dib, u
 	}
 }
 
-void CProMoRenderer::RenderAsMetafile(const CObArray& elements, CDC& dc, unsigned int zoom, CPoint start, CSize size)
+void CProMoRenderer::RenderAsMetafile(const CObArray& elements, CDC& dc, double zoom, CPoint start, CSize size)
 /* ============================================================
 	Function :		CProMoRenderer::RenderAsRaster
 	Description :	Renders the input objects as a metafile.
@@ -321,11 +326,11 @@ void CProMoRenderer::RenderAsMetafile(const CObArray& elements, CDC& dc, unsigne
 	
 	SelectElements(oldSelection);
 
-	start.x = start.x * zoom;
-	start.y = start.y * zoom;
+	start.x = (int)(start.x * zoom);
+	start.y = (int)(start.y * zoom);
 
-	size.cx = size.cx * zoom;
-	size.cy = size.cy * zoom;
+	size.cx = (int)(size.cx * zoom);
+	size.cy = (int)(size.cy * zoom);
 
 	//only needed for vector
 	dc.SetWindowOrg(start);

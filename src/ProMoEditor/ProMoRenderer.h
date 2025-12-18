@@ -20,13 +20,13 @@ public:
 	virtual void SetEntityContainer(CProMoEntityContainer* container);
 	virtual void SetScreenResolution(unsigned int res);
 	
-	virtual void RenderCanvasAsMetafile(CDC& dc, unsigned int zoom);
+	virtual void RenderCanvasAsMetafile(CDC& dc, double zoom);
 	virtual void RenderCanvasAsRaster(CDibHelper& dib, unsigned int resolution);
 	
-	virtual void RenderDiagramAsMetafile(CDC& dc, unsigned int zoom);
+	virtual void RenderDiagramAsMetafile(CDC& dc, double zoom);
 	virtual void RenderDiagramAsRaster(CDibHelper& dib, unsigned int resolution);
 	
-	virtual void RenderSelectionAsMetafile(CDC& dc, unsigned int zoom);
+	virtual void RenderSelectionAsMetafile(CDC& dc, double zoom);
 	virtual void RenderSelectionAsRaster(CDibHelper& dib, unsigned int resolution);
 
 
@@ -35,7 +35,7 @@ protected:
 	unsigned int m_screenRes;
 
 	virtual void RenderAsRaster(const CObArray &elements, CDibHelper& dib, unsigned int resolution, CPoint start, CSize size);
-	virtual void RenderAsMetafile(const CObArray &elements, CDC& dc, unsigned int zoom, CPoint start, CSize size);
+	virtual void RenderAsMetafile(const CObArray &elements, CDC& dc, double zoom, CPoint start, CSize size);
 	
 	virtual void PickSelectedElements(CObArray &elements);
 	virtual void PickElement(CObArray& elements, CObject* element);

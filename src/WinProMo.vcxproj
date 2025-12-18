@@ -221,7 +221,6 @@
     <ClCompile Include="ProMoEditor\ProMoRenderer.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="WinProMo.cpp" />
-    <ClCompile Include="WinProMoCmdHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\WinProMo.rc2" />
@@ -266,7 +265,7 @@
     <ClInclude Include="ProMoEditor\ProMoRenderer.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="WinProMoCmdHandler.h" />
+    <ClInclude Include="ProMoEditor\ProMoCmdHandler.h" />
     <ClInclude Include="WinProMoPluginInterface.h" />
   </ItemGroup>
   <ItemGroup>

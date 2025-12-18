@@ -30,21 +30,18 @@ public:
     HBITMAP DetachBitmap();
 
     // Accessors
-    HBITMAP GetBitmap() const { return m_hBitmap; }
-    void* GetBits() const { return m_pBits; }
-    int      GetWidth() const { return m_width; }
-    int      GetHeight() const { return m_height; }    // logical height (positive)
-    int      GetBitCount() const { return m_bitCount; }
-    int      GetRowBytes() const { return m_rowBytes; } // bytes per row (DWORD aligned)
+    HBITMAP GetBitmap() const;
+    void* GetBits() const;
+    int      GetWidth() const;
+    int      GetHeight() const;
+    int      GetBitCount() const;
+    int      GetRowBytes() const;
 
     // Return pointer to internal BITMAPINFOHEADER (for StretchDIBits)
-    const BITMAPINFOHEADER* GetBitmapInfoHeader() const { return &m_bmih; }
+    const BITMAPINFOHEADER* GetBitmapInfoHeader() const;
 
     // Save as a 24/32-bit BMP file. Returns true on success.
     BOOL SaveBMP(LPCTSTR path) const;
-
-    // Copy as CF_DIB to the clipboard (hwnd may be NULL)
-    BOOL CopyToClipboard(HWND hwnd = NULL) const;
 
     HGLOBAL CreateDibGlobalForClipboard() const;
 

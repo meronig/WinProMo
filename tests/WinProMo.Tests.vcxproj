@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileUtils\DibHelperTests.cpp" />
     <ClCompile Include="FileUtils\FileParserTests.cpp" />
     <ClCompile Include="FileUtils\FileSerializerTests.cpp" />
     <ClCompile Include="FileUtils\VariantWrapperTests.cpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="ProMoEditor\ProMoLabelTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoModelTests.cpp" />
     <ClCompile Include="ProMoEditor\ProMoPropertyTests.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoRendererTests.cpp" />
     <ClCompile Include="WinProMoTests.h" />
   </ItemGroup>
   <ItemGroup>

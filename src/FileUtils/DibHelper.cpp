@@ -21,16 +21,43 @@ CDibHelper::CDibHelper()
     , m_bitCount(0)
     , m_rowBytes(0)
     , m_ownsBitmap(FALSE)
+/* ============================================================
+    Function :		CDibHelper::CDibHelper
+    Description :	Constructor.
+    Access :		Public
+
+    Return :		void
+    Parameters :	none
+
+    ============================================================*/
 {
     ZeroMemory(&m_bmih, sizeof(m_bmih));
 }
 
 CDibHelper::~CDibHelper()
+/* ============================================================
+    Function :		CDibHelper::~CDibHelper
+    Description :	Destructor.
+    Access :		Public
+
+    Return :		void
+    Parameters :	none
+
+    ============================================================*/
 {
     Destroy();
 }
 
 void CDibHelper::Destroy()
+/* ============================================================
+    Function :		CDibHelper::Destroy
+	Description :	Frees resources.
+    Access :		Public
+
+    Return :		void
+    Parameters :	none
+
+    ============================================================*/
 {
     if (m_ownsBitmap && m_hBitmap)
         ::DeleteObject(m_hBitmap);
@@ -42,6 +69,19 @@ void CDibHelper::Destroy()
 }
 
 BOOL CDibHelper::Create(int width, int height, int bitCount)
+/* ============================================================
+    Function :		CDibHelper::Destroy
+	Description :	Creates a DIBSection with specified properties.
+    Access :		Public
+
+	Return :		BOOL            -   "TRUE" on success, 
+                                        "FALSE" on failure.
+	Parameters :	int width       -   width
+					int height      -   height
+					int bitCount    -   bits per pixel 
+                                        (typically 24 or 32)
+
+    ============================================================*/
 {
     Destroy();
 
@@ -88,6 +128,26 @@ BOOL CDibHelper::Create(int width, int height, int bitCount)
 }
 
 BOOL CDibHelper::Attach(HBITMAP hBmp, const BITMAPINFOHEADER* pBIH, BOOL attachOwn)
+/* ============================================================
+    Function :		CDibHelper::Attach
+    Description :	Attaches an existing HBITMAP to the CDibHelper.
+                    If pBIH is NULL, the BITMAPINFOHEADER is built
+                    from the HBITMAP properties.
+                    If attachOwn == TRUE, the CDibHelper will
+					DeleteObject(hBmp) in Destroy().
+    Access :		Public
+
+    Return :		BOOL                    -   "TRUE" on success,
+                                                "FALSE" on failure.
+	Parameters :	HBITMAP hBmp            -   bitmap handle to 
+                                                attach
+                    BITMAPINFOHEADER* pBIH  -   optional pointer to 
+												BITMAPINFOHEADER
+                    BOOL attachOwn          -   "TRUE" if CDibHelper 
+                                                assumes ownership of 
+												hBmp
+
+    ============================================================*/
 {
     Destroy();
     if (!hBmp) return FALSE;
@@ -156,6 +216,17 @@ BOOL CDibHelper::Attach(HBITMAP hBmp, const BITMAPINFOHEADER* pBIH, BOOL attachO
 }
 
 HBITMAP CDibHelper::DetachBitmap()
+/* ============================================================
+    Function :		CDibHelper::DetachBitmap
+    Description :	Detaches ownership of the HBITMAP from the 
+                    CDibHelper. Caller becomes owner of the 
+                    HBITMAP.
+    Access :		Public
+
+	Return :		HBITMAP     -   bitmap handle
+    Parameters :	none
+
+    ============================================================*/
 {
     HBITMAP h = m_hBitmap;
     m_hBitmap = NULL;
@@ -167,15 +238,50 @@ HBITMAP CDibHelper::DetachBitmap()
 }
 
 static inline const BYTE* RowPtrTopDown(const BYTE* base, int rowBytes, int y)
+/* ============================================================
+    Function :		RowPtrTopDown
+    Description :	Returns pointer to the start of row y in a 
+					top-down bitmap.
+
+	Return :		BYTE*   -   Pointer to the start of row y
+    Parameters :	BYTE*   -   base pointer
+                    int     -   row bytes
+					int     -   y coordinate (from top)
+
+    ============================================================*/
 {
     return base + (size_t)y * rowBytes;
 }
 static inline BYTE* RowPtrBottomUp(BYTE* base, int rowBytes, int yFromBottom)
+/* ============================================================
+    Function :		RowPtrBottomUp
+    Description :	Returns pointer to the start of row y in a 
+					bottom-up bitmap.
+
+    Return :		BYTE*   -   Pointer to the start of row y
+    Parameters :	BYTE*   -   base pointer
+                    int     -   row bytes
+                    int     -   y coordinate (from bottom)
+
+    ============================================================*/
 {
     return base + (size_t)yFromBottom * rowBytes;
 }
 
 HGLOBAL CDibHelper::CreateDibGlobalForClipboard() const
+/* ============================================================
+    Function :		CDibHelper::CreateDibGlobalForClipboard
+    Description :	Builds a global memory block containing
+                    a DIB (BITMAPINFOHEADER + pixel data)
+                    suitable for placing on the clipboard
+                    with CF_DIB format. Converts internal
+					top-down pixel data to bottom-up format.
+    Access :		Public
+
+	Return :		HGLOBAL     -   global memory handle
+    Parameters :	none
+
+    ============================================================*/
 {
     if (!m_pBits) return NULL;
 
@@ -209,28 +315,114 @@ HGLOBAL CDibHelper::CreateDibGlobalForClipboard() const
     return hGlobal;
 }
 
-BOOL CDibHelper::CopyToClipboard(HWND hwnd) const
+void* CDibHelper::GetBits() const
+/* ============================================================
+    Function :		CDibHelper::GetBits
+    Description :	Returns pointer to DIB pixel bits.
+    Access :		Public
+    Return :		void*   -   pointer to pixel bits
+    Parameters :	none
+    ============================================================*/
 {
-    if (!m_pBits) return FALSE;
+	return m_pBits;
+}
 
-    HGLOBAL hDib = CreateDibGlobalForClipboard();
-    if (!hDib) return FALSE;
+int CDibHelper::GetWidth() const
+/* ============================================================
+    Function :		CDibHelper::GetWidth
+    Description :	Returns DIB width.
+    Access :		Public
 
-    if (!::OpenClipboard(hwnd))
-    {
-        ::GlobalFree(hDib);
-        return FALSE;
-    }
+    Return :		int   -   DIB width
+    Parameters :	none
 
-    ::EmptyClipboard();
-    // SetClipboardData with CF_DIB expects BITMAPINFO (header + palette) + bits
-    ::SetClipboardData(CF_DIB, hDib);
-    ::CloseClipboard();
-    // Do not GlobalFree(hDib) after SetClipboardData — system owns it.
-    return TRUE;
+    ============================================================*/
+{
+    return m_width;
+}
+
+int CDibHelper::GetHeight() const
+/* ============================================================
+    Function :		CDibHelper::GetHeight
+	Description :	Returns DIB height.
+    Access :		Public
+
+	Return :		int   -   DIB height
+    Parameters :	none
+
+    ============================================================*/
+{
+    return m_height;
+}
+
+int CDibHelper::GetBitCount() const
+/* ============================================================
+    Function :		CDibHelper::GetBitCount
+	Description :	Returns bits per pixel.
+    Access :		Public
+
+	Return :		int   -   bits per pixel
+    Parameters :	none
+
+    ============================================================*/
+{
+    return m_bitCount;
+}
+
+int CDibHelper::GetRowBytes() const
+/* ============================================================
+    Function :		CDibHelper::GetRowBytes
+	Description :	Returns number of bytes per row.
+    Access :		Public
+
+	Return :		int   -   number of bytes per row
+    Parameters :	none
+
+    ============================================================*/
+{
+    return m_rowBytes;
+}
+
+HBITMAP CDibHelper::GetBitmap() const
+/* ============================================================
+    Function :		CDibHelper::GetBitmap
+	Description :	Returns the HBITMAP handle.
+    Access :		Public
+
+	Return :		HBITMAP   -   HBITMAP handle
+    Parameters :	none
+
+    ============================================================*/
+{
+    return m_hBitmap;
+}
+
+const BITMAPINFOHEADER* CDibHelper::GetBitmapInfoHeader() const
+/* ============================================================
+    Function :		CDibHelper::GetBitmapInfoHeader
+	Description :	Returns pointer to internal BITMAPINFOHEADER.
+    Access :		Public
+
+    Return :		BITMAPINFOHEADER*   -   Pointer to 
+										    BITMAPINFOHEADER
+    Parameters :	none
+
+    ============================================================*/
+{
+    return &m_bmih;
 }
 
 BOOL CDibHelper::SaveBMP(LPCTSTR path) const
+/* ============================================================
+    Function :		CDibHelper::SaveBMP
+	Description :	Saves the DIB as a BMP file to disk.
+    Access :		Public
+
+    Return :		BOOL            -   "TRUE" on success,
+                                        "FALSE" on failure.
+	Parameters :	LPCTSTR path    -   path to save BMP file to
+
+    ============================================================*/
 {
     if (!m_pBits) return FALSE;
 
