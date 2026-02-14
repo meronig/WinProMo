@@ -188,6 +188,24 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Automation\ProMoBlockAuto.cpp" />
+    <ClCompile Include="Automation\ProMoBlockChildAuto.cpp" />
+    <ClCompile Include="Automation\ProMoBoundaryBlocksAuto.cpp" />
+    <ClCompile Include="Automation\ProMoDiagramAutoAbs.cpp" />
+    <ClCompile Include="Automation\ProMoEdgeAuto.cpp" />
+    <ClCompile Include="Automation\ProMoEdgeChildAuto.cpp" />
+    <ClCompile Include="Automation\ProMoEdgeSegmentAuto.cpp" />
+    <ClCompile Include="Automation\ProMoEdgeSegmentsAuto.cpp" />
+    <ClCompile Include="Automation\ProMoElementAuto.cpp" />
+    <ClCompile Include="Automation\ProMoElementChildAuto.cpp" />
+    <ClCompile Include="Automation\ProMoElementsAuto.cpp" />
+    <ClCompile Include="Automation\ProMoIncomingEdgesAuto.cpp" />
+    <ClCompile Include="Automation\ProMoLabelAuto.cpp" />
+    <ClCompile Include="Automation\ProMoLabelsAuto.cpp" />
+    <ClCompile Include="Automation\ProMoOutgoingEdgesAuto.cpp" />
+    <ClCompile Include="Automation\ProMoPropertiesAuto.cpp" />
+    <ClCompile Include="Automation\ProMoPropertyAuto.cpp" />
+    <ClCompile Include="Automation\ProMoSubBlocksAuto.cpp" />
     <ClCompile Include="FileUtils\DibHelper.cpp" />
     <ClCompile Include="GeometryUtils\DoublePoint.cpp" />
     <ClCompile Include="FileUtils\FileSerializer.cpp" />
@@ -195,6 +213,10 @@
     <ClCompile Include="GeometryUtils\GeometryHelper.cpp" />
     <ClCompile Include="FileUtils\FileParser.cpp" />
     <ClCompile Include="GeometryUtils\IntersectionHelper.cpp" />
+    <ClCompile Include="Automation\ProMoAppChildAuto.cpp" />
+    <ClCompile Include="Automation\ProMoDiagramsAutoAbs.cpp" />
+    <ClCompile Include="Automation\ProMoAppAutoAbs.cpp" />
+    <ClCompile Include="Automation\ProMoDiagramChildAuto.cpp" />
     <ClCompile Include="ProMoEditor\ProMoLabel.cpp" />
     <ClCompile Include="ProMoEditor\ProMoProperty.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
@@ -219,6 +241,7 @@
     <ClCompile Include="ProMoEditor\ProMoModel.cpp" />
     <ClCompile Include="ProMoEditor\ProMoNameFactory.cpp" />
     <ClCompile Include="ProMoEditor\ProMoRenderer.cpp" />
+    <ClCompile Include="FileUtils\SafeArrayWrapper.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="WinProMo.cpp" />
   </ItemGroup>
@@ -227,6 +250,24 @@
     <None Include="WinProMo.def" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Automation\ProMoBlockAuto.h" />
+    <ClInclude Include="Automation\ProMoBlockChildAuto.h" />
+    <ClInclude Include="Automation\ProMoBoundaryBlocksAuto.h" />
+    <ClInclude Include="Automation\ProMoDiagramAutoAbs.h" />
+    <ClInclude Include="Automation\ProMoEdgeAuto.h" />
+    <ClInclude Include="Automation\ProMoEdgeChildAuto.h" />
+    <ClInclude Include="Automation\ProMoEdgeSegmentAuto.h" />
+    <ClInclude Include="Automation\ProMoEdgeSegmentsAuto.h" />
+    <ClInclude Include="Automation\ProMoElementAuto.h" />
+    <ClInclude Include="Automation\ProMoElementChildAuto.h" />
+    <ClInclude Include="Automation\ProMoElementsAuto.h" />
+    <ClInclude Include="Automation\ProMoIncomingEdgesAuto.h" />
+    <ClInclude Include="Automation\ProMoLabelAuto.h" />
+    <ClInclude Include="Automation\ProMoLabelsAuto.h" />
+    <ClInclude Include="Automation\ProMoOutgoingEdgesAuto.h" />
+    <ClInclude Include="Automation\ProMoPropertiesAuto.h" />
+    <ClInclude Include="Automation\ProMoPropertyAuto.h" />
+    <ClInclude Include="Automation\ProMoSubBlocksAuto.h" />
     <ClInclude Include="FileUtils\DibHelper.h" />
     <ClInclude Include="GeometryUtils\DoublePoint.h" />
     <ClInclude Include="FileUtils\FileSerializer.h" />
@@ -234,6 +275,11 @@
     <ClInclude Include="GeometryUtils\GeometryHelper.h" />
     <ClInclude Include="FileUtils\FileParser.h" />
     <ClInclude Include="GeometryUtils\IntersectionHelper.h" />
+    <ClInclude Include="Automation\ProMoAutomationHost.h" />
+    <ClInclude Include="Automation\ProMoAppChildAuto.h" />
+    <ClInclude Include="Automation\ProMoDiagramsAutoAbs.h" />
+    <ClInclude Include="Automation\ProMoAppAutoAbs.h" />
+    <ClInclude Include="Automation\ProMoDiagramChildAuto.h" />
     <ClInclude Include="ProMoEditor\ProMoLabel.h" />
     <ClInclude Include="ProMoEditor\ProMoProperty.h" />
     <ClInclude Include="ProMoEditor\ProMoPropertyOwner.h" />
@@ -264,6 +310,7 @@
     <ClInclude Include="ProMoEditor\ProMoNameFactory.h" />
     <ClInclude Include="ProMoEditor\ProMoRenderer.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="FileUtils\SafeArrayWrapper.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="ProMoEditor\ProMoCmdHandler.h" />
     <ClInclude Include="WinProMoPluginInterface.h" />

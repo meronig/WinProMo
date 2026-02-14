@@ -190,3 +190,60 @@ CProMoModel* CProMoControlFactory::CreateModelFromString(const CString& str)
 
 	return obj;
 }
+
+CDiagramEntity* CProMoControlFactory::CreateNewEntity(const CString& str)
+/* ============================================================
+	Function :		CProMoControlFactory::CreateNewEntity
+	Description :	The function returns an object with a type
+					corresponding to the parameter str.
+	Return :		CDiagramEntity*		-	The new object, or
+											NULL if str is not a
+											valid object type.
+	Parameters :	const CString& str	-	The object type to
+											create
+	Usage :			Call this static function from the UI or the
+					automation interface to create new objects
+					of the specified type. Note that the caller
+					is responsible for the allocated memory.
+   ============================================================*/
+{
+	CDiagramEntity* obj;
+
+	obj = CProMoBlockView::Create(str);
+
+	if (!obj)
+		obj = CProMoEdgeView::Create(str);
+
+	if (!obj)
+		obj = CProMoLabel::Create(str);
+
+	return obj;
+}
+
+void CProMoControlFactory::GetEntityTypes(CStringArray& typeList)
+/* ============================================================
+	Function :		CProMoControlFactory::GetEntityTypes
+	Description :	Fills the provided list with the types of
+					objects that can be created by this factory.
+	Return :		void
+	Parameters :	CStringArray& typeList	-	The list to fill
+	Usage :			Call this function to get the list of
+					available object types for use in the UI
+					or the automation interface.
+   ============================================================*/
+{
+	// Clear the list
+	typeList.RemoveAll();
+	// Add block types
+	CDiagramEntity* obj = new CProMoBlockView;
+	typeList.Add(obj->GetType());
+	delete obj;
+	// Add edge types
+	obj = new CProMoEdgeView;
+	typeList.Add(obj->GetType());
+	delete obj;
+	// Add label types
+	obj = new CProMoLabel;
+	typeList.Add(obj->GetType());
+	delete obj;
+}

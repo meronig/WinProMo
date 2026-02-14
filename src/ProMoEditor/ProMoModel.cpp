@@ -26,7 +26,8 @@
 #include "../FileUtils/FileParser.h"
 #include "ProMoLabel.h"
 #include "ProMoProperty.h"
-
+#include "../Automation/ProMoElementAuto.h"
+#include "../DiagramEditor/DiagramEntityContainer.h"
 
 CProMoModel::CProMoModel()
 /* ============================================================
@@ -44,6 +45,9 @@ CProMoModel::CProMoModel()
 	SetType(_T("promo_model"));
 	SetName(CProMoNameFactory::GetID());
 	CreateProperties();
+
+	m_autoObject = NULL;
+
 }
 
 CProMoModel::~CProMoModel()
@@ -61,6 +65,8 @@ CProMoModel::~CProMoModel()
 {
 	UnlinkAllLabels();
 	ClearProperties();
+
+	ReleaseAutomationObject();
 }
 
 CProMoModel* CProMoModel::Clone()
@@ -340,6 +346,16 @@ void CProMoModel::RecreateLabelsR(CObArray& list, CProMoProperty* prop)
 			CProMoLabel* label = new CProMoLabel();
 			label->SetProperty(prop->GetFullName());
 			LinkLabel(label);
+			CObArray viewList;
+			GetViews(viewList);
+			if (viewList.GetSize() > 0) {
+				CDiagramEntity* view = dynamic_cast<CDiagramEntity*>(viewList.GetAt(0));
+				if (view) {
+					if (view->GetParent()) {
+						view->GetParent()->Add(label);
+					}
+				}
+			}
 			list.Add(label);
 		}
 		if (prop->GetType() == PROPTYPE_COMPOSITE || prop->IsMultiValue()) {
@@ -1023,5 +1039,40 @@ void CProMoModel::CustomizeLabel(CProMoLabel* label)
 		}
 
 		label->Reposition();
+	}
+}
+
+CProMoAppChildAuto* CProMoModel::GetAutomationObject()
+/* ============================================================
+	Function :		CProMoModel::GetAutomationObject
+	Description :	Returns a pointer to the automation object
+					associated with this container, creating it
+					if it does not already exist.
+	Access :		Public
+	Return :		CProMoAutomationObject*	-	The pointer.
+	Parameters :	none
+   ============================================================*/
+{
+	if (!m_autoObject) {
+		m_autoObject = new CProMoElementAuto();
+		m_autoObject->Initialize(this);
+	}
+	return m_autoObject;
+}
+
+void CProMoModel::ReleaseAutomationObject()
+/* ============================================================
+	Function :		CProMoModel::ReleaseAutomationObject
+	Description :	Releases the pointer to the automation object
+					associated with this container.
+	Access :		Public
+	Return :		void
+	Parameters :	none
+   ============================================================*/
+{
+	if (m_autoObject) {
+		CProMoAppChildAuto* autoObject = m_autoObject;
+		m_autoObject = NULL;
+		autoObject->Detach();
 	}
 }

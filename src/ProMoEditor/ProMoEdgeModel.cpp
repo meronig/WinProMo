@@ -26,7 +26,7 @@
 #include "ProMoNameFactory.h"
 #include "../DiagramEditor/Tokenizer.h"
 #include "../FileUtils/FileParser.h"
-
+#include "../Automation/ProMoEdgeAuto.h"
 
 CProMoEdgeModel::CProMoEdgeModel()
 /* ============================================================
@@ -386,8 +386,7 @@ CProMoModel* CProMoEdgeModel::CreateFromString(const CString& str)
 }
 
 CString CProMoEdgeModel::GetDefaultGetString() const
-{
-	/* ============================================================
+/* ============================================================
 	Function :		CProMoEdgeModel::GetDefaultString
 	Description :	Gets the default properties of the object
 					as a string.
@@ -400,7 +399,8 @@ CString CProMoEdgeModel::GetDefaultGetString() const
 					to disk.
 
    ============================================================*/
-
+{
+	
 	CString result = CProMoModel::GetDefaultGetString();
 
 	CString str;
@@ -422,4 +422,23 @@ CString CProMoEdgeModel::GetDefaultGetString() const
 
 	return result + str;
 
+}
+
+
+CProMoAppChildAuto* CProMoEdgeModel::GetAutomationObject()
+/* ============================================================
+	Function :		CProMoEdgeModel::GetAutomationObject
+	Description :	Returns a pointer to the automation object
+					associated with this container, creating it
+					if it does not already exist.
+	Access :		Public
+	Return :		CProMoAutomationObject*	-	The pointer.
+	Parameters :	none
+   ============================================================*/
+{
+	if (!m_autoObject) {
+		m_autoObject = new CProMoEdgeAuto();
+		m_autoObject->Initialize(this);
+	}
+	return m_autoObject;
 }

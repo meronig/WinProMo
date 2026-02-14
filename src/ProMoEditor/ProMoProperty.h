@@ -13,6 +13,8 @@
 #include "ProMoPropertyOwner.h"
 #include <afxtempl.h>
 #include "../FileUtils/VariantWrapper.h"
+#include "../Automation/ProMoAutomationHost.h"
+
 
 #define PROPTYPE_COMPOSITE     0
 #define PROPTYPE_INT       1
@@ -22,7 +24,7 @@
 #define PROPTYPE_UNKNOWN   999
 
 class AFX_EXT_CLASS CProMoProperty :
-    public CObject
+    public CObject, public IProMoAutomationHost
 {
 protected:
 	typedef BOOL(*ValidationFuction)(CProMoProperty*, const CVariantWrapper& newVal);
@@ -42,6 +44,8 @@ protected:
 	CProMoProperty* m_parentProperty;
 	CProMoProperty* m_template;
 	CObArray		m_childProperties;
+
+	CProMoAppChildAuto* m_autoObject;
 
 public:
 	CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue,
@@ -93,6 +97,11 @@ protected:
 	virtual BOOL				GetDefaultFromString(CString& str);
 	
 	virtual CProMoProperty* HandleChild(const CString& str);
+
+// Implements
+public:
+	virtual CProMoAppChildAuto* GetAutomationObject();
+	virtual void ReleaseAutomationObject();
 };
 
 #endif //_PROMOPROPERTY_H_

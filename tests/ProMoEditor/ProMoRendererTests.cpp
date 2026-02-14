@@ -15,7 +15,7 @@ namespace CProMoRendererTests
     {
 
     private:
-		CProMoEntityContainer m_container;
+		CProMoEntityContainer* m_container;
 		CProMoRenderer m_renderer;
 
         CProMoBlockView* m_a;
@@ -43,7 +43,9 @@ namespace CProMoRendererTests
         {
             WinProMoTestHelpers::BootstrapMFC();
 
-            m_container.SetVirtualSize(CSize(2000, 2000));
+			m_container = new CProMoEntityContainer(new CProMoControlFactory, CString("custom"));
+
+            m_container->SetVirtualSize(CSize(2000, 2000));
 
             m_a = new CProMoBlockView();
             m_a1 = new CProMoBlockView();
@@ -156,27 +158,27 @@ namespace CProMoRendererTests
             m_lz = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
             labels.RemoveAll();
 
-            m_container.Add(m_a);
-            m_container.Add(m_a1);
-            m_container.Add(m_a2);
-            m_container.Add(m_b);
-            m_container.Add(m_b1);
-            m_container.Add(m_b2);
+            m_container->Add(m_a);
+            m_container->Add(m_a1);
+            m_container->Add(m_a2);
+            m_container->Add(m_b);
+            m_container->Add(m_b1);
+            m_container->Add(m_b2);
 
-            m_container.Add(m_x);
-            m_container.Add(m_y);
-            m_container.Add(m_z);
+            m_container->Add(m_x);
+            m_container->Add(m_y);
+            m_container->Add(m_z);
 
-            m_container.Add(m_la);
-            m_container.Add(m_la1);
-            m_container.Add(m_la2);
-            m_container.Add(m_lb);
-            m_container.Add(m_lb1);
-            m_container.Add(m_lb2);
-            m_container.Add(m_lx);
-            m_container.Add(m_lz);
+            m_container->Add(m_la);
+            m_container->Add(m_la1);
+            m_container->Add(m_la2);
+            m_container->Add(m_lb);
+            m_container->Add(m_lb1);
+            m_container->Add(m_lb2);
+            m_container->Add(m_lx);
+            m_container->Add(m_lz);
 
-			m_renderer.SetEntityContainer(&m_container);
+			m_renderer.SetEntityContainer(m_container);
 			m_renderer.SetScreenResolution(96);
         }
 #pragma region SmokeTests

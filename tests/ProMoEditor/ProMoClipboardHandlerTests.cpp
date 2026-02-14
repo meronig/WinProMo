@@ -35,7 +35,7 @@ namespace CProMoClipboardHandlerTests
         TEST_METHOD(CopyAllSelected_WhenInvoked_CopySelection)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer sourceC(CString("custom"));
+            CProMoEntityContainer sourceC(new CProMoControlFactory, CString("custom"));
             
             CProMoBlockView* a = new CProMoBlockView();
             CProMoBlockView* a1 = new CProMoBlockView();
@@ -90,8 +90,8 @@ namespace CProMoClipboardHandlerTests
         TEST_METHOD(Paste_WhenInvoked_PasteObjects)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer sourceC(CString("custom"), &clip);
-            CProMoEntityContainer destC(CString("custom"), &clip);
+            CProMoEntityContainer sourceC(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer destC(new CProMoControlFactory, CString("custom"), &clip);
 
             CProMoBlockView* a = new CProMoBlockView();
             CProMoBlockView* a1 = new CProMoBlockView();

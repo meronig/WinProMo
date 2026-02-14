@@ -1272,24 +1272,12 @@ void CProMoEditor::CreateLabels()
 		
 		if (selObj) {
 			selObj->GetModel()->RecreateLabels(labels);
-			for (int i = 0; i < labels.GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
-				if (label) {
-					GetDiagramEntityContainer()->Add(label);
-				}
-			}
 		}
 		
 		CProMoEdgeView* selEdge = NULL;
 		selEdge = dynamic_cast<CProMoEdgeView*>(GetSelectedObject());
 		if (selEdge) {
 			selEdge->GetModel()->RecreateLabels(labels);
-			for (int i = 0; i < labels.GetSize(); i++) {
-				CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
-				if (label) {
-					GetDiagramEntityContainer()->Add(label);
-				}
-			}
 		}
 	}
 }
@@ -3101,7 +3089,7 @@ void CProMoEditor::SetPageLayout(CDC* dc)
 	}
 }
 
-void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
+void CProMoEditor::Load(const CStringArray& stra)
 /* ============================================================
 	Function :		CProMoEditor::Load
 	Description :	Sets the container properties (normally 
@@ -3112,10 +3100,6 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
 	Return :		void
 	Parameters :	CStringArray& stra			-	The array 
 													to read
-					CProMoControlFactory& fact	-	The factory
-													object to
-													create
-													objects
 
 	Usage :			Call to load the data of the editor from a
 					"CStringArray". Virtual. Can be overridden in
@@ -3126,7 +3110,7 @@ void CProMoEditor::Load(const CStringArray& stra, CProMoControlFactory& fact)
 {
 	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
 	if (objs)
-		objs->Load(stra, fact);
+		objs->Load(stra);
 
 }
 

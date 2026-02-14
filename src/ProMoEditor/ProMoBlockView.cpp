@@ -33,6 +33,7 @@
 #include "../GeometryUtils/GeometryHelper.h"
 #include "../GeometryUtils/IntersectionHelper.h"
 #include "ProMoLabel.h"
+#include "../Automation/ProMoElementAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -80,6 +81,8 @@ CProMoBlockView::CProMoBlockView()
 	m_targetAttachment = DEHT_NONE;
 	m_visible = TRUE;
 
+	m_autoObject = NULL;
+
 	SetName(CProMoNameFactory::GetID());
 
 	//test: a triangle
@@ -104,6 +107,8 @@ CProMoBlockView::~CProMoBlockView()
 
 	SetModel(NULL);
 	ClearVertices();
+
+	ReleaseAutomationObject();
 }
 
 void CProMoBlockView::Draw(CDC* dc, CRect rect)
@@ -1047,6 +1052,47 @@ void CProMoBlockView::UnlinkAllBoundaryBlocks()
 			m_blockModel->UnlinkChildBlock(dynamic_cast<CProMoBlockModel*>(blocks.GetAt(i)));
 		}
 	}
+}
+
+CDiagramEntity* CProMoBlockView::Create(const CString& str)
+/* ============================================================
+	Function :		CProMoBlockView::Create
+	Description :	Creates an object of this type if the type
+					matches.
+	Return :		CDiagramEntity*	-	The created object, or
+										NULL if the type did
+										not match.
+	Parameters :	const CString& str	-	The type to create.
+	Usage :			Static function used by the
+					"CProMoControlFactory" to create objects
+					of this type.
+   ============================================================*/
+{
+	CProMoBlockView* obj = new CProMoBlockView;
+	if (!obj->HasType(str))
+	{
+		delete obj;
+		obj = NULL;
+	}
+
+	return obj;
+}
+
+BOOL CProMoBlockView::HasType(const CString& type) const
+/* ============================================================
+	Function :		CProMoBlockView::HasType
+	Description :	Returns if the object is of the specified
+					type.
+	Access :		Public
+	Return :		BOOL	-	"TRUE" if the object is of the
+								specified type.
+	Parameters :	const CString& type	-	The type to check.
+   ============================================================*/
+{
+	if (type == GetType()) {
+		return TRUE;
+	}
+	return FALSE;
 }
 
 CProMoModel* CProMoBlockView::GetModel() const
@@ -3105,3 +3151,37 @@ BOOL CProMoBlockView::SetFillStyle(const unsigned int& style)
 	return TRUE;
 }
 
+CProMoAppChildAuto* CProMoBlockView::GetAutomationObject()
+/* ============================================================
+	Function :		CProMoBlockView::GetAutomationObject
+	Description :	Returns a pointer to the automation object
+					associated with this container, creating it
+					if it does not already exist.
+	Access :		Public
+	Return :		CProMoAutomationObject*	-	The pointer.
+	Parameters :	none
+   ============================================================*/
+{
+	if (!m_autoObject) {
+		m_autoObject = new CProMoElementAuto();
+		m_autoObject->Initialize(this);
+	}
+	return m_autoObject;
+}
+
+void CProMoBlockView::ReleaseAutomationObject()
+/* ============================================================
+	Function :		CProMoBlockView::ReleaseAutomationObject
+	Description :	Releases the pointer to the automation object
+					associated with this container.
+	Access :		Public
+	Return :		void
+	Parameters :	none
+   ============================================================*/
+{
+	if (m_autoObject) {
+		CProMoAppChildAuto* autoObject = m_autoObject;
+		m_autoObject = NULL;
+		autoObject->Detach();
+	}
+}

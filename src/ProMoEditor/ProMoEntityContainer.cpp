@@ -29,14 +29,29 @@
 #include "ProMoClipboardHandler.h"
 #include "../FileUtils/FileParser.h"
 #include "ProMoLabel.h"
+#include "../Automation/ProMoElementsAuto.h"
 
-CProMoEntityContainer::CProMoEntityContainer(CDiagramClipboardHandler* clip)
+
+CProMoEntityContainer::CProMoEntityContainer(CProMoControlFactory* factory, CDiagramClipboardHandler* clip)
 /* ============================================================
 	Function :		CProMoEntityContainer::CProMoEntityContainer
 	Description :	constructor
 
 	Return :		void
-	Parameters :	none
+	Parameters :	CProMoControlFactory* factory	-	pointer to 
+														the factory 
+														class used 
+														to create 
+														objects 
+														from 
+														string
+					CDiagramClipboardHandler* clip 	-	pointer to 
+														the 
+														clipboard 
+														handler	to 
+														use for 
+														copy/paste 
+														handling
 
 	Usage :
 
@@ -44,16 +59,35 @@ CProMoEntityContainer::CProMoEntityContainer(CDiagramClipboardHandler* clip)
 {
 	SetUndoStackSize(10);
 	m_modelType = _T("promo");
+	m_autoObject = NULL;
+	m_factory = factory;
 }
 
-CProMoEntityContainer::CProMoEntityContainer(CString modelType, CDiagramClipboardHandler* clip)
+CProMoEntityContainer::CProMoEntityContainer(CProMoControlFactory* factory, CString modelType, CDiagramClipboardHandler* clip)
 /* ============================================================
 	Function :		CProMoEntityContainer::CProMoEntityContainer
 	Description :	constructor
 
 	Return :		void
-	Parameters :	CString modelType	-	string representing
-											the type of model
+	Parameters :	CProMoControlFactory* factory	-	pointer to
+														the factory
+														class used
+														to create
+														objects
+														from
+														string
+					CString modelType				-	string 
+														representing
+														the type of 
+														model
+					CDiagramClipboardHandler* clip 	-	pointer to
+														the
+														clipboard
+														handler	to
+														use for
+														copy/paste
+														handling
+
 
 	Usage :
 
@@ -62,6 +96,8 @@ CProMoEntityContainer::CProMoEntityContainer(CString modelType, CDiagramClipboar
 	SetClipboardHandler(clip);
 	SetUndoStackSize(10);
 	m_modelType = modelType;
+	m_autoObject = NULL;
+	m_factory = factory;
 }
 
 CProMoEntityContainer::~CProMoEntityContainer()
@@ -76,9 +112,11 @@ CProMoEntityContainer::~CProMoEntityContainer()
 
    ============================================================*/
 {
+	delete m_factory;
 
 	ClearUndo();
-
+	
+	ReleaseAutomationObject();
 }
 
 
@@ -231,7 +269,7 @@ void CProMoEntityContainer::ReplicateRelations(const CObArray& source, CObArray&
 	}
 }
 
-void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory& fact)
+void CProMoEntityContainer::Load(const CStringArray& stra)
 /* ============================================================
 	Function :		CProMoEntityContainer::Load
 	Description :	Sets the container properties (normally
@@ -242,11 +280,7 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory&
 	Return :		void
 	Parameters :	CStringArray& stra			-	The array
 													to read
-					CProMoControlFactory& fact	-	The factory
-													object to
-													create
-													objects
-
+					
 	Usage :			Call to load the data of the container from a
 					"CStringArray". Virtual. Can be overridden in
 					a derived class to add non-container data
@@ -258,13 +292,13 @@ void CProMoEntityContainer::Load(const CStringArray& stra, CProMoControlFactory&
 
 	CObArray models;
 
-	LoadModels(stra, fact, models);
-	LoadViews(stra, fact, models);
+	LoadModels(stra, models);
+	LoadViews(stra, models);
 	LoadProperties(stra, models);
 
 	LinkViews(stra, models);
 	LinkModels(stra, models);
-	LoadLabels(stra, fact, models);
+	LoadLabels(stra, models);
 	
 	SetModified(FALSE);
 }
@@ -319,29 +353,11 @@ void CProMoEntityContainer::SaveObjects(CStringArray& stra)
 
 	CObArray models;
 
-	int i;
-	for (i = 0; i < GetSize(); i++) {
-		CProMoBlockView* currObjBlock = dynamic_cast<CProMoBlockView*>(GetAt(i));
-		if (currObjBlock) {
-			models.Add(currObjBlock->GetModel());
-		}
-		CProMoEdgeView* currObjEdge = dynamic_cast<CProMoEdgeView*>(GetAt(i));
-		if (currObjEdge) {
-			models.Add(currObjEdge->GetModel());
-		}
-	}
+	GetModels(models);
 
-	for (i = 0; i < models.GetSize(); i++) {
+	for (int i = 0; i < models.GetSize(); i++) {
 		CProMoModel* currModel = dynamic_cast<CProMoModel*>(models.GetAt(i));
-		BOOL found = FALSE;
-		for (int j = 0; j < i; j++) {
-			CProMoModel* prevModel = dynamic_cast<CProMoModel*>(models.GetAt(j));
-			if (prevModel == currModel) {
-				found = TRUE;
-				break;
-			}
-		}
-		if (!found) {
+		if (currModel) {
 			stra.Add(currModel->GetString());
 			for (unsigned int j = 0; j < currModel->GetPropertiesCount(); j++) {
 				CProMoProperty* prop = currModel->GetProperty(j);
@@ -349,6 +365,7 @@ void CProMoEntityContainer::SaveObjects(CStringArray& stra)
 			}
 		}
 	}
+
 }
 
 void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder) 
@@ -771,12 +788,102 @@ CDiagramEntity* CProMoEntityContainer::GetNamedView(const CString& name) const
 
 }
 
+void CProMoEntityContainer::GetModels(CObArray& models) const
+/* ============================================================
+	Function :		CProMoEntityContainer::GetModels
+	Description :	Fills the input array with all models
+					currently in use in the container.
+	Access :		Protected
+	Return :		void
+	Parameters :	CObArray& models	-	Array to fill with
+											models
+	Usage :			Call to get all models currently in use
+					in the container.
+   ============================================================*/
+{
+	int i;
+	CObArray tempModels;
+	models.RemoveAll();
+	for (i = 0; i < GetSize(); i++) {
+		CProMoBlockView* currObjBlock = dynamic_cast<CProMoBlockView*>(GetAt(i));
+		if (currObjBlock) {
+			tempModels.Add(currObjBlock->GetModel());
+		}
+		CProMoEdgeView* currObjEdge = dynamic_cast<CProMoEdgeView*>(GetAt(i));
+		if (currObjEdge) {
+			tempModels.Add(currObjEdge->GetModel());
+		}
+	}
+
+	for (i = 0; i < tempModels.GetSize(); i++) {
+		CProMoModel* currModel = dynamic_cast<CProMoModel*>(tempModels.GetAt(i));
+		BOOL found = FALSE;
+		for (int j = 0; j < i; j++) {
+			CProMoModel* prevModel = dynamic_cast<CProMoModel*>(tempModels.GetAt(j));
+			if (prevModel == currModel) {
+				found = TRUE;
+				break;
+			}
+		}
+		if (!found) {
+			models.Add(currModel);
+		}
+	}
+}
+
+void CProMoEntityContainer::GetLabels(CObArray& labelList, BOOL ifDetached) const
+/* ============================================================
+	Function :		CProMoEntityContainer::GetLabels
+	Description :	Returns the labels in the diagram. If 
+					ifDetached is TRUE, only labels not attached 
+					to any diagram element will be included.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CObArray labelList	-	A CObArray that will
+											contain the labels
+					BOOL ifDetached		-	If TRUE, only labels 
+											not attached to any 
+											diagram element will
+											be included
+
+   ============================================================*/
+{
+	labelList.RemoveAll();
+	for (int i = 0; i < GetSize(); i++) {
+		CProMoLabel* currLabel = dynamic_cast<CProMoLabel*>(GetAt(i));
+		if (currLabel) {
+			if (currLabel->GetModel() == NULL || !ifDetached) {
+				labelList.Add(currLabel);
+			}
+		}
+	}
+}
+
+CProMoControlFactory* CProMoEntityContainer::GetControlFactory() const
+/* ============================================================
+	Function :		CProMoEntityContainer::GetControlFactory
+	Description :	Returns the factory used to create objects
+					from strings in this container.
+	Return :		CProMoControlFactory*	-	The factory
+												used to create
+												objects from
+												strings in this
+												container.
+	Parameters :	none
+	Usage :			Call to get the factory used to create
+					objects from strings in this container.
+   ============================================================*/
+{
+	return m_factory;
+}
+
 CProMoModel* CProMoEntityContainer::GetNamedModel(const CObArray& array, const CString& name) const
 /* ============================================================
 	Function :		CProMoEntityContainer::GetNamedModel
 	Description :	Returns the model with the name attribute
 					name.
-	Access :		Protected
+	Access :		Public
 
 	Return :		CProMoModel*			-	The object, or
 												NULL if not
@@ -804,7 +911,7 @@ CProMoModel* CProMoEntityContainer::GetNamedModel(const CObArray& array, const C
 	return result;
 }
 
-void CProMoEntityContainer::LoadModels(const CStringArray& stra, CProMoControlFactory& fact, CObArray& models)
+void CProMoEntityContainer::LoadModels(const CStringArray& stra, CObArray& models)
 /* ============================================================
 	Function :		CProMoEntityContainer::LoadModels
 	Description :	Creates model objects from their string 
@@ -814,10 +921,6 @@ void CProMoEntityContainer::LoadModels(const CStringArray& stra, CProMoControlFa
 	Return :		void
 	Parameters :	CStringArray& stra			-	The array
 													to read
-					CProMoControlFactory& fact	-	The factory
-													object to
-													create
-													objects
 					CObArray& models			-	The array
 													that will
 													contain
@@ -828,6 +931,10 @@ void CProMoEntityContainer::LoadModels(const CStringArray& stra, CProMoControlFa
 
    ============================================================*/
 {
+	if (!m_factory) {
+		return;
+	}
+	
 	int max = static_cast<int>(stra.GetSize());
 	int t = 0;
 
@@ -840,15 +947,20 @@ void CProMoEntityContainer::LoadModels(const CStringArray& stra, CProMoControlFa
 		if (!FromString(str))
 		{
 			//check for unicity
-			CProMoModel* model = fact.CreateModelFromString(str);
-			if (model)
-				if (!GetNamedModel(models, model->GetName()))
+			CProMoModel* model = m_factory->CreateModelFromString(str);
+			if (model) {
+				if (!GetNamedModel(models, model->GetName())) {
 					models.Add(model);
+				}
+				else {
+					delete model;
+				}
+			}
 		}
 	}
 }
 
-void CProMoEntityContainer::LoadViews(const CStringArray& stra, CProMoControlFactory& fact, const CObArray& models)
+void CProMoEntityContainer::LoadViews(const CStringArray& stra, const CObArray& models)
 /* ============================================================
 	Function :		CProMoEntityContainer::LoadViews
 	Description :	Creates view objects from their string
@@ -859,10 +971,6 @@ void CProMoEntityContainer::LoadViews(const CStringArray& stra, CProMoControlFac
 	Return :		void
 	Parameters :	CStringArray& stra			-	The array
 													to read
-					CProMoControlFactory& fact	-	The factory
-													object to
-													create
-													objects
 					CObArray& models			-	The array
 													that will
 													contain
@@ -874,6 +982,10 @@ void CProMoEntityContainer::LoadViews(const CStringArray& stra, CProMoControlFac
 
    ============================================================*/
 {
+	if (!m_factory) {
+		return;
+	}
+	
 	int max = static_cast<int>(stra.GetSize());
 	int t = 0;
 	
@@ -891,13 +1003,13 @@ void CProMoEntityContainer::LoadViews(const CStringArray& stra, CProMoControlFac
 			if (!GetNamedView(nodeName)) {
 				CProMoModel* blockModel = GetNamedModel(models, modelName);
 				if (blockModel) {
-					obj = fact.CreateViewFromString(str, blockModel);
+					obj = m_factory->CreateViewFromString(str, blockModel);
 				}
 			}
 				
 			//If no model exists for that view, create one from scratch
 			if (!obj) {
-				obj = fact.CreateViewFromString(str);
+				obj = m_factory->CreateViewFromString(str);
 			}
 			if (obj) {
 				Add(obj);
@@ -907,7 +1019,7 @@ void CProMoEntityContainer::LoadViews(const CStringArray& stra, CProMoControlFac
 
 }
 
-void CProMoEntityContainer::LoadLabels(const CStringArray& stra, CProMoControlFactory& fact, const CObArray& models)
+void CProMoEntityContainer::LoadLabels(const CStringArray& stra, const CObArray& models)
 /* ============================================================
 	Function :		CProMoEntityContainer::LoadLabels
 	Description :	Creates label objects from their string
@@ -918,10 +1030,6 @@ void CProMoEntityContainer::LoadLabels(const CStringArray& stra, CProMoControlFa
 	Return :		void
 	Parameters :	CStringArray& stra			-	The array
 													to read
-					CProMoControlFactory& fact	-	The factory
-													object to
-													create
-													objects
 					CObArray& models			-	The array
 													that will
 													contain
@@ -933,6 +1041,10 @@ void CProMoEntityContainer::LoadLabels(const CStringArray& stra, CProMoControlFa
 
    ============================================================*/
 {
+	if (!m_factory) {
+		return;
+	}
+	
 	int max = static_cast<int>(stra.GetSize());
 	int t = 0;
 
@@ -950,13 +1062,13 @@ void CProMoEntityContainer::LoadLabels(const CStringArray& stra, CProMoControlFa
 			if (!GetNamedView(nodeName)) {
 				CProMoModel* blockModel = GetNamedModel(models, modelName);
 				if (blockModel) {
-					obj = fact.CreateLabelFromString(str, blockModel);
+					obj = m_factory->CreateLabelFromString(str, blockModel);
 				}
 			}
 
 			//If no model exists for that label, create the label as unlinked
 			if (!obj) {
-				obj = fact.CreateLabelFromString(str);
+				obj = m_factory->CreateLabelFromString(str);
 			}
 			if (obj) {
 				Add(obj);
@@ -1420,4 +1532,40 @@ int CProMoEntityContainer::ObjectsInPaste()
 	}
 	return CDiagramEntityContainer::ObjectsInPaste();
 
+}
+
+
+CProMoAppChildAuto* CProMoEntityContainer::GetAutomationObject()
+/* ============================================================
+	Function :		CProMoEntityContainer::GetAutomationObject
+	Description :	Returns a pointer to the automation object
+					associated with this container, creating it 
+					if it does not already exist.
+	Access :		Public
+	Return :		CProMoAutomationObject*	-	The pointer.
+	Parameters :	none
+   ============================================================*/
+{
+	if (!m_autoObject) {
+		m_autoObject = new CProMoElementsAuto();
+		m_autoObject->Initialize(this);
+	}
+	return m_autoObject;
+}
+
+void CProMoEntityContainer::ReleaseAutomationObject()
+/* ============================================================
+	Function :		CProMoEntityContainer::ReleaseAutomationObject
+	Description :	Releases the pointer to the automation object
+					associated with this container.
+	Access :		Public
+	Return :		void
+	Parameters :	none
+   ============================================================*/ 
+{
+	if (m_autoObject) {
+		CProMoAppChildAuto* autoObject = m_autoObject;
+		m_autoObject = NULL;
+		autoObject->Detach();
+	}
 }

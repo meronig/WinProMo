@@ -15,6 +15,7 @@ class AFX_EXT_CLASS CVariantWrapper
 {
 public:
 	CVariantWrapper();
+	CVariantWrapper(const VARIANT& var);
 	CVariantWrapper(const CVariantWrapper& var);
 	
 	CVariantWrapper& operator=(const CVariantWrapper& var);
@@ -24,13 +25,14 @@ public:
 	virtual void SetInt(const int& val);
 	virtual void SetDouble(const double& val);
 	virtual void SetString(const CString& val);
+	virtual void SetVariant(const VARIANT& val);
 	virtual BOOL SetFromString(const CString& val, const VARTYPE& type);
 
 	virtual BOOL GetBool() const;
 	virtual int GetInt() const;
 	virtual double GetDouble() const;
 	virtual CString GetString() const;
-
+	
 	virtual VARTYPE GetType() const;
 	virtual VARIANT* GetVARIANT();
 	virtual const VARIANT* GetVARIANT() const;

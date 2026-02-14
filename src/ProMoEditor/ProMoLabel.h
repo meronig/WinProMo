@@ -30,6 +30,7 @@ public:
 	virtual ~CProMoLabel();
 
 	static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
+	static	CDiagramEntity* Create(const CString& str);
 
 	static CString GetModelFromString(const CString& str);
 	static CString GetNameFromString(const CString& str);
@@ -80,6 +81,8 @@ protected:
 	BOOL m_visible;
 
 	BOOL m_noOffset;
+
+	CProMoAppChildAuto* m_autoObject;
 	
 	class CScopedUpdate {
 	public:
@@ -102,6 +105,8 @@ protected:
 
 // Implements
 public:
+	virtual BOOL HasType(const CString& type) const;
+
 	virtual CProMoModel* GetModel() const;
 	virtual void AutoResize();
 	virtual void Reposition();
@@ -149,6 +154,9 @@ public:
 	virtual void SetMargins(double left, double top, double right, double bottom);
 
 	virtual void OnPropertyChanged(CProMoProperty* prop);
+
+	virtual CProMoAppChildAuto* GetAutomationObject();
+	virtual void ReleaseAutomationObject();
 
 protected:
 	virtual void SetModel(CProMoModel* model);

@@ -28,6 +28,7 @@
 #include "stdafx.h"
 #include "ProMoProperty.h"
 #include "../FileUtils/FileParser.h"
+#include "../Automation/ProMoPropertyAuto.h"
 
 CProMoProperty::CProMoProperty()
 /* ============================================================
@@ -51,6 +52,9 @@ CProMoProperty::CProMoProperty()
 	m_editFunction = NULL;
 	m_parentProperty = NULL;
 	m_template = NULL;
+
+	m_autoObject = NULL;
+
 }
 
 
@@ -139,6 +143,9 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 		}
 	}
 	m_parentProperty = NULL;
+
+	m_autoObject = NULL;
+
 }
 
 CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue, const BOOL& readOnly,
@@ -200,6 +207,9 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_editFunction = NULL;
 	m_parentProperty = NULL;
 	m_template = NULL;
+
+	m_autoObject = NULL;
+
 }
 
 CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue, const BOOL& readOnly, 
@@ -247,6 +257,9 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	m_editFunction = NULL;
 	m_parentProperty = NULL;
 	m_template = NULL;
+
+	m_autoObject = NULL;
+
 }
 
 CProMoProperty::~CProMoProperty()
@@ -264,6 +277,7 @@ CProMoProperty::~CProMoProperty()
 		delete m_template;
 		m_template = NULL;
 	}
+	ReleaseAutomationObject();
 }
 
 BOOL CProMoProperty::SetValue(const CVariantWrapper& val)
@@ -1021,4 +1035,39 @@ CString CProMoProperty::GetDefaultGetString() const
 	str.Format(_T("property:%s,%d,%s,%s"), (LPCTSTR)name, m_type, (LPCTSTR)value, (LPCTSTR)ownerRef);
 
 	return str;
+}
+
+CProMoAppChildAuto* CProMoProperty::GetAutomationObject()
+/* ============================================================
+	Function :		CProMoProperty::GetAutomationObject
+	Description :	Returns a pointer to the automation object
+					associated with this container, creating it
+					if it does not already exist.
+	Access :		Public
+	Return :		CProMoAutomationObject*	-	The pointer.
+	Parameters :	none
+   ============================================================*/
+{
+	if (!m_autoObject) {
+		m_autoObject = new CProMoPropertyAuto();
+		m_autoObject->Initialize(this);
+	}
+	return m_autoObject;
+}
+
+void CProMoProperty::ReleaseAutomationObject()
+/* ============================================================
+	Function :		CProMoProperty::ReleaseAutomationObject
+	Description :	Releases the pointer to the automation object
+					associated with this container.
+	Access :		Public
+	Return :		void
+	Parameters :	none
+   ============================================================*/
+{
+	if (m_autoObject) {
+		CProMoAppChildAuto* autoObject = m_autoObject;
+		m_autoObject = NULL;
+		autoObject->Detach();
+	}
 }

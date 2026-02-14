@@ -32,6 +32,7 @@ public:
 	virtual ~CProMoBlockView();
 
 	static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
+	static	CDiagramEntity* Create(const CString& str);
 
 	static CString GetModelFromString(const CString& str);
 	static CString GetNameFromString(const CString& str);
@@ -104,9 +105,14 @@ private:
 	COLORREF		m_fillColor;
 	BOOL			m_fillPattern;
 	unsigned int	m_fillStyle;
+
+	CProMoAppChildAuto* m_autoObject;
+
 	
 // Implements
 public:
+	virtual BOOL HasType(const CString& type) const;
+	
 	virtual CProMoModel* GetModel() const;
 	virtual void AutoResize();
 	virtual void Reposition();
@@ -155,6 +161,9 @@ public:
 	virtual BOOL SetLineColor(const COLORREF& color);
 	virtual BOOL SetLineWidth(const unsigned int& width);
 	virtual BOOL SetLineStyle(const unsigned int& style);
+
+	virtual CProMoAppChildAuto* GetAutomationObject();
+	virtual void ReleaseAutomationObject();
 
 protected:
 	virtual void SetModel(CProMoModel* model);

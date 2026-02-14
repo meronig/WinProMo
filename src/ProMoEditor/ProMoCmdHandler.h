@@ -1,3 +1,10 @@
+/* ==========================================================================
+
+    Copyright © 2026 Technical University of Denmark
+
+    Author :		Giovanni Meroni
+
+   ========================================================================*/
 #ifndef _PROMOCOMMANDHANDLER_H_
 #define _PROMOCOMMANDHANDLER_H_
 

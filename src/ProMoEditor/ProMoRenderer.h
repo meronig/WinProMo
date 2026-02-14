@@ -5,10 +5,11 @@
 	Author :		Giovanni Meroni
 
    ========================================================================*/
-#include "ProMoEntityContainer.h"
-#include "../FileUtils/DibHelper.h"
 #ifndef _PROMORENDERER_H_
 #define _PROMORENDERER_H_
+
+#include "ProMoEntityContainer.h"
+#include "../FileUtils/DibHelper.h"
 
 class AFX_EXT_CLASS CProMoRenderer :
     public CObject

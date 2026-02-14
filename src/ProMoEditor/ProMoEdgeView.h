@@ -21,7 +21,8 @@ public:
     virtual ~CProMoEdgeView();
     
     static	CDiagramEntity* CreateFromString(const CString& str, CProMoModel* model);
-    
+    static  CDiagramEntity* Create(const CString& str);
+
     static CString GetSourceFromString(const CString& str);
     static CString GetDestinationFromString(const CString& str);
     static CString GetModelFromString(const CString& str);
@@ -54,6 +55,8 @@ protected:
 
     CProMoEdgeModel* m_edgeModel;	
 
+    CProMoAppChildAuto* m_autoObject;
+
 private:
     BOOL m_propagating;
     COLORREF		m_bkColor;
@@ -64,6 +67,7 @@ private:
     unsigned int	m_lineWidth;
     unsigned int	m_lineStyle;
 
+    
     class CScopedUpdate {
     public:
         CScopedUpdate(BOOL& flag) : m_flag(flag) { m_flag = TRUE; }
@@ -74,6 +78,8 @@ private:
 
     // Implements
 public:
+    virtual BOOL HasType(const CString& type) const;
+    
     virtual CProMoModel* GetModel() const;
     virtual void AutoResize();
     virtual void Reposition();
@@ -124,6 +130,10 @@ public:
     virtual BOOL SetLineColor(const COLORREF& color);
     virtual BOOL SetLineWidth(const unsigned int& width);
     virtual BOOL SetLineStyle(const unsigned int& style);
+
+    virtual CProMoAppChildAuto* GetAutomationObject();
+    virtual void ReleaseAutomationObject();
+
 
 protected:
     virtual void SetModel(CProMoModel* model);

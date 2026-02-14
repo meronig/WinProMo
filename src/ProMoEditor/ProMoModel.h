@@ -12,13 +12,14 @@
 #include "../DiagramEditor/DiagramEntity.h"
 #include "ProMoPropertyOwner.h"
 #include "../FileUtils/VariantWrapper.h"
+#include "../Automation/ProMoAutomationHost.h"
 #include <afxdisp.h>
 
 class AFX_EXT_CLASS CProMoLabel;
 
 class AFX_EXT_CLASS CProMoProperty;
 
-class AFX_EXT_CLASS CProMoModel : public CObject, public IProMoPropertyOwner
+class AFX_EXT_CLASS CProMoModel : public CObject, public IProMoPropertyOwner, public IProMoAutomationHost
 {
 public:
 	friend class CProMoLabel;
@@ -70,6 +71,8 @@ protected:
 	CObArray m_labels;
 	CObArray m_properties;
 
+	CProMoAppChildAuto* m_autoObject;
+
 	virtual CString				GetDefaultGetString() const;
 	virtual CString				GetHeaderFromString(CString& str);
 	virtual BOOL				GetDefaultFromString(CString& str);
@@ -99,6 +102,9 @@ private:
 	// implements
 public:
 	virtual void OnPropertyChanged(CProMoProperty* prop);
+
+	virtual CProMoAppChildAuto* GetAutomationObject();
+	virtual void ReleaseAutomationObject();
 
 };
 

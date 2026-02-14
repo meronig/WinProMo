@@ -52,6 +52,8 @@ protected:
 public:
     static	CProMoModel* CreateFromString(const CString& str);
 
+    virtual CProMoAppChildAuto* GetAutomationObject();
+
 protected:
     virtual CString				GetDefaultGetString() const;
 

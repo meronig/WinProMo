@@ -6,6 +6,7 @@
 #include "../resource.h"
 #include "ProMoBlockModel.h"
 #include "ProMoEdgeModel.h"
+#include "../Automation/ProMoLabelAuto.h"
 
 CProMoLabel::CProMoLabel()
 /* ============================================================
@@ -53,6 +54,8 @@ CProMoLabel::CProMoLabel()
 	
 	m_visible = TRUE;
 
+	m_autoObject = NULL;
+
 	SetConstraints(CSize(5, 5), CSize(-1, -1));
 	SetType(_T("promo_label"));
 
@@ -87,6 +90,8 @@ CProMoLabel::~CProMoLabel()
 		m_model->UnlinkLabel(this);
 	}
 	delete m_titleProperty;
+
+	ReleaseAutomationObject();
 }
 
 CDiagramEntity* CProMoLabel::Clone()
@@ -454,6 +459,47 @@ void CProMoLabel::ShowPopup(CPoint point, CWnd* parent)
 
 	}
 
+}
+
+CDiagramEntity* CProMoLabel::Create(const CString& str)
+/* ============================================================
+	Function :		CProMoLabel::Create
+	Description :	Creates an object of this type if the type
+					matches.
+	Return :		CDiagramEntity*	-	The created object, or
+										NULL if the type did
+										not match.
+	Parameters :	const CString& str	-	The type to create.
+	Usage :			Static function used by the
+					"CProMoControlFactory" to create objects
+					of this type.
+   ============================================================*/
+{
+	CProMoLabel* obj = new CProMoLabel;
+	if (!obj->HasType(str))
+	{
+		delete obj;
+		obj = NULL;
+	}
+	
+	return obj;
+}
+
+BOOL CProMoLabel::HasType(const CString& type) const
+/* ============================================================
+	Function :		CProMoLabel::HasType
+	Description :	Returns if the object is of the specified
+					type.
+	Access :		Public
+	Return :		BOOL	-	"TRUE" if the object is of the
+								specified type.
+	Parameters :	const CString& type	-	The type to check.
+   ============================================================*/
+{
+	if (type == GetType()) {
+		return TRUE;
+	}
+	return FALSE;
 }
 
 CProMoModel* CProMoLabel::GetModel() const
@@ -2255,4 +2301,39 @@ void CProMoLabel::OnPropertyChanged(CProMoProperty* prop)
    ============================================================*/
 {
 	SetTitle(prop->GetValue().GetString());	
+}
+
+CProMoAppChildAuto* CProMoLabel::GetAutomationObject()
+/* ============================================================
+	Function :		CProMoLabel::GetAutomationObject
+	Description :	Returns a pointer to the automation object
+					associated with this container, creating it
+					if it does not already exist.
+	Access :		Public
+	Return :		CProMoAutomationObject*	-	The pointer.
+	Parameters :	none
+   ============================================================*/
+{
+	if (!m_autoObject) {
+		m_autoObject = new CProMoLabelAuto();
+		m_autoObject->Initialize(this);
+	}
+	return m_autoObject;
+}
+
+void CProMoLabel::ReleaseAutomationObject()
+/* ============================================================
+	Function :		CProMoLabel::ReleaseAutomationObject
+	Description :	Releases the pointer to the automation object
+					associated with this container.
+	Access :		Public
+	Return :		void
+	Parameters :	none
+   ============================================================*/
+{
+	if (m_autoObject) {
+		CProMoAppChildAuto* autoObject = m_autoObject;
+		m_autoObject = NULL;
+		autoObject->Detach();
+	}
 }

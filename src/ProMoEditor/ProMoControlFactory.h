@@ -21,6 +21,8 @@ public:
 	virtual CDiagramEntity* CreateLabelFromString(const CString& str);
 	virtual CDiagramEntity* CreateLabelFromString(const CString& str, CProMoModel* model);
 	virtual CProMoModel* CreateModelFromString(const CString& str);
+	virtual CDiagramEntity* CreateNewEntity(const CString& str);
+	virtual void GetEntityTypes(CStringArray& typeList);
 
 };
 

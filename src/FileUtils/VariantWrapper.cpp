@@ -34,6 +34,20 @@ CVariantWrapper::CVariantWrapper()
 	VariantInit(&m_var);
 }
 
+CVariantWrapper::CVariantWrapper(const VARIANT& var)
+/* ============================================================
+	Function :		CVariantWrapper::CVariantWrapper
+	Description :	Constructor from VARIANT
+	Access :		Public
+	Return :		void
+	Parameters :	const VARIANT& var	-	The VARIANT to copy.
+
+	============================================================*/
+{
+	VariantInit(&m_var);
+	(void)VariantCopy(&m_var, (VARIANT*)&var);
+}
+
 CVariantWrapper::CVariantWrapper(const CVariantWrapper& var)
 /* ============================================================
 	Function :		CVariantWrapper::CVariantWrapper
@@ -52,7 +66,7 @@ CVariantWrapper::CVariantWrapper(const CVariantWrapper& var)
 
 CVariantWrapper& CVariantWrapper::operator=(const CVariantWrapper& var)
 /* ============================================================
-	Function :		CDoublePoint::operator=
+	Function :		CVariantWrapper::operator=
 	Description :	Assignment operator
 	Access :		Public
 
@@ -68,7 +82,7 @@ CVariantWrapper& CVariantWrapper::operator=(const CVariantWrapper& var)
 
 CVariantWrapper::~CVariantWrapper()
 /* ============================================================
-	Function :		CProMoModel::~CProMoModel
+	Function :		CVariantWrapper::~CVariantWrapper
 	Description :	Destructor
 	Access :		Public
 
@@ -166,6 +180,21 @@ void CVariantWrapper::SetString(const CString& val)
     delete[] wideStr;
 #endif
 
+}
+
+void CVariantWrapper::SetVariant(const VARIANT& val)
+/* ============================================================
+	Function :		CVariantWrapper::SetVariant
+	Description :	Sets the value of the variant to another
+					variant value
+	Access :		Public
+
+	Return :		void
+	Parameters :	VARIANT& val	-	The value to set.
+   ============================================================*/
+{
+	Clear();
+	(void)VariantCopy(&m_var, (VARIANT*)&val);
 }
 
 BOOL CVariantWrapper::SetFromString(const CString& val, const VARTYPE& type)

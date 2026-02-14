@@ -25,7 +25,7 @@ public:
 	virtual ~CProMoEditor();
 
 public:
-	virtual void	Load(const CStringArray& stra, CProMoControlFactory& fact);
+	virtual void	Load(const CStringArray& stra);
 	virtual void NotifySelectionChanged();
 	
 	virtual void	MiddleAlignSelected();

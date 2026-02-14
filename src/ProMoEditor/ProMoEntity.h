@@ -9,6 +9,7 @@
 #define _PROMOENTITY_H_
 
 #include "ProMoModel.h"
+#include "../Automation/ProMoAutomationHost.h"
 
 #define DEHT_CENTER		10
 #define DEHT_TOP		11
@@ -36,7 +37,7 @@
 #define VIEW_LAST				1
 #define VIEW_MID				2
 
-class AFX_EXT_CLASS IProMoEntity
+class AFX_EXT_CLASS IProMoEntity : public IProMoAutomationHost
 {
 
 public:
@@ -45,6 +46,8 @@ public:
 
 	// Model-view links
 	virtual CProMoModel* GetModel() const = 0;
+
+	virtual BOOL HasType(const CString& type) const = 0;
 
 	virtual void AutoResize() = 0;
 

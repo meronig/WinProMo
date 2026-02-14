@@ -83,7 +83,7 @@ namespace CProMoEditorTests
         {
             //Some MFC-rem_lated assertions still fail
             WinProMoTestHelpers::BootstrapMFC(); 
-            CProMoEntityContainer* c = new CProMoEntityContainer(CString("custom"));
+            CProMoEntityContainer* c = new CProMoEntityContainer(new CProMoControlFactory, CString("custom"));
             m_editor.SetDiagramEntityContainer(c);
             m_editor.SetVirtualSize(CSize(2000, 2000));
             
@@ -346,8 +346,7 @@ namespace CProMoEditorTests
         TEST_METHOD(Load_WhenStringArrayIsPassed_CreateDiagramElements)
         {
             CStringArray diagram;
-            CProMoControlFactory factory;
-
+            
             diagram.Add(CString("custom:762,1091;"));
             diagram.Add(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4;"));
             diagram.Add(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30;"));
@@ -384,7 +383,7 @@ namespace CProMoEditorTests
             diagram.Add(CString("property:Title,3,x,391;"));
             diagram.Add(CString("property:Title,3,B2,119;"));
             
-            m_editor.Load(diagram, factory);
+            m_editor.Load(diagram);
 
             CProMoEntityContainer* c = dynamic_cast<CProMoEntityContainer*>(m_editor.GetDiagramEntityContainer());
 

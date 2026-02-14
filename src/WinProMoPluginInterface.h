@@ -25,7 +25,6 @@ public:
 	virtual void Destroy() = 0;
 	virtual CProMoCmdHandler* GetCmdHandler() = 0;
 	virtual CProMoEntityContainer* GetContainer() = 0;
-	virtual CProMoControlFactory* GetControlFactory() = 0;
 	virtual CProMoRenderer* GetRenderer() = 0;
 };
 

@@ -27,6 +27,7 @@
 #include "../DiagramEditor/Tokenizer.h"
 #include "../FileUtils/FileParser.h"
 #include "ProMoLabel.h"
+#include "../Automation/ProMoBlockAuto.h"
 
 CProMoBlockModel::CProMoBlockModel()
 	/* ============================================================
@@ -830,4 +831,23 @@ void CProMoBlockModel::CustomizeLabel(CProMoLabel* label)
 	}
 
 	CProMoModel::CustomizeLabel(label);
+}
+
+
+CProMoAppChildAuto* CProMoBlockModel::GetAutomationObject()
+/* ============================================================
+	Function :		CProMoBlockModel::GetAutomationObject
+	Description :	Returns a pointer to the automation object
+					associated with this container, creating it
+					if it does not already exist.
+	Access :		Public
+	Return :		CProMoAutomationObject*	-	The pointer.
+	Parameters :	none
+   ============================================================*/
+{
+	if (!m_autoObject) {
+		m_autoObject = new CProMoBlockAuto();
+		m_autoObject->Initialize(this);
+	}
+	return m_autoObject;
 }
