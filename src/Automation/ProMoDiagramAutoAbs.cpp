@@ -293,16 +293,6 @@ VARIANT CProMoDiagramAutoAbs::GetCreatableElementTypes()
 		}
 	}
 
-	//COleSafeArray sa;
-	//DWORD cElements = (DWORD)names.GetSize();
-	//sa.Create(VT_BSTR, 1, &cElements);
-
-	//for (LONG i = 0; i < names.GetSize(); ++i)
-	//	sa.PutElement(&i, names[i].AllocSysString());
-
-	//VariantClear(pTypes);
-	//*pTypes = sa.Detach();   // Transfers ownership
-
 	HRESULT hr = CSafeArrayWrapper::CreateVariantFromCStringArray(names, vaResult);
 	if (FAILED(hr))
 		AfxThrowOleException(hr);

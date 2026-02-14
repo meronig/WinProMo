@@ -149,23 +149,6 @@ VARIANT CProMoAppAutoAbs::GetCreatableDiagramTypes()
 	VARIANT vaResult;
 	VariantInit(&vaResult);
 	
-	//if (!pTypes)
-	//	AfxThrowOleException(E_POINTER);
-
-	//CStringArray names;
-
-	//GetRegisteredDiagrams(names);
-
-	//COleSafeArray sa;
-	//DWORD cElements = (DWORD)names.GetSize();
-	//sa.Create(VT_BSTR, 1, &cElements);
-
-	//for (LONG i = 0; i < names.GetSize(); ++i)
-	//	sa.PutElement(&i, names[i].AllocSysString());
-
-	//VariantClear(pTypes);
-	//*pTypes = sa.Detach();   // Transfers ownership
-
 	CStringArray names;
 	GetRegisteredDiagrams(names);
 

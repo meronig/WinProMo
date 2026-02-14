@@ -128,7 +128,7 @@ END_INTERFACE_MAP()
 LPDISPATCH CProMoElementChildAuto::Element() 
 {
 	if (m_pElementAuto) {
-		return m_pElementAuto->GetIDispatch(FALSE);
+		return m_pElementAuto->GetIDispatch(TRUE);
 	}
 
 	return NULL;
