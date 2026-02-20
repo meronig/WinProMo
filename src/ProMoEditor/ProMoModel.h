@@ -15,6 +15,8 @@
 #include "../Automation/ProMoAutomationHost.h"
 #include <afxdisp.h>
 
+class AFX_EXT_CLASS IProMoView;
+
 class AFX_EXT_CLASS CProMoLabel;
 
 class AFX_EXT_CLASS CProMoProperty;
@@ -34,6 +36,8 @@ public:
 
 	// Model-view links
 	virtual void GetViews(CObArray& viewList) const;
+	virtual IProMoView* GetMainView() const;
+
 
 	virtual BOOL	FromString(const CString& str);
 	virtual CString	Export(UINT format = 0) const;

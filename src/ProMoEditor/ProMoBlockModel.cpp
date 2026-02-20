@@ -704,9 +704,9 @@ void CProMoBlockModel::GetIncomingEdges(CObArray& edgeList) const
 	edgeList.Append(m_incomingEdges);
 }
 
-CProMoBlockView* CProMoBlockModel::GetMainView() const
+CProMoBlockView* CProMoBlockModel::GetMainBlockView() const
 /* ============================================================
-	Function :		CProMoBlockModel::GetMainView
+	Function :		CProMoBlockModel::GetMainBlockView
 	Description :	Returns a pointer to the primary view for
 					this block.
 	Access :		Public
@@ -719,15 +719,7 @@ CProMoBlockView* CProMoBlockModel::GetMainView() const
    ============================================================*/
 {
 	// for generic blocks, only one view exists
-	// to make the code more robust, return the first view whose class is CProMoBlockView or a derived one
-	for (int i = 0; i < m_views.GetSize(); i++) {
-		CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(m_views.GetAt(i));
-		if (view) {
-			return view;
-		}
-	}
-
-	return NULL;
+	return dynamic_cast<CProMoBlockView*>(GetMainView());
 }
 
 CProMoModel* CProMoBlockModel::CreateFromString(const CString& str)

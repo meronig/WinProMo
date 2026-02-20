@@ -9,6 +9,7 @@
 #define _PROMOELEMENTAUTO_H_
 
 #include "ProMoDiagramChildAuto.h"
+#include "../ProMoEditor/ProMoEdgeView.h"
 
 class AFX_EXT_CLASS CProMoPropertiesAuto;
 class AFX_EXT_CLASS CProMoLabelsAuto;
@@ -25,6 +26,9 @@ public:
 // Operations
 public:
 	virtual CProMoModel* GetModel();
+
+	virtual void GetViews(CObArray& viewList);
+	virtual IProMoView* GetMainView();
 
 	virtual CProMoLabelsAuto* GetLabelsAutoObject();
 	virtual void ReleaseLabelsAutoObject();

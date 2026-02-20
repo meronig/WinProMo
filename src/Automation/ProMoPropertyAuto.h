@@ -25,7 +25,7 @@ class AFX_EXT_CLASS CProMoPropertyAuto : public CProMoElementChildAuto
 
 // Attributes
 public:
-
+	virtual CProMoProperty* GetProperty();
 // Operations
 public:
 

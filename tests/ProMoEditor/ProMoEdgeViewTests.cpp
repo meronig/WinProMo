@@ -524,7 +524,7 @@ namespace CProMoEdgeViewTests
             blockView.GetBlockModel()->GetOutgoingEdges(edges);
 
             TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockView*>(edgeView.GetSource()));
-            TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockModel*>(edgeView.GetEdgeModel()->GetSource())->GetMainView());
+            TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockModel*>(edgeView.GetEdgeModel()->GetSource())->GetMainBlockView());
             Assert::AreEqual((INT_PTR)1, edges.GetSize());
             TestHelpers::PointerAssert::AreEqual(edgeView.GetEdgeModel(), dynamic_cast<CProMoEdgeModel*>(edges.GetAt(0)));
             
@@ -601,7 +601,7 @@ namespace CProMoEdgeViewTests
             blockView.GetBlockModel()->GetIncomingEdges(edges);
 
             TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockView*>(edgeView.GetDestination()));
-            TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockModel*>(edgeView.GetEdgeModel()->GetDestination())->GetMainView());
+            TestHelpers::PointerAssert::AreEqual(dynamic_cast<CProMoBlockView*>(&blockView), dynamic_cast<CProMoBlockModel*>(edgeView.GetEdgeModel()->GetDestination())->GetMainBlockView());
             Assert::AreEqual((INT_PTR)1, edges.GetSize());
             TestHelpers::PointerAssert::AreEqual(edgeView.GetEdgeModel(), dynamic_cast<CProMoEdgeModel*>(edges.GetAt(0)));
 

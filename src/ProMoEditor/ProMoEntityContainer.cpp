@@ -149,7 +149,7 @@ void CProMoEntityContainer::RemoveAt(int index)
 				CProMoBlockModel* subBlockModel = NULL;
 				subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
 				if (subBlockModel) {
-					Remove(subBlockModel->GetMainView());
+					Remove(subBlockModel->GetMainBlockView());
 				}
 			}
 			// disconnect block from parent
@@ -404,7 +404,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 			if (sourceModel) {
 				for (int j = 0; j < newOrder.GetSize(); j++) {
 					//source node has already been explored
-					if (newOrder.GetAt(j) == sourceModel->GetMainView()) {
+					if (newOrder.GetAt(j) == sourceModel->GetMainBlockView()) {
 						//add all edge views
 						newOrder.Append(views);
 						//add all edge labels
@@ -441,7 +441,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 				if (destModel != block->GetModel()) {
 					for (int j = 0; j < newOrder.GetSize(); j++) {
 						//destination node has already been explored
-						if (newOrder.GetAt(j) == destModel->GetMainView()) {
+						if (newOrder.GetAt(j) == destModel->GetMainBlockView()) {
 							//add all edge views
 							newOrder.Append(views);
 							//add all edge labels
@@ -484,7 +484,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 		if (subBlockView) {
 			for (int i = 0; i < subBlockModels.GetSize(); i++) {
 				CProMoBlockModel* subBlockModel = dynamic_cast<CProMoBlockModel*>(subBlockModels.GetAt(i));
-				if (subBlockView == subBlockModel->GetMainView()) {
+				if (subBlockView == subBlockModel->GetMainBlockView()) {
 					ReorderR(subBlockView, newOrder);
 				}
 			}
@@ -501,7 +501,7 @@ void CProMoEntityContainer::ReorderR(CProMoBlockView* block, CObArray& newOrder)
 		if (boundaryBlockView) {
 			for (int i = 0; i < boundaryBlockModels.GetSize(); i++) {
 				CProMoBlockModel* boundaryBlockModel = dynamic_cast<CProMoBlockModel*>(boundaryBlockModels.GetAt(i));
-				if (boundaryBlockView == boundaryBlockModel->GetMainView()) {
+				if (boundaryBlockView == boundaryBlockModel->GetMainBlockView()) {
 					ReorderR(boundaryBlockView, newOrder);
 				}
 			}
@@ -1160,13 +1160,13 @@ void CProMoEntityContainer::LinkModels(const CStringArray& stra, const CObArray&
 				unsigned int attachment = blockModel->GetAttachmentTypeFromString(str);
 
 				CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
-				if (parent && blockModel->GetMainView()) {
+				if (parent && blockModel->GetMainBlockView()) {
 					if (attachment != DEHT_NONE) {
 						if (attachment == DEHT_BODY) {
-							parent->GetMainView()->LinkSubBlock(blockModel->GetMainView());
+							parent->GetMainBlockView()->LinkSubBlock(blockModel->GetMainBlockView());
 						}
 						else {
-							parent->GetMainView()->LinkBoundaryBlock(blockModel->GetMainView(), attachment);
+							parent->GetMainBlockView()->LinkBoundaryBlock(blockModel->GetMainBlockView(), attachment);
 						}
 					}
 				}
@@ -1181,11 +1181,11 @@ void CProMoEntityContainer::LinkModels(const CStringArray& stra, const CObArray&
 
 				CProMoBlockModel* source = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, sourceName));
 				if (source && edgeModel->GetFirstSegment()) {
-					edgeModel->GetFirstSegment()->SetSource(source->GetMainView());
+					edgeModel->GetFirstSegment()->SetSource(source->GetMainBlockView());
 				}
 				CProMoBlockModel* dest = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, destName));
 				if (dest && edgeModel->GetLastSegment()) {
-					edgeModel->GetLastSegment()->SetDestination(dest->GetMainView());
+					edgeModel->GetLastSegment()->SetDestination(dest->GetMainBlockView());
 				}
 						
 			}
@@ -1401,10 +1401,10 @@ CSize CProMoEntityContainer::GetSelectionTotalSize()
 				for (int i = 0; i < boundaryBlocks.GetSize(); i++) {
 					CProMoBlockModel* boundary = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(i));
 					if (boundary) {
-						width = max(width, boundary->GetMainView()->GetLeft());
-						width = max(width, boundary->GetMainView()->GetRight());
-						height = max(height, boundary->GetMainView()->GetTop());
-						height = max(height, boundary->GetMainView()->GetBottom());
+						width = max(width, boundary->GetMainBlockView()->GetLeft());
+						width = max(width, boundary->GetMainBlockView()->GetRight());
+						height = max(height, boundary->GetMainBlockView()->GetTop());
+						height = max(height, boundary->GetMainBlockView()->GetBottom());
 					}
 				}
 
@@ -1474,10 +1474,10 @@ CPoint CProMoEntityContainer::GetSelectionStartPoint()
 				for (int i = 0; i < boundaryBlocks.GetSize(); i++) {
 					CProMoBlockModel* boundary = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(i));
 					if (boundary) {
-						startx = min(startx, boundary->GetMainView()->GetLeft());
-						startx = min(startx, boundary->GetMainView()->GetRight());
-						starty = min(starty, boundary->GetMainView()->GetTop());
-						starty = min(starty, boundary->GetMainView()->GetBottom());
+						startx = min(startx, boundary->GetMainBlockView()->GetLeft());
+						startx = min(startx, boundary->GetMainBlockView()->GetRight());
+						starty = min(starty, boundary->GetMainBlockView()->GetTop());
+						starty = min(starty, boundary->GetMainBlockView()->GetBottom());
 					}
 				}
 

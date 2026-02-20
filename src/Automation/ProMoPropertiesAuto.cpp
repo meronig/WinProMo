@@ -17,6 +17,8 @@
    ========================================================================*/
 #include "stdafx.h"
 #include "ProMoPropertiesAuto.h"
+#include "../FileUtils/SafeArrayWrapper.h"
+#include "ProMoPropertyAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,6 +40,7 @@ CProMoPropertiesAuto::~CProMoPropertiesAuto()
 }
 
 void CProMoPropertiesAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
 
@@ -73,14 +76,37 @@ END_INTERFACE_MAP()
 
 long CProMoPropertiesAuto::Count() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetModel()) {
+		return GetModel()->GetPropertiesCount();
+	}
 
 	return 0;
 }
 
 LPDISPATCH CProMoPropertiesAuto::GetItem(const VARIANT FAR& Item) 
 {
-	// TODO: Add your property handler here
+	CVariantWrapper wrapper(Item);
+
+	CProMoProperty* pProperty = NULL;
+	
+	if (GetModel()) {
+
+		if (wrapper.GetType() != VT_BSTR) {
+			pProperty = GetModel()->GetProperty(wrapper.GetInt());
+
+		}
+		else {
+			pProperty = GetModel()->FindProperty(wrapper.GetString());
+		}
+
+		if (pProperty) {
+			CProMoPropertyAuto* pElementAuto = dynamic_cast<CProMoPropertyAuto*>(pProperty->GetAutomationObject());
+			if (pElementAuto) {
+				pElementAuto->SetElementAutoObject(GetElementAutoObject());
+				return pElementAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }
@@ -95,7 +121,16 @@ VARIANT CProMoPropertiesAuto::GetNames()
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
-	// TODO: Add your property handler here
+	
+	CStringArray names;
+
+	if (GetModel()) {
+		GetModel()->GetPropertyNames(names, FALSE);
+	}
+
+	HRESULT hr = CSafeArrayWrapper::CreateVariantFromCStringArray(names, vaResult);
+	if (FAILED(hr))
+		AfxThrowOleException(hr);
 
 	return vaResult;
 }

@@ -41,6 +41,7 @@ CProMoBoundaryBlocksAuto::~CProMoBoundaryBlocksAuto()
 }
 
 void CProMoBoundaryBlocksAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
 
@@ -86,8 +87,6 @@ BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH Item, long Attachment)
 
 long CProMoBoundaryBlocksAuto::Count() 
 {
-	ThrowIfNoElementAutoObject();
-
 	if (GetBlockModel()) {
 		CObArray boundaryBlocks;
 		GetBlockModel()->GetBoundaryBlocks(boundaryBlocks, DEHT_BODY);
@@ -106,8 +105,6 @@ BOOL CProMoBoundaryBlocksAuto::Remove(const VARIANT FAR& Item)
 
 LPDISPATCH CProMoBoundaryBlocksAuto::GetItem(const VARIANT FAR& Item) 
 {
-	ThrowIfNoElementAutoObject();
-
 	CVariantWrapper wrapper(Item);
 
 	if (GetBlockModel()) {
@@ -149,8 +146,6 @@ void CProMoBoundaryBlocksAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newVa
 
 VARIANT CProMoBoundaryBlocksAuto::GetIDs() 
 {
-	ThrowIfNoElementAutoObject();
-
 	VARIANT vaResult;
 	VariantInit(&vaResult);
 

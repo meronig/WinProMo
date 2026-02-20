@@ -2086,8 +2086,8 @@ CDiagramEntity* CProMoLabel::GetView() const
 	CDiagramEntity* view = NULL;
 	CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(m_model);
 	if (blockModel) {
-		if (blockModel->GetMainView()) {
-			view = (CDiagramEntity*)blockModel->GetMainView();
+		if (blockModel->GetMainBlockView()) {
+			view = (CDiagramEntity*)blockModel->GetMainBlockView();
 		}
 	}
 	CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(m_model);
@@ -2206,7 +2206,7 @@ void CProMoLabel::AutoResize()
 
 	CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(m_model);
 	if (blockModel) {
-		CProMoBlockView* blockView = blockModel->GetMainView();
+		CProMoBlockView* blockView = blockModel->GetMainBlockView();
 		if (blockView) {
 			blockView->OnLabelChanged(this);
 		}

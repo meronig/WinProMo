@@ -29,8 +29,11 @@ public:
 
 // Operations
 public:
+	virtual CProMoLabel* GetLabel();
 
 // Overrides
+public:
+	virtual CProMoElementAuto* GetElementAutoObject() const;
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CProMoLabelAuto)
 	//}}AFX_VIRTUAL

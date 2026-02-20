@@ -44,19 +44,23 @@ CProMoLabelsAuto::~CProMoLabelsAuto()
 }
 
 void CProMoLabelsAuto::SetDiagramAutoObject(CProMoDiagramAutoAbs* pDiagramAuto) {
-	CProMoAppChildAuto::SetAppAutoObject(pDiagramAuto ? pDiagramAuto->GetAppAutoObject() : NULL);
+	SetAppAutoObject(pDiagramAuto ? pDiagramAuto->GetAppAutoObject() : NULL);
 	m_pDiagramAuto = pDiagramAuto;
 }
 
 void CProMoLabelsAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
-	CProMoDiagramChildAuto::SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
+	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
+}
+
+CProMoElementAuto* CProMoLabelsAuto::GetElementAutoObject() const
+{
+	ThrowIfNoDiagramAutoObject();
+	return m_pElementAuto;
 }
 
 void CProMoLabelsAuto::GetLabels(CObArray& labels)
 {
-	ThrowIfNoDiagramAutoObject();
-	
 	if (GetElementAutoObject()) {
 		// Collection is associated to an element, so we return the labels of the element
 		if (GetModel()) {
@@ -104,8 +108,6 @@ END_INTERFACE_MAP()
 
 LPDISPATCH CProMoLabelsAuto::Add() 
 {
-	ThrowIfNoDiagramAutoObject();
-
 	if (GetElementAutoObject()) {
 		// Collection is associated to an element, so we cannot add a label to it
 		AfxThrowOleException(E_FAIL);

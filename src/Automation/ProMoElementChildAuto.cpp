@@ -56,6 +56,8 @@ void CProMoElementChildAuto::OnFinalRelease()
 
 CProMoModel* CProMoElementChildAuto::GetModel()
 {
+	ThrowIfNoElementAutoObject();
+
 	if (m_pElementAuto) {
 		return m_pElementAuto->GetModel();
 	}
@@ -64,6 +66,7 @@ CProMoModel* CProMoElementChildAuto::GetModel()
 
 CProMoElementAuto* CProMoElementChildAuto::GetElementAutoObject() const
 {
+	ThrowIfNoElementAutoObject();
 	return m_pElementAuto;
 }
 

@@ -47,9 +47,25 @@ CProMoBlockAuto::~CProMoBlockAuto()
 {
 }
 
+CProMoBlockModel* CProMoBlockAuto::GetBlockModel() {
+	
+	return dynamic_cast<CProMoBlockModel*>(GetModel());
+}
+
+CProMoBlockView* CProMoBlockAuto::GetMainView()
+{
+	if (GetBlockModel()) {
+		return GetBlockModel()->GetMainBlockView();
+	}
+
+	return NULL;
+}
 
 CProMoSubBlocksAuto* CProMoBlockAuto::GetSubBlocksAutoObject()
 {
+	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
+	
 	if (!m_pSubBlocks) {
 		m_pSubBlocks = new CProMoSubBlocksAuto();
 		if (m_pSubBlocks) {
@@ -70,6 +86,9 @@ void CProMoBlockAuto::ReleaseSubBlocksAutoObject()
 
 CProMoBoundaryBlocksAuto* CProMoBlockAuto::GetBoundaryBlocksAutoObject()
 {
+	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
+	
 	if (!m_pBoundaryBlocks) {
 		m_pBoundaryBlocks = new CProMoBoundaryBlocksAuto();
 		if (m_pBoundaryBlocks) {
@@ -90,6 +109,9 @@ void CProMoBlockAuto::ReleaseBoundaryBlocksAutoObject()
 
 CProMoIncomingEdgesAuto* CProMoBlockAuto::GetIncomingEdgesAutoObject()
 {
+	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
+	
 	if (!m_pIncomingEdges) {
 		m_pIncomingEdges = new CProMoIncomingEdgesAuto();
 		if (m_pIncomingEdges) {
@@ -110,6 +132,9 @@ void CProMoBlockAuto::ReleaseIncomingEdgesAutoObject()
 
 CProMoOutgoingEdgesAuto* CProMoBlockAuto::GetOutgoingEdgesAutoObject()
 {
+	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
+	
 	if (!m_pOutgoingEdges) {
 		m_pOutgoingEdges = new CProMoOutgoingEdgesAuto();
 		if (m_pOutgoingEdges) {
@@ -186,7 +211,10 @@ END_INTERFACE_MAP()
 
 OLE_COLOR CProMoBlockAuto::GetFillColor() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		COLORREF color = GetMainView()->GetFillColor();
+		return RGB(GetRValue(color), GetGValue(color), GetBValue(color));
+	}
 
 	return RGB(0,0,0);
 }
@@ -199,9 +227,11 @@ void CProMoBlockAuto::SetFillColor(OLE_COLOR nNewValue)
 
 BOOL CProMoBlockAuto::GetFillPattern() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->IsFillPattern();
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 void CProMoBlockAuto::SetFillPattern(BOOL bNewValue) 
@@ -212,7 +242,9 @@ void CProMoBlockAuto::SetFillPattern(BOOL bNewValue)
 
 long CProMoBlockAuto::GetFillStyle() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetFillStyle();
+	}
 
 	return 0;
 }
@@ -225,7 +257,16 @@ void CProMoBlockAuto::SetFillStyle(long nNewValue)
 
 LPDISPATCH CProMoBlockAuto::GetParent() 
 {
-	// TODO: Add your property handler here
+	if (GetBlockModel()) {
+		CProMoBlockModel* pModel = GetBlockModel()->GetParentBlock();
+		if (pModel) {
+			CProMoElementAuto* pModelAuto = dynamic_cast<CProMoElementAuto*>(pModel->GetAutomationObject());
+			if (pModelAuto) {
+				pModelAuto->SetDiagramAutoObject(GetDiagramAutoObject());
+				return pModelAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }
@@ -238,8 +279,8 @@ void CProMoBlockAuto::SetParent(LPDISPATCH newValue)
 
 LPDISPATCH CProMoBlockAuto::GetSubBlocks() 
 {
-	if (m_pSubBlocks) {
-		return m_pSubBlocks->GetIDispatch(TRUE);
+	if (GetSubBlocksAutoObject()) {
+		return GetSubBlocksAutoObject()->GetIDispatch(TRUE);
 	}
 
 	return NULL;
@@ -253,8 +294,8 @@ void CProMoBlockAuto::SetSubBlocks(LPDISPATCH newValue)
 
 LPDISPATCH CProMoBlockAuto::GetBoundaryBlocks() 
 {
-	if (m_pBoundaryBlocks) {
-		return m_pBoundaryBlocks->GetIDispatch(TRUE);
+	if (GetBoundaryBlocksAutoObject()) {
+		return GetBoundaryBlocksAutoObject()->GetIDispatch(TRUE);
 	}
 
 	return NULL;
@@ -268,35 +309,40 @@ void CProMoBlockAuto::SetBoundaryBlocks(LPDISPATCH newValue)
 
 long CProMoBlockAuto::GetBoundaryAttachment() 
 {
-	// TODO: Add your property handler here
+	if (GetBlockModel()) {
+		return GetBlockModel()->GetBoundaryAttachment();
+	}
 
 	return 0;
 }
 
 void CProMoBlockAuto::SetBoundaryAttachment(long nNewValue) 
 {
-	// TODO: Add your property handler here
-
+	SetNotSupported();
 }
 
 BOOL CProMoBlockAuto::IsBoundaryBlock() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetBlockModel()) {
+		return GetBlockModel()->IsBoundaryBlock();
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 BOOL CProMoBlockAuto::IsSubBlock() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetBlockModel()) {
+		return GetBlockModel()->IsSubBlock();
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 LPDISPATCH CProMoBlockAuto::GetOutgoingEdges() 
 {
-	if (m_pOutgoingEdges) {
-		return m_pOutgoingEdges->GetIDispatch(TRUE);
+	if (GetOutgoingEdgesAutoObject()) {
+		return GetOutgoingEdgesAutoObject()->GetIDispatch(TRUE);
 	}
 
 	return NULL;
@@ -310,8 +356,8 @@ void CProMoBlockAuto::SetOutgoingEdges(LPDISPATCH newValue)
 
 LPDISPATCH CProMoBlockAuto::GetIncomingEdges() 
 {
-	if (m_pIncomingEdges) {
-		return m_pIncomingEdges->GetIDispatch(TRUE);
+	if (GetIncomingEdgesAutoObject()) {
+		return GetIncomingEdgesAutoObject()->GetIDispatch(TRUE);
 	}
 
 	return NULL;
@@ -325,7 +371,9 @@ void CProMoBlockAuto::SetIncomingEdges(LPDISPATCH newValue)
 
 double CProMoBlockAuto::GetTop() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetTop();
+	}
 
 	return 0.0;
 }
@@ -338,7 +386,9 @@ void CProMoBlockAuto::SetTop(double newValue)
 
 double CProMoBlockAuto::GetBottom() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetBottom();
+	}
 
 	return 0.0;
 }
@@ -351,7 +401,9 @@ void CProMoBlockAuto::SetBottom(double newValue)
 
 double CProMoBlockAuto::GetLeft() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetLeft();
+	}
 
 	return 0.0;
 }
@@ -364,7 +416,9 @@ void CProMoBlockAuto::SetLeft(double newValue)
 
 double CProMoBlockAuto::GetRight() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetRight();
+	}
 
 	return 0.0;
 }
@@ -377,7 +431,9 @@ void CProMoBlockAuto::SetRight(double newValue)
 
 double CProMoBlockAuto::GetWidth() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetRect().Width();
+	}
 
 	return 0.0;
 }
@@ -390,7 +446,9 @@ void CProMoBlockAuto::SetWidth(double newValue)
 
 double CProMoBlockAuto::GetHeight() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetRect().Height();
+	}
 
 	return 0.0;
 }

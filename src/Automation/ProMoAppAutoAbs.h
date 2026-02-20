@@ -15,6 +15,8 @@
 
 class CProMoDiagramsAutoAbs;
 
+class CProMoDiagramAutoAbs;
+
 class AFX_EXT_CLASS CProMoAppAutoAbs : public CCmdTarget
 {
 	DECLARE_DYNAMIC(CProMoAppAutoAbs)
@@ -31,6 +33,9 @@ public:
 protected:
 	virtual void GetRegisteredDiagrams(CStringArray& diagramTypes) = 0;
 	virtual CProMoDiagramsAutoAbs* CreateDiagramsAutoObject() = 0;
+	virtual CProMoDiagramAutoAbs* GetActiveDiagram() = 0;
+
+
 	// Overrides
 		// ClassWizard generated virtual function overrides
 		//{{AFX_VIRTUAL(CProMoAppAutoAbs)

@@ -30,6 +30,8 @@ public:
 
 // Operations
 public:
+	virtual CProMoEdgeModel* GetEdgeModel();
+
 	virtual CProMoEdgeSegmentsAuto* GetSegmentsAutoObject();
 	virtual void ReleaseSegmentsAutoObject();
 

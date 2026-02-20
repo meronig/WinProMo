@@ -43,7 +43,7 @@ public:
 	virtual void GetIncomingEdges(CObArray& edgeList) const;
 	
 	// Model-view links
-	virtual CProMoBlockView* GetMainView() const;
+	virtual CProMoBlockView* GetMainBlockView() const;
 
 	static CString GetParentFromString(const CString& str);
 	static unsigned int GetAttachmentTypeFromString(const CString& str);

@@ -58,6 +58,8 @@ CProMoDiagramAutoAbs::~CProMoDiagramAutoAbs()
 
 CProMoLabelsAuto* CProMoDiagramAutoAbs::GetLabelsAutoObject()
 {
+	ThrowIfDetached();
+
 	if (!m_pLabels) {
 		m_pLabels = new CProMoLabelsAuto();
 		if (m_pLabels) {
@@ -124,8 +126,6 @@ void CProMoDiagramAutoAbs::Activate()
 
 void CProMoDiagramAutoAbs::Redo(short times)
 {
-	ThrowIfNoAppAutoObject();
-	
 	for (short i = 0; i < times; ++i) {
 		if (GetContainer()) {
 			GetContainer()->Redo();
@@ -137,8 +137,6 @@ void CProMoDiagramAutoAbs::Redo(short times)
 
 void CProMoDiagramAutoAbs::Undo(BOOL times)
 {
-	ThrowIfNoAppAutoObject();
-
 	for (short i = 0; i < times; ++i) {
 		if (GetContainer()) {
 			GetContainer()->Undo();
@@ -168,8 +166,6 @@ BSTR CProMoDiagramAutoAbs::Type()
 
 LPDISPATCH CProMoDiagramAutoAbs::GetElements()
 {
-	ThrowIfNoAppAutoObject();
-
 	if (GetContainer()) {
 		CProMoDiagramChildAuto* pContainerAuto = dynamic_cast<CProMoDiagramChildAuto*>(GetContainer()->GetAutomationObject());
 		if (pContainerAuto) {
@@ -188,8 +184,6 @@ void CProMoDiagramAutoAbs::SetElements(LPDISPATCH newValue)
 
 long CProMoDiagramAutoAbs::GetWidth()
 {
-	ThrowIfNoAppAutoObject();
-
 	if (GetContainer()) {
 		return GetContainer()->GetVirtualSize().cx;
 	}
@@ -199,8 +193,6 @@ long CProMoDiagramAutoAbs::GetWidth()
 
 void CProMoDiagramAutoAbs::SetWidth(long nNewValue)
 {
-	ThrowIfNoAppAutoObject();
-
 	if (GetContainer()) {
 		GetContainer()->SetVirtualSize(CSize(nNewValue, GetContainer()->GetVirtualSize().cy));
 		GetContainer()->SetModified(TRUE);
@@ -210,8 +202,6 @@ void CProMoDiagramAutoAbs::SetWidth(long nNewValue)
 
 long CProMoDiagramAutoAbs::GetHeight()
 {
-	ThrowIfNoAppAutoObject();
-
 	if (GetContainer()) {
 		return GetContainer()->GetVirtualSize().cy;
 	}
@@ -221,8 +211,6 @@ long CProMoDiagramAutoAbs::GetHeight()
 
 void CProMoDiagramAutoAbs::SetHeight(long nNewValue)
 {
-	ThrowIfNoAppAutoObject();
-
 	if (GetContainer()) {
 		GetContainer()->SetVirtualSize(CSize(GetContainer()->GetVirtualSize().cx, nNewValue));
 		GetContainer()->SetModified(TRUE);
@@ -232,8 +220,8 @@ void CProMoDiagramAutoAbs::SetHeight(long nNewValue)
 
 void CProMoDiagramAutoAbs::Save(BOOL noPrompt)
 {
-	ThrowIfNoAppAutoObject();
-
+	//TODO: handle noPrompt parameter
+	
 	if (GetContainer()) {
 		SaveDiagram();
 	}
@@ -241,8 +229,6 @@ void CProMoDiagramAutoAbs::Save(BOOL noPrompt)
 
 void CProMoDiagramAutoAbs::SaveAs(const VARIANT FAR& fileName)
 {
-	ThrowIfNoAppAutoObject();
-
 	if (GetContainer()) {
 		SaveDiagramAs(CVariantWrapper(fileName).GetString());
 	}
@@ -250,8 +236,6 @@ void CProMoDiagramAutoAbs::SaveAs(const VARIANT FAR& fileName)
 
 void CProMoDiagramAutoAbs::Close(BOOL saveChanges)
 {
-	ThrowIfNoAppAutoObject();
-
 	if (GetContainer()) {
 		if (saveChanges) {
 			SaveDiagram();
@@ -259,6 +243,7 @@ void CProMoDiagramAutoAbs::Close(BOOL saveChanges)
 		CloseDiagram();
 	}
 }
+
 LPDISPATCH CProMoDiagramAutoAbs::GetLabels() 
 {
 	if (GetLabelsAutoObject())
@@ -280,8 +265,6 @@ VARIANT CProMoDiagramAutoAbs::GetCreatableElementTypes()
 	VARIANT vaResult;
 	VariantInit(&vaResult);
 	
-	ThrowIfNoAppAutoObject();
-
 	CStringArray names;
 
 	if (GetContainer()) {
@@ -302,6 +285,6 @@ VARIANT CProMoDiagramAutoAbs::GetCreatableElementTypes()
 
 void CProMoDiagramAutoAbs::SetCreatableElementTypes(const VARIANT FAR& newValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }

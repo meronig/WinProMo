@@ -135,6 +135,9 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	else {
 		m_template = NULL;
 	}
+
+	m_autoObject = NULL;
+
 	if (parent) {
 		if (parent->m_type == PROPTYPE_COMPOSITE || (parent->IsMultiValue() && parent->m_type == type && !IsMultiValue())) {
 			m_parentProperty = parent;
@@ -144,8 +147,7 @@ CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, co
 	}
 	m_parentProperty = NULL;
 
-	m_autoObject = NULL;
-
+	
 }
 
 CProMoProperty::CProMoProperty(const CString& name, const unsigned int& type, const CVariantWrapper& initValue, const BOOL& readOnly,
@@ -358,6 +360,21 @@ const unsigned int& CProMoProperty::GetType()
 	return m_type;
 }
 
+IProMoPropertyOwner* CProMoProperty::GetPropertyOwner() const
+/* ============================================================
+	Function :		CProMoProperty::GetPropertyOwner
+	Description :	Gets the pointer to the object to which
+					the property belongs
+	Access :		Public
+	Return :		IProMoPropertyOwner*	-	the pointer to the
+											object to which the
+											property belongs
+	Parameters :	none
+   ============================================================*/
+{
+	return m_owner;
+}
+
 BOOL CProMoProperty::IsReadOnly() const
 /* ============================================================
 	Function :		CProMoProperty::IsReadOnly
@@ -404,6 +421,22 @@ BOOL CProMoProperty::IsPersistent() const
    ============================================================*/
 {
 	return m_persistent;
+}
+
+BOOL CProMoProperty::IsComposite() const
+/* ============================================================
+	Function :		CProMoProperty::IsComposite
+	Description :	Returns "TRUE" if the property is a
+					composite property, i.e. it can have
+					child properties
+	Access :		Public
+	Return :		BOOL	-	"TRUE" if the property is a
+								composite property, "FALSE"
+								otherwise
+	Parameters :	none
+   ============================================================*/
+{
+	return m_type == PROPTYPE_COMPOSITE;
 }
 
 BOOL CProMoProperty::HasHandler() const
@@ -623,6 +656,68 @@ CProMoProperty* CProMoProperty::GetChild(const int& index) const
 		return (CProMoProperty*)m_childProperties.GetAt(index);
 	}
 	return NULL;
+}
+
+CProMoProperty* CProMoProperty::FindChild(const CString& name) const
+/* ============================================================
+	Function :		CProMoProperty::FindChild
+	Description :	Returns the child having the specified name.
+					Only applicable to composite and multi-value
+					properties. The search is performed only on
+					the direct children of the property, and does
+					not include grandchildren or other descendants.
+	Access :		Public
+	Return :		CProMoProperty*	-	the child having the
+										specified name
+	Parameters :	CString name	-	the name for the child
+										to be returned
+   ============================================================*/
+{
+	CProMoProperty* result = NULL;
+	for (int i = 0; i < m_childProperties.GetSize(); i++) {
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_childProperties.GetAt(i));
+		if (prop) {
+			result = FindChildR(name, prop, prop);
+			if (result) {
+				return result;
+			}
+		}
+	}
+	return NULL;
+}
+
+void CProMoProperty::GetChildrenNames(CStringArray& array, const BOOL& recursive) const
+/* ============================================================
+	Function :		CProMoProperty::GetChildrenNames
+	Description :	Fills "array" with the names of the child
+					properties of the current property. If
+					"recursive" is "TRUE", also fills the array
+					with the names of all descendant properties,
+					prefixed with the path to reach them (e.g.,
+					"ChildProperty.0.GrandChildProperty").
+	Access :		Public
+	Return :		void
+	Parameters :	CStringArray& array	-	the array to be filled
+					BOOL& recursive		-	if "TRUE", also fills
+											the array with the
+											names of all
+											descendant
+											properties, with
+											the path to reach
+											them
+   ============================================================*/
+{
+	for (int i = 0; i < m_childProperties.GetSize(); i++) {
+		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_childProperties.GetAt(i));
+		if (recursive) {
+			GetChildrenNamesR(array, prop, prop);
+		}
+		else {
+			if (prop) {
+				array.Add(prop->GetFullName());
+			}
+		}
+	}
 }
 
 CString CProMoProperty::GetFullName() const
@@ -885,6 +980,93 @@ CProMoProperty* CProMoProperty::HandleChild(const CString& str)
 	}
 	
 	return NULL;
+}
+
+
+CProMoProperty* CProMoProperty::FindChildR(const CString& name, CProMoProperty* prop, const CProMoProperty* root)
+/* ============================================================
+	Function :		CProMoProperty::FindChildR
+	Description :	Recursive helper function to find a child
+					property by name.
+	Access :		Protected
+	Return :		CProMoProperty*		-	the child property having
+											the specified name
+	Parameters :	CString name		-	the name for the child
+											to be returned
+					CProMoProperty* prop -	the current property
+					CProMoProperty* root -	the root property to
+											calculate relative
+											names
+   ============================================================*/
+{
+	if (prop) {
+		if (prop->GetRelativeName(root) == name) {
+			return prop;
+		}
+		else {
+			CProMoProperty* temp = NULL;
+			for (int i = 0; i < prop->GetChildrenCount(); i++) {
+				temp = FindChildR(name, prop->GetChild(i), root);
+				if (temp) {
+					return temp;
+				}
+			}
+		}
+	}
+	return NULL;
+}
+
+void CProMoProperty::GetChildrenNamesR(CStringArray& array, CProMoProperty* prop, const CProMoProperty* root)
+/* ============================================================
+	Function :		CProMoProperty::GetChildrenNamesR
+	Description :	Recursive helper function to get the names of
+					all child properties.
+	Access :		Protected
+	Return :		void
+	Parameters :	CStringArray& array			-	Array to fill
+					CProMoProperty* prop		-	The current property
+					const CProMoProperty* root -	The root property to
+													calculate relative
+													names
+   ============================================================*/
+{
+	if (prop) {
+		array.Add(prop->GetRelativeName(root));
+		if (prop->GetType() == PROPTYPE_COMPOSITE || prop->IsMultiValue()) {
+			for (int i = 0; i < prop->GetChildrenCount(); i++) {
+				CProMoProperty* child = prop->GetChild(i);
+				GetChildrenNamesR(array, child, root);
+			}
+		}
+	}
+}
+
+CString CProMoProperty::GetRelativeName(const CProMoProperty* ancestor) const
+/* ============================================================
+	Function :		CProMoProperty::GetRelativeName
+	Description :	Gets the name of the property relative to a
+					specified ancestor property.
+	Access :		Protected
+	Return :		CString					-	The relative name of the
+												property
+	Parameters :	CProMoProperty* ancestor -	The ancestor
+												property to which the
+												name should be relative
+	Usage :			Call to get the name of a property relative
+					to an ancestor, e.g., when building a list of
+					child properties.
+   ============================================================*/
+{
+	CString result = m_name;
+	const CProMoProperty* parent = m_parentProperty;
+
+	while (parent && parent != ancestor)
+	{
+		result = parent->m_name + _T(".") + result;
+		parent = parent->m_parentProperty;
+	}
+
+	return result;
 }
 
 CString CProMoProperty::GetElementFromString(const CString& str)

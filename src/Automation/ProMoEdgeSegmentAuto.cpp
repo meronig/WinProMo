@@ -33,6 +33,14 @@ CProMoEdgeSegmentAuto::CProMoEdgeSegmentAuto()
 {
 }
 
+CProMoEdgeView* CProMoEdgeSegmentAuto::GetSegment()
+{
+	ThrowIfDetached();
+	ThrowIfNoElementAutoObject();
+	
+	return dynamic_cast<CProMoEdgeView*>(m_pInternalObject);
+}
+
 CProMoEdgeSegmentAuto::~CProMoEdgeSegmentAuto()
 {
 }
@@ -76,7 +84,9 @@ END_INTERFACE_MAP()
 
 double CProMoEdgeSegmentAuto::GetTop() 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		return GetSegment()->GetTop();
+	}
 
 	return 0.0;
 }
@@ -89,7 +99,9 @@ void CProMoEdgeSegmentAuto::SetTop(double newValue)
 
 double CProMoEdgeSegmentAuto::GetLeft() 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		return GetSegment()->GetLeft();
+	}
 
 	return 0.0;
 }
@@ -102,7 +114,9 @@ void CProMoEdgeSegmentAuto::SetLeft(double newValue)
 
 double CProMoEdgeSegmentAuto::GetBottom() 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		return GetSegment()->GetBottom();
+	}
 
 	return 0.0;
 }
@@ -115,7 +129,9 @@ void CProMoEdgeSegmentAuto::SetBottom(double newValue)
 
 double CProMoEdgeSegmentAuto::GetRight() 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		return GetSegment()->GetRight();
+	}
 
 	return 0.0;
 }
@@ -128,7 +144,9 @@ void CProMoEdgeSegmentAuto::SetRight(double newValue)
 
 double CProMoEdgeSegmentAuto::GetWidth() 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		return GetSegment()->GetRect().Width();
+	}
 
 	return 0.0;
 }
@@ -141,7 +159,10 @@ void CProMoEdgeSegmentAuto::SetWidth(double newValue)
 
 double CProMoEdgeSegmentAuto::GetHeight() 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		return GetSegment()->GetRect().Height();
+	}
+
 
 	return 0.0;
 }
@@ -161,14 +182,32 @@ LPDISPATCH CProMoEdgeSegmentAuto::Split()
 
 LPDISPATCH CProMoEdgeSegmentAuto::Prev() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetSegment()) {
+		CProMoEdgeView* pPrev = dynamic_cast<CProMoEdgeView*>(GetSegment()->GetSource());
+		if (pPrev) {
+			CProMoEdgeSegmentAuto* pElementAuto = dynamic_cast<CProMoEdgeSegmentAuto*>(pPrev->GetAutomationObject());
+			if (pElementAuto) {
+				pElementAuto->SetElementAutoObject(GetElementAutoObject());
+				return pElementAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }
 
 LPDISPATCH CProMoEdgeSegmentAuto::Next() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetSegment()){
+		CProMoEdgeView* pNext = dynamic_cast<CProMoEdgeView*>(GetSegment()->GetDestination());
+		if (pNext) {
+			CProMoEdgeSegmentAuto* pElementAuto = dynamic_cast<CProMoEdgeSegmentAuto*>(pNext->GetAutomationObject());
+			if (pElementAuto) {
+				pElementAuto->SetElementAutoObject(GetElementAutoObject());
+				return pElementAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }

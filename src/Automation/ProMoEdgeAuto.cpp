@@ -18,6 +18,7 @@
 #include "stdafx.h"
 #include "ProMoEdgeAuto.h"
 #include "ProMoEdgeSegmentsAuto.h"
+#include "ProMoBlockAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,8 +36,16 @@ CProMoEdgeAuto::CProMoEdgeAuto()
 	m_pSegments = NULL;
 }
 
+CProMoEdgeModel* CProMoEdgeAuto::GetEdgeModel() {
+	
+	return dynamic_cast<CProMoEdgeModel*>(GetModel());
+}
+
 CProMoEdgeSegmentsAuto* CProMoEdgeAuto::GetSegmentsAutoObject()
 {
+	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
+	
 	if (!m_pSegments) {
 		m_pSegments = new CProMoEdgeSegmentsAuto();
 		if (m_pSegments) {
@@ -101,7 +110,16 @@ END_INTERFACE_MAP()
 
 LPDISPATCH CProMoEdgeAuto::GetSource() 
 {
-	// TODO: Add your property handler here
+	if (GetEdgeModel()) {
+		CProMoBlockModel* pSource = GetEdgeModel()->GetSource();
+		if (pSource) {
+			CProMoBlockAuto* pSourceAuto = dynamic_cast<CProMoBlockAuto*>(pSource->GetAutomationObject());
+			if (pSourceAuto) {
+				pSourceAuto->SetDiagramAutoObject(GetDiagramAutoObject());
+				return pSourceAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }
@@ -114,7 +132,16 @@ void CProMoEdgeAuto::SetSource(LPDISPATCH newValue)
 
 LPDISPATCH CProMoEdgeAuto::GetDestination() 
 {
-	// TODO: Add your property handler here
+	if (GetEdgeModel()) {
+		CProMoBlockModel* pDest = GetEdgeModel()->GetDestination();
+		if (pDest) {
+			CProMoBlockAuto* pDestAuto = dynamic_cast<CProMoBlockAuto*>(pDest->GetAutomationObject());
+			if (pDestAuto) {
+				pDestAuto->SetDiagramAutoObject(GetDiagramAutoObject());
+				return pDestAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }

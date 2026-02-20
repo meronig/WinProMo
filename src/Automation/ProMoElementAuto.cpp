@@ -43,8 +43,28 @@ CProMoElementAuto::CProMoElementAuto()
 CProMoModel* CProMoElementAuto::GetModel()
 {
 	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
 
 	return dynamic_cast<CProMoModel*>(m_pInternalObject);
+}
+
+void CProMoElementAuto::GetViews(CObArray& viewList)
+{
+	viewList.RemoveAll();
+
+	if (GetModel()) {
+		GetModel()->GetViews(viewList);
+	}
+}
+
+IProMoView* CProMoElementAuto::GetMainView()
+{
+	CObArray viewList;
+	GetViews(viewList);
+	if (viewList.GetCount() > 0) {
+		return dynamic_cast<IProMoView*>(viewList.GetAt(0));
+	}
+	return NULL;
 }
 
 CProMoElementAuto::~CProMoElementAuto()
@@ -53,6 +73,9 @@ CProMoElementAuto::~CProMoElementAuto()
 
 CProMoLabelsAuto* CProMoElementAuto::GetLabelsAutoObject()
 {
+	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
+
 	if (!m_pLabels) {
 		m_pLabels = new CProMoLabelsAuto();
 		if (m_pLabels) {
@@ -73,6 +96,9 @@ void CProMoElementAuto::ReleaseLabelsAutoObject()
 
 CProMoPropertiesAuto* CProMoElementAuto::GetPropertiesAutoObject()
 {
+	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
+
 	if (!m_pProperties) {
 		m_pProperties = new CProMoPropertiesAuto();
 		if (m_pProperties) {
@@ -90,7 +116,6 @@ void CProMoElementAuto::ReleasePropertiesAutoObject()
 		m_pProperties = NULL;
 	}
 }
-
 
 void CProMoElementAuto::OnFinalRelease()
 {
@@ -127,7 +152,7 @@ BEGIN_DISPATCH_MAP(CProMoElementAuto, CProMoDiagramChildAuto)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextAlignment", GetTextAlignment, SetTextAlignment, VT_I4)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I4)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I4)
-	DISP_PROPERTY_EX(CProMoElementAuto, "Name", GetName, SetName, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoElementAuto, "ID", GetName, SetName, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Labels", GetLabels, SetLabels, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Properties", GetProperties, SetProperties, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Type", GetType, SetType, VT_BSTR)
@@ -193,7 +218,10 @@ void CProMoElementAuto::SetLockAspectRatio(BOOL bNewValue)
 
 OLE_COLOR CProMoElementAuto::GetLineColor() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		COLORREF color = GetMainView()->GetLineColor();
+		return RGB(GetRValue(color), GetGValue(color), GetBValue(color));
+	}
 
 	return RGB(0,0,0);
 }
@@ -206,7 +234,9 @@ void CProMoElementAuto::SetLineColor(OLE_COLOR nNewValue)
 
 long CProMoElementAuto::GetLineWidth() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetLineWidth();
+	}
 
 	return 0;
 }
@@ -219,7 +249,9 @@ void CProMoElementAuto::SetLineWidth(long nNewValue)
 
 long CProMoElementAuto::GetLineStyle() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetLineWidth();
+	}
 
 	return 0;
 }
@@ -233,7 +265,10 @@ void CProMoElementAuto::SetLineStyle(long nNewValue)
 BSTR CProMoElementAuto::GetFontName() 
 {
 	CString strResult;
-	// TODO: Add your property handler here
+
+	if (GetMainView()) {
+		strResult = GetMainView()->GetFontName();
+	}
 
 	return strResult.AllocSysString();
 }
@@ -246,7 +281,9 @@ void CProMoElementAuto::SetFontName(LPCTSTR lpszNewValue)
 
 long CProMoElementAuto::GetFontSize() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetFontSize();
+	}
 
 	return 0;
 }
@@ -259,7 +296,9 @@ void CProMoElementAuto::SetFontSize(long nNewValue)
 
 long CProMoElementAuto::GetFontWeight() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetFontWeight();
+	}
 
 	return 0;
 }
@@ -272,7 +311,9 @@ void CProMoElementAuto::SetFontWeight(long nNewValue)
 
 BOOL CProMoElementAuto::GetFontItalic() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->IsFontItalic();
+	}
 
 	return TRUE;
 }
@@ -285,7 +326,9 @@ void CProMoElementAuto::SetFontItalic(BOOL bNewValue)
 
 BOOL CProMoElementAuto::GetFontUnderline() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->IsFontUnderline();
+	}
 
 	return TRUE;
 }
@@ -298,7 +341,9 @@ void CProMoElementAuto::SetFontUnderline(BOOL bNewValue)
 
 BOOL CProMoElementAuto::GetFontStrikeOut() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->IsFontStrikeOut();
+	}
 
 	return TRUE;
 }
@@ -311,7 +356,10 @@ void CProMoElementAuto::SetFontStrikeOut(BOOL bNewValue)
 
 OLE_COLOR CProMoElementAuto::GetTextColor() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		COLORREF color = GetMainView()->GetTextColor();
+		return RGB(GetRValue(color), GetGValue(color), GetBValue(color));
+	}
 
 	return RGB(0,0,0);
 }
@@ -324,7 +372,10 @@ void CProMoElementAuto::SetTextColor(OLE_COLOR nNewValue)
 
 OLE_COLOR CProMoElementAuto::GetBkColor() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		COLORREF color = GetMainView()->GetBkColor();
+		return RGB(GetRValue(color), GetGValue(color), GetBValue(color));
+	}
 
 	return RGB(0,0,0);
 }
@@ -337,7 +388,9 @@ void CProMoElementAuto::SetBkColor(OLE_COLOR nNewValue)
 
 long CProMoElementAuto::GetBkMode() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetBkMode();
+	}
 
 	return 0;
 }
@@ -350,7 +403,9 @@ void CProMoElementAuto::SetBkMode(long nNewValue)
 
 long CProMoElementAuto::GetTextAlignment() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetTextAlignment();
+	}
 
 	return 0;
 }
@@ -363,7 +418,9 @@ void CProMoElementAuto::SetTextAlignment(long nNewValue)
 
 long CProMoElementAuto::GetTextHorizontalAlignment() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetTextHorizontalAlignment();
+	}
 
 	return 0;
 }
@@ -376,7 +433,9 @@ void CProMoElementAuto::SetTextHorizontalAlignment(long nNewValue)
 
 long CProMoElementAuto::GetTextVerticalAlignment() 
 {
-	// TODO: Add your property handler here
+	if (GetMainView()) {
+		return GetMainView()->GetTextVerticalAlignment();
+	}
 
 	return 0;
 }
@@ -390,14 +449,17 @@ void CProMoElementAuto::SetTextVerticalAlignment(long nNewValue)
 BSTR CProMoElementAuto::GetName() 
 {
 	CString strResult;
-	// TODO: Add your property handler here
+	
+	if (GetModel()) {
+		strResult = GetModel()->GetName();
+	}
 
 	return strResult.AllocSysString();
 }
 
 void CProMoElementAuto::SetName(LPCTSTR lpszNewValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }
 
@@ -429,17 +491,18 @@ LPDISPATCH CProMoElementAuto::GetProperties()
 
 void CProMoElementAuto::SetProperties(LPDISPATCH newValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }
 
 BSTR CProMoElementAuto::GetType() 
 {
-	ThrowIfNoDiagramAutoObject();
-
 	CString strResult;
-	if (GetModel()) {
-		strResult = GetModel()->GetType();
+
+	CDiagramEntity* pEntity = dynamic_cast<CDiagramEntity*>(GetMainView());
+
+	if (pEntity) {
+		strResult = pEntity->GetType();
 	}
 	
 	return strResult.AllocSysString();
@@ -447,6 +510,6 @@ BSTR CProMoElementAuto::GetType()
 
 void CProMoElementAuto::SetType(LPCTSTR lpszNewValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }

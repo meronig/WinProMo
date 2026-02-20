@@ -28,6 +28,8 @@ public:
 
 // Operations
 public:
+protected:
+	virtual CProMoEdgeView* GetSegment();
 
 // Overrides
 	// ClassWizard generated virtual function overrides

@@ -504,14 +504,14 @@ namespace CProMoBlockModelTests
 
             model.LinkView(&view);
 
-            TestHelpers::PointerAssert::AreEqual(&view, model.GetMainView());
+            TestHelpers::PointerAssert::AreEqual(&view, model.GetMainBlockView());
         }
 
         TEST_METHOD(GetMainView_WhenNoViewExists_ReturnNull)
         {
             CProMoBlockModelTestStub model;
             
-            TestHelpers::PointerAssert::IsNull(model.GetMainView());
+            TestHelpers::PointerAssert::IsNull(model.GetMainBlockView());
         }
 
         TEST_METHOD(GetMainView_WhenManyViewsExist_ReturnFirstView)
@@ -522,7 +522,7 @@ namespace CProMoBlockModelTests
             model.LinkView(&v1);
             model.LinkView(&v2);
 
-            TestHelpers::PointerAssert::AreEqual(&v1, model.GetMainView());
+            TestHelpers::PointerAssert::AreEqual(&v1, model.GetMainBlockView());
         }
 
         TEST_METHOD(GetMainView_WhenManyViewTypesExist_ReturnFirstCProMoBlockView)
@@ -534,7 +534,7 @@ namespace CProMoBlockModelTests
             model.LinkView(&v1);
             model.LinkView(&v2);
 
-            TestHelpers::PointerAssert::AreEqual(&v2, model.GetMainView());
+            TestHelpers::PointerAssert::AreEqual(&v2, model.GetMainBlockView());
         }
 
 #pragma endregion

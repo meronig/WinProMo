@@ -749,7 +749,7 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 			for (i = 0; i < childBlocks.GetSize(); i++) {
 				CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 				if (childModel) {
-					CProMoBlockView* childView = childModel->GetMainView();
+					CProMoBlockView* childView = childModel->GetMainBlockView();
 					if (childView) {
 						//move child nodes that are not selected (otherwise they will be moved twice)
 						if (!childView->IsSelected()) {
@@ -767,7 +767,7 @@ void CProMoBlockView::KeepElementsConnected(double left, double top, double righ
 			for (i = 0; i < boundaryBlocks.GetSize(); i++) {
 				CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(i));
 				if (childModel) {
-					CProMoBlockView* childView = childModel->GetMainView();
+					CProMoBlockView* childView = childModel->GetMainBlockView();
 					if (childView) {
 						//move child nodes that are not selected (otherwise they will be moved twice)
 						if (!childView->IsSelected()) {
@@ -886,7 +886,7 @@ void CProMoBlockView::RecomputeIntersectionLinks()
 		for (i = 0; i < childBlocks.GetSize(); i++) {
 			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 			if (childModel) {
-				CProMoBlockView* childView = childModel->GetMainView();
+				CProMoBlockView* childView = childModel->GetMainBlockView();
 				if (childView) {
 					childView->RecomputeIntersectionLinks();
 				}
@@ -1272,7 +1272,7 @@ void CProMoBlockView::AutoResize()
 		for (int i = 0; i < childBlocks.GetSize(); i++) {
 			CProMoBlockModel* childModel = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 			if (childModel) {
-				CProMoBlockView* childView = childModel->GetMainView();
+				CProMoBlockView* childView = childModel->GetMainBlockView();
 				if (childView) {
 					BOOL isSelected = childView->IsSelected();
 					childView->Select(TRUE);
@@ -1294,8 +1294,8 @@ void CProMoBlockView::AutoResize()
 		}
 
 		if (m_blockModel->GetParentBlock() != NULL) {
-			if (m_blockModel->GetParentBlock()->GetMainView() != NULL) {
-				m_blockModel->GetParentBlock()->GetMainView()->AutoResize();
+			if (m_blockModel->GetParentBlock()->GetMainBlockView() != NULL) {
+				m_blockModel->GetParentBlock()->GetMainBlockView()->AutoResize();
 			}
 		}
 		else {
@@ -1918,7 +1918,7 @@ void CProMoBlockView::Reposition()
 	for (i = 0; i < blocks.GetSize(); i++) {
 		CProMoBlockModel* block = dynamic_cast<CProMoBlockModel*>(blocks.GetAt(i));
 		if (block) {
-			CProMoBlockView* view = block->GetMainView();
+			CProMoBlockView* view = block->GetMainBlockView();
 			if (view) {
 				CDoubleRect blockRect = view->GetRect();
 				double blockHeight = blockRect.Height();

@@ -439,7 +439,7 @@ void CProMoEdgeView::Reposition()
 			if (IsFirstSegment() && m_edgeModel->GetSource()) {
 				CProMoBlockModel* sourceBlockModel = m_edgeModel->GetSource();
 				if (sourceBlockModel) {
-					CProMoBlockView* sourceBlockView = sourceBlockModel->GetMainView();
+					CProMoBlockView* sourceBlockView = sourceBlockModel->GetMainBlockView();
 					if (sourceBlockView) {
 						CPoint pt = sourceBlockView->GetIntersection(GetRect().TopLeft(), GetRect().BottomRight());
 						// No intersection exists, set to block center and compute again
@@ -463,7 +463,7 @@ void CProMoEdgeView::Reposition()
 			if (IsLastSegment() && m_edgeModel->GetDestination()) {
 				CProMoBlockModel* destBlockModel = m_edgeModel->GetDestination();
 				if (destBlockModel) {
-					CProMoBlockView* destBlockView = destBlockModel->GetMainView();
+					CProMoBlockView* destBlockView = destBlockModel->GetMainBlockView();
 					if (destBlockView) {
 						CPoint pt = destBlockView->GetIntersection(GetRect().BottomRight(), GetRect().TopLeft());
 						// No intersection exists, set to block center and compute again
@@ -723,7 +723,7 @@ CDiagramEntity* CProMoEdgeView::GetSource() const
 	if (m_edgeModel) {
 		if (IsFirstSegment()) {
 			if (m_edgeModel->GetSource()) {
-				return m_edgeModel->GetSource()->GetMainView();
+				return m_edgeModel->GetSource()->GetMainBlockView();
 			}
 		}
 	}
@@ -748,7 +748,7 @@ CDiagramEntity* CProMoEdgeView::GetDestination() const
 	if (m_edgeModel) {
 		if (IsLastSegment()) {
 			if (m_edgeModel->GetDestination()) {
-				return m_edgeModel->GetDestination()->GetMainView();
+				return m_edgeModel->GetDestination()->GetMainBlockView();
 			}
 		}
 	}
@@ -947,10 +947,10 @@ CProMoEdgeView* CProMoEdgeView::Split()
 			newEdge->SetDestinationEdge(dynamic_cast<CProMoEdgeView*>(GetDestination()));
 			newEdge->SetSourceEdge(this);
 			if (destBlockModel) {
-				newEdge->SetDestinationBlock(destBlockModel->GetMainView());
+				newEdge->SetDestinationBlock(destBlockModel->GetMainBlockView());
 			}
 			if (sourceBlockModel) {
-				newEdge->SetSourceBlock(sourceBlockModel->GetMainView());
+				newEdge->SetSourceBlock(sourceBlockModel->GetMainBlockView());
 			}
 			newEdge->SetRect(newEdgeRect);
 			//clear duplicated properties

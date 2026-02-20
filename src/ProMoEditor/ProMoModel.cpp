@@ -462,6 +462,31 @@ void CProMoModel::GetViews(CObArray& viewList) const
 	viewList.Append(m_views);
 }
 
+IProMoView* CProMoModel::GetMainView() const
+/* ============================================================
+	Function :		CProMoModel::GetMainView
+	Description :	Returns a pointer to the primary view for
+					this model.
+	Access :		Public
+
+	Return :		IProMoView*	-	The primary view,
+									or "NULL" if no view
+									is defined.
+	Parameters :	none
+
+   ============================================================*/
+{
+	// to make the code more robust, return the first view whose class implements IProMoView or a derived one
+	for (int i = 0; i < m_views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(m_views.GetAt(i));
+		if (view) {
+			return view;
+		}
+	}
+
+	return NULL;
+}
+
 BOOL CProMoModel::FromString(const CString& str)
 /* ============================================================
 	Function :		CProMoModel::FromString

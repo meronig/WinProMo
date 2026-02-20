@@ -62,12 +62,15 @@ public:
 	virtual CVariantWrapper& GetValue();
 	virtual const CString& GetName();
 	virtual const unsigned int& GetType();
+	virtual IProMoPropertyOwner* GetPropertyOwner() const;
 	virtual BOOL IsReadOnly() const;
 	virtual BOOL IsLabelVisible() const;
 	virtual BOOL IsPersistent() const;
+	virtual BOOL IsComposite() const;
 	virtual BOOL HasHandler() const;
 	virtual BOOL IsMultiValue() const;
 	virtual BOOL InvokeHandler(CWnd* parent);
+
 
 	virtual CProMoProperty* Clone();
 	
@@ -75,6 +78,9 @@ public:
 	virtual void ClearChildren();
 	virtual int GetChildrenCount() const;
 	virtual CProMoProperty* GetChild(const int& index) const;
+	virtual CProMoProperty* FindChild(const CString& name) const;
+	virtual void GetChildrenNames(CStringArray& array, const BOOL& recursive) const;
+
 
 	virtual CProMoProperty* AddOption();
 	virtual int GetOptionsCount() const;
@@ -97,6 +103,10 @@ protected:
 	virtual BOOL				GetDefaultFromString(CString& str);
 	
 	virtual CProMoProperty* HandleChild(const CString& str);
+
+	static CProMoProperty* FindChildR(const CString& name, CProMoProperty* parent, const CProMoProperty* root);
+	static void GetChildrenNamesR(CStringArray& array, CProMoProperty* parent, const CProMoProperty* root);
+	virtual CString GetRelativeName(const CProMoProperty* ancestor) const;
 
 // Implements
 public:

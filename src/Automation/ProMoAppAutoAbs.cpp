@@ -133,7 +133,13 @@ void CProMoAppAutoAbs::SetDiagrams(LPDISPATCH newValue)
 
 LPDISPATCH CProMoAppAutoAbs::ActiveDiagram()
 {
-	// TODO: Add your dispatch handler code here
+	CProMoDiagramAutoAbs* pActiveDiagram = GetActiveDiagram();
+
+	if (pActiveDiagram)
+	{
+		pActiveDiagram->SetAppAutoObject(this);
+		return pActiveDiagram->GetIDispatch(TRUE);
+	}
 
 	return NULL;
 }
@@ -161,6 +167,6 @@ VARIANT CProMoAppAutoAbs::GetCreatableDiagramTypes()
 
 void CProMoAppAutoAbs::SetCreatableDiagramTypes(const VARIANT FAR& newValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }

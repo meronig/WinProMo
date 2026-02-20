@@ -82,8 +82,6 @@ END_INTERFACE_MAP()
 
 short CProMoElementsAuto::Count() 
 {
-	ThrowIfNoDiagramAutoObject();
-
 	if (GetContainer()) {
 		CObArray models;
 		GetContainer()->GetModels(models);
@@ -95,8 +93,6 @@ short CProMoElementsAuto::Count()
 
 LPDISPATCH CProMoElementsAuto::GetItem(const VARIANT FAR& Item) 
 {
-	ThrowIfNoDiagramAutoObject();
-
 	CVariantWrapper wrapper(Item);
 
 	if (GetContainer()) {
@@ -132,8 +128,6 @@ void CProMoElementsAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue)
 
 LPDISPATCH CProMoElementsAuto::Add(const VARIANT FAR& elementType) 
 {
-	ThrowIfNoDiagramAutoObject();
-
 	CVariantWrapper wrapper(elementType);
 	CString strType = wrapper.GetString();
 
@@ -185,8 +179,6 @@ BOOL CProMoElementsAuto::Remove(const VARIANT FAR& Item)
 
 VARIANT CProMoElementsAuto::GetIDs() 
 {
-	ThrowIfNoDiagramAutoObject();
-
 	VARIANT vaResult;
 	VariantInit(&vaResult);
 

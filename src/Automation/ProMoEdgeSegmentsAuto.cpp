@@ -40,6 +40,7 @@ CProMoEdgeSegmentsAuto::~CProMoEdgeSegmentsAuto()
 
 
 void CProMoEdgeSegmentsAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
 
@@ -74,8 +75,6 @@ END_INTERFACE_MAP()
 
 long CProMoEdgeSegmentsAuto::Count() 
 {
-	ThrowIfNoElementAutoObject();
-
 	if (GetEdgeModel()) {
 		CObArray edgeViews;
 		GetEdgeModel()->GetViews(edgeViews);
@@ -87,8 +86,6 @@ long CProMoEdgeSegmentsAuto::Count()
 
 LPDISPATCH CProMoEdgeSegmentsAuto::GetItem(long Item) 
 {
-	ThrowIfNoElementAutoObject();
-
 	if (GetEdgeModel()) {
 		CProMoEdgeView* pView = GetEdgeModel()->GetFirstSegment();
 		for (int i = 0; pView && i < Item; i++) {

@@ -659,10 +659,10 @@ namespace CProMoEntityContainerTests
             TestHelpers::PointerAssert::AreEqual(a2, dynamic_cast<CProMoBlockView*>(z->GetDestination()));
             TestHelpers::PointerAssert::AreNotEqual(z->GetModel(), y->GetModel());
 
-            TestHelpers::PointerAssert::AreEqual(a, a1->GetBlockModel()->GetParentBlock()->GetMainView());
-            TestHelpers::PointerAssert::AreEqual(a, a2->GetBlockModel()->GetParentBlock()->GetMainView());
-            TestHelpers::PointerAssert::AreEqual(b, b1->GetBlockModel()->GetParentBlock()->GetMainView());
-            TestHelpers::PointerAssert::AreEqual(b, b2->GetBlockModel()->GetParentBlock()->GetMainView());
+            TestHelpers::PointerAssert::AreEqual(a, a1->GetBlockModel()->GetParentBlock()->GetMainBlockView());
+            TestHelpers::PointerAssert::AreEqual(a, a2->GetBlockModel()->GetParentBlock()->GetMainBlockView());
+            TestHelpers::PointerAssert::AreEqual(b, b1->GetBlockModel()->GetParentBlock()->GetMainBlockView());
+            TestHelpers::PointerAssert::AreEqual(b, b2->GetBlockModel()->GetParentBlock()->GetMainBlockView());
             TestHelpers::PointerAssert::IsNull(a->GetBlockModel()->GetParentBlock());
             TestHelpers::PointerAssert::IsNull(b->GetBlockModel()->GetParentBlock());
             

@@ -41,6 +41,7 @@ CProMoIncomingEdgesAuto::~CProMoIncomingEdgesAuto()
 }
 
 void CProMoIncomingEdgesAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
 
@@ -79,8 +80,6 @@ END_INTERFACE_MAP()
 
 long CProMoIncomingEdgesAuto::Count() 
 {
-	ThrowIfNoElementAutoObject();
-
 	if (GetBlockModel()) {
 		CObArray incomingEdges;
 		GetBlockModel()->GetIncomingEdges(incomingEdges);
@@ -92,8 +91,6 @@ long CProMoIncomingEdgesAuto::Count()
 
 LPDISPATCH CProMoIncomingEdgesAuto::GetItem(const VARIANT FAR& Item) 
 {
-	ThrowIfNoElementAutoObject();
-
 	CVariantWrapper wrapper(Item);
 
 	if (GetBlockModel()) {
@@ -149,8 +146,6 @@ BOOL CProMoIncomingEdgesAuto::Remove(const VARIANT FAR& Item)
 
 VARIANT CProMoIncomingEdgesAuto::GetIDs() 
 {
-	ThrowIfNoElementAutoObject();
-
 	VARIANT vaResult;
 	VariantInit(&vaResult);
 

@@ -41,6 +41,7 @@ CProMoSubBlocksAuto::~CProMoSubBlocksAuto()
 }
 
 void CProMoSubBlocksAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL); 
 	m_pElementAuto = pElementAuto;
 }
 
@@ -78,8 +79,6 @@ END_INTERFACE_MAP()
 
 long CProMoSubBlocksAuto::Count() 
 {
-	ThrowIfNoElementAutoObject();
-
 	if (GetBlockModel()) {
 		CObArray subBlocks;
 		GetBlockModel()->GetSubBlocks(subBlocks);
@@ -91,8 +90,6 @@ long CProMoSubBlocksAuto::Count()
 
 LPDISPATCH CProMoSubBlocksAuto::GetItem(const VARIANT FAR& Item) 
 {
-	ThrowIfNoElementAutoObject();
-	
 	CVariantWrapper wrapper(Item);
 
 	if (GetBlockModel()) {
@@ -134,8 +131,6 @@ void CProMoSubBlocksAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue)
 
 BOOL CProMoSubBlocksAuto::Add(LPDISPATCH Item) 
 {
-	ThrowIfNoElementAutoObject();
-
 	// TODO: Add your dispatch handler code here
 
 	return TRUE;
@@ -150,8 +145,6 @@ BOOL CProMoSubBlocksAuto::Remove(const VARIANT FAR& Item)
 
 VARIANT CProMoSubBlocksAuto::GetIDs()
 {
-	ThrowIfNoElementAutoObject();
-
 	VARIANT vaResult;
 	VariantInit(&vaResult);
 

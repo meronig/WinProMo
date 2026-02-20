@@ -19,6 +19,7 @@
    ========================================================================*/
 #include "stdafx.h"
 #include "ProMoLabelAuto.h"
+#include "ProMoPropertyAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,20 @@ IMPLEMENT_DYNCREATE(CProMoLabelAuto, CProMoElementChildAuto)
 
 CProMoLabelAuto::CProMoLabelAuto()
 {
+}
+
+CProMoLabel* CProMoLabelAuto::GetLabel()
+{
+	ThrowIfDetached();
+	ThrowIfNoDiagramAutoObject();
+	
+	return dynamic_cast<CProMoLabel*>(m_pInternalObject);
+}
+
+CProMoElementAuto* CProMoLabelAuto::GetElementAutoObject() const
+{
+	ThrowIfNoDiagramAutoObject();
+	return m_pElementAuto;
 }
 
 CProMoLabelAuto::~CProMoLabelAuto()
@@ -90,7 +105,9 @@ END_INTERFACE_MAP()
 
 double CProMoLabelAuto::GetTop() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetTop();
+	}
 
 	return 0.0;
 }
@@ -103,7 +120,9 @@ void CProMoLabelAuto::SetTop(double newValue)
 
 double CProMoLabelAuto::GetBottom() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetBottom();
+	}
 
 	return 0.0;
 }
@@ -116,7 +135,9 @@ void CProMoLabelAuto::SetBottom(double newValue)
 
 double CProMoLabelAuto::GetLeft() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetLeft();
+	}
 
 	return 0.0;
 }
@@ -129,7 +150,9 @@ void CProMoLabelAuto::SetLeft(double newValue)
 
 double CProMoLabelAuto::GetRight() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetRight();
+	}
 
 	return 0.0;
 }
@@ -142,7 +165,9 @@ void CProMoLabelAuto::SetRight(double newValue)
 
 double CProMoLabelAuto::GetWidth() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetRect().Width();
+	}
 
 	return 0.0;
 }
@@ -155,7 +180,9 @@ void CProMoLabelAuto::SetWidth(double newValue)
 
 double CProMoLabelAuto::GetHeight() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetRect().Height();
+	}
 
 	return 0.0;
 }
@@ -169,7 +196,10 @@ void CProMoLabelAuto::SetHeight(double newValue)
 BSTR CProMoLabelAuto::GetFontName() 
 {
 	CString strResult;
-	// TODO: Add your property handler here
+	
+	if (GetLabel()) {
+		strResult = GetLabel()->GetFontName();
+	}
 
 	return strResult.AllocSysString();
 }
@@ -182,7 +212,9 @@ void CProMoLabelAuto::SetFontName(LPCTSTR lpszNewValue)
 
 long CProMoLabelAuto::GetFontSize() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetFontSize();
+	}
 
 	return 0;
 }
@@ -195,7 +227,9 @@ void CProMoLabelAuto::SetFontSize(long nNewValue)
 
 long CProMoLabelAuto::GetFontWeight() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetFontWeight();
+	}
 
 	return 0;
 }
@@ -208,7 +242,9 @@ void CProMoLabelAuto::SetFontWeight(long nNewValue)
 
 BOOL CProMoLabelAuto::GetFontItalic() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->IsFontItalic();
+	}
 
 	return TRUE;
 }
@@ -221,7 +257,9 @@ void CProMoLabelAuto::SetFontItalic(BOOL bNewValue)
 
 BOOL CProMoLabelAuto::GetFontUnderline() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->IsFontUnderline();
+	}
 
 	return TRUE;
 }
@@ -234,7 +272,9 @@ void CProMoLabelAuto::SetFontUnderline(BOOL bNewValue)
 
 BOOL CProMoLabelAuto::GetFontStrikeOut() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->IsFontStrikeOut();
+	}
 
 	return TRUE;
 }
@@ -247,7 +287,10 @@ void CProMoLabelAuto::SetFontStrikeOut(BOOL bNewValue)
 
 OLE_COLOR CProMoLabelAuto::GetTextColor() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		COLORREF color = GetLabel()->GetTextColor();
+		return RGB(GetRValue(color), GetGValue(color), GetBValue(color));
+	}
 
 	return RGB(0,0,0);
 }
@@ -260,7 +303,10 @@ void CProMoLabelAuto::SetTextColor(OLE_COLOR nNewValue)
 
 OLE_COLOR CProMoLabelAuto::GetBkColor() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		COLORREF color = GetLabel()->GetBkColor();
+		return RGB(GetRValue(color), GetGValue(color), GetBValue(color));
+	}
 
 	return RGB(0,0,0);
 }
@@ -273,7 +319,9 @@ void CProMoLabelAuto::SetBkColor(OLE_COLOR nNewValue)
 
 long CProMoLabelAuto::GetBkMode() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetBkMode();
+	}
 
 	return 0;
 }
@@ -286,7 +334,9 @@ void CProMoLabelAuto::SetBkMode(long nNewValue)
 
 long CProMoLabelAuto::GetTextAlignment() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetTextAlignment();
+	}
 
 	return 0;
 }
@@ -299,7 +349,9 @@ void CProMoLabelAuto::SetTextAlignment(long nNewValue)
 
 long CProMoLabelAuto::GetTextHorizontalAlignment() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetTextHorizontalAlignment();
+	}
 
 	return 0;
 }
@@ -312,7 +364,9 @@ void CProMoLabelAuto::SetTextHorizontalAlignment(long nNewValue)
 
 long CProMoLabelAuto::GetTextVerticalAlignment() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->GetTextVerticalAlignment();
+	}
 
 	return 0;
 }
@@ -350,13 +404,22 @@ LPDISPATCH CProMoLabelAuto::Duplicate()
 
 LPDISPATCH CProMoLabelAuto::GetProperty() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		CProMoProperty* pProperty = GetLabel()->GetProperty();
+		if (pProperty) {
+			CProMoPropertyAuto* pPropertyAuto = dynamic_cast<CProMoPropertyAuto*>(pProperty->GetAutomationObject());
+			if (pPropertyAuto) {
+				pPropertyAuto->SetElementAutoObject(GetElementAutoObject());
+				return pPropertyAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }
 
 void CProMoLabelAuto::SetProperty(LPDISPATCH newValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }

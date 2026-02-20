@@ -35,6 +35,7 @@ protected:
 public:
 	virtual void SetDiagramAutoObject(CProMoDiagramAutoAbs* pAppAuto);
 	virtual void SetElementAutoObject(CProMoElementAuto* pElementAuto);
+	virtual CProMoElementAuto* GetElementAutoObject() const;
 
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CProMoLabelsAuto)

@@ -21,6 +21,8 @@
    ========================================================================*/
 #include "stdafx.h"
 #include "ProMoPropertyAuto.h"
+#include "../FileUtils/SafeArrayWrapper.h"
+#include "ProMoLabelAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,6 +37,13 @@ IMPLEMENT_DYNCREATE(CProMoPropertyAuto, CProMoElementChildAuto)
 
 CProMoPropertyAuto::CProMoPropertyAuto()
 {
+}
+
+CProMoProperty* CProMoPropertyAuto::GetProperty() {
+	ThrowIfDetached();
+	ThrowIfNoElementAutoObject();
+
+	return dynamic_cast<CProMoProperty*>(m_pInternalObject);
 }
 
 CProMoPropertyAuto::~CProMoPropertyAuto()
@@ -84,54 +93,80 @@ END_INTERFACE_MAP()
 BSTR CProMoPropertyAuto::GetName() 
 {
 	CString strResult;
-	// TODO: Add your property handler here
+	
+	if (GetProperty()) {
+		strResult = GetProperty()->GetName();
+	}
 
 	return strResult.AllocSysString();
 }
 
 void CProMoPropertyAuto::SetName(LPCTSTR lpszNewValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }
 
 BOOL CProMoPropertyAuto::IsReadOnly() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetProperty()) {
+		return GetProperty()->IsReadOnly();
+	}
 
 	return TRUE;
 }
 
 long CProMoPropertyAuto::GetType() 
 {
-	// TODO: Add your property handler here
+	if (GetProperty()) {
+		return GetProperty()->GetType();
+	}
 
 	return 0;
 }
 
 void CProMoPropertyAuto::SetType(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }
 
 LPDISPATCH CProMoPropertyAuto::Label() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetProperty() && GetModel()) {
+		CObArray labels;
+		GetModel()->GetLabels(labels);
+		for (int i = 0; i < labels.GetCount(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (label) {
+				if (label->GetProperty() == GetProperty()) {
+					CProMoLabelAuto* labelAuto = dynamic_cast<CProMoLabelAuto*>(label->GetAutomationObject());
+					if (labelAuto) {
+						labelAuto->SetElementAutoObject(GetElementAutoObject());
+						return labelAuto->GetIDispatch(TRUE);
+					}
+				}
+			}
+		}
+	}
 
 	return NULL;
 }
 
 BOOL CProMoPropertyAuto::IsComposite() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetProperty()) {
+		return GetProperty()->IsComposite();
+	}
 
 	return TRUE;
 }
 
 BOOL CProMoPropertyAuto::IsMultivalue() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetProperty()) {
+		return GetProperty()->IsMultiValue();
+	}
 
 	return TRUE;
 }
@@ -140,14 +175,30 @@ VARIANT CProMoPropertyAuto::GetValue()
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
-	// TODO: Add your property handler here
+	
+	if (GetProperty()) {
+		if (IsMultivalue() || IsComposite()) {
+			GetNotSupported();
+		}
+		else {
+			CVariantWrapper varWrapper = GetProperty()->GetValue();
+			VariantCopy(&vaResult, varWrapper.GetVARIANT());
+		}
+	}
 
 	return vaResult;
 }
 
 void CProMoPropertyAuto::SetValue(const VARIANT FAR& newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetProperty()) {
+		if (IsMultivalue() || IsComposite()) {
+			SetNotSupported();
+			return;
+		}
+		CVariantWrapper varWrapper(newValue);
+		GetProperty()->SetValue(varWrapper);
+	}
 
 }
 
@@ -167,20 +218,50 @@ BOOL CProMoPropertyAuto::Remove()
 
 LPDISPATCH CProMoPropertyAuto::GetItem(const VARIANT FAR& Item) 
 {
-	// TODO: Add your property handler here
+	if (!IsMultivalue() && !IsComposite()) {
+		GetNotSupported();
+		return NULL;
+	}
+
+	if (GetProperty()) {
+		CVariantWrapper wrapper(Item);
+		CProMoProperty* childProperty = NULL;
+		if (wrapper.GetType() != VT_BSTR) {
+			childProperty = GetProperty()->GetChild(wrapper.GetInt());
+		}
+		else {
+			if (IsMultivalue()) {
+				GetNotSupported();
+				return NULL;
+			}
+			else
+			childProperty = GetProperty()->FindChild(wrapper.GetString());
+		}
+
+		if (childProperty) {
+			CProMoPropertyAuto* childPropertyAuto = dynamic_cast<CProMoPropertyAuto*>(childProperty->GetAutomationObject());
+			if (childPropertyAuto) {
+				childPropertyAuto->SetElementAutoObject(GetElementAutoObject());
+				return childPropertyAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
+	
 
 	return NULL;
 }
 
 void CProMoPropertyAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }
 
 long CProMoPropertyAuto::Count() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetProperty()) {
+		return GetProperty()->GetChildrenCount();
+	}
 
 	return 0;
 }
@@ -189,13 +270,22 @@ VARIANT CProMoPropertyAuto::GetChildNames()
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
-	// TODO: Add your property handler here
+	
+	CStringArray names;
+
+	if (GetProperty()) {
+		GetProperty()->GetChildrenNames(names, FALSE);
+	}
+
+	HRESULT hr = CSafeArrayWrapper::CreateVariantFromCStringArray(names, vaResult);
+	if (FAILED(hr))
+		AfxThrowOleException(hr);
 
 	return vaResult;
 }
 
 void CProMoPropertyAuto::SetChildNames(const VARIANT FAR& newValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }

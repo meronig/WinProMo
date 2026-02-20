@@ -81,8 +81,7 @@ void CProMoDiagramChildAuto::SetDiagramAutoObject(CProMoDiagramAutoAbs* pDiagram
 
 void CProMoDiagramChildAuto::ThrowIfNoDiagramAutoObject() const
 {
-	ThrowIfNoAppAutoObject();
-
+	
 	if (!m_pDiagramAuto) {
 		//TODO: consider a more specific error code and message
 		AfxThrowOleException(E_FAIL);
@@ -91,6 +90,8 @@ void CProMoDiagramChildAuto::ThrowIfNoDiagramAutoObject() const
 
 CProMoEntityContainer* CProMoDiagramChildAuto::GetContainer() 
 {
+	ThrowIfNoDiagramAutoObject();
+
 	if (m_pDiagramAuto) {
 		return m_pDiagramAuto->GetContainer();
 	}

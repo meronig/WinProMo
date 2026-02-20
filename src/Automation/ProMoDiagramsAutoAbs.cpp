@@ -27,6 +27,7 @@
    ========================================================================*/
 #include "stdafx.h"
 #include "ProMoDiagramsAutoAbs.h"
+#include "../FileUtils/SafeArrayWrapper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -82,6 +83,7 @@ END_INTERFACE_MAP()
 LPDISPATCH CProMoDiagramsAutoAbs::Add(const VARIANT FAR& documentType)
 {
 	ThrowIfNoAppAutoObject();
+
 	CVariantWrapper wrapper(documentType);
 	CProMoDiagramAutoAbs* pDiagramAuto = AddNewDiagram(wrapper.GetString());
 	if (pDiagramAuto) {
@@ -94,6 +96,7 @@ LPDISPATCH CProMoDiagramsAutoAbs::Add(const VARIANT FAR& documentType)
 LPDISPATCH CProMoDiagramsAutoAbs::Open(const VARIANT FAR& fileName)
 {
 	ThrowIfNoAppAutoObject();
+
 	CVariantWrapper wrapper(fileName);
 	CProMoDiagramAutoAbs* pDiagramAuto = OpenDiagram(wrapper.GetString());
 	if (pDiagramAuto) {
@@ -106,7 +109,7 @@ LPDISPATCH CProMoDiagramsAutoAbs::Open(const VARIANT FAR& fileName)
 LPDISPATCH CProMoDiagramsAutoAbs::GetItem(const VARIANT FAR& Item)
 {
 	ThrowIfNoAppAutoObject();
-	
+
 	CVariantWrapper wrapper(Item);
 
 	if (wrapper.GetType() != VT_BSTR) {
@@ -157,15 +160,23 @@ void CProMoDiagramsAutoAbs::Close(BOOL saveChanges)
 }
 VARIANT CProMoDiagramsAutoAbs::GetIDs() 
 {
+	ThrowIfNoAppAutoObject();
+
 	VARIANT vaResult;
 	VariantInit(&vaResult);
-	// TODO: Add your property handler here
+	
+	CStringArray names;
+	GetOpenDiagrams(names);
+
+	HRESULT hr = CSafeArrayWrapper::CreateVariantFromCStringArray(names, vaResult);
+	if (FAILED(hr))
+		AfxThrowOleException(hr);
 
 	return vaResult;
 }
 
 void CProMoDiagramsAutoAbs::SetIDs(const VARIANT FAR& newValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }

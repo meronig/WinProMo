@@ -35,6 +35,7 @@ protected:
 	virtual CProMoDiagramAutoAbs* GetDiagramAutoObject(const CString& name) = 0;
 	virtual CProMoDiagramAutoAbs* AddNewDiagram(const CString& type) = 0;
 	virtual CProMoDiagramAutoAbs* OpenDiagram(const CString& fileName) = 0;
+	virtual void GetOpenDiagrams(CStringArray& diagramList) = 0;
 
 	// Overrides
 public:

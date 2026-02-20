@@ -311,13 +311,13 @@ CProMoBlockView* CProMoEditor::GetConnectedBlock(CProMoEdgeView* line, BOOL back
 	if (backwards) {
 		model = ((CProMoEdgeModel*)line->GetModel())->GetSource();
 		if (model) {
-			return model->GetMainView();
+			return model->GetMainBlockView();
 		}
 	}
 	else {
 		model = ((CProMoEdgeModel*)line->GetModel())->GetDestination();
 		if (model) {
-			return model->GetMainView();
+			return model->GetMainBlockView();
 		}
 	}
 
@@ -346,8 +346,8 @@ void CProMoEditor::DeselectSubBlocks(CProMoBlockView* block)
 	for (int i = 0; i < childBlocks.GetSize(); i++) {
 		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 		if (subBlock) {
-			subBlock->GetMainView()->Select(FALSE);
-			DeselectSubBlocks(subBlock->GetMainView());
+			subBlock->GetMainBlockView()->Select(FALSE);
+			DeselectSubBlocks(subBlock->GetMainBlockView());
 		}
 	}
 }
@@ -374,8 +374,8 @@ void CProMoEditor::DeselectBoundaryBlocks(CProMoBlockView* block)
 	for (int i = 0; i < childBlocks.GetSize(); i++) {
 		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 		if (subBlock) {
-			subBlock->GetMainView()->Select(FALSE);
-			DeselectBoundaryBlocks(subBlock->GetMainView());
+			subBlock->GetMainBlockView()->Select(FALSE);
+			DeselectBoundaryBlocks(subBlock->GetMainBlockView());
 		}
 	}
 }
@@ -401,8 +401,8 @@ void CProMoEditor::SelectBoundaryBlocks(CProMoBlockView* block)
 	for (int i = 0; i < childBlocks.GetSize(); i++) {
 		CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(childBlocks.GetAt(i));
 		if (subBlock) {
-			subBlock->GetMainView()->Select(TRUE);
-			SelectBoundaryBlocks(subBlock->GetMainView());
+			subBlock->GetMainBlockView()->Select(TRUE);
+			SelectBoundaryBlocks(subBlock->GetMainBlockView());
 		}
 	}
 }
@@ -675,7 +675,7 @@ BOOL CProMoEditor::RepositionSelectedBoundaryBlock()
 	CProMoBlockView* selectedObject = dynamic_cast<CProMoBlockView*>(GetSelectedObject());
 	if (selectedObject) {
 		if (selectedObject->GetBlockModel()->GetParentBlock() && selectedObject->GetBlockModel()->IsBoundaryBlock()) {
-			CProMoBlockView* parentView = selectedObject->GetBlockModel()->GetParentBlock()->GetMainView();
+			CProMoBlockView* parentView = selectedObject->GetBlockModel()->GetParentBlock()->GetMainBlockView();
 			CRect intersect;
 			CRect boundaryRect = parentView->GetRect();
 			unsigned int boundaryAttachment = selectedObject->GetBlockModel()->GetBoundaryAttachment();

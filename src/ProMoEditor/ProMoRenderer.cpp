@@ -401,7 +401,7 @@ void CProMoRenderer::PickElement(CObArray& elements, CObject* element)
 		block->GetBlockModel()->GetSubBlocks(subBlocks);
 		for (i = 0; i < subBlocks.GetSize(); i++) {
 			CProMoBlockModel* subBlock = dynamic_cast<CProMoBlockModel*>(subBlocks.GetAt(i));
-			PickElement(elements, subBlock->GetMainView());
+			PickElement(elements, subBlock->GetMainBlockView());
 		}
 
 		// add all boundary blocks
@@ -409,7 +409,7 @@ void CProMoRenderer::PickElement(CObArray& elements, CObject* element)
 		block->GetBlockModel()->GetBoundaryBlocks(boundaryBlocks, DEHT_BODY);
 		for (i = 0; i < boundaryBlocks.GetSize(); i++) {
 			CProMoBlockModel* boundaryBlock = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(i));
-			PickElement(elements, boundaryBlock->GetMainView());
+			PickElement(elements, boundaryBlock->GetMainBlockView());
 		}
 	}
 

@@ -64,6 +64,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	// Generated OLE dispatch map functions
 	//{{AFX_DISPATCH(CProMoDiagramAutoAbs)
+public:
 	afx_msg LPDISPATCH GetElements();
 	afx_msg void SetElements(LPDISPATCH newValue);
 	afx_msg long GetWidth();
