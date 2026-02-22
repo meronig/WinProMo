@@ -77,11 +77,6 @@ BOOL CProMoAppChildAuto::IsAlive() const
 	return m_pInternalObject != NULL;
 }
 
-void CProMoAppChildAuto::RefreshViews()
-{
-
-}
-
 void CProMoAppChildAuto::Initialize(IProMoAutomationHost* obj)
 {
 	m_pInternalObject = obj;

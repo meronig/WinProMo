@@ -146,8 +146,7 @@ LPDISPATCH CProMoElementsAuto::Add(const VARIANT FAR& elementType)
 					CProMoModel* pModel = promoEntity->GetModel();
 					if (pModel) {
 						pModel->RecreateLabels(CObArray());
-						GetContainer()->SetModified(TRUE);
-						RefreshViews();
+						GetDiagramAutoObject()->NotifyChange();
 						CProMoElementAuto* pElementAuto = GetElementAutoObject(pModel);
 						if (pElementAuto) {
 							pElementAuto->SetDiagramAutoObject(GetDiagramAutoObject());

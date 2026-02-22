@@ -136,7 +136,7 @@ LPDISPATCH CProMoPropertyAuto::Label()
 	if (GetProperty() && GetModel()) {
 		CObArray labels;
 		GetModel()->GetLabels(labels);
-		for (int i = 0; i < labels.GetCount(); i++) {
+		for (int i = 0; i < labels.GetSize(); i++) {
 			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
 			if (label) {
 				if (label->GetProperty() == GetProperty()) {

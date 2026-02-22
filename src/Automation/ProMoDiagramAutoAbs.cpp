@@ -78,6 +78,12 @@ void CProMoDiagramAutoAbs::ReleaseLabelsAutoObject()
 	}
 }
 
+void CProMoDiagramAutoAbs::NotifyChange()
+{
+	GetContainer()->SetModified(TRUE);
+	RefreshWindow();
+}
+
 void CProMoDiagramAutoAbs::OnFinalRelease()
 {
 	// When the last reference for an automation object is released
@@ -131,8 +137,7 @@ void CProMoDiagramAutoAbs::Redo(short times)
 			GetContainer()->Redo();
 		}
 	}
-	GetContainer()->SetModified(TRUE);
-	RefreshWindow();
+	NotifyChange();
 }
 
 void CProMoDiagramAutoAbs::Undo(BOOL times)
@@ -142,8 +147,7 @@ void CProMoDiagramAutoAbs::Undo(BOOL times)
 			GetContainer()->Undo();
 		}
 	}
-	GetContainer()->SetModified(TRUE);
-	RefreshWindow();
+	NotifyChange();
 }
 
 BSTR CProMoDiagramAutoAbs::Path()
@@ -195,8 +199,7 @@ void CProMoDiagramAutoAbs::SetWidth(long nNewValue)
 {
 	if (GetContainer()) {
 		GetContainer()->SetVirtualSize(CSize(nNewValue, GetContainer()->GetVirtualSize().cy));
-		GetContainer()->SetModified(TRUE);
-		RefreshWindow();
+		NotifyChange();
 	}
 }
 
@@ -213,8 +216,7 @@ void CProMoDiagramAutoAbs::SetHeight(long nNewValue)
 {
 	if (GetContainer()) {
 		GetContainer()->SetVirtualSize(CSize(GetContainer()->GetVirtualSize().cx, nNewValue));
-		GetContainer()->SetModified(TRUE);
-		RefreshWindow();
+		NotifyChange();
 	}
 }
 

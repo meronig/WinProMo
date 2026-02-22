@@ -80,14 +80,16 @@ protected:
 	afx_msg void SetBkColor(OLE_COLOR nNewValue);
 	afx_msg long GetBkMode();
 	afx_msg void SetBkMode(long nNewValue);
-	afx_msg long GetTextAlignment();
-	afx_msg void SetTextAlignment(long nNewValue);
 	afx_msg long GetTextHorizontalAlignment();
 	afx_msg void SetTextHorizontalAlignment(long nNewValue);
 	afx_msg long GetTextVerticalAlignment();
 	afx_msg void SetTextVerticalAlignment(long nNewValue);
 	afx_msg LPDISPATCH GetProperty();
 	afx_msg void SetProperty(LPDISPATCH newValue);
+	afx_msg BSTR GetID();
+	afx_msg void SetID(LPCTSTR lpszNewValue);
+	afx_msg BOOL GetTextMultiLine();
+	afx_msg void SetTextMultiLine(BOOL bNewValue);
 	afx_msg void Cut();
 	afx_msg void Copy();
 	afx_msg void Delete();

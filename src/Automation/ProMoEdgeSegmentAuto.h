@@ -31,6 +31,7 @@ public:
 protected:
 	virtual CProMoEdgeView* GetSegment();
 
+	virtual void KeepElementsConnected();
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CProMoEdgeSegmentAuto)

@@ -61,7 +61,7 @@ IProMoView* CProMoElementAuto::GetMainView()
 {
 	CObArray viewList;
 	GetViews(viewList);
-	if (viewList.GetCount() > 0) {
+	if (viewList.GetSize() > 0) {
 		return dynamic_cast<IProMoView*>(viewList.GetAt(0));
 	}
 	return NULL;
@@ -212,7 +212,7 @@ BOOL CProMoElementAuto::GetLockAspectRatio()
 
 void CProMoElementAuto::SetLockAspectRatio(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }
 
@@ -228,7 +228,26 @@ OLE_COLOR CProMoElementAuto::GetLineColor()
 
 void CProMoElementAuto::SetLineColor(OLE_COLOR nNewValue) 
 {
-	// TODO: Add your property handler here
+	COLORREF color;
+	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
+	if (FAILED(hr))
+		AfxThrowOleException(hr);
+
+	CObArray views;
+	GetViews(views);
+	
+	if (views.GetSize()>0){
+		GetContainer()->Snapshot();
+	}
+	
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetLineColor(color);
+		}
+	}
+	
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -243,7 +262,19 @@ long CProMoElementAuto::GetLineWidth()
 
 void CProMoElementAuto::SetLineWidth(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetLineWidth(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -258,7 +289,19 @@ long CProMoElementAuto::GetLineStyle()
 
 void CProMoElementAuto::SetLineStyle(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetLineStyle(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -275,7 +318,19 @@ BSTR CProMoElementAuto::GetFontName()
 
 void CProMoElementAuto::SetFontName(LPCTSTR lpszNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetFontName(lpszNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -290,7 +345,19 @@ long CProMoElementAuto::GetFontSize()
 
 void CProMoElementAuto::SetFontSize(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetFontSize(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -305,7 +372,19 @@ long CProMoElementAuto::GetFontWeight()
 
 void CProMoElementAuto::SetFontWeight(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetFontWeight(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -320,7 +399,19 @@ BOOL CProMoElementAuto::GetFontItalic()
 
 void CProMoElementAuto::SetFontItalic(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetFontItalic(bNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -335,7 +426,19 @@ BOOL CProMoElementAuto::GetFontUnderline()
 
 void CProMoElementAuto::SetFontUnderline(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetFontUnderline(bNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -350,7 +453,19 @@ BOOL CProMoElementAuto::GetFontStrikeOut()
 
 void CProMoElementAuto::SetFontStrikeOut(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetFontStrikeOut(bNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -366,7 +481,23 @@ OLE_COLOR CProMoElementAuto::GetTextColor()
 
 void CProMoElementAuto::SetTextColor(OLE_COLOR nNewValue) 
 {
-	// TODO: Add your property handler here
+	COLORREF color;
+	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
+	if (FAILED(hr))
+		AfxThrowOleException(hr);
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetTextColor(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -382,7 +513,21 @@ OLE_COLOR CProMoElementAuto::GetBkColor()
 
 void CProMoElementAuto::SetBkColor(OLE_COLOR nNewValue) 
 {
-	// TODO: Add your property handler here
+	COLORREF color;
+	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetBkColor(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -397,7 +542,19 @@ long CProMoElementAuto::GetBkMode()
 
 void CProMoElementAuto::SetBkMode(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetBkMode(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -412,7 +569,19 @@ long CProMoElementAuto::GetTextAlignment()
 
 void CProMoElementAuto::SetTextAlignment(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetTextAlignment(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -427,7 +596,19 @@ long CProMoElementAuto::GetTextHorizontalAlignment()
 
 void CProMoElementAuto::SetTextHorizontalAlignment(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetTextHorizontalAlignment(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
@@ -442,7 +623,19 @@ long CProMoElementAuto::GetTextVerticalAlignment()
 
 void CProMoElementAuto::SetTextVerticalAlignment(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
+	if (views.GetSize() > 0) {
+		GetContainer()->Snapshot();
+	}
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			view->SetTextVerticalAlignment(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 

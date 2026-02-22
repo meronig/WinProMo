@@ -36,6 +36,8 @@ public:
 	
 	virtual CProMoLabelsAuto* GetLabelsAutoObject();
 	virtual void ReleaseLabelsAutoObject();
+
+	virtual void NotifyChange();
 	
 protected:
 	

@@ -396,4 +396,9 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Midl Include="WinProMo.odl">
+      <Filter>Source Files</Filter>
+    </Midl>
+  </ItemGroup>
 </Project>

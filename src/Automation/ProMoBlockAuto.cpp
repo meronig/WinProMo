@@ -23,6 +23,7 @@
 #include "ProMoBoundaryBlocksAuto.h"
 #include "ProMoIncomingEdgesAuto.h"
 #include "ProMoOutgoingEdgesAuto.h"
+#include "../GeometryUtils/GeometryHelper.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -52,7 +53,7 @@ CProMoBlockModel* CProMoBlockAuto::GetBlockModel() {
 	return dynamic_cast<CProMoBlockModel*>(GetModel());
 }
 
-CProMoBlockView* CProMoBlockAuto::GetMainView()
+CProMoBlockView* CProMoBlockAuto::GetMainBlockView()
 {
 	if (GetBlockModel()) {
 		return GetBlockModel()->GetMainBlockView();
@@ -211,8 +212,8 @@ END_INTERFACE_MAP()
 
 OLE_COLOR CProMoBlockAuto::GetFillColor() 
 {
-	if (GetMainView()) {
-		COLORREF color = GetMainView()->GetFillColor();
+	if (GetMainBlockView()) {
+		COLORREF color = GetMainBlockView()->GetFillColor();
 		return RGB(GetRValue(color), GetGValue(color), GetBValue(color));
 	}
 
@@ -227,8 +228,8 @@ void CProMoBlockAuto::SetFillColor(OLE_COLOR nNewValue)
 
 BOOL CProMoBlockAuto::GetFillPattern() 
 {
-	if (GetMainView()) {
-		return GetMainView()->IsFillPattern();
+	if (GetMainBlockView()) {
+		return GetMainBlockView()->IsFillPattern();
 	}
 
 	return FALSE;
@@ -242,8 +243,8 @@ void CProMoBlockAuto::SetFillPattern(BOOL bNewValue)
 
 long CProMoBlockAuto::GetFillStyle() 
 {
-	if (GetMainView()) {
-		return GetMainView()->GetFillStyle();
+	if (GetMainBlockView()) {
+		return GetMainBlockView()->GetFillStyle();
 	}
 
 	return 0;
@@ -371,8 +372,8 @@ void CProMoBlockAuto::SetIncomingEdges(LPDISPATCH newValue)
 
 double CProMoBlockAuto::GetTop() 
 {
-	if (GetMainView()) {
-		return GetMainView()->GetTop();
+	if (GetMainBlockView()) {
+		return GetMainBlockView()->GetTop();
 	}
 
 	return 0.0;
@@ -380,14 +381,19 @@ double CProMoBlockAuto::GetTop()
 
 void CProMoBlockAuto::SetTop(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetMainBlockView()) {
+		GetContainer()->Snapshot();
+		GetMainBlockView()->SetRect(GetMainBlockView()->GetLeft(), newValue, GetMainBlockView()->GetRight(), GetMainBlockView()->GetBottom() - GetMainBlockView()->GetTop() + newValue);
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
 double CProMoBlockAuto::GetBottom() 
 {
-	if (GetMainView()) {
-		return GetMainView()->GetBottom();
+	if (GetMainBlockView()) {
+		return GetMainBlockView()->GetBottom();
 	}
 
 	return 0.0;
@@ -395,14 +401,19 @@ double CProMoBlockAuto::GetBottom()
 
 void CProMoBlockAuto::SetBottom(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetMainBlockView()) {
+		GetContainer()->Snapshot();
+		GetMainBlockView()->SetRect(GetMainBlockView()->GetLeft(), GetMainBlockView()->GetTop() - GetMainBlockView()->GetBottom() + newValue, GetMainBlockView()->GetRight(), newValue);
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
 double CProMoBlockAuto::GetLeft() 
 {
-	if (GetMainView()) {
-		return GetMainView()->GetLeft();
+	if (GetMainBlockView()) {
+		return GetMainBlockView()->GetLeft();
 	}
 
 	return 0.0;
@@ -410,14 +421,19 @@ double CProMoBlockAuto::GetLeft()
 
 void CProMoBlockAuto::SetLeft(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetMainBlockView()) {
+		GetContainer()->Snapshot();
+		GetMainBlockView()->SetRect(newValue, GetMainBlockView()->GetTop(), GetMainBlockView()->GetRight() - GetMainBlockView()->GetLeft() + newValue, GetMainBlockView()->GetBottom());
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
 double CProMoBlockAuto::GetRight() 
 {
-	if (GetMainView()) {
-		return GetMainView()->GetRight();
+	if (GetMainBlockView()) {
+		return GetMainBlockView()->GetRight();
 	}
 
 	return 0.0;
@@ -425,14 +441,19 @@ double CProMoBlockAuto::GetRight()
 
 void CProMoBlockAuto::SetRight(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetMainBlockView()) {
+		GetContainer()->Snapshot();
+		GetMainBlockView()->SetRect(GetMainBlockView()->GetLeft() - GetMainBlockView()->GetRight() + newValue, GetMainBlockView()->GetTop(), newValue, GetMainBlockView()->GetBottom());
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
 double CProMoBlockAuto::GetWidth() 
 {
-	if (GetMainView()) {
-		return GetMainView()->GetRect().Width();
+	if (GetMainBlockView()) {
+		return GetMainBlockView()->GetRect().Width();
 	}
 
 	return 0.0;
@@ -440,14 +461,28 @@ double CProMoBlockAuto::GetWidth()
 
 void CProMoBlockAuto::SetWidth(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetMainBlockView()) {
+
+		CDoubleRect oldRect(GetMainBlockView()->GetLeft(), GetMainBlockView()->GetTop(), GetMainBlockView()->GetRight(), GetMainBlockView()->GetBottom());
+		CDoubleRect newRect(GetMainBlockView()->GetLeft(), GetMainBlockView()->GetTop(), GetMainBlockView()->GetLeft() + newValue, GetMainBlockView()->GetBottom());
+
+		if (GetMainBlockView()->HasLockedProportions()) {
+			CGeometryHelper::EnforceAspectRatio(oldRect, newRect, DEHT_RIGHTMIDDLE, CPoint(0, 0));
+		}
+
+		GetContainer()->Snapshot();
+		GetMainBlockView()->SetRect(newRect.ToCRect());
+		GetMainBlockView()->AutoResize();
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
 double CProMoBlockAuto::GetHeight() 
 {
-	if (GetMainView()) {
-		return GetMainView()->GetRect().Height();
+	if (GetMainBlockView()) {
+		return GetMainBlockView()->GetRect().Height();
 	}
 
 	return 0.0;
@@ -455,7 +490,19 @@ double CProMoBlockAuto::GetHeight()
 
 void CProMoBlockAuto::SetHeight(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetMainBlockView()) {
+		CDoubleRect oldRect(GetMainBlockView()->GetLeft(), GetMainBlockView()->GetTop(), GetMainBlockView()->GetRight(), GetMainBlockView()->GetBottom());
+		CDoubleRect newRect(GetMainBlockView()->GetLeft(), GetMainBlockView()->GetTop(), GetMainBlockView()->GetRight(), GetMainBlockView()->GetTop() + newValue);
 
+		if (GetMainBlockView()->HasLockedProportions()) {
+			CGeometryHelper::EnforceAspectRatio(oldRect, newRect, DEHT_BOTTOMMIDDLE, CPoint(0, 0));
+		}
+
+		GetContainer()->Snapshot();
+		GetMainBlockView()->SetRect(newRect.ToCRect());
+		GetMainBlockView()->AutoResize();
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 }
 

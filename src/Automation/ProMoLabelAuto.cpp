@@ -77,10 +77,11 @@ BEGIN_DISPATCH_MAP(CProMoLabelAuto, CProMoElementChildAuto)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "BkMode", GetBkMode, SetBkMode, VT_I4)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "TextAlignment", GetTextAlignment, SetTextAlignment, VT_I4)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I4)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I4)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Property", GetProperty, SetProperty, VT_DISPATCH)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "ID", GetID, SetID, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "TextMultiLine", GetTextMultiLine, SetTextMultiLine, VT_BOOL)
 	DISP_FUNCTION(CProMoLabelAuto, "Cut", Cut, VT_EMPTY, VTS_NONE)
 	DISP_FUNCTION(CProMoLabelAuto, "Copy", Copy, VT_EMPTY, VTS_NONE)
 	DISP_FUNCTION(CProMoLabelAuto, "Delete", Delete, VT_EMPTY, VTS_NONE)
@@ -114,7 +115,12 @@ double CProMoLabelAuto::GetTop()
 
 void CProMoLabelAuto::SetTop(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetRect(GetLabel()->GetLeft(), newValue, GetLabel()->GetRight(), GetLabel()->GetBottom() - GetLabel()->GetTop() + newValue);
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
@@ -129,7 +135,12 @@ double CProMoLabelAuto::GetBottom()
 
 void CProMoLabelAuto::SetBottom(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetRect(GetLabel()->GetLeft(), GetLabel()->GetTop() - GetLabel()->GetBottom() + newValue, GetLabel()->GetRight(), newValue);
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
@@ -144,7 +155,12 @@ double CProMoLabelAuto::GetLeft()
 
 void CProMoLabelAuto::SetLeft(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetRect(newValue, GetLabel()->GetTop(), GetLabel()->GetRight() - GetLabel()->GetLeft() + newValue, GetLabel()->GetBottom());
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
@@ -159,7 +175,12 @@ double CProMoLabelAuto::GetRight()
 
 void CProMoLabelAuto::SetRight(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetRect(GetLabel()->GetLeft() - GetLabel()->GetRight() + newValue, GetLabel()->GetTop(), newValue, GetLabel()->GetBottom());
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
@@ -174,7 +195,17 @@ double CProMoLabelAuto::GetWidth()
 
 void CProMoLabelAuto::SetWidth(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+
+		CDoubleRect oldRect(GetLabel()->GetLeft(), GetLabel()->GetTop(), GetLabel()->GetRight(), GetLabel()->GetBottom());
+		CDoubleRect newRect(GetLabel()->GetLeft(), GetLabel()->GetTop(), GetLabel()->GetLeft() + newValue, GetLabel()->GetBottom());
+
+		GetContainer()->Snapshot();
+		GetLabel()->SetRect(newRect.ToCRect());
+		GetLabel()->AutoResize();
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
@@ -189,7 +220,16 @@ double CProMoLabelAuto::GetHeight()
 
 void CProMoLabelAuto::SetHeight(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		CDoubleRect oldRect(GetLabel()->GetLeft(), GetLabel()->GetTop(), GetLabel()->GetRight(), GetLabel()->GetBottom());
+		CDoubleRect newRect(GetLabel()->GetLeft(), GetLabel()->GetTop(), GetLabel()->GetRight(), GetLabel()->GetTop() + newValue);
+
+		GetContainer()->Snapshot();
+		GetLabel()->SetRect(newRect.ToCRect());
+		GetLabel()->AutoResize();
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
 
 }
 
@@ -206,7 +246,11 @@ BSTR CProMoLabelAuto::GetFontName()
 
 void CProMoLabelAuto::SetFontName(LPCTSTR lpszNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetFontName(lpszNewValue);
+		GetDiagramAutoObject()->NotifyChange();
+	}
 
 }
 
@@ -221,8 +265,12 @@ long CProMoLabelAuto::GetFontSize()
 
 void CProMoLabelAuto::SetFontSize(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetFontSize(nNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 long CProMoLabelAuto::GetFontWeight() 
@@ -236,8 +284,12 @@ long CProMoLabelAuto::GetFontWeight()
 
 void CProMoLabelAuto::SetFontWeight(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetFontWeight(nNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 BOOL CProMoLabelAuto::GetFontItalic() 
@@ -251,8 +303,12 @@ BOOL CProMoLabelAuto::GetFontItalic()
 
 void CProMoLabelAuto::SetFontItalic(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetFontItalic(bNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 BOOL CProMoLabelAuto::GetFontUnderline() 
@@ -266,8 +322,12 @@ BOOL CProMoLabelAuto::GetFontUnderline()
 
 void CProMoLabelAuto::SetFontUnderline(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetFontUnderline(bNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 BOOL CProMoLabelAuto::GetFontStrikeOut() 
@@ -281,8 +341,12 @@ BOOL CProMoLabelAuto::GetFontStrikeOut()
 
 void CProMoLabelAuto::SetFontStrikeOut(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetFontStrikeOut(bNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 OLE_COLOR CProMoLabelAuto::GetTextColor() 
@@ -297,8 +361,16 @@ OLE_COLOR CProMoLabelAuto::GetTextColor()
 
 void CProMoLabelAuto::SetTextColor(OLE_COLOR nNewValue) 
 {
-	// TODO: Add your property handler here
+	COLORREF color;
+	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
+	if (FAILED(hr))
+		AfxThrowOleException(hr);
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetTextColor(color);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 OLE_COLOR CProMoLabelAuto::GetBkColor() 
@@ -313,8 +385,16 @@ OLE_COLOR CProMoLabelAuto::GetBkColor()
 
 void CProMoLabelAuto::SetBkColor(OLE_COLOR nNewValue) 
 {
-	// TODO: Add your property handler here
+	COLORREF color;
+	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
+	if (FAILED(hr))
+		AfxThrowOleException(hr);
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetBkColor(color);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 long CProMoLabelAuto::GetBkMode() 
@@ -328,8 +408,12 @@ long CProMoLabelAuto::GetBkMode()
 
 void CProMoLabelAuto::SetBkMode(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetBkMode(nNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 long CProMoLabelAuto::GetTextAlignment() 
@@ -343,8 +427,12 @@ long CProMoLabelAuto::GetTextAlignment()
 
 void CProMoLabelAuto::SetTextAlignment(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetTextAlignment(nNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 long CProMoLabelAuto::GetTextHorizontalAlignment() 
@@ -358,8 +446,12 @@ long CProMoLabelAuto::GetTextHorizontalAlignment()
 
 void CProMoLabelAuto::SetTextHorizontalAlignment(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetTextHorizontalAlignment(nNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 long CProMoLabelAuto::GetTextVerticalAlignment() 
@@ -373,8 +465,12 @@ long CProMoLabelAuto::GetTextVerticalAlignment()
 
 void CProMoLabelAuto::SetTextVerticalAlignment(long nNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		GetLabel()->SetTextVerticalAlignment(nNewValue);
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 void CProMoLabelAuto::Cut() 
@@ -421,5 +517,32 @@ LPDISPATCH CProMoLabelAuto::GetProperty()
 void CProMoLabelAuto::SetProperty(LPDISPATCH newValue) 
 {
 	SetNotSupported();
+
+}
+
+BSTR CProMoLabelAuto::GetID() 
+{
+	CString strResult;
+	// TODO: Add your property handler here
+
+	return strResult.AllocSysString();
+}
+
+void CProMoLabelAuto::SetID(LPCTSTR lpszNewValue) 
+{
+	// TODO: Add your property handler here
+
+}
+
+BOOL CProMoLabelAuto::GetTextMultiLine() 
+{
+	// TODO: Add your property handler here
+
+	return TRUE;
+}
+
+void CProMoLabelAuto::SetTextMultiLine(BOOL bNewValue) 
+{
+	// TODO: Add your property handler here
 
 }

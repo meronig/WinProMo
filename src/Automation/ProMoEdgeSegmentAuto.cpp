@@ -17,6 +17,7 @@
    ========================================================================*/
 #include "stdafx.h"
 #include "ProMoEdgeSegmentAuto.h"
+#include <math.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,6 +42,20 @@ CProMoEdgeView* CProMoEdgeSegmentAuto::GetSegment()
 	return dynamic_cast<CProMoEdgeView*>(m_pInternalObject);
 }
 
+void CProMoEdgeSegmentAuto::KeepElementsConnected()
+{
+	// resize source and destination blocks (if they exist), so to invoke the logic to keep edges connected
+	if (GetEdgeModel()) {
+		if (GetEdgeModel()->GetSource()) {
+			GetEdgeModel()->GetSource()->GetMainBlockView()->SetLeft(GetEdgeModel()->GetSource()->GetMainBlockView()->GetLeft());
+		}
+		if (GetEdgeModel()->GetDestination()) {
+			GetEdgeModel()->GetDestination()->GetMainBlockView()->SetLeft(GetEdgeModel()->GetDestination()->GetMainBlockView()->GetLeft());
+		}
+	}
+	GetEdgeModel()->GetMainView()->Reposition();
+}
+
 CProMoEdgeSegmentAuto::~CProMoEdgeSegmentAuto()
 {
 }
@@ -54,10 +69,10 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoEdgeSegmentAuto, CProMoEdgeChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoEdgeSegmentAuto)
-	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "Top", GetTop, SetTop, VT_R8)
-	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "Left", GetLeft, SetLeft, VT_R8)
-	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "Bottom", GetBottom, SetBottom, VT_R8)
-	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "Right", GetRight, SetRight, VT_R8)
+	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "StartY", GetTop, SetTop, VT_R8)
+	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "StartX", GetLeft, SetLeft, VT_R8)
+	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "EndY", GetBottom, SetBottom, VT_R8)
+	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "EndX", GetRight, SetRight, VT_R8)
 	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "Width", GetWidth, SetWidth, VT_R8)
 	DISP_PROPERTY_EX(CProMoEdgeSegmentAuto, "Height", GetHeight, SetHeight, VT_R8)
 	DISP_FUNCTION(CProMoEdgeSegmentAuto, "Split", Split, VT_DISPATCH, VTS_NONE)
@@ -93,8 +108,12 @@ double CProMoEdgeSegmentAuto::GetTop()
 
 void CProMoEdgeSegmentAuto::SetTop(double newValue) 
 {
-	// TODO: Add your property handler here
-
+	if (GetSegment()) {
+		GetContainer()->Snapshot();
+		GetSegment()->SetRect(GetSegment()->GetLeft(), newValue, GetSegment()->GetRight(), GetSegment()->GetBottom());
+		KeepElementsConnected();
+		GetDiagramAutoObject()->NotifyChange();
+	}
 }
 
 double CProMoEdgeSegmentAuto::GetLeft() 
@@ -108,8 +127,13 @@ double CProMoEdgeSegmentAuto::GetLeft()
 
 void CProMoEdgeSegmentAuto::SetLeft(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		GetContainer()->Snapshot();
+		GetSegment()->SetRect(newValue, GetSegment()->GetTop(), GetSegment()->GetRight(), GetSegment()->GetBottom());
+		KeepElementsConnected();
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 double CProMoEdgeSegmentAuto::GetBottom() 
@@ -123,8 +147,13 @@ double CProMoEdgeSegmentAuto::GetBottom()
 
 void CProMoEdgeSegmentAuto::SetBottom(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		GetContainer()->Snapshot();
+		GetSegment()->SetRect(GetSegment()->GetLeft(), GetSegment()->GetTop(), GetSegment()->GetRight(), newValue);
+		KeepElementsConnected();
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 double CProMoEdgeSegmentAuto::GetRight() 
@@ -138,14 +167,19 @@ double CProMoEdgeSegmentAuto::GetRight()
 
 void CProMoEdgeSegmentAuto::SetRight(double newValue) 
 {
-	// TODO: Add your property handler here
+	if (GetSegment()) {
+		GetContainer()->Snapshot();
+		GetSegment()->SetRect(GetSegment()->GetLeft(), GetSegment()->GetTop(), newValue, GetSegment()->GetBottom());
+		KeepElementsConnected();
+		GetDiagramAutoObject()->NotifyChange();
 
+	}
 }
 
 double CProMoEdgeSegmentAuto::GetWidth() 
 {
 	if (GetSegment()) {
-		return GetSegment()->GetRect().Width();
+		return fabs(GetSegment()->GetRect().Width());
 	}
 
 	return 0.0;
@@ -153,14 +187,13 @@ double CProMoEdgeSegmentAuto::GetWidth()
 
 void CProMoEdgeSegmentAuto::SetWidth(double newValue) 
 {
-	// TODO: Add your property handler here
-
+	SetNotSupported();
 }
 
 double CProMoEdgeSegmentAuto::GetHeight() 
 {
 	if (GetSegment()) {
-		return GetSegment()->GetRect().Height();
+		return fabs(GetSegment()->GetRect().Height());
 	}
 
 
@@ -169,8 +202,7 @@ double CProMoEdgeSegmentAuto::GetHeight()
 
 void CProMoEdgeSegmentAuto::SetHeight(double newValue) 
 {
-	// TODO: Add your property handler here
-
+	SetNotSupported();
 }
 
 LPDISPATCH CProMoEdgeSegmentAuto::Split() 

@@ -37,7 +37,7 @@ public:
 // Operations
 public:
 	virtual CProMoBlockModel* GetBlockModel();
-	virtual CProMoBlockView* GetMainView();
+	virtual CProMoBlockView* GetMainBlockView();
 
 	virtual CProMoSubBlocksAuto* GetSubBlocksAutoObject();
 	virtual void ReleaseSubBlocksAutoObject();

@@ -23,7 +23,6 @@ public:
 	virtual void Initialize(IProMoAutomationHost* obj);
 	void Detach();
 	BOOL IsAlive() const;
-	void RefreshViews();
 
 	virtual CProMoAppAutoAbs* GetAppAutoObject() const;
 	virtual void SetAppAutoObject(CProMoAppAutoAbs* pAppAuto);
