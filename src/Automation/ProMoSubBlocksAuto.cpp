@@ -54,7 +54,7 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoSubBlocksAuto, CProMoBlockChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoSubBlocksAuto)
 	DISP_PROPERTY_EX(CProMoSubBlocksAuto, "IDs", GetIDs, SetIDs, VT_VARIANT)
-	DISP_FUNCTION(CProMoSubBlocksAuto, "Count", Count, VT_I4, VTS_NONE)
+	DISP_FUNCTION(CProMoSubBlocksAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CProMoSubBlocksAuto, "Add", Add, VT_BOOL, VTS_DISPATCH)
 	DISP_FUNCTION(CProMoSubBlocksAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
 	DISP_PROPERTY_PARAM(CProMoSubBlocksAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
@@ -77,7 +77,7 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoSubBlocksAuto message handlers
 
-long CProMoSubBlocksAuto::Count() 
+short CProMoSubBlocksAuto::Count() 
 {
 	if (GetBlockModel()) {
 		CObArray subBlocks;

@@ -177,11 +177,11 @@ BEGIN_DISPATCH_MAP(CProMoBlockAuto, CProMoElementAuto)
 	//{{AFX_DISPATCH_MAP(CProMoBlockAuto)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillColor", GetFillColor, SetFillColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillPattern", GetFillPattern, SetFillPattern, VT_BOOL)
-	DISP_PROPERTY_EX(CProMoBlockAuto, "FillStyle", GetFillStyle, SetFillStyle, VT_I4)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "FillStyle", GetFillStyle, SetFillStyle, VT_I2)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "Parent", GetParent, SetParent, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "SubBlocks", GetSubBlocks, SetSubBlocks, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "BoundaryBlocks", GetBoundaryBlocks, SetBoundaryBlocks, VT_DISPATCH)
-	DISP_PROPERTY_EX(CProMoBlockAuto, "BoundaryAttachment", GetBoundaryAttachment, SetBoundaryAttachment, VT_I4)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "BoundaryAttachment", GetBoundaryAttachment, SetBoundaryAttachment, VT_I2)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "OutgoingEdges", GetOutgoingEdges, SetOutgoingEdges, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "IncomingEdges", GetIncomingEdges, SetIncomingEdges, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "Top", GetTop, SetTop, VT_R8)
@@ -241,7 +241,7 @@ void CProMoBlockAuto::SetFillPattern(BOOL bNewValue)
 
 }
 
-long CProMoBlockAuto::GetFillStyle() 
+short CProMoBlockAuto::GetFillStyle() 
 {
 	if (GetMainBlockView()) {
 		return GetMainBlockView()->GetFillStyle();
@@ -250,7 +250,7 @@ long CProMoBlockAuto::GetFillStyle()
 	return 0;
 }
 
-void CProMoBlockAuto::SetFillStyle(long nNewValue) 
+void CProMoBlockAuto::SetFillStyle(short nNewValue) 
 {
 	// TODO: Add your property handler here
 
@@ -308,7 +308,7 @@ void CProMoBlockAuto::SetBoundaryBlocks(LPDISPATCH newValue)
 
 }
 
-long CProMoBlockAuto::GetBoundaryAttachment() 
+short CProMoBlockAuto::GetBoundaryAttachment() 
 {
 	if (GetBlockModel()) {
 		return GetBlockModel()->GetBoundaryAttachment();
@@ -317,7 +317,7 @@ long CProMoBlockAuto::GetBoundaryAttachment()
 	return 0;
 }
 
-void CProMoBlockAuto::SetBoundaryAttachment(long nNewValue) 
+void CProMoBlockAuto::SetBoundaryAttachment(short nNewValue) 
 {
 	SetNotSupported();
 }

@@ -55,8 +55,8 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoBoundaryBlocksAuto, CProMoBlockChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoBoundaryBlocksAuto)
 	DISP_PROPERTY_EX(CProMoBoundaryBlocksAuto, "IDs", GetIDs, SetIDs, VT_VARIANT)
+	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Add", Add, VT_BOOL, VTS_DISPATCH VTS_I4)
-	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Count", Count, VT_I4, VTS_NONE)
 	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
 	DISP_PROPERTY_PARAM(CProMoBoundaryBlocksAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
 	DISP_DEFVALUE(CProMoBoundaryBlocksAuto, "Item")
@@ -78,14 +78,14 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoBoundaryBlocksAuto message handlers
 
-BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH Item, long Attachment) 
+BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH Item, short Attachment) 
 {
 	// TODO: Add your dispatch handler code here
 
 	return TRUE;
 }
 
-long CProMoBoundaryBlocksAuto::Count() 
+short CProMoBoundaryBlocksAuto::Count() 
 {
 	if (GetBlockModel()) {
 		CObArray boundaryBlocks;

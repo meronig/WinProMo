@@ -52,8 +52,8 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoEdgeSegmentsAuto, CProMoEdgeChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoEdgeSegmentsAuto)
-	DISP_FUNCTION(CProMoEdgeSegmentsAuto, "Count", Count, VT_I4, VTS_NONE)
-	DISP_PROPERTY_PARAM(CProMoEdgeSegmentsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_I4)
+	DISP_FUNCTION(CProMoEdgeSegmentsAuto, "Count", Count, VT_I2, VTS_NONE)
+	DISP_PROPERTY_PARAM(CProMoEdgeSegmentsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_I2)
 	DISP_DEFVALUE(CProMoEdgeSegmentsAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
@@ -73,7 +73,7 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoEdgeSegmentsAuto message handlers
 
-long CProMoEdgeSegmentsAuto::Count() 
+short CProMoEdgeSegmentsAuto::Count() 
 {
 	if (GetEdgeModel()) {
 		CObArray edgeViews;
@@ -84,7 +84,7 @@ long CProMoEdgeSegmentsAuto::Count()
 	return 0;
 }
 
-LPDISPATCH CProMoEdgeSegmentsAuto::GetItem(long Item) 
+LPDISPATCH CProMoEdgeSegmentsAuto::GetItem(short Item) 
 {
 	if (GetEdgeModel()) {
 		CProMoEdgeView* pView = GetEdgeModel()->GetFirstSegment();
@@ -103,7 +103,7 @@ LPDISPATCH CProMoEdgeSegmentsAuto::GetItem(long Item)
 	return NULL;
 }
 
-void CProMoEdgeSegmentsAuto::SetItem(long Item, LPDISPATCH newValue) 
+void CProMoEdgeSegmentsAuto::SetItem(short Item, LPDISPATCH newValue) 
 {
 	SetNotSupported();
 

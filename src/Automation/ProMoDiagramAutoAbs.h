@@ -82,7 +82,7 @@ public:
 	afx_msg void Close(BOOL saveChanges);
 	afx_msg void Redo(short times);
 	afx_msg void Save(BOOL noPrompt);
-	afx_msg void Undo(BOOL times);
+	afx_msg void Undo(short times);
 	afx_msg BSTR Path();
 	afx_msg BSTR Type();
 	//}}AFX_DISPATCH

@@ -69,16 +69,16 @@ BEGIN_DISPATCH_MAP(CProMoLabelAuto, CProMoElementChildAuto)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Width", GetWidth, SetWidth, VT_R8)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Height", GetHeight, SetHeight, VT_R8)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "FontName", GetFontName, SetFontName, VT_BSTR)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "FontSize", GetFontSize, SetFontSize, VT_I4)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "FontWeight", GetFontWeight, SetFontWeight, VT_I4)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "FontSize", GetFontSize, SetFontSize, VT_I2)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "FontWeight", GetFontWeight, SetFontWeight, VT_I2)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "FontItalic", GetFontItalic, SetFontItalic, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "FontUnderline", GetFontUnderline, SetFontUnderline, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "FontStrikeOut", GetFontStrikeOut, SetFontStrikeOut, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "BkMode", GetBkMode, SetBkMode, VT_I4)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I4)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I4)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "BkMode", GetBkMode, SetBkMode, VT_I2)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Property", GetProperty, SetProperty, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "ID", GetID, SetID, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextMultiLine", GetTextMultiLine, SetTextMultiLine, VT_BOOL)
@@ -254,7 +254,7 @@ void CProMoLabelAuto::SetFontName(LPCTSTR lpszNewValue)
 
 }
 
-long CProMoLabelAuto::GetFontSize() 
+short CProMoLabelAuto::GetFontSize() 
 {
 	if (GetLabel()) {
 		return GetLabel()->GetFontSize();
@@ -263,7 +263,7 @@ long CProMoLabelAuto::GetFontSize()
 	return 0;
 }
 
-void CProMoLabelAuto::SetFontSize(long nNewValue) 
+void CProMoLabelAuto::SetFontSize(short nNewValue) 
 {
 	if (GetLabel()) {
 		GetContainer()->Snapshot();
@@ -273,7 +273,7 @@ void CProMoLabelAuto::SetFontSize(long nNewValue)
 	}
 }
 
-long CProMoLabelAuto::GetFontWeight() 
+short CProMoLabelAuto::GetFontWeight() 
 {
 	if (GetLabel()) {
 		return GetLabel()->GetFontWeight();
@@ -282,7 +282,7 @@ long CProMoLabelAuto::GetFontWeight()
 	return 0;
 }
 
-void CProMoLabelAuto::SetFontWeight(long nNewValue) 
+void CProMoLabelAuto::SetFontWeight(short nNewValue) 
 {
 	if (GetLabel()) {
 		GetContainer()->Snapshot();
@@ -397,7 +397,7 @@ void CProMoLabelAuto::SetBkColor(OLE_COLOR nNewValue)
 	}
 }
 
-long CProMoLabelAuto::GetBkMode() 
+short CProMoLabelAuto::GetBkMode() 
 {
 	if (GetLabel()) {
 		return GetLabel()->GetBkMode();
@@ -406,7 +406,7 @@ long CProMoLabelAuto::GetBkMode()
 	return 0;
 }
 
-void CProMoLabelAuto::SetBkMode(long nNewValue) 
+void CProMoLabelAuto::SetBkMode(short nNewValue) 
 {
 	if (GetLabel()) {
 		GetContainer()->Snapshot();
@@ -416,26 +416,7 @@ void CProMoLabelAuto::SetBkMode(long nNewValue)
 	}
 }
 
-long CProMoLabelAuto::GetTextAlignment() 
-{
-	if (GetLabel()) {
-		return GetLabel()->GetTextAlignment();
-	}
-
-	return 0;
-}
-
-void CProMoLabelAuto::SetTextAlignment(long nNewValue) 
-{
-	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetTextAlignment(nNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
-	}
-}
-
-long CProMoLabelAuto::GetTextHorizontalAlignment() 
+short CProMoLabelAuto::GetTextHorizontalAlignment() 
 {
 	if (GetLabel()) {
 		return GetLabel()->GetTextHorizontalAlignment();
@@ -444,7 +425,7 @@ long CProMoLabelAuto::GetTextHorizontalAlignment()
 	return 0;
 }
 
-void CProMoLabelAuto::SetTextHorizontalAlignment(long nNewValue) 
+void CProMoLabelAuto::SetTextHorizontalAlignment(short nNewValue) 
 {
 	if (GetLabel()) {
 		GetContainer()->Snapshot();
@@ -454,7 +435,7 @@ void CProMoLabelAuto::SetTextHorizontalAlignment(long nNewValue)
 	}
 }
 
-long CProMoLabelAuto::GetTextVerticalAlignment() 
+short CProMoLabelAuto::GetTextVerticalAlignment() 
 {
 	if (GetLabel()) {
 		return GetLabel()->GetTextVerticalAlignment();
@@ -463,7 +444,7 @@ long CProMoLabelAuto::GetTextVerticalAlignment()
 	return 0;
 }
 
-void CProMoLabelAuto::SetTextVerticalAlignment(long nNewValue) 
+void CProMoLabelAuto::SetTextVerticalAlignment(short nNewValue) 
 {
 	if (GetLabel()) {
 		GetContainer()->Snapshot();

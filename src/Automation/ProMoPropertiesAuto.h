@@ -50,7 +50,7 @@ protected:
 	//{{AFX_DISPATCH(CProMoPropertiesAuto)
 	afx_msg VARIANT GetNames();
 	afx_msg void SetNames(const VARIANT FAR& newValue);
-	afx_msg long Count();
+	afx_msg short Count();
 	afx_msg LPDISPATCH GetItem(const VARIANT FAR& Item);
 	afx_msg void SetItem(const VARIANT FAR& Item, LPDISPATCH newValue);
 	//}}AFX_DISPATCH

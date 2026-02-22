@@ -51,8 +51,8 @@ protected:
 	//{{AFX_DISPATCH(CProMoBoundaryBlocksAuto)
 	afx_msg VARIANT GetIDs();
 	afx_msg void SetIDs(const VARIANT FAR& newValue);
-	afx_msg BOOL Add(LPDISPATCH Item, long Attachment);
-	afx_msg long Count();
+	afx_msg BOOL Add(LPDISPATCH Item, short Attachment);
+	afx_msg short Count();
 	afx_msg BOOL Remove(const VARIANT FAR& Item);
 	afx_msg LPDISPATCH GetItem(const VARIANT FAR& Item);
 	afx_msg void SetItem(const VARIANT FAR& Item, LPDISPATCH newValue);

@@ -53,7 +53,7 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoPropertiesAuto, CProMoElementChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoPropertiesAuto)
 	DISP_PROPERTY_EX(CProMoPropertiesAuto, "Names", GetNames, SetNames, VT_VARIANT)
-	DISP_FUNCTION(CProMoPropertiesAuto, "Count", Count, VT_I4, VTS_NONE)
+	DISP_FUNCTION(CProMoPropertiesAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_PROPERTY_PARAM(CProMoPropertiesAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
 	DISP_DEFVALUE(CProMoPropertiesAuto, "Item")
 	//}}AFX_DISPATCH_MAP
@@ -74,7 +74,7 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoPropertiesAuto message handlers
 
-long CProMoPropertiesAuto::Count() 
+short CProMoPropertiesAuto::Count() 
 {
 	if (GetModel()) {
 		return GetModel()->GetPropertiesCount();

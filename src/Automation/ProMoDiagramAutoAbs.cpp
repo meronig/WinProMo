@@ -110,9 +110,9 @@ BEGIN_DISPATCH_MAP(CProMoDiagramAutoAbs, CProMoAppChildAuto)
 	DISP_FUNCTION(CProMoDiagramAutoAbs, "SaveAs", SaveAs, VT_EMPTY, VTS_VARIANT)
 	DISP_FUNCTION(CProMoDiagramAutoAbs, "Activate", Activate, VT_EMPTY, VTS_NONE)
 	DISP_FUNCTION(CProMoDiagramAutoAbs, "Close", Close, VT_EMPTY, VTS_BOOL)
+	DISP_FUNCTION(CProMoDiagramAutoAbs, "Undo", Undo, VT_EMPTY, VTS_I2)
 	DISP_FUNCTION(CProMoDiagramAutoAbs, "Redo", Redo, VT_EMPTY, VTS_I2)
 	DISP_FUNCTION(CProMoDiagramAutoAbs, "Save", Save, VT_EMPTY, VTS_BOOL)
-	DISP_FUNCTION(CProMoDiagramAutoAbs, "Undo", Undo, VT_EMPTY, VTS_BOOL)
 	DISP_FUNCTION(CProMoDiagramAutoAbs, "Path", Path, VT_BSTR, VTS_NONE)
 	DISP_FUNCTION(CProMoDiagramAutoAbs, "Type", Type, VT_BSTR, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
@@ -140,7 +140,7 @@ void CProMoDiagramAutoAbs::Redo(short times)
 	NotifyChange();
 }
 
-void CProMoDiagramAutoAbs::Undo(BOOL times)
+void CProMoDiagramAutoAbs::Undo(short times)
 {
 	for (short i = 0; i < times; ++i) {
 		if (GetContainer()) {

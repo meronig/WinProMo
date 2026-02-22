@@ -48,9 +48,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	// Generated OLE dispatch map functions
 	//{{AFX_DISPATCH(CProMoEdgeSegmentsAuto)
-	afx_msg long Count();
-	afx_msg LPDISPATCH GetItem(long Item);
-	afx_msg void SetItem(long Item, LPDISPATCH newValue);
+	afx_msg short Count();
+	afx_msg LPDISPATCH GetItem(short Item);
+	afx_msg void SetItem(short Item, LPDISPATCH newValue);
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
 	DECLARE_INTERFACE_MAP()

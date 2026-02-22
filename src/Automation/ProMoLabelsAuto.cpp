@@ -74,17 +74,17 @@ void CProMoLabelsAuto::GetLabels(CObArray& labels)
 	}
 }
 
-BEGIN_MESSAGE_MAP(CProMoLabelsAuto, CCmdTarget)
+BEGIN_MESSAGE_MAP(CProMoLabelsAuto, CProMoElementChildAuto)
 	//{{AFX_MSG_MAP(CProMoLabelsAuto)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-BEGIN_DISPATCH_MAP(CProMoLabelsAuto, CCmdTarget)
+BEGIN_DISPATCH_MAP(CProMoLabelsAuto, CProMoElementChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoLabelsAuto)
 	DISP_PROPERTY_EX(CProMoLabelsAuto, "IDs", GetIDs, SetIDs, VT_VARIANT)
 	DISP_FUNCTION(CProMoLabelsAuto, "Add", Add, VT_DISPATCH, VTS_NONE)
-	DISP_FUNCTION(CProMoLabelsAuto, "Count", Count, VT_I4, VTS_NONE)
+	DISP_FUNCTION(CProMoLabelsAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CProMoLabelsAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
 	DISP_PROPERTY_PARAM(CProMoLabelsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
 	DISP_DEFVALUE(CProMoLabelsAuto, "Item")
@@ -99,7 +99,7 @@ END_DISPATCH_MAP()
 static const IID IID_IProMoLabelsAuto =
 { 0x18ea3771, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
 
-BEGIN_INTERFACE_MAP(CProMoLabelsAuto, CCmdTarget)
+BEGIN_INTERFACE_MAP(CProMoLabelsAuto, CProMoElementChildAuto)
 	INTERFACE_PART(CProMoLabelsAuto, IID_IProMoLabelsAuto, Dispatch)
 END_INTERFACE_MAP()
 
@@ -132,7 +132,7 @@ LPDISPATCH CProMoLabelsAuto::Add()
 	return NULL;
 }
 
-long CProMoLabelsAuto::Count() 
+short CProMoLabelsAuto::Count() 
 {
 	CObArray labels;
 	GetLabels(labels);

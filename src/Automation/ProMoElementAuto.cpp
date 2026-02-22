@@ -138,20 +138,20 @@ BEGIN_DISPATCH_MAP(CProMoElementAuto, CProMoDiagramChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoElementAuto)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LockAspectRatio", GetLockAspectRatio, SetLockAspectRatio, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineColor", GetLineColor, SetLineColor, VT_COLOR)
-	DISP_PROPERTY_EX(CProMoElementAuto, "LineWidth", GetLineWidth, SetLineWidth, VT_I4)
-	DISP_PROPERTY_EX(CProMoElementAuto, "LineStyle", GetLineStyle, SetLineStyle, VT_I4)
+	DISP_PROPERTY_EX(CProMoElementAuto, "LineWidth", GetLineWidth, SetLineWidth, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "LineStyle", GetLineStyle, SetLineStyle, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "FontName", GetFontName, SetFontName, VT_BSTR)
-	DISP_PROPERTY_EX(CProMoElementAuto, "FontSize", GetFontSize, SetFontSize, VT_I4)
-	DISP_PROPERTY_EX(CProMoElementAuto, "FontWeight", GetFontWeight, SetFontWeight, VT_I4)
+	DISP_PROPERTY_EX(CProMoElementAuto, "FontSize", GetFontSize, SetFontSize, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "FontWeight", GetFontWeight, SetFontWeight, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "FontItalic", GetFontItalic, SetFontItalic, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "FontUnderline", GetFontUnderline, SetFontUnderline, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "FontStrikeOut", GetFontStrikeOut, SetFontStrikeOut, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
-	DISP_PROPERTY_EX(CProMoElementAuto, "BkMode", GetBkMode, SetBkMode, VT_I4)
-	DISP_PROPERTY_EX(CProMoElementAuto, "TextAlignment", GetTextAlignment, SetTextAlignment, VT_I4)
-	DISP_PROPERTY_EX(CProMoElementAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I4)
-	DISP_PROPERTY_EX(CProMoElementAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I4)
+	DISP_PROPERTY_EX(CProMoElementAuto, "BkMode", GetBkMode, SetBkMode, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "TextAlignment", GetTextAlignment, SetTextAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "ID", GetName, SetName, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Labels", GetLabels, SetLabels, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Properties", GetProperties, SetProperties, VT_DISPATCH)
@@ -251,7 +251,7 @@ void CProMoElementAuto::SetLineColor(OLE_COLOR nNewValue)
 
 }
 
-long CProMoElementAuto::GetLineWidth() 
+short CProMoElementAuto::GetLineWidth() 
 {
 	if (GetMainView()) {
 		return GetMainView()->GetLineWidth();
@@ -260,7 +260,7 @@ long CProMoElementAuto::GetLineWidth()
 	return 0;
 }
 
-void CProMoElementAuto::SetLineWidth(long nNewValue) 
+void CProMoElementAuto::SetLineWidth(short nNewValue) 
 {
 	CObArray views;
 	GetViews(views);
@@ -278,7 +278,7 @@ void CProMoElementAuto::SetLineWidth(long nNewValue)
 
 }
 
-long CProMoElementAuto::GetLineStyle() 
+short CProMoElementAuto::GetLineStyle() 
 {
 	if (GetMainView()) {
 		return GetMainView()->GetLineWidth();
@@ -287,7 +287,7 @@ long CProMoElementAuto::GetLineStyle()
 	return 0;
 }
 
-void CProMoElementAuto::SetLineStyle(long nNewValue) 
+void CProMoElementAuto::SetLineStyle(short nNewValue) 
 {
 	CObArray views;
 	GetViews(views);
@@ -334,7 +334,7 @@ void CProMoElementAuto::SetFontName(LPCTSTR lpszNewValue)
 
 }
 
-long CProMoElementAuto::GetFontSize() 
+short CProMoElementAuto::GetFontSize() 
 {
 	if (GetMainView()) {
 		return GetMainView()->GetFontSize();
@@ -343,7 +343,7 @@ long CProMoElementAuto::GetFontSize()
 	return 0;
 }
 
-void CProMoElementAuto::SetFontSize(long nNewValue) 
+void CProMoElementAuto::SetFontSize(short nNewValue) 
 {
 	CObArray views;
 	GetViews(views);
@@ -361,7 +361,7 @@ void CProMoElementAuto::SetFontSize(long nNewValue)
 
 }
 
-long CProMoElementAuto::GetFontWeight() 
+short CProMoElementAuto::GetFontWeight() 
 {
 	if (GetMainView()) {
 		return GetMainView()->GetFontWeight();
@@ -370,7 +370,7 @@ long CProMoElementAuto::GetFontWeight()
 	return 0;
 }
 
-void CProMoElementAuto::SetFontWeight(long nNewValue) 
+void CProMoElementAuto::SetFontWeight(short nNewValue) 
 {
 	CObArray views;
 	GetViews(views);
@@ -531,7 +531,7 @@ void CProMoElementAuto::SetBkColor(OLE_COLOR nNewValue)
 
 }
 
-long CProMoElementAuto::GetBkMode() 
+short CProMoElementAuto::GetBkMode() 
 {
 	if (GetMainView()) {
 		return GetMainView()->GetBkMode();
@@ -540,7 +540,7 @@ long CProMoElementAuto::GetBkMode()
 	return 0;
 }
 
-void CProMoElementAuto::SetBkMode(long nNewValue) 
+void CProMoElementAuto::SetBkMode(short nNewValue) 
 {
 	CObArray views;
 	GetViews(views);
@@ -558,7 +558,7 @@ void CProMoElementAuto::SetBkMode(long nNewValue)
 
 }
 
-long CProMoElementAuto::GetTextAlignment() 
+short CProMoElementAuto::GetTextAlignment() 
 {
 	if (GetMainView()) {
 		return GetMainView()->GetTextAlignment();
@@ -567,7 +567,7 @@ long CProMoElementAuto::GetTextAlignment()
 	return 0;
 }
 
-void CProMoElementAuto::SetTextAlignment(long nNewValue) 
+void CProMoElementAuto::SetTextAlignment(short nNewValue) 
 {
 	CObArray views;
 	GetViews(views);
@@ -585,7 +585,7 @@ void CProMoElementAuto::SetTextAlignment(long nNewValue)
 
 }
 
-long CProMoElementAuto::GetTextHorizontalAlignment() 
+short CProMoElementAuto::GetTextHorizontalAlignment() 
 {
 	if (GetMainView()) {
 		return GetMainView()->GetTextHorizontalAlignment();
@@ -594,7 +594,7 @@ long CProMoElementAuto::GetTextHorizontalAlignment()
 	return 0;
 }
 
-void CProMoElementAuto::SetTextHorizontalAlignment(long nNewValue) 
+void CProMoElementAuto::SetTextHorizontalAlignment(short nNewValue) 
 {
 	CObArray views;
 	GetViews(views);
@@ -612,7 +612,7 @@ void CProMoElementAuto::SetTextHorizontalAlignment(long nNewValue)
 
 }
 
-long CProMoElementAuto::GetTextVerticalAlignment() 
+short CProMoElementAuto::GetTextVerticalAlignment() 
 {
 	if (GetMainView()) {
 		return GetMainView()->GetTextVerticalAlignment();
@@ -621,7 +621,7 @@ long CProMoElementAuto::GetTextVerticalAlignment()
 	return 0;
 }
 
-void CProMoElementAuto::SetTextVerticalAlignment(long nNewValue) 
+void CProMoElementAuto::SetTextVerticalAlignment(short nNewValue) 
 {
 	CObArray views;
 	GetViews(views);

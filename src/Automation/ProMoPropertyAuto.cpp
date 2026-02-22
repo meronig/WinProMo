@@ -60,16 +60,16 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoPropertyAuto, CProMoElementChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoPropertyAuto)
 	DISP_PROPERTY_EX(CProMoPropertyAuto, "Name", GetName, SetName, VT_BSTR)
-	DISP_PROPERTY_EX(CProMoPropertyAuto, "Type", GetType, SetType, VT_I4)
+	DISP_PROPERTY_EX(CProMoPropertyAuto, "Type", GetType, SetType, VT_I2)
 	DISP_PROPERTY_EX(CProMoPropertyAuto, "Value", GetValue, SetValue, VT_VARIANT)
 	DISP_PROPERTY_EX(CProMoPropertyAuto, "ChildNames", GetChildNames, SetChildNames, VT_VARIANT)
 	DISP_FUNCTION(CProMoPropertyAuto, "IsReadOnly", IsReadOnly, VT_BOOL, VTS_NONE)
-	DISP_FUNCTION(CProMoPropertyAuto, "Label", Label, VT_DISPATCH, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "IsComposite", IsComposite, VT_BOOL, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "IsMultivalue", IsMultivalue, VT_BOOL, VTS_NONE)
+	DISP_FUNCTION(CProMoPropertyAuto, "Label", Label, VT_DISPATCH, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Add", Add, VT_BOOL, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Remove", Remove, VT_BOOL, VTS_NONE)
-	DISP_FUNCTION(CProMoPropertyAuto, "Count", Count, VT_I4, VTS_NONE)
+	DISP_FUNCTION(CProMoPropertyAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_PROPERTY_PARAM(CProMoPropertyAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
 	DISP_DEFVALUE(CProMoPropertyAuto, "Item")
 	//}}AFX_DISPATCH_MAP
@@ -116,7 +116,7 @@ BOOL CProMoPropertyAuto::IsReadOnly()
 	return TRUE;
 }
 
-long CProMoPropertyAuto::GetType() 
+short CProMoPropertyAuto::GetType() 
 {
 	if (GetProperty()) {
 		return GetProperty()->GetType();
@@ -125,7 +125,7 @@ long CProMoPropertyAuto::GetType()
 	return 0;
 }
 
-void CProMoPropertyAuto::SetType(long nNewValue) 
+void CProMoPropertyAuto::SetType(short nNewValue) 
 {
 	SetNotSupported();
 
@@ -257,7 +257,7 @@ void CProMoPropertyAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue)
 
 }
 
-long CProMoPropertyAuto::Count() 
+short CProMoPropertyAuto::Count() 
 {
 	if (GetProperty()) {
 		return GetProperty()->GetChildrenCount();

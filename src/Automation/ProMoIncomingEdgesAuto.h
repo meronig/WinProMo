@@ -50,7 +50,7 @@ protected:
 	//{{AFX_DISPATCH(CProMoIncomingEdgesAuto)
 	afx_msg VARIANT GetIDs();
 	afx_msg void SetIDs(const VARIANT FAR& newValue);
-	afx_msg long Count();
+	afx_msg short Count();
 	afx_msg BOOL Add(LPDISPATCH Item);
 	afx_msg BOOL Remove(const VARIANT FAR& Item);
 	afx_msg LPDISPATCH GetItem(const VARIANT FAR& Item);

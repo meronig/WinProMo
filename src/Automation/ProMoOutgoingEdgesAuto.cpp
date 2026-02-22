@@ -54,7 +54,7 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoOutgoingEdgesAuto, CProMoBlockChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoOutgoingEdgesAuto)
 	DISP_PROPERTY_EX(CProMoOutgoingEdgesAuto, "IDs", GetIDs, SetIDs, VT_VARIANT)
-	DISP_FUNCTION(CProMoOutgoingEdgesAuto, "Count", Count, VT_I4, VTS_NONE)
+	DISP_FUNCTION(CProMoOutgoingEdgesAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CProMoOutgoingEdgesAuto, "Add", Add, VT_BOOL, VTS_DISPATCH)
 	DISP_FUNCTION(CProMoOutgoingEdgesAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
 	DISP_PROPERTY_PARAM(CProMoOutgoingEdgesAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
@@ -77,7 +77,7 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoOutgoingEdgesAuto message handlers
 
-long CProMoOutgoingEdgesAuto::Count() 
+short CProMoOutgoingEdgesAuto::Count() 
 {
 	if (GetBlockModel()) {
 		CObArray outgoingEdges;
