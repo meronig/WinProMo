@@ -3,7 +3,7 @@
     version(1.0),
     helpstring("WinProMo Diagram Elements Library")
 ]
-library WinProMoLib
+library WinProMo
 {
 	importlib("stdole32.tlb");
 	importlib("stdole2.tlb");
