@@ -104,10 +104,6 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoAppAutoAbs, CCmdTarget)
 	//{{AFX_DISPATCH_MAP(CProMoAppAutoAbs)
-	DISP_PROPERTY_EX(CProMoAppAutoAbs, "Diagrams", GetDiagrams, SetDiagrams, VT_DISPATCH)
-	DISP_PROPERTY_EX(CProMoAppAutoAbs, "CreatableDiagramTypes", GetCreatableDiagramTypes, SetCreatableDiagramTypes, VT_VARIANT)
-	DISP_FUNCTION(CProMoAppAutoAbs, "ActiveDocument", ActiveDiagram, VT_DISPATCH, VTS_NONE)
-	DISP_FUNCTION(CProMoAppAutoAbs, "Quit", Quit, VT_EMPTY, VTS_BOOL)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 

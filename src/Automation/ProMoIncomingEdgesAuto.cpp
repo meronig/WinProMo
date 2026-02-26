@@ -60,6 +60,12 @@ BEGIN_DISPATCH_MAP(CProMoIncomingEdgesAuto, CProMoBlockChildAuto)
 	DISP_FUNCTION(CProMoIncomingEdgesAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
 	DISP_PROPERTY_PARAM(CProMoIncomingEdgesAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
 	DISP_DEFVALUE(CProMoIncomingEdgesAuto, "Item")
+	//Common to CProMoElementChildAuto
+	DISP_FUNCTION(CProMoIncomingEdgesAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
+	//Common to CProMoDiagramChildAuto
+	DISP_FUNCTION(CProMoIncomingEdgesAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
+	//Common to CProMoAppChildAuto
+	DISP_FUNCTION(CProMoIncomingEdgesAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -67,9 +73,9 @@ END_DISPATCH_MAP()
 //  from VBA.  This IID must match the GUID that is attached to the 
 //  dispinterface in the .ODL file.
 
-// {18EA376B-08C3-11F1-9744-000C2976A615}
+// {38EA3766-08C3-11F1-9744-000C2976A615}
 static const IID IID_IProMoIncomingEdgesAuto =
-{ 0x18ea376b, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
+{ 0x38ea3766, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
 
 BEGIN_INTERFACE_MAP(CProMoIncomingEdgesAuto, CProMoBlockChildAuto)
 	INTERFACE_PART(CProMoIncomingEdgesAuto, IID_IProMoIncomingEdgesAuto, Dispatch)

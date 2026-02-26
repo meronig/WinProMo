@@ -135,7 +135,6 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoAppChildAuto, CCmdTarget)
 	//{{AFX_DISPATCH_MAP(CProMoAppChildAuto)
-	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 

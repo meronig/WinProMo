@@ -87,9 +87,40 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoEdgeAuto, CProMoElementAuto)
 	//{{AFX_DISPATCH_MAP(CProMoEdgeAuto)
+	//Common to CProMoElementAuto
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "LockAspectRatio", GetLockAspectRatio, SetLockAspectRatio, VT_BOOL)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "LineColor", GetLineColor, SetLineColor, VT_COLOR)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "LineWidth", GetLineWidth, SetLineWidth, VT_I2)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "LineStyle", GetLineStyle, SetLineStyle, VT_I2)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "FontName", GetFontName, SetFontName, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "FontSize", GetFontSize, SetFontSize, VT_I2)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "FontWeight", GetFontWeight, SetFontWeight, VT_I2)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "FontItalic", GetFontItalic, SetFontItalic, VT_BOOL)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "FontUnderline", GetFontUnderline, SetFontUnderline, VT_BOOL)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "FontStrikeOut", GetFontStrikeOut, SetFontStrikeOut, VT_BOOL)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "BkMode", GetBkMode, SetBkMode, VT_I2)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "TextAlignment", GetTextAlignment, SetTextAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "ID", GetName, SetName, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "Labels", GetLabels, SetLabels, VT_DISPATCH)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "Properties", GetProperties, SetProperties, VT_DISPATCH)
+	DISP_PROPERTY_EX(CProMoEdgeAuto, "Type", GetType, SetType, VT_BSTR)
+	//Specific to CProMoEdgeAuto
 	DISP_PROPERTY_EX(CProMoEdgeAuto, "Source", GetSource, SetSource, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoEdgeAuto, "Destination", GetDestination, SetDestination, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoEdgeAuto, "Segments", GetSegments, SetSegments, VT_DISPATCH)
+	//Common to CProMoElementAuto
+	DISP_FUNCTION(CProMoEdgeAuto, "Copy", Copy, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION(CProMoEdgeAuto, "Cut", Cut, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION(CProMoEdgeAuto, "Delete", Delete, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION(CProMoEdgeAuto, "Duplicate", Duplicate, VT_DISPATCH, VTS_NONE)
+	//Common to CProMoDiagramChildAuto
+	DISP_FUNCTION(CProMoEdgeAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
+	//Common to CProMoAppChildAuto
+	DISP_FUNCTION(CProMoEdgeAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -97,9 +128,9 @@ END_DISPATCH_MAP()
 //  from VBA.  This IID must match the GUID that is attached to the 
 //  dispinterface in the .ODL file.
 
-// {18EA3769-08C3-11F1-9744-000C2976A615}
+// {38EA3762-08C3-11F1-9744-000C2976A615}
 static const IID IID_IProMoEdgeAuto =
-{ 0x18ea3769, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
+{ 0x18ea3762, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
 
 BEGIN_INTERFACE_MAP(CProMoEdgeAuto, CProMoElementAuto)
 	INTERFACE_PART(CProMoEdgeAuto, IID_IProMoEdgeAuto, Dispatch)

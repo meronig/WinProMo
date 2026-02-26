@@ -62,6 +62,10 @@ BEGIN_DISPATCH_MAP(CProMoElementsAuto, CProMoDiagramChildAuto)
 	DISP_FUNCTION(CProMoElementsAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
 	DISP_PROPERTY_PARAM(CProMoElementsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
 	DISP_DEFVALUE(CProMoElementsAuto, "Item")
+	//Common to CProMoDiagramChildAuto
+	DISP_FUNCTION(CProMoElementsAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
+	//Common to CProMoAppChildAuto
+	DISP_FUNCTION(CProMoElementsAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -69,9 +73,9 @@ END_DISPATCH_MAP()
 //  from VBA.  This IID must match the GUID that is attached to the 
 //  dispinterface in the .ODL file.
 
-// {7E3C6CD4-01D3-11F1-9743-000C2976A615}
+// {38EA3765-01D3-11F1-9743-000C2976A615}
 static const IID IID_IProMoElementsAuto =
-{ 0x7e3c6cd4, 0x1d3, 0x11f1, { 0x97, 0x43, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
+{ 0x38ea3765, 0x1d3, 0x11f1, { 0x97, 0x43, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
 
 BEGIN_INTERFACE_MAP(CProMoElementsAuto, CProMoDiagramChildAuto)
 	INTERFACE_PART(CProMoElementsAuto, IID_IProMoElementsAuto, Dispatch)

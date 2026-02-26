@@ -175,6 +175,28 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoBlockAuto, CProMoElementAuto)
 	//{{AFX_DISPATCH_MAP(CProMoBlockAuto)
+	//Common to CProMoElementAuto
+	DISP_PROPERTY_EX(CProMoBlockAuto, "LockAspectRatio", GetLockAspectRatio, SetLockAspectRatio, VT_BOOL)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "LineColor", GetLineColor, SetLineColor, VT_COLOR)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "LineWidth", GetLineWidth, SetLineWidth, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "LineStyle", GetLineStyle, SetLineStyle, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "FontName", GetFontName, SetFontName, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "FontSize", GetFontSize, SetFontSize, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "FontWeight", GetFontWeight, SetFontWeight, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "FontItalic", GetFontItalic, SetFontItalic, VT_BOOL)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "FontUnderline", GetFontUnderline, SetFontUnderline, VT_BOOL)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "FontStrikeOut", GetFontStrikeOut, SetFontStrikeOut, VT_BOOL)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "BkMode", GetBkMode, SetBkMode, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "TextAlignment", GetTextAlignment, SetTextAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "ID", GetName, SetName, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "Labels", GetLabels, SetLabels, VT_DISPATCH)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "Properties", GetProperties, SetProperties, VT_DISPATCH)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "Type", GetType, SetType, VT_BSTR)
+	//Specific to CProMoBlockAuto
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillColor", GetFillColor, SetFillColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillPattern", GetFillPattern, SetFillPattern, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillStyle", GetFillStyle, SetFillStyle, VT_I2)
@@ -192,6 +214,15 @@ BEGIN_DISPATCH_MAP(CProMoBlockAuto, CProMoElementAuto)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "Height", GetHeight, SetHeight, VT_R8)
 	DISP_FUNCTION(CProMoBlockAuto, "IsBoundaryBlock", IsBoundaryBlock, VT_BOOL, VTS_NONE)
 	DISP_FUNCTION(CProMoBlockAuto, "IsSubBlock", IsSubBlock, VT_BOOL, VTS_NONE)
+	//Common to CProMoElementAuto
+	DISP_FUNCTION(CProMoBlockAuto, "Copy", Copy, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION(CProMoBlockAuto, "Cut", Cut, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION(CProMoBlockAuto, "Delete", Delete, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION(CProMoBlockAuto, "Duplicate", Duplicate, VT_DISPATCH, VTS_NONE)
+	//Common to CProMoDiagramChildAuto
+	DISP_FUNCTION(CProMoBlockAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
+	//Common to CProMoAppChildAuto
+	DISP_FUNCTION(CProMoBlockAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -199,9 +230,9 @@ END_DISPATCH_MAP()
 //  from VBA.  This IID must match the GUID that is attached to the 
 //  dispinterface in the .ODL file.
 
-// {18EA3768-08C3-11F1-9744-000C2976A615}
+// {38EA3760-08C3-11F1-9744-000C2976A615}
 static const IID IID_IProMoBlockAuto =
-{ 0x18ea3768, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
+{ 0x38ea3760, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
 
 BEGIN_INTERFACE_MAP(CProMoBlockAuto, CProMoElementAuto)
 	INTERFACE_PART(CProMoBlockAuto, IID_IProMoBlockAuto, Dispatch)

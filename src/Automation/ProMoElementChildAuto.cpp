@@ -109,20 +109,10 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoElementChildAuto, CProMoDiagramChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoElementChildAuto)
-	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
-// Note: we add support for IID_IProMoElementChildAuto to support typesafe binding
-//  from VBA.  This IID must match the GUID that is attached to the 
-//  dispinterface in the .ODL file.
-
-// {18EA3777-08C3-11F1-9744-000C2976A615}
-static const IID IID_IProMoElementChildAuto =
-{ 0x18ea3777, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
-
 BEGIN_INTERFACE_MAP(CProMoElementChildAuto, CProMoDiagramChildAuto)
-	INTERFACE_PART(CProMoElementChildAuto, IID_IProMoElementChildAuto, Dispatch)
 END_INTERFACE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////

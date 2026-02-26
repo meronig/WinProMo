@@ -65,7 +65,6 @@ CLEAN :
 	-@erase "$(INTDIR)\DibHelper.obj"
 	-@erase "$(INTDIR)\DoublePoint.obj"
 	-@erase "$(INTDIR)\DoubleRect.obj"
-	-@erase "$(INTDIR)\DummyClass.obj"
 	-@erase "$(INTDIR)\FileParser.obj"
 	-@erase "$(INTDIR)\FileSerializer.obj"
 	-@erase "$(INTDIR)\GeometryHelper.obj"
@@ -160,7 +159,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\DibHelper.obj" \
 	"$(INTDIR)\DoublePoint.obj" \
 	"$(INTDIR)\DoubleRect.obj" \
-	"$(INTDIR)\DummyClass.obj" \
 	"$(INTDIR)\FileParser.obj" \
 	"$(INTDIR)\FileSerializer.obj" \
 	"$(INTDIR)\GeometryHelper.obj" \
@@ -229,8 +227,8 @@ LINK32_OBJS= \
 OUTDIR=.\Debug
 INTDIR=.\Debug
 
-ALL : "..\..\Debug\WinProMo.dll" "$(OUTDIR)\WinProMo.bsc"\
- "$(OUTDIR)\WinProMo.tlb"
+ALL : "..\..\Debug\WinProMo.dll" "$(OUTDIR)\WinProMo.tlb"\
+ "$(OUTDIR)\WinProMo.bsc"
 
 CLEAN : 
 	-@erase "$(INTDIR)\DiagramClipboardHandler.obj"
@@ -253,8 +251,6 @@ CLEAN :
 	-@erase "$(INTDIR)\DoublePoint.sbr"
 	-@erase "$(INTDIR)\DoubleRect.obj"
 	-@erase "$(INTDIR)\DoubleRect.sbr"
-	-@erase "$(INTDIR)\DummyClass.obj"
-	-@erase "$(INTDIR)\DummyClass.sbr"
 	-@erase "$(INTDIR)\FileParser.obj"
 	-@erase "$(INTDIR)\FileParser.sbr"
 	-@erase "$(INTDIR)\FileSerializer.obj"
@@ -391,7 +387,6 @@ BSC32_SBRS= \
 	"$(INTDIR)\DibHelper.sbr" \
 	"$(INTDIR)\DoublePoint.sbr" \
 	"$(INTDIR)\DoubleRect.sbr" \
-	"$(INTDIR)\DummyClass.sbr" \
 	"$(INTDIR)\FileParser.sbr" \
 	"$(INTDIR)\FileSerializer.sbr" \
 	"$(INTDIR)\GeometryHelper.sbr" \
@@ -463,7 +458,6 @@ LINK32_OBJS= \
 	"$(INTDIR)\DibHelper.obj" \
 	"$(INTDIR)\DoublePoint.obj" \
 	"$(INTDIR)\DoubleRect.obj" \
-	"$(INTDIR)\DummyClass.obj" \
 	"$(INTDIR)\FileParser.obj" \
 	"$(INTDIR)\FileSerializer.obj" \
 	"$(INTDIR)\GeometryHelper.obj" \
@@ -3791,38 +3785,6 @@ SOURCE=.\WinProMo.odl
 
 "$(OUTDIR)\WinProMo.tlb" : $(SOURCE) "$(OUTDIR)"
    $(MTL) /nologo /D "_DEBUG" /tlb "$(OUTDIR)/WinProMo.tlb" /win32 $(SOURCE)
-
-
-!ENDIF 
-
-# End Source File
-################################################################################
-# Begin Source File
-
-SOURCE=.\DummyClass.cpp
-DEP_CPP_DUMMY=\
-	".\Automation\..\stdafx.h"\
-	".\DummyClass.h"\
-	
-NODEP_CPP_DUMMY=\
-	".\	\ add additional includes here"\
-	
-
-!IF  "$(CFG)" == "WinProMo - Win32 Release"
-
-
-"$(INTDIR)\DummyClass.obj" : $(SOURCE) $(DEP_CPP_DUMMY) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
-
-
-!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
-
-
-"$(INTDIR)\DummyClass.obj" : $(SOURCE) $(DEP_CPP_DUMMY) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
-
-"$(INTDIR)\DummyClass.sbr" : $(SOURCE) $(DEP_CPP_DUMMY) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
 
 
 !ENDIF 

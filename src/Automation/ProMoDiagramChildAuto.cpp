@@ -110,7 +110,6 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoDiagramChildAuto, CProMoAppChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoDiagramChildAuto)
-	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 

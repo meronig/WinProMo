@@ -63,14 +63,6 @@ END_MESSAGE_MAP()
 
 BEGIN_DISPATCH_MAP(CProMoDiagramsAutoAbs, CProMoAppChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoDiagramsAutoAbs)
-	DISP_PROPERTY_EX(CProMoDiagramsAutoAbs, "IDs", GetIDs, SetIDs, VT_VARIANT)
-	DISP_FUNCTION(CProMoDiagramsAutoAbs, "Count", Count, VT_I2, VTS_NONE)
-	DISP_FUNCTION(CProMoDiagramsAutoAbs, "Add", Add, VT_DISPATCH, VTS_VARIANT)
-	DISP_FUNCTION(CProMoDiagramsAutoAbs, "Open", Open, VT_DISPATCH, VTS_VARIANT)
-	DISP_FUNCTION(CProMoDiagramsAutoAbs, "Save", Save, VT_EMPTY, VTS_BOOL)
-	DISP_FUNCTION(CProMoDiagramsAutoAbs, "Close", Close, VT_EMPTY, VTS_BOOL)
-	DISP_PROPERTY_PARAM_ID(CProMoDiagramsAutoAbs, "Item", 0, GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
-	DISP_DEFVALUE(CProMoDiagramsAutoAbs, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 

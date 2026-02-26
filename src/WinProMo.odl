@@ -1,128 +1,89 @@
 [
-    uuid(34249921-08C3-11F1-9744-000C2976A615),
+    uuid(07738135-08C3-11F1-9744-000C2976A615),
     version(1.0),
-    helpstring("WinProMo Library")
+    helpstring("WinProMo Diagram Elements Library")
 ]
-library WinProMo
+library WinProMoLib
 {
 	importlib("stdole32.tlb");
 	importlib("stdole2.tlb");
 
-	// Primary dispatch interface for CProMoAppAutoAbs
-	// NOTE: this class is not in sync with implementation, so care must be taken to keep both aligned
-
-	[uuid(11111111-08C3-11F1-9744-000C2976A615)]
-		dispinterface IProMoAppAutoAbs
-	{
-
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoAppAutoAbs)
-			[id(1)] IDispatch * Diagrams;
-			[id(2)] VARIANT CreatableDiagramTypes;
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoAppAutoAbs)
-			[id(3)] IDispatch* ActiveDocument();
-			[id(4)] boolean Quit(boolean saveChanges);
-			//}}AFX_ODL_METHOD
-
-	};
-
-	// Primary dispatch interface for CProMoAppChildAuto
-	// NOTE: this class is not in sync with implementation, so care must be taken to keep both aligned
-
-	[uuid(11111112-08C3-11F1-9744-000C2976A615)]
-		dispinterface IProMoAppChildAuto
-	{
-
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoAppChildAuto)
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoAppChildAuto)
-			[id(1)] IDispatch * Application();
-			//}}AFX_ODL_METHOD
-
-	};
-
 	//  Primary dispatch interface for CProMoBlockAuto
-
-	[uuid(18EA3768-08C3-11F1-9744-000C2976A615)]
-		dispinterface IProMoBlockAuto //: IProMoElementAuto
+	[uuid(38EA3760-08C3-11F1-9744-000C2976A615)]
+		dispinterface IBlock
 	{
 		properties:
 			// NOTE - ClassWizard will maintain property information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_PROP(CProMoBlockAuto)
-			[id(1)] OLE_COLOR FillColor;
-			[id(2)] boolean FillPattern;
-			[id(3)] short FillStyle;
-			[id(4)] IDispatch* Parent;
-			[id(5)] IDispatch* SubBlocks;
-			[id(6)] IDispatch* BoundaryBlocks;
-			[id(7)] short BoundaryAttachment;
-			[id(8)] IDispatch* OutgoingEdges;
-			[id(9)] IDispatch* IncomingEdges;
-			[id(10)] double Top;
-			[id(11)] double Bottom;
-			[id(12)] double Left;
-			[id(13)] double Right;
-			[id(14)] double Width;
-			[id(15)] double Height;
+			// from IProMoElementAuto
+			[id(1)] boolean LockAspectRatio;
+			[id(2)] OLE_COLOR LineColor;
+			[id(3)] short LineWidth;
+			[id(4)] short LineStyle;
+			[id(5)] BSTR FontName;
+			[id(6)] short FontSize;
+			[id(7)] short FontWeight;
+			[id(8)] boolean FontItalic;
+			[id(9)] boolean FontUnderline;
+			[id(10)] boolean FontStrikeOut;
+			[id(11)] OLE_COLOR TextColor;
+			[id(12)] OLE_COLOR BkColor;
+			[id(13)] short BkMode;
+			[id(14)] short TextAlignment;
+			[id(15)] short TextHorizontalAlignment;
+			[id(16)] short TextVerticalAlignment;
+			[id(17)] BSTR ID;
+			[id(18)] IDispatch* Labels;
+			[id(19)] IDispatch* Properties;
+			[id(20)] BSTR Type;
+			// Native
+			[id(21)] OLE_COLOR FillColor;
+			[id(22)] boolean FillPattern;
+			[id(23)] short FillStyle;
+			[id(24)] IDispatch* Parent;
+			[id(25)] IDispatch* SubBlocks;
+			[id(26)] IDispatch* BoundaryBlocks;
+			[id(27)] short BoundaryAttachment;
+			[id(28)] IDispatch* OutgoingEdges;
+			[id(29)] IDispatch* IncomingEdges;
+			[id(30)] double Top;
+			[id(31)] double Bottom;
+			[id(32)] double Left;
+			[id(33)] double Right;
+			[id(34)] double Width;
+			[id(35)] double Height;
 			//}}AFX_ODL_PROP
-
+			
 		methods:
 			// NOTE - ClassWizard will maintain method information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoBlockAuto)
-			[id(16)] boolean IsBoundaryBlock();
-			[id(17)] boolean IsSubBlock();
+			[id(36)] boolean IsBoundaryBlock();
+			[id(37)] boolean IsSubBlock();
+			// from IProMoElementAuto
+			[id(38)] void Copy();
+			[id(39)] void Cut();
+			[id(40)] void Delete();
+			[id(41)] IDispatch* Duplicate();
+			// from IProMoDiagramChildAuto
+			[id(42)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(43)] IDispatch* Application();
 			//}}AFX_ODL_METHOD
-
 	};
 
-	//  Class information for CProMoBlockAuto (probably not needed)
-	//[uuid(18EA376A-1001-11F1-9746-000C2976A615)]
-	//	coclass CPROMOBLOCKAUTO
-	//{
-	//	[default] dispinterface IProMoBlockAuto;
-	//};
-
-	// Primary dispatch interface for CProMoBlockChildAuto
-	// NOTE: this class is not in sync with implementation, so care must be taken to keep both aligned
-
-	[uuid(11111113-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoBlockChildAuto //: IProMoElementChildAuto
+	//  Class information for CProMoBlockAuto
+	[uuid(48EA3760-1001-11F1-9746-000C2976A615)]
+		coclass Block
 	{
-
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoBlockChildAuto)
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoBlockChildAuto)
-			//}}AFX_ODL_METHOD
-
+		[default] dispinterface IBlock;
 	};
+
 
 	//  Primary dispatch interface for CProMoBoundaryBlocksAuto
-
-	[uuid(18EA376D-08C3-11F1-9744-000C2976A615)]
-		dispinterface IProMoBoundaryBlocksAuto //: IProMoBlockChildAuto
+	[uuid(38EA3761-08C3-11F1-9744-000C2976A615)]
+		dispinterface IBoundaryBlocks
 	{
 
 		properties:
@@ -141,160 +102,89 @@ library WinProMo
 			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
+			// from IProMoElementChildAuto
+			[id(6)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(7)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(8)] IDispatch* Application();
+			// native
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoBoundaryBlocksAuto
-	//[uuid(18EA376E-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOBOUNDARYBLOCKSAUTO
-	//{
-	//	[default] dispinterface IProMoBoundaryBlocksAuto;
-	//};
-
-
-	// TODO Placeholder for CProMoDiagramAutoAbs (if needed)
-	//  Primary dispatch interface for CProMoBoundaryBlocksAuto
-
-	[uuid(11111114-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoDiagramAutoAbs //: IProMoAppChildAuto
+	[uuid(48EA3761-08C3-11F1-9744-000C2976A615)]
+		coclass BoundaryBlocks
 	{
-
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoDiagramAutoAbs)
-			[id(1)] IDispatch * Elements;
-			[id(2)] long Width;
-			[id(3)] long Height;
-			[id(4)] IDispatch* Labels;
-			[id(5)] VARIANT CreatableElementTypes;
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoDiagramAutoAbs)
-			[id(6)] void SaveAs(VARIANT fileName);
-			[id(7)] void Activate();
-			[id(8)] void Close(boolean saveChanges);
-			[id(9)] void Undo(short times);
-			[id(10)] void Redo(short times);
-			[id(11)] void Save(boolean noPrompt);
-			[id(12)] BSTR Path();
-			[id(13)] BSTR Type();
-			//}}AFX_ODL_METHOD
-
+		[default] dispinterface IBoundaryBlocks;
 	};
 
-	// Primary dispatch interface for CProMoDiagramChildAuto
-	// NOTE: this class is not in sync with implementation, so care must be taken to keep both aligned
-
-	[uuid(11111115-08C3-11F1-9744-000C2976A615)]
-		dispinterface IProMoDiagramChildAuto //: IProMoAppChildAuto
-	{
-
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoDiagramChildAuto)
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoDiagramChildAuto)
-			[id(1)] IDispatch * Diagram();
-			//}}AFX_ODL_METHOD
-
-	};
-
-	//  Primary dispatch interface for CProMoDiagramsAutoAbs
-
-	[uuid(11111116-08C3-11F1-9744-000C2976A615)]
-		dispinterface IProMoDiagramsAutoAbs //: IProMoAppChildAuto
-	{
-
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoDiagramsAutoAbs)
-			[id(1)] VARIANT IDs;
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoDiagramsAutoAbs)
-			[id(2)] short Count();
-			[id(3)] IDispatch* Add(VARIANT documentType);
-			[id(4)] IDispatch* Open(VARIANT fileName);
-			[id(5)] void Save(boolean noPrompt);
-			[id(6)] void Close(boolean saveChanges);
-			[id(7), propget] IDispatch* Item(VARIANT item);
-			[id(7), propputref] void Item(VARIANT item, IDispatch* newValue);
-			[id(0), propget] IDispatch* _Item(VARIANT item);
-			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
-			//}}AFX_ODL_METHOD
-
-	};
 
 	//  Primary dispatch interface for CProMoEdgeAuto
-
-	[uuid(18EA3769-08C3-11F1-9744-000C2976A615)]
-		dispinterface IProMoEdgeAuto //: IProMoElementAuto
+	[uuid(38EA3762-08C3-11F1-9744-000C2976A615)]
+		dispinterface IEdge
 	{
 		properties:
 			// NOTE - ClassWizard will maintain property information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_PROP(CProMoEdgeAuto)
-			[id(1)] IDispatch * Source;
-			[id(2)] IDispatch* Destination;
-			[id(3)] IDispatch* Segments;
+			// from IProMoElementAuto
+			[id(1)] boolean LockAspectRatio;
+			[id(2)] OLE_COLOR LineColor;
+			[id(3)] short LineWidth;
+			[id(4)] short LineStyle;
+			[id(5)] BSTR FontName;
+			[id(6)] short FontSize;
+			[id(7)] short FontWeight;
+			[id(8)] boolean FontItalic;
+			[id(9)] boolean FontUnderline;
+			[id(10)] boolean FontStrikeOut;
+			[id(11)] OLE_COLOR TextColor;
+			[id(12)] OLE_COLOR BkColor;
+			[id(13)] short BkMode;
+			[id(14)] short TextAlignment;
+			[id(15)] short TextHorizontalAlignment;
+			[id(16)] short TextVerticalAlignment;
+			[id(17)] BSTR ID;
+			[id(18)] IDispatch* Labels;
+			[id(19)] IDispatch* Properties;
+			[id(20)] BSTR Type;
+			// Native
+			[id(21)] IDispatch * Source;
+			[id(22)] IDispatch* Destination;
+			[id(23)] IDispatch* Segments;
 			//}}AFX_ODL_PROP
-
+			
 		methods:
 			// NOTE - ClassWizard will maintain method information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoEdgeAuto)
+			// from IProMoElementAuto
+			[id(24)] void Copy();
+			[id(25)] void Cut();
+			[id(26)] void Delete();
+			[id(27)] IDispatch* Duplicate();
+			// from IProMoDiagramChildAuto
+			[id(28)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(29)] IDispatch* Application();
 			//}}AFX_ODL_METHOD
-
 	};
 
-	//  Class information for CProMoEdgeAuto (probably not needed)
-	//[uuid(18EA376B-1001-11F1-9746-000C2976A615)]
-	//	coclass CPROMOEDGEAUTO
-	//{
-	//	[default] dispinterface IProMoEdgeAuto;
-	//};
-
-	// Primary dispatch interface for CProMoEdgeChildAuto
-	// NOTE: this class is not in sync with implementation, so care must be taken to keep both aligned
-
-	[uuid(11111117-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoEdgeChildAuto //: IProMoElementChildAuto
+	//  Class information for CProMoEdgeAuto
+	[uuid(48EA3762-1001-11F1-9746-000C2976A615)]
+		coclass Edge
 	{
-
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoEdgeChildAuto)
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoEdgeChildAuto)
-			//}}AFX_ODL_METHOD
-
+		[default] dispinterface IEdge;
 	};
+
 
 	//  Primary dispatch interface for CProMoEdgeSegmentAuto
-
-	[uuid(18EA376F-08C3-11F1-9744-000C2976A615)]
-		dispinterface IProMoEdgeSegmentAuto //: IProMoEdgeChildAuto
+	[uuid(38EA3763-08C3-11F1-9744-000C2976A615)]
+		dispinterface IEdgeSegment
 	{
 		properties:
 			// NOTE - ClassWizard will maintain property information here.
@@ -316,22 +206,26 @@ library WinProMo
 			[id(8)] IDispatch* Prev();
 			[id(9)] IDispatch* Next();
 			[id(10)] void Remove();
+			// from IProMoElementChildAuto
+			[id(11)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(12)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(13)] IDispatch* Application();
 			//}}AFX_ODL_METHOD
-
 	};
 
 	//  Class information for CProMoEdgeSegmentAuto (probably not needed)
-	//[uuid(18EA376E-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOEDGESEGMENTAUTO
-	//{
-	//	[default] dispinterface IProMoEdgeSegmentAuto;
-	//};
+	[uuid(48EA3763-08C3-11F1-9744-000C2976A615)]
+		coclass EdgeSegment
+	{
+		[default] dispinterface IEdgeSegment;
+	};
 
-	// TODO Placeholder for CProMoEdgeSegmentsAuto
+
 	//  Primary dispatch interface for CProMoEdgeSegmentsAuto
-
-	[uuid(18EA376E-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoEdgeSegmentsAuto //: IProMoEdgeChildAuto
+	[uuid(38EA3764-08C3-11F1-9744-000C2976A615)]
+	dispinterface IEdgeSegments
 	{
 
 		properties:
@@ -347,95 +241,28 @@ library WinProMo
 			[id(1)] short Count();
 			[id(2), propget] IDispatch* Item(short item);
 			[id(2), propputref] void Item(short item, IDispatch* newValue);
-			[id(0), propget] IDispatch* _Item(short item);
+			// from IProMoElementChildAuto
+			[id(3)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(4)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(5)] IDispatch* Application(); [id(0), propget] IDispatch* _Item(short item);
 			[id(0), propputref] void _Item(short item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoEdgeSegmentsAuto
-	//[uuid(18EA376F-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOEDGESEGMENTSAUTO
-	//{
-	//	[default] dispinterface IProMoEdgeSegmentsAuto;
-	//};
-
-	//  Primary dispatch interface for CProMoElementAuto
-
-	[uuid(7E3C6CD5-01D3-11F1-9743-000C2976A615)]
-	dispinterface IProMoElementAuto //: IProMoDiagramChildAuto
+	[uuid(48EA3764-08C3-11F1-9744-000C2976A615)]
+		coclass EdgeSegments
 	{
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoElementAuto)
-			[id(1)] boolean LockAspectRatio;
-			[id(2)] OLE_COLOR LineColor;
-			[id(3)] short LineWidth;
-			[id(4)] short LineStyle;
-			[id(5)] BSTR FontName;
-			[id(6)] short FontSize;
-			[id(7)] short FontWeight;
-			[id(8)] boolean FontItalic;
-			[id(9)] boolean FontUnderline;
-			[id(10)] boolean FontStrikeOut;
-			[id(11)] OLE_COLOR TextColor;
-			[id(12)] OLE_COLOR BkColor;
-			[id(13)] short BkMode;
-			[id(14)] short TextAlignment;
-			[id(15)] short TextHorizontalAlignment;
-			[id(16)] short TextVerticalAlignment;
-			[id(17)] BSTR ID;
-			[id(18)] IDispatch* Labels;
-			[id(19)] IDispatch* Properties;
-			[id(20)] BSTR Type;
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoElementAuto)
-			[id(21)] void Copy();
-			[id(22)] void Cut();
-			[id(23)] void Delete();
-			[id(24)] IDispatch* Duplicate();
-			//}}AFX_ODL_METHOD
-
+		[default] dispinterface IEdgeSegments;
 	};
 
-	//  Class information for CProMoElementAuto (probably not needed)
-	//[uuid(7E3C6CD6-01D3-11F1-9743-000C2976A615)]
-	//	coclass CPROMOELEMENTAUTO
-	//{
-	//	[default] dispinterface IProMoElementAuto;
-	//};
-
-	// Primary dispatch interface for CProMoElementChildAuto
-	// NOTE: this class is not in sync with implementation, so care must be taken to keep both aligned
-
-	[uuid(11111118-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoElementChildAuto //: IProMoDiagramChildAuto
-	{
-
-		properties:
-			// NOTE - ClassWizard will maintain property information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_PROP(CProMoElementChildAuto)
-			//}}AFX_ODL_PROP
-
-		methods:
-			// NOTE - ClassWizard will maintain method information here.
-			//    Use extreme caution when editing this section.
-			//{{AFX_ODL_METHOD(CProMoElementChildAuto)
-			[id(1)] IDispatch * Element();
-			//}}AFX_ODL_METHOD
-
-	};
 
 	//  Primary dispatch interface for CProMoElementsAuto
-
-	[uuid(7E3C6CD4-01D3-11F1-9743-000C2976A615)]
-		dispinterface IProMoElementsAuto //: IProMoDiagramChildAuto
+	[uuid(38EA3765-01D3-11F1-9743-000C2976A615)]
+		dispinterface IElements
 	{
 
 		properties:
@@ -454,24 +281,27 @@ library WinProMo
 			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
+			// from IProMoDiagramChildAuto
+			[id(6)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(7)] IDispatch* Application(); 
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoElementsAuto
-	//[uuid(7E3C6CD5-01D3-11F1-9743-000C2976A615)]
-	//	coclass CPROMOELEMENTSAUTO
-	//{
-	//	[default] dispinterface IProMoElementsAuto;
-	//};
+	[uuid(48EA3765-01D3-11F1-9743-000C2976A615)]
+		coclass Elements
+	{
+		[default] dispinterface IElements;
+	};
 
 
 	//  Primary dispatch interface for CProMoIncomingEdgesAuto
-
-	[uuid(18EA376B-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoIncomingEdgesAuto //: IProMoBlockChildAuto
+	[uuid(38EA3766-08C3-11F1-9744-000C2976A615)]
+	dispinterface IIncomingEdges
 	{
 
 		properties:
@@ -490,49 +320,55 @@ library WinProMo
 			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
+			// from IProMoElementChildAuto
+			[id(6)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(7)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(8)] IDispatch* Application(); 
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoIncomingEdgesAuto
-	//[uuid(18EA376C-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOINCOMINGEDGESAUTO
-	//{
-	//	[default] dispinterface IProMoIncomingEdgesAuto;
-	//};
+	[uuid(48EA3766-08C3-11F1-9744-000C2976A615)]
+		coclass IncomingEdges
+	{
+		[default] dispinterface IIncomingEdges;
+	};
+
 
 	//  Primary dispatch interface for CProMoLabelAuto
-
-	[uuid(18EA3776-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoLabelAuto //: IProMoElementChildAuto
+	[uuid(38EA3767-08C3-11F1-9744-000C2976A615)]
+	dispinterface ILabel
 	{
 
 		properties:
 			// NOTE - ClassWizard will maintain property information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_PROP(CProMoLabelAuto)
-			[id(1)] double Top;
-			[id(2)] double Bottom;
-			[id(3)] double Left;
-			[id(4)] double Right;
-			[id(5)] double Width;
-			[id(6)] double Height;
-			[id(7)] BSTR FontName;
-			[id(8)] short FontSize;
-			[id(9)] short FontWeight;
-			[id(10)] boolean FontItalic;
-			[id(11)] boolean FontUnderline;
-			[id(12)] boolean FontStrikeOut;
-			[id(13)] OLE_COLOR TextColor;
-			[id(14)] OLE_COLOR BkColor;
-			[id(15)] short BkMode;
-			[id(16)] short TextHorizontalAlignment;
-			[id(17)] short TextVerticalAlignment;
-			[id(18)] IDispatch* Property;
-			[id(19)] BSTR ID;
-			[id(20)] boolean TextMultiLine;
+			[id(1)] BSTR FontName;
+			[id(2)] short FontSize;
+			[id(3)] short FontWeight;
+			[id(4)] boolean FontItalic;
+			[id(5)] boolean FontUnderline;
+			[id(6)] boolean FontStrikeOut;
+			[id(7)] OLE_COLOR TextColor;
+			[id(8)] OLE_COLOR BkColor;
+			[id(9)] short BkMode;
+			[id(10)] boolean TextMultiLine;
+			[id(11)] short TextHorizontalAlignment;
+			[id(12)] short TextVerticalAlignment;
+			[id(13)] BSTR ID;
+			[id(14)] IDispatch* Property;
+			[id(15)] double Top;
+			[id(16)] double Bottom;
+			[id(17)] double Left;
+			[id(18)] double Right;
+			[id(19)] double Width;
+			[id(20)] double Height;
 			//}}AFX_ODL_PROP
 
 		methods:
@@ -543,21 +379,26 @@ library WinProMo
 			[id(22)] void Copy();
 			[id(23)] void Delete();
 			[id(24)] IDispatch* Duplicate();
+			// from IProMoElementChildAuto
+			[id(25)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(26)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(27)] IDispatch* Application();
 			//}}AFX_ODL_METHOD
-
 	};
 
 	//  Class information for CProMoLabelAuto (probably not needed)
-	//[uuid(18EA3777-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOLABELAUTO
-	//{
-	//	[default] dispinterface IProMoLabelAuto;
-	//};
+	[uuid(48EA3767-08C3-11F1-9744-000C2976A615)]
+		coclass Label
+	{
+		[default] dispinterface ILabel;
+	};
+
 
 	//  Primary dispatch interface for CProMoLabelsAuto
-
-	[uuid(18EA3771-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoLabelsAuto //: IProMoElementChildAuto
+	[uuid(38EA3768-08C3-11F1-9744-000C2976A615)]
+	dispinterface ILabels
 	{
 
 		properties:
@@ -576,23 +417,29 @@ library WinProMo
 			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
+			// from IProMoElementChildAuto
+			[id(6)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(7)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(8)] IDispatch* Application(); 
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoLabelsAuto
-	//[uuid(18EA3772-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOLABELSAUTO
-	//{
-	//	[default] dispinterface IProMoLabelsAuto;
-	//};
+	[uuid(48EA3768-08C3-11F1-9744-000C2976A615)]
+		coclass Labels
+	{
+		[default] dispinterface ILabels;
+	};
+
 
 	//  Primary dispatch interface for CProMoOutgoingEdgesAuto
-
-	[uuid(18EA376A-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoOutgoingEdgesAuto //: IProMoBlockChildAuto
+	[uuid(38EA3769-08C3-11F1-9744-000C2976A615)]
+	dispinterface IOutgoingEdges
 	{
 
 		properties:
@@ -611,23 +458,29 @@ library WinProMo
 			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
+			// from IProMoElementChildAuto
+			[id(6)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(7)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(8)] IDispatch* Application(); 
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoOutgoingEdgesAuto
-	//[uuid(18EA376B-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOOUTGOINGEDGESAUTO
-	//{
-	//	[default] dispinterface IProMoOutgoingEdgesAuto;
-	//};
+	[uuid(48EA3769-08C3-11F1-9744-000C2976A615)]
+		coclass OutgoingEdges
+	{
+		[default] dispinterface IOutgoingEdges;
+	};
+
 
 	//  Primary dispatch interface for CProMoPropertiesAuto
-
-	[uuid(18EA3772-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoPropertiesAuto //: IProMoElementChildAuto
+	[uuid(38EA376A-08C3-11F1-9744-000C2976A615)]
+	dispinterface IProperties
 	{
 
 		properties:
@@ -644,24 +497,29 @@ library WinProMo
 			[id(2)] short Count();
 			[id(3), propget] IDispatch* Item(VARIANT item);
 			[id(3), propputref] void Item(VARIANT item, IDispatch* newValue);
+			// from IProMoElementChildAuto
+			[id(4)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(5)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(6)] IDispatch* Application(); 
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoPropertiesAuto
-	//[uuid(18EA3773-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOPROPERTIESAUTO
-	//{
-	//	[default] dispinterface IProMoPropertiesAuto;
-	//};
+	[uuid(48EA376A-08C3-11F1-9744-000C2976A615)]
+		coclass Properties
+	{
+		[default] dispinterface IProperties;
+	};
 
 
 	//  Primary dispatch interface for CProMoPropertyAuto
-
-	[uuid(18EA3773-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoPropertyAuto //: IProMoElementChildAuto
+	[uuid(38EA376B-08C3-11F1-9744-000C2976A615)]
+	dispinterface IProperty
 	{
 
 		properties:
@@ -687,23 +545,29 @@ library WinProMo
 			[id(11)] short Count();
 			[id(12), propget] IDispatch* Item(VARIANT idx);
 			[id(12), propputref] void Item(VARIANT idx, IDispatch* newValue);
+			// from IProMoElementChildAuto
+			[id(13)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(14)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(15)] IDispatch* Application();
 			[id(0), propget] IDispatch* _Item(VARIANT idx);
 			[id(0), propputref] void _Item(VARIANT idx, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoPropertyAuto (probably not needed)
-	//[uuid(18EA3774-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOPROPERTYAUTO
-	//{
-	//	[default] dispinterface IProMoPropertyAuto;
-	//};
+	[uuid(48EA376B-08C3-11F1-9744-000C2976A615)]
+		coclass Property
+	{
+		[default] dispinterface IProperty;
+	};
+
 
 	//  Primary dispatch interface for CProMoSubBlocksAuto
-
-	[uuid(18EA376C-08C3-11F1-9744-000C2976A615)]
-	dispinterface IProMoSubBlocksAuto //: IProMoBlockChildAuto
+	[uuid(38EA376C-08C3-11F1-9744-000C2976A615)]
+	dispinterface ISubBlocks
 	{
 
 		properties:
@@ -722,18 +586,24 @@ library WinProMo
 			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
+			// from IProMoElementChildAuto
+			[id(6)] IDispatch* Element();
+			// from IProMoDiagramChildAuto
+			[id(7)] IDispatch* Diagram();
+			// from IProMoAppChildAuto
+			[id(8)] IDispatch* Application(); 
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
-
+			
 	};
 
 	//  Class information for CProMoSubBlocksAuto
-	//[uuid(18EA376D-08C3-11F1-9744-000C2976A615)]
-	//	coclass CPROMOSUBBLOCKSAUTO
-	//{
-	//	[default] dispinterface IProMoSubBlocksAuto;
-	//};
+	[uuid(48EA376C-08C3-11F1-9744-000C2976A615)]
+		coclass SubBlocks
+	{
+		[default] dispinterface ISubBlocks;
+	};
 
 	//{{AFX_APPEND_ODL}}
 
