@@ -311,6 +311,10 @@ void CProMoRenderer::RenderAsMetafile(const CObArray& elements, CDC& dc, double 
 
    ============================================================*/
 {
+	//only needed for vector
+	dc.SetWindowOrg(start);
+	dc.SetWindowExt(size); 
+	
 	CObArray oldSelection;
 
 	CopySelection(oldSelection);
@@ -332,9 +336,6 @@ void CProMoRenderer::RenderAsMetafile(const CObArray& elements, CDC& dc, double 
 	size.cx = (int)(size.cx * zoom);
 	size.cy = (int)(size.cy * zoom);
 
-	//only needed for vector
-	dc.SetWindowOrg(start);
-	dc.SetWindowExt(size);
 }
 
 void CProMoRenderer::PickSelectedElements(CObArray& elements)
