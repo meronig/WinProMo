@@ -44,6 +44,7 @@ public:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
+public:
 	// Generated OLE dispatch map functions
 	//{{AFX_DISPATCH(CProMoAppChildAuto)
 	afx_msg LPDISPATCH Application();

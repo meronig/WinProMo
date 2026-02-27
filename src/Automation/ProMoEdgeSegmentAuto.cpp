@@ -80,11 +80,11 @@ BEGIN_DISPATCH_MAP(CProMoEdgeSegmentAuto, CProMoEdgeChildAuto)
 	DISP_FUNCTION(CProMoEdgeSegmentAuto, "Next", Next, VT_DISPATCH, VTS_NONE)
 	DISP_FUNCTION(CProMoEdgeSegmentAuto, "Remove", Remove, VT_EMPTY, VTS_NONE)
 	//Common to CProMoElementChildAuto
-	DISP_FUNCTION(CProMoEdgeSegmentAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
-	DISP_FUNCTION(CProMoEdgeSegmentAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
-	DISP_FUNCTION(CProMoEdgeSegmentAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 

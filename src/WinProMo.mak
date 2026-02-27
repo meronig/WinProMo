@@ -52,7 +52,7 @@ MTL=mktyplib.exe
 OUTDIR=.\Release
 INTDIR=.\Release
 
-ALL : "..\..\Release\WinProMo.dll" "$(OUTDIR)\WinProMo.tlb"
+ALL : "..\..\Release\WinProMo.dll" "..\..\Release\WinProMo.tlb"
 
 CLEAN : 
 	-@erase "$(INTDIR)\DiagramClipboardHandler.obj"
@@ -113,10 +113,10 @@ CLEAN :
 	-@erase "$(INTDIR)\WinProMo.obj"
 	-@erase "$(INTDIR)\WinProMo.pch"
 	-@erase "$(INTDIR)\WinProMo.res"
-	-@erase "$(INTDIR)\WinProMo.tlb"
 	-@erase "$(OUTDIR)\WinProMo.exp"
 	-@erase "$(OUTDIR)\WinProMo.lib"
 	-@erase "..\..\Release\WinProMo.dll"
+	-@erase "..\..\Release\WinProMo.tlb"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -227,7 +227,7 @@ LINK32_OBJS= \
 OUTDIR=.\Debug
 INTDIR=.\Debug
 
-ALL : "..\..\Debug\WinProMo.dll" "$(OUTDIR)\WinProMo.tlb"\
+ALL : "..\..\Debug\WinProMo.dll" "..\..\Debug\WinProMo.tlb"\
  "$(OUTDIR)\WinProMo.bsc"
 
 CLEAN : 
@@ -347,13 +347,13 @@ CLEAN :
 	-@erase "$(INTDIR)\WinProMo.pch"
 	-@erase "$(INTDIR)\WinProMo.res"
 	-@erase "$(INTDIR)\WinProMo.sbr"
-	-@erase "$(INTDIR)\WinProMo.tlb"
 	-@erase "$(OUTDIR)\WinProMo.bsc"
 	-@erase "$(OUTDIR)\WinProMo.exp"
 	-@erase "$(OUTDIR)\WinProMo.lib"
 	-@erase "$(OUTDIR)\WinProMo.pdb"
 	-@erase "..\..\Debug\WinProMo.dll"
 	-@erase "..\..\Debug\WinProMo.ilk"
+	-@erase "..\..\Debug\WinProMo.tlb"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -3775,16 +3775,19 @@ SOURCE=.\WinProMo.odl
 
 !IF  "$(CFG)" == "WinProMo - Win32 Release"
 
+# ADD MTL /tlb "../../Release/WinProMo.tlb"
 
-"$(OUTDIR)\WinProMo.tlb" : $(SOURCE) "$(OUTDIR)"
-   $(MTL) /nologo /D "NDEBUG" /tlb "$(OUTDIR)/WinProMo.tlb" /win32 $(SOURCE)
+"..\..\Release\WinProMo.tlb" : $(SOURCE) "$(OUTDIR)"
+   $(MTL) /nologo /D "NDEBUG" /tlb "../../Release/WinProMo.tlb" /win32\
+ $(SOURCE)
 
 
 !ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
 
+# ADD MTL /tlb "../../Debug/WinProMo.tlb"
 
-"$(OUTDIR)\WinProMo.tlb" : $(SOURCE) "$(OUTDIR)"
-   $(MTL) /nologo /D "_DEBUG" /tlb "$(OUTDIR)/WinProMo.tlb" /win32 $(SOURCE)
+"..\..\Debug\WinProMo.tlb" : $(SOURCE) "$(OUTDIR)"
+   $(MTL) /nologo /D "_DEBUG" /tlb "../../Debug/WinProMo.tlb" /win32 $(SOURCE)
 
 
 !ENDIF 

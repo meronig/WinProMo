@@ -60,11 +60,11 @@ BEGIN_DISPATCH_MAP(CProMoOutgoingEdgesAuto, CProMoBlockChildAuto)
 	DISP_PROPERTY_PARAM(CProMoOutgoingEdgesAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
 	DISP_DEFVALUE(CProMoOutgoingEdgesAuto, "Item")
 	//Common to CProMoElementChildAuto
-	DISP_FUNCTION(CProMoOutgoingEdgesAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
-	DISP_FUNCTION(CProMoOutgoingEdgesAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
-	DISP_FUNCTION(CProMoOutgoingEdgesAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 

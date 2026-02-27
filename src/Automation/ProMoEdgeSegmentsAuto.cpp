@@ -56,11 +56,11 @@ BEGIN_DISPATCH_MAP(CProMoEdgeSegmentsAuto, CProMoEdgeChildAuto)
 	DISP_PROPERTY_PARAM(CProMoEdgeSegmentsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_I2)
 	DISP_DEFVALUE(CProMoEdgeSegmentsAuto, "Item")
 	//Common to CProMoElementChildAuto
-	DISP_FUNCTION(CProMoEdgeSegmentsAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
-	DISP_FUNCTION(CProMoEdgeSegmentsAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
-	DISP_FUNCTION(CProMoEdgeSegmentsAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -84,7 +84,7 @@ short CProMoEdgeSegmentsAuto::Count()
 	if (GetEdgeModel()) {
 		CObArray edgeViews;
 		GetEdgeModel()->GetViews(edgeViews);
-		return (long)edgeViews.GetSize();
+		return edgeViews.GetSize();
 	}
 
 	return 0;
