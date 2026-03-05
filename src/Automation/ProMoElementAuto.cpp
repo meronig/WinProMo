@@ -117,6 +117,23 @@ void CProMoElementAuto::ReleasePropertiesAutoObject()
 	}
 }
 
+BOOL CProMoElementAuto::HasLockFlag(unsigned int lockFlag)
+{
+	CObArray views;
+	GetViews(views);
+	
+	// return false if at least one view has not the specified flag locked
+	for (int i = 0; i < views.GetSize(); i++) {
+		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
+		if (view) {
+			if (!view->IsLocked(lockFlag)) {
+				return FALSE;
+			}
+		}
+	}
+	return TRUE;
+}
+
 void CProMoElementAuto::OnFinalRelease()
 {
 	// When the last reference for an automation object is released
@@ -159,28 +176,38 @@ void CProMoElementAuto::Cut()
 
 void CProMoElementAuto::Delete() 
 {
-	// TODO: Add your dispatch handler code here
+	CObArray views;
+	GetViews(views);
+
+	GetContainer()->Snapshot();
+	
+	if (GetContainer()) {
+		for (int i = views.GetSize() - 1; i >= 0; --i) {
+			CDiagramEntity* view = dynamic_cast<CDiagramEntity*>(views.GetAt(i));
+			GetContainer()->Remove(view);
+		}
+	}
+
+	GetDiagramAutoObject()->NotifyChange();
 
 }
 
 LPDISPATCH CProMoElementAuto::Duplicate() 
 {
-	// TODO: Add your dispatch handler code here
+	GetContainer()->Snapshot();
+	IProMoEntity* view = dynamic_cast<IProMoEntity*>(GetMainView());
+	IProMoEntity* newView = dynamic_cast<IProMoEntity*>(GetContainer()->CloneEntity(view));
+	GetDiagramAutoObject()->NotifyChange();
 
+	if (newView) {
+		CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(newView->GetAutomationObject());
+		if (pElementAuto) {
+			pElementAuto->SetDiagramAutoObject(GetDiagramAutoObject());
+			return pElementAuto->GetIDispatch(TRUE);
+		}
+	}
+	
 	return NULL;
-}
-
-BOOL CProMoElementAuto::GetLockAspectRatio() 
-{
-	// TODO: Add your property handler here
-
-	return TRUE;
-}
-
-void CProMoElementAuto::SetLockAspectRatio(BOOL bNewValue) 
-{
-	SetNotSupported();
-
 }
 
 OLE_COLOR CProMoElementAuto::GetLineColor() 
@@ -202,10 +229,12 @@ void CProMoElementAuto::SetLineColor(OLE_COLOR nNewValue)
 
 	CObArray views;
 	GetViews(views);
-	
-	if (views.GetSize()>0){
-		GetContainer()->Snapshot();
+
+	if (HasLockFlag(LOCK_LINECOLOR)) {
+		return;
 	}
+	
+	GetContainer()->Snapshot();
 	
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -231,9 +260,12 @@ void CProMoElementAuto::SetLineWidth(short nNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+
+	if (HasLockFlag(LOCK_LINEWIDTH)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -258,9 +290,12 @@ void CProMoElementAuto::SetLineStyle(short nNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_LINESTYLE)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -287,9 +322,12 @@ void CProMoElementAuto::SetFontName(LPCTSTR lpszNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_FONTNAME)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -314,9 +352,12 @@ void CProMoElementAuto::SetFontSize(short nNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_FONTSIZE)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -341,9 +382,12 @@ void CProMoElementAuto::SetFontWeight(short nNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_FONTWEIGHT)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -368,9 +412,12 @@ void CProMoElementAuto::SetFontItalic(BOOL bNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_FONTITALIC)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -395,9 +442,12 @@ void CProMoElementAuto::SetFontUnderline(BOOL bNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_FONTUNDERLINE)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -422,9 +472,12 @@ void CProMoElementAuto::SetFontStrikeOut(BOOL bNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_FONTSTRIKEOUT)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -454,9 +507,12 @@ void CProMoElementAuto::SetTextColor(OLE_COLOR nNewValue)
 		AfxThrowOleException(hr);
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_TEXTCOLOR)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -484,9 +540,12 @@ void CProMoElementAuto::SetBkColor(OLE_COLOR nNewValue)
 	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_BKCOLOR)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -511,9 +570,12 @@ void CProMoElementAuto::SetBkMode(short nNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_BKMODE)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
@@ -525,31 +587,33 @@ void CProMoElementAuto::SetBkMode(short nNewValue)
 
 }
 
-short CProMoElementAuto::GetTextAlignment() 
+BOOL CProMoElementAuto::GetTextMultiLine()
 {
 	if (GetMainView()) {
-		return GetMainView()->GetTextAlignment();
+		return GetMainView()->IsTextMultiline();
 	}
 
-	return 0;
+	return FALSE;
 }
 
-void CProMoElementAuto::SetTextAlignment(short nNewValue) 
+void CProMoElementAuto::SetTextMultiLine(BOOL bNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_ALIGNMENT)) {
+		return;
 	}
+
+	GetContainer()->Snapshot();
 
 	for (int i = 0; i < views.GetSize(); i++) {
 		IProMoView* view = dynamic_cast<IProMoView*>(views.GetAt(i));
 		if (view) {
-			view->SetTextAlignment(nNewValue);
+			view->SetTextMultiline(bNewValue);
 		}
 	}
 	GetDiagramAutoObject()->NotifyChange();
-
 }
 
 short CProMoElementAuto::GetTextHorizontalAlignment() 
@@ -565,8 +629,9 @@ void CProMoElementAuto::SetTextHorizontalAlignment(short nNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_ALIGNMENT)) {
+		return;
 	}
 
 	for (int i = 0; i < views.GetSize(); i++) {
@@ -592,8 +657,9 @@ void CProMoElementAuto::SetTextVerticalAlignment(short nNewValue)
 {
 	CObArray views;
 	GetViews(views);
-	if (views.GetSize() > 0) {
-		GetContainer()->Snapshot();
+	
+	if (HasLockFlag(LOCK_ALIGNMENT)) {
+		return;
 	}
 
 	for (int i = 0; i < views.GetSize(); i++) {
@@ -672,4 +738,18 @@ void CProMoElementAuto::SetType(LPCTSTR lpszNewValue)
 {
 	SetNotSupported();
 
+}
+
+short CProMoElementAuto::GetLockFlags()
+{
+	if (GetMainView()) {
+		return GetMainView()->GetLock();
+	}
+
+	return 0;
+}
+
+void CProMoElementAuto::SetLockFlags(short nNewValue)
+{
+	SetNotSupported();
 }

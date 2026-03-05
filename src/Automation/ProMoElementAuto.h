@@ -37,6 +37,7 @@ public:
 	virtual void ReleasePropertiesAutoObject();
 
 protected:
+	virtual BOOL HasLockFlag(unsigned int lockFlag);
 	
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -57,8 +58,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	// Generated OLE dispatch map functions
 	//{{AFX_DISPATCH(CProMoElementAuto)
-	afx_msg BOOL GetLockAspectRatio();
-	afx_msg void SetLockAspectRatio(BOOL bNewValue);
 	afx_msg OLE_COLOR GetLineColor();
 	afx_msg void SetLineColor(OLE_COLOR nNewValue);
 	afx_msg short GetLineWidth();
@@ -83,12 +82,12 @@ protected:
 	afx_msg void SetBkColor(OLE_COLOR nNewValue);
 	afx_msg short GetBkMode();
 	afx_msg void SetBkMode(short nNewValue);
-	afx_msg short GetTextAlignment();
-	afx_msg void SetTextAlignment(short nNewValue);
 	afx_msg short GetTextHorizontalAlignment();
 	afx_msg void SetTextHorizontalAlignment(short nNewValue);
 	afx_msg short GetTextVerticalAlignment();
 	afx_msg void SetTextVerticalAlignment(short nNewValue);
+	afx_msg BOOL GetTextMultiLine();
+	afx_msg void SetTextMultiLine(BOOL bNewValue);
 	afx_msg BSTR GetName();
 	afx_msg void SetName(LPCTSTR lpszNewValue);
 	afx_msg LPDISPATCH GetLabels();
@@ -97,6 +96,8 @@ protected:
 	afx_msg void SetProperties(LPDISPATCH newValue);
 	afx_msg BSTR GetType();
 	afx_msg void SetType(LPCTSTR lpszNewValue);
+	afx_msg short GetLockFlags();
+	afx_msg void SetLockFlags(short nNewValue);
 	afx_msg void Copy();
 	afx_msg void Cut();
 	afx_msg void Delete();

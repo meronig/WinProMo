@@ -139,15 +139,24 @@ void CProMoDiagramsAutoAbs::Save(BOOL noPrompt)
 {
 	ThrowIfNoAppAutoObject();
 	
-	// TODO: Add your dispatch handler code here
-
+	for (int i = GetOpenDiagramsCount() - 1; i >= 0; --i) {
+		CProMoDiagramAutoAbs* pDiagramAuto = GetDiagramAutoObject(i);
+		if (pDiagramAuto) {
+			pDiagramAuto->Save(noPrompt);
+		}
+	}
 }
 
 void CProMoDiagramsAutoAbs::Close(BOOL saveChanges)
 {
 	ThrowIfNoAppAutoObject();
 	
-	// TODO: Add your dispatch handler code here
+	for (int i = GetOpenDiagramsCount() - 1; i >= 0; --i) {
+		CProMoDiagramAutoAbs* pDiagramAuto = GetDiagramAutoObject(i);
+		if (pDiagramAuto) {
+			pDiagramAuto->Close(saveChanges);
+		}
+	}
 
 }
 VARIANT CProMoDiagramsAutoAbs::GetIDs() 

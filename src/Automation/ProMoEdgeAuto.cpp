@@ -88,7 +88,6 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoEdgeAuto, CProMoElementAuto)
 	//{{AFX_DISPATCH_MAP(CProMoEdgeAuto)
 	//Common to CProMoElementAuto
-	DISP_PROPERTY_EX(CProMoElementAuto, "LockAspectRatio", GetLockAspectRatio, SetLockAspectRatio, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineColor", GetLineColor, SetLineColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineWidth", GetLineWidth, SetLineWidth, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineStyle", GetLineStyle, SetLineStyle, VT_I2)
@@ -101,13 +100,14 @@ BEGIN_DISPATCH_MAP(CProMoEdgeAuto, CProMoElementAuto)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "BkMode", GetBkMode, SetBkMode, VT_I2)
-	DISP_PROPERTY_EX(CProMoElementAuto, "TextAlignment", GetTextAlignment, SetTextAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "TextMultiLine", GetTextMultiLine, SetTextMultiLine, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "ID", GetName, SetName, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Labels", GetLabels, SetLabels, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Properties", GetProperties, SetProperties, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Type", GetType, SetType, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoElementAuto, "LockFlags", GetLockFlags, SetLockFlags, VT_I2)
 	//Specific to CProMoEdgeAuto
 	DISP_PROPERTY_EX(CProMoEdgeAuto, "Source", GetSource, SetSource, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoEdgeAuto, "Destination", GetDestination, SetDestination, VT_DISPATCH)
@@ -130,7 +130,7 @@ END_DISPATCH_MAP()
 
 // {38EA3762-08C3-11F1-9744-000C2976A615}
 static const IID IID_IProMoEdgeAuto =
-{ 0x18ea3762, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
+{ 0x38ea3762, 0x8c3, 0x11f1, { 0x97, 0x44, 0x0, 0xc, 0x29, 0x76, 0xa6, 0x15 } };
 
 BEGIN_INTERFACE_MAP(CProMoEdgeAuto, CProMoElementAuto)
 	INTERFACE_PART(CProMoEdgeAuto, IID_IProMoEdgeAuto, Dispatch)

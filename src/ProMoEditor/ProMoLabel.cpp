@@ -1453,6 +1453,22 @@ unsigned int CProMoLabel::GetAnchorView() const
 	return m_anchorView;
 }
 
+BOOL CProMoLabel::IsTextMultiline() const
+/* ============================================================
+	Function :		CProMoLabel::IsTextMultiline()
+	Description :	Returns whether the text is split into
+					multiple lines
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the text is split into
+								multiple lines
+	Parameters :	none
+
+   ============================================================*/
+{
+	return HasTextAlignmentFlag(DT_WORDBREAK);
+}
+
 BOOL CProMoLabel::IsVisible() const
 /* ============================================================
 	Function :		CProMoLabel::IsVisible()
@@ -1847,6 +1863,38 @@ BOOL CProMoLabel::SetAnchorView(const unsigned int& position)
 	m_anchorView = position;
 	AutoResize();
 	return TRUE;
+}
+
+BOOL CProMoLabel::SetTextMultiline(const BOOL& multiline)
+/* ============================================================
+	Function :		CProMoLabel::SetTextMultiline()
+	Description :	Sets whether the text in the label should
+					be split into multiple lines
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& multiline			-	"TRUE" if the
+												text in	the 
+												label should
+												be split into
+												multiple lines
+
+   ============================================================*/
+{
+	unsigned int alignment = m_textAlignment;
+	
+	alignment &= ~LINE_GROUP; // clear vertical group
+
+	if (multiline) {
+		alignment |= DT_WORDBREAK;
+	}
+	else {
+		alignment |= DT_SINGLELINE;
+	}
+
+	return SetTextAlignment(alignment);
 }
 
 BOOL CProMoLabel::SetVisible(const BOOL& visible)

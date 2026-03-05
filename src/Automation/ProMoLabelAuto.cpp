@@ -74,7 +74,8 @@ BEGIN_DISPATCH_MAP(CProMoLabelAuto, CProMoElementChildAuto)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextMultiLine", GetTextMultiLine, SetTextMultiLine, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "ID", GetID, SetID, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "Text", GetText, SetText, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "ID", GetName, SetName, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Property", GetProperty, SetProperty, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Top", GetTop, SetTop, VT_R8)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Bottom", GetBottom, SetBottom, VT_R8)
@@ -82,6 +83,7 @@ BEGIN_DISPATCH_MAP(CProMoLabelAuto, CProMoElementChildAuto)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Right", GetRight, SetRight, VT_R8)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Width", GetWidth, SetWidth, VT_R8)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Height", GetHeight, SetHeight, VT_R8)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "LockFlags", GetLockFlags, SetLockFlags, VT_I2)
 	DISP_FUNCTION(CProMoLabelAuto, "Cut", Cut, VT_EMPTY, VTS_NONE)
 	DISP_FUNCTION(CProMoLabelAuto, "Copy", Copy, VT_EMPTY, VTS_NONE)
 	DISP_FUNCTION(CProMoLabelAuto, "Delete", Delete, VT_EMPTY, VTS_NONE)
@@ -253,9 +255,11 @@ BSTR CProMoLabelAuto::GetFontName()
 void CProMoLabelAuto::SetFontName(LPCTSTR lpszNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetFontName(lpszNewValue);
-		GetDiagramAutoObject()->NotifyChange();
+		if (!GetLabel()->IsLocked(LOCK_FONTNAME)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetFontName(lpszNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 
 }
@@ -272,10 +276,11 @@ short CProMoLabelAuto::GetFontSize()
 void CProMoLabelAuto::SetFontSize(short nNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetFontSize(nNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_FONTSIZE)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetFontSize(nNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -291,10 +296,11 @@ short CProMoLabelAuto::GetFontWeight()
 void CProMoLabelAuto::SetFontWeight(short nNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetFontWeight(nNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_FONTWEIGHT)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetFontWeight(nNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -310,10 +316,11 @@ BOOL CProMoLabelAuto::GetFontItalic()
 void CProMoLabelAuto::SetFontItalic(BOOL bNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetFontItalic(bNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_FONTITALIC)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetFontItalic(bNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -329,10 +336,11 @@ BOOL CProMoLabelAuto::GetFontUnderline()
 void CProMoLabelAuto::SetFontUnderline(BOOL bNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetFontUnderline(bNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_FONTUNDERLINE)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetFontUnderline(bNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -348,10 +356,11 @@ BOOL CProMoLabelAuto::GetFontStrikeOut()
 void CProMoLabelAuto::SetFontStrikeOut(BOOL bNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetFontStrikeOut(bNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_FONTSTRIKEOUT)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetFontStrikeOut(bNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -372,10 +381,11 @@ void CProMoLabelAuto::SetTextColor(OLE_COLOR nNewValue)
 	if (FAILED(hr))
 		AfxThrowOleException(hr);
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetTextColor(color);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_TEXTCOLOR)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetTextColor(color);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -396,10 +406,11 @@ void CProMoLabelAuto::SetBkColor(OLE_COLOR nNewValue)
 	if (FAILED(hr))
 		AfxThrowOleException(hr);
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetBkColor(color);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_BKCOLOR)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetBkColor(color);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -415,10 +426,11 @@ short CProMoLabelAuto::GetBkMode()
 void CProMoLabelAuto::SetBkMode(short nNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetBkMode(nNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_BKMODE)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetBkMode(nNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -434,10 +446,11 @@ short CProMoLabelAuto::GetTextHorizontalAlignment()
 void CProMoLabelAuto::SetTextHorizontalAlignment(short nNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetTextHorizontalAlignment(nNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_ALIGNMENT)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetTextHorizontalAlignment(nNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -453,10 +466,11 @@ short CProMoLabelAuto::GetTextVerticalAlignment()
 void CProMoLabelAuto::SetTextVerticalAlignment(short nNewValue) 
 {
 	if (GetLabel()) {
-		GetContainer()->Snapshot();
-		GetLabel()->SetTextVerticalAlignment(nNewValue);
-		GetDiagramAutoObject()->NotifyChange();
-
+		if (!GetLabel()->IsLocked(LOCK_ALIGNMENT)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetTextVerticalAlignment(nNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
 	}
 }
 
@@ -507,29 +521,79 @@ void CProMoLabelAuto::SetProperty(LPDISPATCH newValue)
 
 }
 
-BSTR CProMoLabelAuto::GetID() 
+BSTR CProMoLabelAuto::GetText()
 {
 	CString strResult;
-	// TODO: Add your property handler here
+
+	if (GetLabel()) {
+		strResult = GetLabel()->GetTitle();
+	}
 
 	return strResult.AllocSysString();
 }
 
-void CProMoLabelAuto::SetID(LPCTSTR lpszNewValue) 
+void CProMoLabelAuto::SetText(LPCTSTR lpszNewValue)
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		if (!GetLabel()->GetProperty()) {
+			// Label is not associated to any property, so text can be changed
+			GetContainer()->Snapshot();
+			GetLabel()->SetTitle(lpszNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
+		else {
+			// Label is associated to a property, so text is read-only
+			SetNotSupported();
+		}
+	}
+}
 
+BSTR CProMoLabelAuto::GetName() 
+{
+	CString strResult;
+	
+	if (GetLabel()) {
+		strResult = GetLabel()->GetName();
+	}
+
+	return strResult.AllocSysString();
+}
+
+void CProMoLabelAuto::SetName(LPCTSTR lpszNewValue) 
+{
+	SetNotSupported();
 }
 
 BOOL CProMoLabelAuto::GetTextMultiLine() 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		return GetLabel()->IsTextMultiline();
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 void CProMoLabelAuto::SetTextMultiLine(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	if (GetLabel()) {
+		if (!GetLabel()->IsLocked(LOCK_ALIGNMENT)) {
+			GetContainer()->Snapshot();
+			GetLabel()->SetTextMultiline(bNewValue);
+			GetDiagramAutoObject()->NotifyChange();
+		}
+	}
+}
 
+short CProMoLabelAuto::GetLockFlags()
+{
+	if (GetLabel()) {
+		return GetLabel()->GetLock();
+	}
+
+	return 0;
+}
+
+void CProMoLabelAuto::SetLockFlags(short nNewValue)
+{
+	SetNotSupported();
 }

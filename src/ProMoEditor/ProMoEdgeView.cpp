@@ -2125,6 +2125,22 @@ unsigned int CProMoEdgeView::GetTextAlignment() const
 	return alignment;
 }
 
+BOOL CProMoEdgeView::IsTextMultiline() const
+/* ============================================================
+	Function :		CProMoEdgeView::IsTextMultiline()
+	Description :	Returns whether the text in the labels is
+					split into multiple lines
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the text is split into
+								multiple lines
+	Parameters :	none
+
+   ============================================================*/
+{
+	return HasTextAlignmentFlag(DT_WORDBREAK);
+}
+
 BOOL CProMoEdgeView::IsVisible() const
 /* ============================================================
 	Function :		CProMoEdgeView::IsVisible()
@@ -2585,6 +2601,43 @@ BOOL CProMoEdgeView::SetTextAlignment(const unsigned int& alignment)
 				continue;
 			}
 			result &= label->SetTextAlignment(alignment);
+		}
+	}
+	return result;
+}
+
+BOOL CProMoEdgeView::SetTextMultiline(const BOOL& multiline)
+/* ============================================================
+	Function :		CProMoEdgeView::SetTextMultiline()
+	Description :	Sets whether the text in the labels should
+					be split into multiple lines
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& multiline			-	"TRUE" if the
+												text in	the
+												label should
+												be split into
+												multiple lines
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_edgeModel) {
+		CObArray labels;
+		m_edgeModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
+			}
+			result &= label->SetTextMultiline(multiline);
 		}
 	}
 	return result;

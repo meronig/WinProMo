@@ -67,7 +67,7 @@ BEGIN_DISPATCH_MAP(CProMoPropertyAuto, CProMoElementChildAuto)
 	DISP_FUNCTION(CProMoPropertyAuto, "IsComposite", IsComposite, VT_BOOL, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "IsMultivalue", IsMultivalue, VT_BOOL, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Label", Label, VT_DISPATCH, VTS_NONE)
-	DISP_FUNCTION(CProMoPropertyAuto, "Add", Add, VT_BOOL, VTS_NONE)
+	DISP_FUNCTION(CProMoPropertyAuto, "Add", Add, VT_DISPATCH, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Remove", Remove, VT_BOOL, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_PROPERTY_PARAM(CProMoPropertyAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
@@ -198,28 +198,52 @@ VARIANT CProMoPropertyAuto::GetValue()
 void CProMoPropertyAuto::SetValue(const VARIANT FAR& newValue) 
 {
 	if (GetProperty()) {
-		if (IsMultivalue() || IsComposite()) {
+		if (IsMultivalue() || IsComposite() | IsReadOnly()) {
 			SetNotSupported();
 			return;
 		}
 		CVariantWrapper varWrapper(newValue);
+		GetContainer()->Snapshot();
 		GetProperty()->SetValue(varWrapper);
+		GetDiagramAutoObject()->NotifyChange();
 	}
 
 }
 
-BOOL CProMoPropertyAuto::Add() 
+LPDISPATCH CProMoPropertyAuto::Add()
 {
-	// TODO: Add your dispatch handler code here
+	if (GetProperty()) {
+		if (IsMultivalue() && !IsReadOnly()) {
+			GetContainer()->Snapshot();
+			CProMoProperty* newProp = GetProperty()->AddChild();
+			GetDiagramAutoObject()->NotifyChange();
+			if (newProp) {
+				CProMoPropertyAuto* newPropAuto = dynamic_cast<CProMoPropertyAuto*>(newProp->GetAutomationObject());
+				if (newPropAuto) {
+					newPropAuto->SetElementAutoObject(GetElementAutoObject());
+					return newPropAuto->GetIDispatch(TRUE);
+				}
+			}
+		}
+	}
 
-	return TRUE;
+	return NULL;
 }
 
-BOOL CProMoPropertyAuto::Remove() 
+BOOL CProMoPropertyAuto::Remove(short index) 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetProperty()) {
+		if (IsMultivalue() && !IsReadOnly()) {
+			if (GetProperty()->GetChild(index)) {
+				GetContainer()->Snapshot();
+				GetProperty()->RemoveChild(index);
+				GetDiagramAutoObject()->NotifyChange();
+				return TRUE;
+			}
+		}
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 LPDISPATCH CProMoPropertyAuto::GetItem(const VARIANT FAR& Item) 

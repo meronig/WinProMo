@@ -2105,6 +2105,36 @@ void CProMoEditor::SetTextAlignment(const unsigned int& alignment)
 	RedrawWindow();
 }
 
+void CProMoEditor::SetTextMultiline(const BOOL& multiline)
+/* ============================================================
+	Function :		CProMoEditor::SetTextMultiline()
+	Description :	Sets whether the text in the selected 
+					objects should be split into multiple lines.
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL& multiline	-	"TRUE" if the text 
+										should be split into
+										multiple lines
+
+   ============================================================*/
+{
+	GetDiagramEntityContainer()->Snapshot();
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			if (entity) {
+				entity->SetTextMultiline(multiline);
+			}
+		}
+	}
+	SetModified(TRUE);
+	RedrawWindow();
+}
+
+
 void CProMoEditor::SetLineColor(const COLORREF& color)
 /* ============================================================
 	Function :		CProMoEditor::SetLineColor
@@ -2734,6 +2764,42 @@ unsigned int CProMoEditor::GetTextAlignment() const
 	}
 
 	return alignment;
+}
+
+BOOL CProMoEditor::IsTextMultiline() const
+/* ============================================================
+	Function :		CProMoEditor::IsTextMultiline()
+	Description :	Returns if the text in the selected objects
+					is split into multiple lines
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the text is split
+									into multiple lines
+	Parameters :	none
+
+   ============================================================*/
+{
+	BOOL multiline = FALSE;
+	BOOL hasValue = FALSE;
+
+	CProMoEntityContainer* objs = static_cast<CProMoEntityContainer*>(GetDiagramEntityContainer());
+	for (int i = 0; i < GetObjectCount(); i++) {
+		CDiagramEntity* selObj = (CDiagramEntity*)objs->GetAt(i);
+		if (selObj && selObj->IsSelected()) {
+			IProMoEntity* entity = dynamic_cast<IProMoEntity*>(selObj);
+			BOOL currValue = entity->IsTextMultiline();
+			if (!hasValue) {
+				multiline = currValue;
+				hasValue = TRUE;
+			}
+			else if (multiline != currValue) {
+				// mixed state, return sentinel
+				return FALSE;
+			}
+		}
+	}
+
+	return multiline;
 }
 
 unsigned int CProMoEditor::GetBkMode() const

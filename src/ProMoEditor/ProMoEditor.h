@@ -44,6 +44,7 @@ public:
 	virtual void SetTextVerticalAlignment(const unsigned int& flag);
 	virtual void SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled);
 	virtual void SetTextAlignment(const unsigned int& alignment);
+	virtual void SetTextMultiline(const BOOL& multiline);
 	virtual void SetLineColor(const COLORREF& color);
 	virtual void SetLineWidth(const unsigned int& width);
 	virtual void SetLineStyle(const unsigned int& style);
@@ -64,6 +65,7 @@ public:
 	virtual unsigned int GetTextVerticalAlignment() const;
 	virtual BOOL HasTextAlignmentFlag(unsigned int flag) const;
 	virtual unsigned int GetTextAlignment() const;
+	virtual BOOL IsTextMultiline() const;
 	virtual COLORREF GetLineColor() const;
 	virtual unsigned int GetLineWidth() const;
 	virtual unsigned int GetLineStyle() const;

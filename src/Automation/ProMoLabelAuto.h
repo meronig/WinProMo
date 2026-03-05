@@ -86,10 +86,14 @@ protected:
 	afx_msg void SetTextVerticalAlignment(short nNewValue);
 	afx_msg LPDISPATCH GetProperty();
 	afx_msg void SetProperty(LPDISPATCH newValue);
-	afx_msg BSTR GetID();
-	afx_msg void SetID(LPCTSTR lpszNewValue);
+	afx_msg BSTR GetText();
+	afx_msg void SetText(LPCTSTR lpszNewValue);
+	afx_msg BSTR GetName();
+	afx_msg void SetName(LPCTSTR lpszNewValue);
 	afx_msg BOOL GetTextMultiLine();
 	afx_msg void SetTextMultiLine(BOOL bNewValue);
+	afx_msg short GetLockFlags();
+	afx_msg void SetLockFlags(short nNewValue);
 	afx_msg void Cut();
 	afx_msg void Copy();
 	afx_msg void Delete();

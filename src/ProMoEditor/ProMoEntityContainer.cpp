@@ -182,6 +182,32 @@ void CProMoEntityContainer::RemoveAt(int index)
 
 }
 
+
+void CProMoEntityContainer::Duplicate(CDiagramEntity* obj)
+/* ============================================================
+	Function :		CProMoEntityContainer::Duplicate
+	Description :	Duplicates the object and adds the new
+					one 10 pixels offset down and right.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CDiagramEntity* obj	-	The object to
+											duplicate.
+
+	Usage :			Call to create a copy of the selected
+					element.
+
+   ============================================================*/
+{
+	IProMoEntity* currElement = dynamic_cast<IProMoEntity*>(obj);
+	if (currElement) {
+		CloneEntity(currElement);
+	}
+	else {
+		CDiagramEntityContainer::Duplicate(obj);
+	}
+}
+
 void CProMoEntityContainer::ReplicateRelations(const CObArray& source, CObArray& destination) 
 /* ============================================================
 	Function :		CProMoEntityContainer::ReplicateRelations
@@ -617,6 +643,64 @@ CProMoBlockView* CProMoEntityContainer::GetTarget() const
 		}
 	}
 	return NULL;
+}
+
+CDiagramEntity* CProMoEntityContainer::CloneEntity(IProMoEntity* obj)
+/* ============================================================
+	Function :		CProMoEntityContainer::CloneEntity
+	Description :	Clones the selected object, as well as all
+					its views, its model, and associated labels.
+	Access :		Public
+
+	Return :		CDiagramEntity* obj	-	The main view
+											representing
+											the cloned object.
+	Parameters :	IProMoEntity* obj	-	The object to
+											duplicate.
+
+	Usage :			Call to create a copy of the selected
+					element.
+
+   ============================================================*/
+{
+
+	CObArray elements;
+	CObArray newElements;
+
+		
+	CProMoModel* model = obj->GetModel();
+	if (model) {
+		//get all views
+		model->GetViews(elements);
+		model->GetLabels(elements);
+
+		for (int i = 0; i < elements.GetSize(); i++) {
+			IProMoEntity* element = dynamic_cast<IProMoEntity*>(elements.GetAt(i));
+			ASSERT(element);
+			CDiagramEntity* newobj = dynamic_cast<CDiagramEntity*>(element)->Clone();
+			ASSERT(newobj);
+			newobj->SetRect(newobj->GetLeft() + 10, newobj->GetTop() + 10, newobj->GetRight() + 10, newobj->GetBottom() + 10);
+			Add(newobj);
+			newElements.Add(newobj);
+		}
+
+		ReplicateRelations(elements, newElements);
+
+		if (newElements.GetSize() > 0) {
+			return dynamic_cast<CDiagramEntity*>(dynamic_cast<IProMoEntity*>(newElements.GetAt(0))->GetModel()->GetMainView());
+		}
+	} else {
+		CDiagramEntity* element = dynamic_cast<CDiagramEntity*>(obj);
+		ASSERT(element);
+		CDiagramEntity* newobj = element->Clone();
+		ASSERT(newobj);
+		newobj->SetRect(newobj->GetLeft() + 10, newobj->GetTop() + 10, newobj->GetRight() + 10, newobj->GetBottom() + 10);
+		Add(newobj);
+		return newobj;
+	}
+
+	return NULL;
+
 }
 
 

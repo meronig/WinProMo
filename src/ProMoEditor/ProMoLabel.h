@@ -131,6 +131,7 @@ public:
 	virtual unsigned int GetLabelAnchorPoint() const;
 	virtual unsigned int GetViewAnchorPoint() const;
 	virtual unsigned int GetAnchorView() const;
+	virtual BOOL IsTextMultiline() const;
 	virtual BOOL IsVisible() const;
 	virtual void GetMargins(double& left, double& top, double& right, double& bottom) const;
 
@@ -150,6 +151,7 @@ public:
 	virtual BOOL SetLabelAnchorPoint(const unsigned int& position);
 	virtual BOOL SetViewAnchorPoint(const unsigned int& position);
 	virtual BOOL SetAnchorView(const unsigned int& position);
+	virtual BOOL SetTextMultiline(const BOOL& multiline);
 	virtual BOOL SetVisible(const BOOL& visible);
 	virtual void SetMargins(double left, double top, double right, double bottom);
 

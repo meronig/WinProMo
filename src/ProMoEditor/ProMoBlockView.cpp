@@ -517,6 +517,7 @@ void CProMoBlockView::ShowPopup(CPoint point, CWnd* parent)
 
 		menu.AppendMenu(MF_STRING, ID_EDIT_CUT, _T("Cut"));
 		menu.AppendMenu(MF_STRING, ID_EDIT_COPY, _T("Copy"));
+		menu.AppendMenu(MF_STRING, CMD_DUPLICATE, _T("Duplicate"));
 		menu.TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, parent);
 
 	}
@@ -2458,6 +2459,22 @@ unsigned int CProMoBlockView::GetTextAlignment() const
 	return alignment;
 }
 
+BOOL CProMoBlockView::IsTextMultiline() const
+/* ============================================================
+	Function :		CProMoBlockView::IsTextMultiline()
+	Description :	Returns whether the text in the labels is 
+					split into multiple lines
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the text is split into
+								multiple lines
+	Parameters :	none
+
+   ============================================================*/
+{
+	return HasTextAlignmentFlag(DT_WORDBREAK);
+}
+
 BOOL CProMoBlockView::IsVisible() const
 /* ============================================================
 	Function :		CProMoBlockView::IsVisible()
@@ -2974,6 +2991,43 @@ BOOL CProMoBlockView::SetTextAlignment(const unsigned int& alignment)
 				continue;
 			}
 			result &= label->SetTextAlignment(alignment);
+		}
+	}
+	return result;
+}
+
+BOOL CProMoBlockView::SetTextMultiline(const BOOL& multiline)
+/* ============================================================
+	Function :		CProMoBlockView::SetTextMultiline()
+	Description :	Sets whether the text in the labels should
+					be split into multiple lines
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if the
+												operation
+												succeeded
+	Parameters :	BOOL& multiline			-	"TRUE" if the
+												text in	the
+												label should
+												be split into
+												multiple lines
+
+   ============================================================*/
+{
+	BOOL result = TRUE;
+	if (IsLocked(LOCK_ALIGNMENT))
+		return FALSE;
+
+	if (m_blockModel) {
+		CObArray labels;
+		m_blockModel->GetLabels(labels);
+
+		for (int i = 0; i < labels.GetSize(); i++) {
+			CProMoLabel* label = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
+			if (!label || label->IsLocked(LOCK_ALIGNMENT)) {
+				continue;
+			}
+			result &= label->SetTextMultiline(multiline);
 		}
 	}
 	return result;

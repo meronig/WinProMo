@@ -101,6 +101,7 @@ public:
     virtual unsigned int GetTextVerticalAlignment() const;
     virtual BOOL HasTextAlignmentFlag(unsigned int flag) const;
     virtual unsigned int GetTextAlignment() const;
+    virtual BOOL IsTextMultiline() const;
     virtual BOOL IsVisible() const;
     //virtual void GetMargins(double& left, double& top, double& right, double& bottom) const;
 
@@ -117,6 +118,7 @@ public:
     virtual BOOL SetTextVerticalAlignment(const unsigned int& flag);
     virtual BOOL SetTextAlignmentFlag(const unsigned int& flag, const BOOL& enabled);
     virtual BOOL SetTextAlignment(const unsigned int& alignment);
+    virtual BOOL SetTextMultiline(const BOOL& multiline);
     virtual BOOL SetVisible(const BOOL& visible);
     //virtual void SetMargins(double left, double top, double right, double bottom);
 

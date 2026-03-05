@@ -594,12 +594,39 @@ CProMoProperty* CProMoProperty::AddChild()
 	return newChild;
 }
 
+void CProMoProperty::RemoveChild(const int& index)
+/* ============================================================
+	Function :		CProMoProperty::RemoveChild
+	Description :	Removes the child property having the 
+					specified index. Only applicable to 
+					composite and multi-value properties.
+	Access :		Public
+
+	Return :		void
+	Parameters :	int index		-	the index for the child
+										to be removed
+
+   ============================================================*/
+{
+	if (m_readOnly || !m_template) {
+		return; // cannot add child properties to read-only properties
+	}
+
+	if (m_childProperties.GetSize() < index) {
+		CProMoProperty* prop = (CProMoProperty*)m_childProperties.GetAt(index);
+		if (prop) {
+			delete prop;
+		}
+	}
+	m_childProperties.RemoveAt(index);
+}
+
 void CProMoProperty::ClearChildren()
 /* ============================================================
 	Function :		CProMoProperty::ClearChildren
 	Description :	Removes all child properties of the
 					current property. Has effect only
-					for multi-value properties.
+					for composite and multi-value properties.
 	Access :		Public
 
 	Return :		void
@@ -640,9 +667,9 @@ int CProMoProperty::GetChildrenCount() const
 CProMoProperty* CProMoProperty::GetChild(const int& index) const
 /* ============================================================
 	Function :		CProMoProperty::GetChild
-	Description :	Returns the children having the specified
-					index. Only applicable to composite and
-					multi-value properties
+	Description :	Returns the child property having the 
+					specified index. Only applicable to 
+					composite and multi-value properties
 	Access :		Public
 
 	Return :		CProMoProperty*	-	the child having the

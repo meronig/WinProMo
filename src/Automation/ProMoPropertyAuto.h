@@ -58,8 +58,8 @@ protected:
 	afx_msg LPDISPATCH Label();
 	afx_msg BOOL IsComposite();
 	afx_msg BOOL IsMultivalue();
-	afx_msg BOOL Add();
-	afx_msg BOOL Remove();
+	afx_msg LPDISPATCH Add();
+	afx_msg BOOL Remove(short index);
 	afx_msg short Count();
 	afx_msg LPDISPATCH GetItem(const VARIANT FAR& Item);
 	afx_msg void SetItem(const VARIANT FAR& Item, LPDISPATCH newValue);

@@ -75,6 +75,7 @@ public:
 	virtual CProMoProperty* Clone();
 	
 	virtual CProMoProperty* AddChild();
+	virtual void RemoveChild(const int& index);
 	virtual void ClearChildren();
 	virtual int GetChildrenCount() const;
 	virtual CProMoProperty* GetChild(const int& index) const;

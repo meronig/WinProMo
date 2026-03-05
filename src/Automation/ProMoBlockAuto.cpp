@@ -176,7 +176,6 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoBlockAuto, CProMoElementAuto)
 	//{{AFX_DISPATCH_MAP(CProMoBlockAuto)
 	//Common to CProMoElementAuto
-	DISP_PROPERTY_EX(CProMoElementAuto, "LockAspectRatio", GetLockAspectRatio, SetLockAspectRatio, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineColor", GetLineColor, SetLineColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineWidth", GetLineWidth, SetLineWidth, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineStyle", GetLineStyle, SetLineStyle, VT_I2)
@@ -189,13 +188,14 @@ BEGIN_DISPATCH_MAP(CProMoBlockAuto, CProMoElementAuto)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "BkMode", GetBkMode, SetBkMode, VT_I2)
-	DISP_PROPERTY_EX(CProMoElementAuto, "TextAlignment", GetTextAlignment, SetTextAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "TextMultiLine", GetTextMultiLine, SetTextMultiLine, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "ID", GetName, SetName, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Labels", GetLabels, SetLabels, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Properties", GetProperties, SetProperties, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Type", GetType, SetType, VT_BSTR)
+	DISP_PROPERTY_EX(CProMoElementAuto, "LockFlags", GetLockFlags, SetLockFlags, VT_I2)
 	//Specific to CProMoBlockAuto
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillColor", GetFillColor, SetFillColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillPattern", GetFillPattern, SetFillPattern, VT_BOOL)
@@ -253,8 +253,26 @@ OLE_COLOR CProMoBlockAuto::GetFillColor()
 
 void CProMoBlockAuto::SetFillColor(OLE_COLOR nNewValue) 
 {
-	// TODO: Add your property handler here
+	COLORREF color;
+	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
+	if (FAILED(hr))
+		AfxThrowOleException(hr);
+	CObArray views;
+	GetViews(views);
 
+	if (HasLockFlag(LOCK_FILLCOLOR)) {
+		return;
+	}
+
+	GetContainer()->Snapshot();
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(views.GetAt(i));
+		if (view) {
+			view->SetFillColor(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 }
 
 BOOL CProMoBlockAuto::GetFillPattern() 
@@ -268,8 +286,22 @@ BOOL CProMoBlockAuto::GetFillPattern()
 
 void CProMoBlockAuto::SetFillPattern(BOOL bNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
 
+	if (HasLockFlag(LOCK_FILLSTYLE)) {
+		return;
+	}
+
+	GetContainer()->Snapshot();
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(views.GetAt(i));
+		if (view) {
+			view->SetFillPattern(bNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 }
 
 short CProMoBlockAuto::GetFillStyle() 
@@ -283,8 +315,22 @@ short CProMoBlockAuto::GetFillStyle()
 
 void CProMoBlockAuto::SetFillStyle(short nNewValue) 
 {
-	// TODO: Add your property handler here
+	CObArray views;
+	GetViews(views);
 
+	if (HasLockFlag(LOCK_FILLSTYLE)) {
+		return;
+	}
+
+	GetContainer()->Snapshot();
+
+	for (int i = 0; i < views.GetSize(); i++) {
+		CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(views.GetAt(i));
+		if (view) {
+			view->SetFillStyle(nNewValue);
+		}
+	}
+	GetDiagramAutoObject()->NotifyChange();
 }
 
 LPDISPATCH CProMoBlockAuto::GetParent() 
@@ -305,7 +351,7 @@ LPDISPATCH CProMoBlockAuto::GetParent()
 
 void CProMoBlockAuto::SetParent(LPDISPATCH newValue) 
 {
-	// TODO: Add your property handler here
+	SetNotSupported();
 
 }
 

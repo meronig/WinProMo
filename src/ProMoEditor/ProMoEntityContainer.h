@@ -26,6 +26,8 @@ public:
 	virtual void SetTarget(CProMoBlockView* obj, unsigned int attachment);
 	virtual CProMoBlockView* GetTarget() const;
 
+	virtual CDiagramEntity* CloneEntity(IProMoEntity* obj);
+
 	virtual void ReplicateRelations(const CObArray& source, CObArray& destination);
 	virtual void Load(const CStringArray& stra);
 	virtual void Save(CStringArray& stra);
@@ -69,6 +71,8 @@ public:
 public:
 	int				GetSelectCount();
 	virtual void	RemoveAt(int index);
+
+	virtual void	Duplicate(CDiagramEntity* obj);
 
 	virtual CString GetString() const;
 	virtual BOOL FromString(const CString& str);
