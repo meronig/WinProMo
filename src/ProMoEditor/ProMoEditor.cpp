@@ -1245,8 +1245,6 @@ void CProMoEditor::SplitSelectedEdge()
 			//split the edge into two
 			CProMoEdgeView* newEdge = edge->Split();
 			edge->Select(FALSE);
-			//add new edge
-			AddObject(newEdge);
 			//switch to resizing the old edge
 			SetInteractMode(MODE_RESIZING, DEHT_BOTTOMRIGHT);
 			

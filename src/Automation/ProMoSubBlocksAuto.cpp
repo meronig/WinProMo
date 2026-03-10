@@ -20,6 +20,7 @@
 #include "ProMoSubBlocksAuto.h"
 #include "../ProMoEditor/ProMoBlockModel.h"
 #include "../FileUtils/SafeArrayWrapper.h"
+#include "ProMoBlockAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -94,29 +95,13 @@ short CProMoSubBlocksAuto::Count()
 	return 0;
 }
 
-LPDISPATCH CProMoSubBlocksAuto::GetItem(const VARIANT FAR& Item) 
+LPDISPATCH CProMoSubBlocksAuto::GetItem(const VARIANT FAR& item) 
 {
-	CVariantWrapper wrapper(Item);
-
 	if (GetBlockModel()) {
 		CObArray subBlocks;
-		CProMoBlockModel* pModel = NULL;
 		GetBlockModel()->GetSubBlocks(subBlocks);
-		if (wrapper.GetType() != VT_BSTR) {
-			if (wrapper.GetInt() >= 0 && wrapper.GetInt() < subBlocks.GetSize()) {
-				pModel = dynamic_cast<CProMoBlockModel*>(subBlocks.GetAt(wrapper.GetInt()));
-			}
-		}
-		else {
-			for (int i = 0; i < subBlocks.GetSize(); i++) {
-				pModel = dynamic_cast<CProMoBlockModel*>(subBlocks.GetAt(i));
-				if (pModel && pModel->GetName() == wrapper.GetString()) {
-					break;
-				}
-				pModel = NULL;
-			}
-		}
-
+		CProMoBlockModel* pModel = dynamic_cast<CProMoBlockModel*>(FindModel(item, subBlocks));
+		
 		if (pModel) {
 			CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(pModel->GetAutomationObject());
 			if (pElementAuto) {
@@ -135,18 +120,60 @@ void CProMoSubBlocksAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue)
 
 }
 
-BOOL CProMoSubBlocksAuto::Add(LPDISPATCH Item) 
+BOOL CProMoSubBlocksAuto::Add(LPDISPATCH item) 
 {
-	// TODO: Add your dispatch handler code here
-
-	return TRUE;
+	if (GetBlockModel()) {
+		if (item) {
+			CProMoBlockModel* pBlockModel = CProMoBlockAuto::GetModelFromIDispatch(item);
+			CProMoBlockView* pBlockView = pBlockModel->GetMainBlockView();
+			// a valid block is passed
+			if (pBlockModel) {
+				// check if the parent block has changed
+				if (GetBlockModel() != pBlockModel->GetParentBlock() || !pBlockModel->IsSubBlock()) {
+					// check if the block can be nested
+					if (pBlockModel->CanBeSubBlockOf(GetBlockModel())) {
+						GetContainer()->Snapshot();
+						// disconnect from old parent block (if any)
+						pBlockView->UnlinkFromParent();
+						CProMoBlockView* pParentView = GetBlockModel()->GetMainBlockView();
+						CRect parentBlockRect = pParentView->GetRect();
+						CRect blockRect = pBlockView->GetRect();
+						if (!parentBlockRect.PtInRect(blockRect.TopLeft())) {
+							// move child block at the top-left of the parent
+							//pBlockView->SetRect(parentBlockRect.left + 5, parentBlockRect.top + 5, parentBlockRect.left + 5 + blockRect.Width(), parentBlockRect.top + 5 + blockRect.Height());
+						}
+						pParentView->LinkSubBlock(pBlockView);
+						pParentView->AutoResize();
+						GetDiagramAutoObject()->NotifyChange();
+						return TRUE;
+					}
+				}
+			}
+		}
+	}
+	
+	return FALSE;
 }
 
-BOOL CProMoSubBlocksAuto::Remove(const VARIANT FAR& Item) 
+BOOL CProMoSubBlocksAuto::Remove(const VARIANT FAR& item) 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetBlockModel()) {
+		CObArray subBlocks;
+		GetBlockModel()->GetSubBlocks(subBlocks);
+		CProMoBlockModel* pModel = dynamic_cast<CProMoBlockModel*>(FindModel(item, subBlocks));
+		
+		if (pModel) {
+			CProMoBlockView* pView = pModel->GetMainBlockView();
+			if (pView) {
+				GetContainer()->Snapshot();
+				pView->UnlinkFromParent();
+				GetDiagramAutoObject()->NotifyChange();
+				return TRUE;
+			}
+		}
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 VARIANT CProMoSubBlocksAuto::GetIDs()

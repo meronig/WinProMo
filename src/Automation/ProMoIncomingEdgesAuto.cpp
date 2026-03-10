@@ -20,6 +20,7 @@
 #include "ProMoIncomingEdgesAuto.h"
 #include "../ProMoEditor/ProMoEdgeModel.h"
 #include "../FileUtils/SafeArrayWrapper.h"
+#include "ProMoEdgeAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -95,29 +96,13 @@ short CProMoIncomingEdgesAuto::Count()
 	return 0;
 }
 
-LPDISPATCH CProMoIncomingEdgesAuto::GetItem(const VARIANT FAR& Item) 
+LPDISPATCH CProMoIncomingEdgesAuto::GetItem(const VARIANT FAR& item) 
 {
-	CVariantWrapper wrapper(Item);
-
 	if (GetBlockModel()) {
 		CObArray incomingEdges;
-		CProMoEdgeModel* pModel = NULL;
 		GetBlockModel()->GetIncomingEdges(incomingEdges);
-		if (wrapper.GetType() != VT_BSTR) {
-			if (wrapper.GetInt() >= 0 && wrapper.GetInt() < incomingEdges.GetSize()) {
-				pModel = dynamic_cast<CProMoEdgeModel*>(incomingEdges.GetAt(wrapper.GetInt()));
-			}
-		}
-		else {
-			for (int i = 0; i < incomingEdges.GetSize(); i++) {
-				pModel = dynamic_cast<CProMoEdgeModel*>(incomingEdges.GetAt(i));
-				if (pModel && pModel->GetName() == wrapper.GetString()) {
-					break;
-				}
-				pModel = NULL;
-			}
-		}
-
+		CProMoEdgeModel* pModel = dynamic_cast<CProMoEdgeModel*>(FindModel(item, incomingEdges));
+		
 		if (pModel) {
 			CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(pModel->GetAutomationObject());
 			if (pElementAuto) {
@@ -136,18 +121,38 @@ void CProMoIncomingEdgesAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newVal
 
 }
 
-BOOL CProMoIncomingEdgesAuto::Add(LPDISPATCH Item) 
+BOOL CProMoIncomingEdgesAuto::Add(LPDISPATCH item) 
 {
-	// TODO: Add your dispatch handler code here
-
-	return TRUE;
+	if (GetBlockModel()) {
+		if (item) {
+			CProMoEdgeAuto* pEdgeAuto = CProMoEdgeAuto::FromIDispatch(item);
+			if (pEdgeAuto) {
+				return pEdgeAuto->SetSourceBlock(GetBlockModel());
+			}
+		}
+	}
+	
+	return FALSE;
 }
 
-BOOL CProMoIncomingEdgesAuto::Remove(const VARIANT FAR& Item) 
+BOOL CProMoIncomingEdgesAuto::Remove(const VARIANT FAR& item) 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetBlockModel()) {
+		CObArray incomingEdges;
+		GetBlockModel()->GetIncomingEdges(incomingEdges);
+		CProMoEdgeModel* pModel = dynamic_cast<CProMoEdgeModel*>(FindModel(item, incomingEdges));
+		if (pModel) {
+			CProMoEdgeView* pView = dynamic_cast<CProMoEdgeView*>(pModel->GetLastSegment());
+			if (pView) {
+				GetContainer()->Snapshot();
+				pView->SetDestination(NULL);
+				GetDiagramAutoObject()->NotifyChange();
+				return TRUE;
+			}
+		}
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 VARIANT CProMoIncomingEdgesAuto::GetIDs() 

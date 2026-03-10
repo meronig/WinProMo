@@ -938,8 +938,8 @@ CProMoEdgeView* CProMoEdgeView::Split()
 		if (newEdge) {
 			//compute the length and position of the new edge
 			CRect newEdgeRect(GetRect());
-			newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);;
-			newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);;
+			newEdgeRect.top = newEdgeRect.bottom - (newEdgeRect.Height() / 2);
+			newEdgeRect.left = newEdgeRect.right - (newEdgeRect.Width() / 2);
 			newEdge->Select(FALSE);
 			CProMoBlockModel* sourceBlockModel = m_edgeModel->GetSource();
 			CProMoBlockModel* destBlockModel = m_edgeModel->GetDestination();
@@ -955,6 +955,8 @@ CProMoEdgeView* CProMoEdgeView::Split()
 			newEdge->SetRect(newEdgeRect);
 			//clear duplicated properties
 			newEdge->SetTitle(_T(""));
+			//add new edge to parent
+			GetParent()->Add(newEdge);
 			return newEdge;
 		}
 	}

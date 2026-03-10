@@ -98,6 +98,23 @@ CProMoEntityContainer* CProMoDiagramChildAuto::GetContainer()
 	return NULL;
 }
 
+CProMoModel* CProMoDiagramChildAuto::FindModel(const VARIANT& Item, const CObArray& collection)
+{
+	CVariantWrapper wrapper(Item);
+	CProMoModel* pModel = NULL;
+
+	if (wrapper.GetType() != VT_BSTR) {
+		if (wrapper.GetInt() >= 0 && wrapper.GetInt() < collection.GetSize()) {
+			pModel = dynamic_cast<CProMoModel*>(collection.GetAt(wrapper.GetInt()));
+		}
+	}
+	else {
+		pModel = dynamic_cast<CProMoModel*>(CProMoEntityContainer::GetNamedModel(collection, wrapper.GetString()));
+	}
+
+	return pModel;
+}
+
 CProMoDiagramChildAuto::~CProMoDiagramChildAuto()
 {
 }

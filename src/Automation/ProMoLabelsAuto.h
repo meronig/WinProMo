@@ -30,6 +30,7 @@ public:
 public:
 protected:
 	virtual void GetLabels(CObArray& labels);
+	static CProMoLabel* FindLabel(const VARIANT FAR& Item, const CObArray& collection);
 
 // Overrides
 public:

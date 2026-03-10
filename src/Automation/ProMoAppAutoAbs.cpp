@@ -96,6 +96,20 @@ void CProMoAppAutoAbs::ReleaseDiagramsAutoObject()
 	}
 }
 
+BOOL CProMoAppAutoAbs::CanCreateDiagram(const CString& diagramType)
+{
+	CStringArray types;
+	GetRegisteredDiagrams(types);
+
+	for (int i = 0; i < types.GetSize(); i++) {
+		if (types.GetAt(i) == diagramType) {
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 BEGIN_MESSAGE_MAP(CProMoAppAutoAbs, CCmdTarget)
 	//{{AFX_MSG_MAP(CProMoAppAutoAbs)
 		// NOTE - the ClassWizard will add and remove mapping macros here.

@@ -74,6 +74,29 @@ void CProMoLabelsAuto::GetLabels(CObArray& labels)
 	}
 }
 
+CProMoLabel* CProMoLabelsAuto::FindLabel(const VARIANT& Item, const CObArray& collection)
+{
+	CVariantWrapper wrapper(Item);
+	CProMoLabel* pModel = NULL;
+
+	if (wrapper.GetType() != VT_BSTR) {
+		if (wrapper.GetInt() >= 0 && wrapper.GetInt() < collection.GetSize()) {
+			pModel = dynamic_cast<CProMoLabel*>(collection.GetAt(wrapper.GetInt()));
+		}
+	}
+	else {
+		for (int i = 0; i < collection.GetSize(); i++) {
+			pModel = dynamic_cast<CProMoLabel*>(collection.GetAt(i));
+			if (pModel && pModel->GetName() == wrapper.GetString()) {
+				break;
+			}
+			pModel = NULL;
+		}
+	}
+
+	return pModel;
+}
+
 BEGIN_MESSAGE_MAP(CProMoLabelsAuto, CProMoElementChildAuto)
 	//{{AFX_MSG_MAP(CProMoLabelsAuto)
 		// NOTE - the ClassWizard will add and remove mapping macros here.
@@ -123,7 +146,7 @@ LPDISPATCH CProMoLabelsAuto::Add()
 		CProMoEntityContainer* pContainer = GetContainer();
 		if (pContainer) {
 			CProMoLabel* element = new CProMoLabel;
-			element->SetRect(0, 0, 1, 1);
+			element->SetRect(0, 0, 10, 10);
 			GetContainer()->Snapshot();
 			pContainer->Add(element);
 			GetDiagramAutoObject()->NotifyChange();
@@ -145,35 +168,26 @@ short CProMoLabelsAuto::Count()
 	return labels.GetSize();
 }
 
-BOOL CProMoLabelsAuto::Remove(const VARIANT FAR& Item) 
+BOOL CProMoLabelsAuto::Remove(const VARIANT FAR& item) 
 {
-	// TODO: Add your dispatch handler code here
-
-	return TRUE;
+	CObArray labels;
+	GetLabels(labels);
+	CProMoLabel* pLabel = FindLabel(item, labels);
+	if (pLabel) {
+		GetContainer()->Snapshot();
+		GetContainer()->Remove(pLabel);
+		GetDiagramAutoObject()->NotifyChange();
+		return TRUE;
+	}
+	
+	return FALSE;
 }
 
-LPDISPATCH CProMoLabelsAuto::GetItem(const VARIANT FAR& Item) 
+LPDISPATCH CProMoLabelsAuto::GetItem(const VARIANT FAR& item) 
 {
-	CVariantWrapper wrapper(Item);
-	
 	CObArray labels;
-	CProMoLabel* pLabel = NULL;
 	GetLabels(labels);
-
-	if (wrapper.GetType() != VT_BSTR) {
-		if (wrapper.GetInt() >= 0 && wrapper.GetInt() < labels.GetSize()) {
-			pLabel = dynamic_cast<CProMoLabel*>(labels.GetAt(wrapper.GetInt()));
-		}
-	}
-	else {
-		for (int i = 0; i < labels.GetSize(); i++) {
-			pLabel = dynamic_cast<CProMoLabel*>(labels.GetAt(i));
-			if (pLabel && pLabel->GetName() == wrapper.GetString()) {
-				break;
-			}
-			pLabel = NULL;
-		}
-	}
+	CProMoLabel* pLabel = FindLabel(item, labels);
 
 	if (pLabel) {
 		CProMoLabelAuto* pElementAuto = dynamic_cast<CProMoLabelAuto*>(pLabel->GetAutomationObject());

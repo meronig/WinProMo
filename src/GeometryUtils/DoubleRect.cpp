@@ -143,6 +143,19 @@ double CDoubleRect::Ratio() const
 	return Height() / Width();
 }
 
+CDoublePoint CDoubleRect::CenterPoint() const
+/* ============================================================
+	Function :		CDoubleRect::CenterPoint
+	Description :	Returns the center of the rectangle
+
+	Return :		CDoublePoint	-	Center of the rectangle
+	Parameters :	none
+
+   ============================================================*/
+{
+	return CDoublePoint(left + (right - left) / 2, top + (bottom - top) / 2);
+}
+
 CRect CDoubleRect::ToCRect() const
 /* ============================================================
 	Function :		CDoubleRect::ToCRect

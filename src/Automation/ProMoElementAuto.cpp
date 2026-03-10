@@ -67,6 +67,14 @@ IProMoView* CProMoElementAuto::GetMainView()
 	return NULL;
 }
 
+void CProMoElementAuto::GetAttachedLabels(CObArray& labelList)
+{
+	labelList.RemoveAll();
+	if (GetModel()) {
+		GetModel()->GetLabels(labelList);
+	}
+}
+
 CProMoElementAuto::~CProMoElementAuto()
 {
 }
@@ -117,6 +125,28 @@ void CProMoElementAuto::ReleasePropertiesAutoObject()
 	}
 }
 
+void CProMoElementAuto::DeleteViewsAndLabels()
+{
+	CObArray elements;
+	CObArray labels;
+	GetViews(elements);
+	GetAttachedLabels(labels);
+	elements.Append(labels);
+
+	if (GetContainer() && GetModel()) {
+
+		GetContainer()->Snapshot();
+
+		for (int i = elements.GetSize() - 1; i >= 0; --i) {
+			CDiagramEntity* element = dynamic_cast<CDiagramEntity*>(elements.GetAt(i));
+			GetContainer()->Remove(element);
+		}
+
+		GetDiagramAutoObject()->NotifyChange();
+
+	}
+}
+
 BOOL CProMoElementAuto::HasLockFlag(unsigned int lockFlag)
 {
 	CObArray views;
@@ -132,6 +162,22 @@ BOOL CProMoElementAuto::HasLockFlag(unsigned int lockFlag)
 		}
 	}
 	return TRUE;
+}
+
+void CProMoElementAuto::Select()
+{
+	GetContainer()->UnselectAll();
+	CObArray elements;
+	GetViews(elements);
+	CObArray labels;
+	GetAttachedLabels(labels);
+	elements.Append(labels);
+	for (int i = 0; i < elements.GetSize(); i++) {
+		CDiagramEntity* view = dynamic_cast<CDiagramEntity*>(elements.GetAt(i));
+		if (view) {
+			view->Select(TRUE);
+		}
+	}
 }
 
 void CProMoElementAuto::OnFinalRelease()
@@ -164,36 +210,33 @@ END_INTERFACE_MAP()
 
 void CProMoElementAuto::Copy() 
 {
-	// TODO: Add your dispatch handler code here
-
+	if (GetModel()) {
+		Select();
+		GetContainer()->CopyAllSelected();
+	}
 }
 
 void CProMoElementAuto::Cut() 
 {
-	// TODO: Add your dispatch handler code here
-
+	if (GetModel()) {
+		GetContainer()->Snapshot();
+		Copy();
+		GetContainer()->RemoveAllSelected();
+		GetDiagramAutoObject()->NotifyChange();
+	}
 }
 
 void CProMoElementAuto::Delete() 
 {
-	CObArray views;
-	GetViews(views);
-
-	GetContainer()->Snapshot();
-	
-	if (GetContainer()) {
-		for (int i = views.GetSize() - 1; i >= 0; --i) {
-			CDiagramEntity* view = dynamic_cast<CDiagramEntity*>(views.GetAt(i));
-			GetContainer()->Remove(view);
-		}
-	}
-
-	GetDiagramAutoObject()->NotifyChange();
-
+	DeleteViewsAndLabels();
 }
 
 LPDISPATCH CProMoElementAuto::Duplicate() 
 {
+	if (!GetModel()) {
+		return NULL;
+	}
+
 	GetContainer()->Snapshot();
 	IProMoEntity* view = dynamic_cast<IProMoEntity*>(GetMainView());
 	IProMoEntity* newView = dynamic_cast<IProMoEntity*>(GetContainer()->CloneEntity(view));
@@ -230,7 +273,7 @@ void CProMoElementAuto::SetLineColor(OLE_COLOR nNewValue)
 	CObArray views;
 	GetViews(views);
 
-	if (HasLockFlag(LOCK_LINECOLOR)) {
+	if (HasLockFlag(LOCK_LINECOLOR) || !GetModel()) {
 		return;
 	}
 	
@@ -261,7 +304,7 @@ void CProMoElementAuto::SetLineWidth(short nNewValue)
 	CObArray views;
 	GetViews(views);
 
-	if (HasLockFlag(LOCK_LINEWIDTH)) {
+	if (HasLockFlag(LOCK_LINEWIDTH) || !GetModel()) {
 		return;
 	}
 
@@ -291,7 +334,7 @@ void CProMoElementAuto::SetLineStyle(short nNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_LINESTYLE)) {
+	if (HasLockFlag(LOCK_LINESTYLE) || !GetModel()) {
 		return;
 	}
 
@@ -323,7 +366,7 @@ void CProMoElementAuto::SetFontName(LPCTSTR lpszNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_FONTNAME)) {
+	if (HasLockFlag(LOCK_FONTNAME) || !GetModel()) {
 		return;
 	}
 
@@ -353,7 +396,7 @@ void CProMoElementAuto::SetFontSize(short nNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_FONTSIZE)) {
+	if (HasLockFlag(LOCK_FONTSIZE) || !GetModel()) {
 		return;
 	}
 
@@ -383,7 +426,7 @@ void CProMoElementAuto::SetFontWeight(short nNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_FONTWEIGHT)) {
+	if (HasLockFlag(LOCK_FONTWEIGHT) || !GetModel()) {
 		return;
 	}
 
@@ -413,7 +456,7 @@ void CProMoElementAuto::SetFontItalic(BOOL bNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_FONTITALIC)) {
+	if (HasLockFlag(LOCK_FONTITALIC) || !GetModel()) {
 		return;
 	}
 
@@ -443,7 +486,7 @@ void CProMoElementAuto::SetFontUnderline(BOOL bNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_FONTUNDERLINE)) {
+	if (HasLockFlag(LOCK_FONTUNDERLINE) || !GetModel()) {
 		return;
 	}
 
@@ -473,7 +516,7 @@ void CProMoElementAuto::SetFontStrikeOut(BOOL bNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_FONTSTRIKEOUT)) {
+	if (HasLockFlag(LOCK_FONTSTRIKEOUT) || !GetModel()) {
 		return;
 	}
 
@@ -508,7 +551,7 @@ void CProMoElementAuto::SetTextColor(OLE_COLOR nNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_TEXTCOLOR)) {
+	if (HasLockFlag(LOCK_TEXTCOLOR) || !GetModel()) {
 		return;
 	}
 
@@ -541,7 +584,7 @@ void CProMoElementAuto::SetBkColor(OLE_COLOR nNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_BKCOLOR)) {
+	if (HasLockFlag(LOCK_BKCOLOR) || !GetModel()) {
 		return;
 	}
 
@@ -571,7 +614,7 @@ void CProMoElementAuto::SetBkMode(short nNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_BKMODE)) {
+	if (HasLockFlag(LOCK_BKMODE) || !GetModel()) {
 		return;
 	}
 
@@ -601,7 +644,7 @@ void CProMoElementAuto::SetTextMultiLine(BOOL bNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_ALIGNMENT)) {
+	if (HasLockFlag(LOCK_ALIGNMENT) || !GetModel()) {
 		return;
 	}
 
@@ -630,7 +673,7 @@ void CProMoElementAuto::SetTextHorizontalAlignment(short nNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_ALIGNMENT)) {
+	if (HasLockFlag(LOCK_ALIGNMENT) || !GetModel()) {
 		return;
 	}
 
@@ -658,7 +701,7 @@ void CProMoElementAuto::SetTextVerticalAlignment(short nNewValue)
 	CObArray views;
 	GetViews(views);
 	
-	if (HasLockFlag(LOCK_ALIGNMENT)) {
+	if (HasLockFlag(LOCK_ALIGNMENT) || !GetModel()) {
 		return;
 	}
 

@@ -29,11 +29,12 @@ class AFX_EXT_CLASS CProMoAppAutoAbs : public CCmdTarget
 public:
 	virtual CProMoDiagramsAutoAbs* GetDiagramsAutoObject();
 	virtual void ReleaseDiagramsAutoObject();
-
+	virtual BOOL CanCreateDiagram(const CString& diagramType);
+	
 protected:
-	virtual void GetRegisteredDiagrams(CStringArray& diagramTypes) = 0;
 	virtual CProMoDiagramsAutoAbs* CreateDiagramsAutoObject() = 0;
 	virtual CProMoDiagramAutoAbs* GetActiveDiagram() = 0;
+	virtual void GetRegisteredDiagrams(CStringArray& diagramTypes) = 0;
 
 
 	// Overrides

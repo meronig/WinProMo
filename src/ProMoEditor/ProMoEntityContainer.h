@@ -34,7 +34,7 @@ public:
 	virtual void SaveObjects(CStringArray& stra);
 
 	virtual CDiagramEntity* GetNamedView(const CString& name) const;
-	virtual CProMoModel* GetNamedModel(const CObArray& array, const CString& name) const;
+	static CProMoModel* GetNamedModel(const CObArray& array, const CString& name);
 
 	virtual void GetModels(CObArray& models) const;
 	virtual void GetLabels(CObArray& labels, BOOL ifDetached) const;

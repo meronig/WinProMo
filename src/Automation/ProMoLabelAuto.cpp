@@ -476,25 +476,48 @@ void CProMoLabelAuto::SetTextVerticalAlignment(short nNewValue)
 
 void CProMoLabelAuto::Cut() 
 {
-	// TODO: Add your dispatch handler code here
-
+	if (GetLabel()) {
+		GetContainer()->Snapshot();
+		Copy();
+		GetDiagramAutoObject()->NotifyChange();
+	}
 }
 
 void CProMoLabelAuto::Copy() 
 {
-	// TODO: Add your dispatch handler code here
-
+	if (GetLabel()) {
+		GetContainer()->UnselectAll();
+		GetLabel()->Select(TRUE);
+		GetContainer()->CopyAllSelected();
+	}
 }
 
 void CProMoLabelAuto::Delete() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetLabel() && GetContainer()) {
+		GetContainer()->Snapshot();
+		GetContainer()->Remove(GetLabel());
+		GetDiagramAutoObject()->NotifyChange();
+	}
 
 }
 
 LPDISPATCH CProMoLabelAuto::Duplicate() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetLabel()) {
+
+		GetContainer()->Snapshot();
+		IProMoEntity* newView = dynamic_cast<IProMoEntity*>(GetContainer()->CloneEntity(GetLabel()));
+		GetDiagramAutoObject()->NotifyChange();
+
+		if (newView) {
+			CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(newView->GetAutomationObject());
+			if (pElementAuto) {
+				pElementAuto->SetDiagramAutoObject(GetDiagramAutoObject());
+				return pElementAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }

@@ -31,6 +31,9 @@ public:
 	virtual void SetDiagramAutoObject(CProMoDiagramAutoAbs* pAppAuto);
 	
 	virtual void ThrowIfNoDiagramAutoObject() const;
+
+protected:
+	static CProMoModel* FindModel(const VARIANT FAR& Item, const CObArray& collection);
 	
 	// Overrides
 	// ClassWizard generated virtual function overrides

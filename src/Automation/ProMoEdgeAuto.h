@@ -35,6 +35,12 @@ public:
 	virtual CProMoEdgeSegmentsAuto* GetSegmentsAutoObject();
 	virtual void ReleaseSegmentsAutoObject();
 
+	virtual BOOL SetSourceBlock(CProMoBlockModel* src);
+	virtual BOOL SetDestinationBlock(CProMoBlockModel* src);
+
+	static CProMoEdgeAuto* FromIDispatch(LPDISPATCH obj);
+	static CProMoEdgeModel* GetModelFromIDispatch(LPDISPATCH obj);
+
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CProMoEdgeAuto)

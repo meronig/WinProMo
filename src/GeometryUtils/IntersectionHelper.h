@@ -1,7 +1,15 @@
-#include "DoublePoint.h"
-#include "DoubleRect.h"
+/* ==========================================================================
+
+	Copyright © 2025 Technical University of Denmark
+
+	Author :		Giovanni Meroni
+
+   ========================================================================*/
 #ifndef _INTERSECTIONHELPER_H_
 #define _INTERSECTIONHELPER_H_
+
+#include "DoublePoint.h"
+#include "DoubleRect.h"
 
 class AFX_EXT_CLASS CIntersectionHelper
 {

@@ -51,6 +51,8 @@ public:
 	virtual CProMoOutgoingEdgesAuto* GetOutgoingEdgesAutoObject();
 	virtual void ReleaseOutgoingEdgesAutoObject();
 
+	static CProMoBlockAuto* FromIDispatch(LPDISPATCH obj);
+	static CProMoBlockModel* GetModelFromIDispatch(LPDISPATCH obj);
 
 // Overrides
 	// ClassWizard generated virtual function overrides

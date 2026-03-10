@@ -95,23 +95,13 @@ short CProMoElementsAuto::Count()
 	return 0;
 }
 
-LPDISPATCH CProMoElementsAuto::GetItem(const VARIANT FAR& Item) 
+LPDISPATCH CProMoElementsAuto::GetItem(const VARIANT FAR& item) 
 {
-	CVariantWrapper wrapper(Item);
-
 	if (GetContainer()) {
 		CObArray models;
-		CProMoModel* pModel = NULL;
 		GetContainer()->GetModels(models);
-		if (wrapper.GetType() != VT_BSTR) {
-			if (wrapper.GetInt() >= 0 && wrapper.GetInt() < models.GetSize()) {
-				pModel = dynamic_cast<CProMoModel*>(models.GetAt(wrapper.GetInt()));
-			}
-		}
-		else {
-			pModel = dynamic_cast<CProMoModel*>(GetContainer()->GetNamedModel(models, wrapper.GetString()));
-		}
-
+		CProMoModel* pModel = FindModel(item, models);
+	
 		if (pModel) {
 			CProMoElementAuto* pElementAuto = GetElementAutoObject(pModel);
 			if (pElementAuto) {
@@ -142,7 +132,7 @@ LPDISPATCH CProMoElementsAuto::Add(const VARIANT FAR& elementType)
 		if (pFactory) {
 			CDiagramEntity* element = pFactory->CreateNewEntity(strType);
 			if (element) {
-				element->SetRect(0, 0, 1, 1); // force minimum size so that element will be visible when added to diagram
+				element->SetRect(10, 10, 30, 30); // force minimum size so that element will be visible when added to diagram
 				IProMoEntity* promoEntity = dynamic_cast<IProMoEntity*>(element);
 				if (promoEntity) {
 					GetContainer()->Snapshot();
@@ -173,11 +163,20 @@ LPDISPATCH CProMoElementsAuto::Add(const VARIANT FAR& elementType)
 	return NULL;
 }
 
-BOOL CProMoElementsAuto::Remove(const VARIANT FAR& Item) 
+BOOL CProMoElementsAuto::Remove(const VARIANT FAR& item) 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetContainer()) {
+		CObArray models;
+		GetContainer()->GetModels(models);
+		CProMoModel* pModel = FindModel(item, models);
+		if (pModel) {
+			CProMoElementAuto* pElementAuto = GetElementAutoObject(pModel);
+			pElementAuto->DeleteViewsAndLabels();
+			return TRUE;
+		}
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 VARIANT CProMoElementsAuto::GetIDs() 

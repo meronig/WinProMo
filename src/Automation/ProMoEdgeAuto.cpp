@@ -64,10 +64,110 @@ void CProMoEdgeAuto::ReleaseSegmentsAutoObject()
 	}
 }
 
+BOOL CProMoEdgeAuto::SetSourceBlock(CProMoBlockModel* pSource)
+{
+	if (GetEdgeModel()) {
+		CProMoBlockModel* pOldSource = GetEdgeModel()->GetSource();
+		CProMoEdgeView* pFirstSegment = GetEdgeModel()->GetFirstSegment();
+		if (pSource) {
+			// check if the source has changed
+			if (pSource != pOldSource) {
+				// check if the edge can be connected
+				if (GetEdgeModel()->CanConnectSource(pSource)) {
+					GetContainer()->Snapshot();
+					// disconnect from old source block (if any)
+					pFirstSegment->SetSource(NULL);
+					CRect blockRect = pSource->GetMainBlockView()->GetRect();
+					if (!blockRect.PtInRect(pFirstSegment->GetRect().TopLeft())) {
+						// move starting point of the edge inside new source block
+						CDoublePoint center = CDoubleRect(blockRect).CenterPoint();
+						pFirstSegment->SetRect(center.x, center.y, pFirstSegment->GetRight(), pFirstSegment->GetBottom());
+					}
+					pFirstSegment->SetSource(pSource->GetMainBlockView());
+					GetDiagramAutoObject()->NotifyChange();
+					return TRUE;
+				}
+			}
+		}
+		// NULL is passed
+		else {
+			if (!pOldSource) {
+				GetContainer()->Snapshot();
+				pFirstSegment->SetSource(NULL);
+				GetDiagramAutoObject()->NotifyChange();
+				return TRUE;
+			}
+		}
+	}
+	
+	return FALSE;
+}
+
+BOOL CProMoEdgeAuto::SetDestinationBlock(CProMoBlockModel* pDest)
+{
+	if (GetEdgeModel()) {
+		CProMoBlockModel* pOldDest = GetEdgeModel()->GetDestination();
+		CProMoEdgeView* pLastSegment = GetEdgeModel()->GetLastSegment();
+		if (pDest) {
+			// check if the source has changed
+			if (pDest != pOldDest) {
+				// check if the edge can be connected
+				if (GetEdgeModel()->CanConnectDestination(pDest)) {
+					GetContainer()->Snapshot();
+					// disconnect from old source block (if any)
+					pLastSegment->SetDestination(NULL);
+					CRect blockRect = pDest->GetMainBlockView()->GetRect();
+					if (!blockRect.PtInRect(pLastSegment->GetRect().TopLeft())) {
+						// move starting point of the edge inside new source block
+						CDoublePoint center = CDoubleRect(blockRect).CenterPoint();
+						pLastSegment->SetRect(pLastSegment->GetLeft(), pLastSegment->GetTop(), center.x, center.y);
+					}
+					pLastSegment->SetDestination(pDest->GetMainBlockView());
+					GetDiagramAutoObject()->NotifyChange();
+					return TRUE;
+				}
+			}
+		}
+		
+		// NULL is passed
+		else {
+			if (!pOldDest) {
+				GetContainer()->Snapshot();
+				pLastSegment->SetDestination(NULL);
+				GetDiagramAutoObject()->NotifyChange();
+				return TRUE;
+			}
+		}
+	}
+	
+	return FALSE;
+}
+
 CProMoEdgeAuto::~CProMoEdgeAuto()
 {
 }
 
+CProMoEdgeAuto* CProMoEdgeAuto::FromIDispatch(LPDISPATCH obj)
+{
+	CCmdTarget* pTarget = CCmdTarget::FromIDispatch(obj);
+
+	if (!pTarget || !pTarget->IsKindOf(RUNTIME_CLASS(CProMoEdgeAuto))) {
+		AfxThrowOleDispatchException(
+			1001,
+			_T("Invalid edge automation object"));
+	}
+
+	return (CProMoEdgeAuto*)pTarget;
+}
+
+CProMoEdgeModel* CProMoEdgeAuto::GetModelFromIDispatch(LPDISPATCH obj)
+{
+	CProMoEdgeAuto* pAuto = FromIDispatch(obj);
+	if (pAuto) {
+		return pAuto->GetEdgeModel();
+	}
+	return NULL;
+}
 
 void CProMoEdgeAuto::OnFinalRelease()
 {
@@ -157,7 +257,18 @@ LPDISPATCH CProMoEdgeAuto::GetSource()
 
 void CProMoEdgeAuto::SetSource(LPDISPATCH newValue) 
 {
-	// TODO: Add your property handler here
+	// something is passed
+	if (newValue) {
+		// decode newValue
+		CProMoBlockModel* pSource = CProMoBlockAuto::GetModelFromIDispatch(newValue);
+		if (pSource) {
+			SetSourceBlock(pSource);
+		}
+	}
+	// NULL is passed
+	else {
+		SetSourceBlock(NULL);
+	}
 
 }
 
@@ -179,7 +290,18 @@ LPDISPATCH CProMoEdgeAuto::GetDestination()
 
 void CProMoEdgeAuto::SetDestination(LPDISPATCH newValue) 
 {
-	// TODO: Add your property handler here
+	// something is passed
+	if (newValue) {
+		// decode newValue
+		CProMoBlockModel* pDest = CProMoBlockAuto::GetModelFromIDispatch(newValue);
+		if (pDest) {
+			SetDestinationBlock(pDest);
+		}
+	}
+	// NULL is passed
+	else {
+		SetDestinationBlock(NULL);
+	}
 
 }
 

@@ -29,6 +29,7 @@ public:
 
 	virtual void GetViews(CObArray& viewList);
 	virtual IProMoView* GetMainView();
+	virtual void GetAttachedLabels(CObArray& labelList);
 
 	virtual CProMoLabelsAuto* GetLabelsAutoObject();
 	virtual void ReleaseLabelsAutoObject();
@@ -36,8 +37,11 @@ public:
 	virtual CProMoPropertiesAuto* GetPropertiesAutoObject();
 	virtual void ReleasePropertiesAutoObject();
 
+	virtual void DeleteViewsAndLabels();
+
 protected:
 	virtual BOOL HasLockFlag(unsigned int lockFlag);
+	virtual void Select();
 	
 // Overrides
 	// ClassWizard generated virtual function overrides

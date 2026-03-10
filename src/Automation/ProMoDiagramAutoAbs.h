@@ -41,8 +41,8 @@ public:
 	
 protected:
 	
-	virtual void SaveDiagramAs(CString fileName) = 0;
-	virtual void SaveDiagram() = 0;
+	virtual void SaveDiagramAs(const CString& fileName) = 0;
+	virtual void SaveDiagram(BOOL noPrompt) = 0;
 	virtual void CloseDiagram() = 0;
 	
 

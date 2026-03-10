@@ -209,10 +209,8 @@ void CProMoDiagramAutoAbs::SetHeight(long nNewValue)
 
 void CProMoDiagramAutoAbs::Save(BOOL noPrompt)
 {
-	//TODO: handle noPrompt parameter
-	
 	if (GetContainer()) {
-		SaveDiagram();
+		SaveDiagram(noPrompt);
 	}
 }
 
@@ -227,7 +225,7 @@ void CProMoDiagramAutoAbs::Close(BOOL saveChanges)
 {
 	if (GetContainer()) {
 		if (saveChanges) {
-			SaveDiagram();
+			SaveDiagram(FALSE);
 		}
 		CloseDiagram();
 	}

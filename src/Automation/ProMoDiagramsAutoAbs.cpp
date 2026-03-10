@@ -77,11 +77,16 @@ LPDISPATCH CProMoDiagramsAutoAbs::Add(const VARIANT FAR& documentType)
 	ThrowIfNoAppAutoObject();
 
 	CVariantWrapper wrapper(documentType);
-	CProMoDiagramAutoAbs* pDiagramAuto = AddNewDiagram(wrapper.GetString());
-	if (pDiagramAuto) {
-		pDiagramAuto->SetAppAutoObject(GetAppAutoObject());
-		return pDiagramAuto->GetIDispatch(TRUE);
+
+	if (GetAppAutoObject()->CanCreateDiagram(documentType)) {
+
+		CProMoDiagramAutoAbs* pDiagramAuto = AddNewDiagram(wrapper.GetString());
+		if (pDiagramAuto) {
+			pDiagramAuto->SetAppAutoObject(GetAppAutoObject());
+			return pDiagramAuto->GetIDispatch(TRUE);
+		}
 	}
+
 	return NULL;
 }
 

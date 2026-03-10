@@ -154,6 +154,28 @@ void CProMoBlockAuto::ReleaseOutgoingEdgesAutoObject()
 	}
 }
 
+CProMoBlockAuto* CProMoBlockAuto::FromIDispatch(LPDISPATCH obj)
+{
+	CCmdTarget* pTarget = CCmdTarget::FromIDispatch(obj);
+
+	if (!pTarget || !pTarget->IsKindOf(RUNTIME_CLASS(CProMoBlockAuto))) {
+		AfxThrowOleDispatchException(
+			1001,
+			_T("Invalid block automation object"));
+	}
+
+	return (CProMoBlockAuto*)pTarget;
+}
+
+CProMoBlockModel* CProMoBlockAuto::GetModelFromIDispatch(LPDISPATCH obj)
+{
+	CProMoBlockAuto* pAuto = FromIDispatch(obj);
+	if (pAuto) {
+		return pAuto->GetBlockModel();
+	}
+	return NULL;
+}
+
 void CProMoBlockAuto::OnFinalRelease()
 {
 	// When the last reference for an automation object is released
@@ -260,7 +282,7 @@ void CProMoBlockAuto::SetFillColor(OLE_COLOR nNewValue)
 	CObArray views;
 	GetViews(views);
 
-	if (HasLockFlag(LOCK_FILLCOLOR)) {
+	if (HasLockFlag(LOCK_FILLCOLOR) || !GetModel()) {
 		return;
 	}
 
@@ -289,7 +311,7 @@ void CProMoBlockAuto::SetFillPattern(BOOL bNewValue)
 	CObArray views;
 	GetViews(views);
 
-	if (HasLockFlag(LOCK_FILLSTYLE)) {
+	if (HasLockFlag(LOCK_FILLSTYLE) || !GetModel()) {
 		return;
 	}
 
@@ -318,7 +340,7 @@ void CProMoBlockAuto::SetFillStyle(short nNewValue)
 	CObArray views;
 	GetViews(views);
 
-	if (HasLockFlag(LOCK_FILLSTYLE)) {
+	if (HasLockFlag(LOCK_FILLSTYLE) || !GetModel()) {
 		return;
 	}
 

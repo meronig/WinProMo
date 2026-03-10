@@ -1,5 +1,14 @@
+/* ==========================================================================
+
+	Copyright © 2025 Technical University of Denmark
+
+	Author :		Giovanni Meroni
+
+   ========================================================================*/
 #ifndef _DOUBLERECT_H_
 #define _DOUBLERECT_H_
+
+#include "DoublePoint.h"
 
 class AFX_EXT_CLASS CDoubleRect : public CObject
 {
@@ -16,6 +25,7 @@ public:
 	double Width() const;
 	double Height() const;
 	double Ratio() const;
+	CDoublePoint CenterPoint() const;
 
 	CRect ToCRect() const;
 

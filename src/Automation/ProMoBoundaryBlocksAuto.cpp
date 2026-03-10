@@ -20,6 +20,7 @@
 #include "ProMoBoundaryBlocksAuto.h"
 #include "../ProMoEditor/ProMoBlockModel.h"
 #include "../FileUtils/SafeArrayWrapper.h"
+#include "ProMoBlockAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -84,11 +85,55 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoBoundaryBlocksAuto message handlers
 
-BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH Item, short Attachment) 
+BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH item, short attachment) 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetBlockModel()) {
+		if (item) {
+			CProMoBlockModel* pBlockModel = CProMoBlockAuto::GetModelFromIDispatch(item);
+			CProMoBlockView* pBlockView = pBlockModel->GetMainBlockView();
+			// a valid block is passed
+			if (pBlockModel) {
+				// check if the parent block has changed
+				if (GetBlockModel() != pBlockModel->GetParentBlock() || !pBlockModel->IsBoundaryBlock()) {
+					// check if the block can be attached to boundary
+					if (pBlockModel->CanBeBoundaryOf(GetBlockModel(), attachment)) {
+						GetContainer()->Snapshot();
+						// disconnect from old parent block (if any)
+						pBlockView->UnlinkFromParent();
+						CProMoBlockView* pParentView = GetBlockModel()->GetMainBlockView();
+						// TODO REVISE
+						CRect parentBlockRect = pParentView->GetRect();
+						CRect blockRect = pBlockView->GetRect();
+						CRect intersection;
+						intersection.IntersectRect(parentBlockRect, blockRect);
 
-	return TRUE;
+						if (intersection.IsRectEmpty()) {
+							switch (attachment) {
+							case DEHT_TOP:
+								pBlockView->SetRect(parentBlockRect.CenterPoint().x, parentBlockRect.top - 5, parentBlockRect.CenterPoint().x + blockRect.Width(), parentBlockRect.top - 5 + blockRect.Height());
+								break;
+							case DEHT_BOTTOM:
+								pBlockView->SetRect(parentBlockRect.CenterPoint().x, parentBlockRect.bottom - 5, parentBlockRect.CenterPoint().x + blockRect.Width(), parentBlockRect.bottom - 5 + blockRect.Height());
+								break;
+							case DEHT_LEFT:
+								pBlockView->SetRect(parentBlockRect.left - 5, parentBlockRect.CenterPoint().y, parentBlockRect.left - 5 + blockRect.Width(), parentBlockRect.CenterPoint().y + blockRect.Height());
+								break;
+							case DEHT_RIGHT:
+								pBlockView->SetRect(parentBlockRect.right - 5, parentBlockRect.CenterPoint().y, parentBlockRect.right - 5 + blockRect.Width(), parentBlockRect.CenterPoint().y + blockRect.Height());
+								break;
+							}
+						}
+
+						pParentView->LinkBoundaryBlock(pBlockView, attachment);
+						GetDiagramAutoObject()->NotifyChange();
+						return TRUE;
+					}
+				}
+			}
+		}
+	}
+
+	return FALSE;
 }
 
 short CProMoBoundaryBlocksAuto::Count() 
@@ -102,35 +147,33 @@ short CProMoBoundaryBlocksAuto::Count()
 	return 0;
 }
 
-BOOL CProMoBoundaryBlocksAuto::Remove(const VARIANT FAR& Item) 
+BOOL CProMoBoundaryBlocksAuto::Remove(const VARIANT FAR& item) 
 {
-	// TODO: Add your dispatch handler code here
-
-	return TRUE;
-}
-
-LPDISPATCH CProMoBoundaryBlocksAuto::GetItem(const VARIANT FAR& Item) 
-{
-	CVariantWrapper wrapper(Item);
-
 	if (GetBlockModel()) {
 		CObArray boundaryBlocks;
-		CProMoBlockModel* pModel = NULL;
 		GetBlockModel()->GetBoundaryBlocks(boundaryBlocks, DEHT_BODY);
-		if (wrapper.GetType() != VT_BSTR) {
-			if (wrapper.GetInt() >= 0 && wrapper.GetInt() < boundaryBlocks.GetSize()) {
-				pModel = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(wrapper.GetInt()));
+		CProMoBlockModel* pModel = dynamic_cast<CProMoBlockModel*>(FindModel(item, boundaryBlocks));
+
+		if (pModel) {
+			CProMoBlockView* pView = pModel->GetMainBlockView();
+			if (pView) {
+				GetContainer()->Snapshot();
+				pView->UnlinkFromParent();
+				GetDiagramAutoObject()->NotifyChange();
+				return TRUE;
 			}
 		}
-		else {
-			for (int i = 0; i < boundaryBlocks.GetSize(); i++) {
-				pModel = dynamic_cast<CProMoBlockModel*>(boundaryBlocks.GetAt(i));
-				if (pModel && pModel->GetName() == wrapper.GetString()) {
-					break;
-				}
-				pModel = NULL;
-			}
-		}
+	}
+
+	return FALSE;
+}
+
+LPDISPATCH CProMoBoundaryBlocksAuto::GetItem(const VARIANT FAR& item) 
+{
+	if (GetBlockModel()) {
+		CObArray boundaryBlocks;
+		GetBlockModel()->GetBoundaryBlocks(boundaryBlocks, DEHT_BODY);
+		CProMoBlockModel* pModel = dynamic_cast<CProMoBlockModel*>(FindModel(item, boundaryBlocks));
 
 		if (pModel) {
 			CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(pModel->GetAutomationObject());

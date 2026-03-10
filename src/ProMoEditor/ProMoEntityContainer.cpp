@@ -665,14 +665,15 @@ CDiagramEntity* CProMoEntityContainer::CloneEntity(IProMoEntity* obj)
 {
 
 	CObArray elements;
+	CObArray labels;
 	CObArray newElements;
-
 		
 	CProMoModel* model = obj->GetModel();
 	if (model) {
 		//get all views
 		model->GetViews(elements);
-		model->GetLabels(elements);
+		model->GetLabels(labels);
+		elements.Append(labels);
 
 		for (int i = 0; i < elements.GetSize(); i++) {
 			IProMoEntity* element = dynamic_cast<IProMoEntity*>(elements.GetAt(i));
@@ -962,7 +963,7 @@ CProMoControlFactory* CProMoEntityContainer::GetControlFactory() const
 	return m_factory;
 }
 
-CProMoModel* CProMoEntityContainer::GetNamedModel(const CObArray& array, const CString& name) const
+CProMoModel* CProMoEntityContainer::GetNamedModel(const CObArray& array, const CString& name)
 /* ============================================================
 	Function :		CProMoEntityContainer::GetNamedModel
 	Description :	Returns the model with the name attribute

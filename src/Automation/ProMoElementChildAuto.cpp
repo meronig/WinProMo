@@ -97,6 +97,7 @@ void CProMoElementChildAuto::ThrowIfNoElementAutoObject() const
 	}
 }
 
+
 CProMoElementChildAuto::~CProMoElementChildAuto()
 {
 }

@@ -213,7 +213,18 @@ void CProMoEdgeSegmentAuto::SetHeight(double newValue)
 
 LPDISPATCH CProMoEdgeSegmentAuto::Split() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetSegment()) {
+		GetContainer()->Snapshot();
+		CProMoEdgeView* newSegment = GetSegment()->Split();
+		GetDiagramAutoObject()->NotifyChange();
+		if (newSegment) {
+			CProMoEdgeSegmentAuto* pElementAuto = dynamic_cast<CProMoEdgeSegmentAuto*>(newSegment->GetAutomationObject());
+			if (pElementAuto) {
+				pElementAuto->SetElementAutoObject(GetElementAutoObject());
+				return pElementAuto->GetIDispatch(TRUE);
+			}
+		}
+	}
 
 	return NULL;
 }
@@ -252,6 +263,10 @@ LPDISPATCH CProMoEdgeSegmentAuto::Next()
 
 void CProMoEdgeSegmentAuto::Remove() 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetSegment() && GetContainer()) {
+		GetContainer()->Snapshot(); 
+		GetContainer()->Remove(GetSegment());
+		GetDiagramAutoObject()->NotifyChange();
+	}
 
 }

@@ -241,6 +241,10 @@ BOOL CProMoBlockModel::CanBeBoundaryOf(CProMoBlockModel* block, unsigned int ali
 	if (Contains(block, TRUE)) {
 		return FALSE;
 	}
+	if (alignment != DEHT_TOP && alignment != DEHT_BOTTOM && alignment != DEHT_LEFT && alignment != DEHT_RIGHT) {
+		return FALSE;
+	}
+
 	return TRUE;
 }
 

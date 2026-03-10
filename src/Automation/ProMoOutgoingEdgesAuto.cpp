@@ -20,6 +20,7 @@
 #include "ProMoOutgoingEdgesAuto.h"
 #include "../ProMoEditor/ProMoEdgeModel.h"
 #include "../FileUtils/SafeArrayWrapper.h"
+#include "ProMoEdgeAuto.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -94,28 +95,12 @@ short CProMoOutgoingEdgesAuto::Count()
 	return 0;
 }
 
-LPDISPATCH CProMoOutgoingEdgesAuto::GetItem(const VARIANT FAR& Item) 
+LPDISPATCH CProMoOutgoingEdgesAuto::GetItem(const VARIANT FAR& item) 
 {
-	CVariantWrapper wrapper(Item);
-
 	if (GetBlockModel()) {
 		CObArray outgoingEdges;
-		CProMoEdgeModel* pModel = NULL;
 		GetBlockModel()->GetOutgoingEdges(outgoingEdges);
-		if (wrapper.GetType() != VT_BSTR) {
-			if (wrapper.GetInt() >= 0 && wrapper.GetInt() < outgoingEdges.GetSize()) {
-				pModel = dynamic_cast<CProMoEdgeModel*>(outgoingEdges.GetAt(wrapper.GetInt()));
-			}
-		}
-		else {
-			for (int i = 0; i < outgoingEdges.GetSize(); i++) {
-				pModel = dynamic_cast<CProMoEdgeModel*>(outgoingEdges.GetAt(i));
-				if (pModel && pModel->GetName() == wrapper.GetString()) {
-					break;
-				}
-				pModel = NULL;
-			}
-		}
+		CProMoEdgeModel* pModel = dynamic_cast<CProMoEdgeModel*>(FindModel(item, outgoingEdges));
 
 		if (pModel) {
 			CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(pModel->GetAutomationObject());
@@ -135,18 +120,39 @@ void CProMoOutgoingEdgesAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newVal
 
 }
 
-BOOL CProMoOutgoingEdgesAuto::Add(LPDISPATCH Item) 
+BOOL CProMoOutgoingEdgesAuto::Add(LPDISPATCH item) 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetBlockModel()) {
+		if (item) {
+			CProMoEdgeAuto* pEdgeAuto = CProMoEdgeAuto::FromIDispatch(item);
+			if (pEdgeAuto) {
+				return pEdgeAuto->SetDestinationBlock(GetBlockModel());
+			}
+		}
+	}
 
-	return TRUE;
+	return FALSE;
+
 }
 
-BOOL CProMoOutgoingEdgesAuto::Remove(const VARIANT FAR& Item) 
+BOOL CProMoOutgoingEdgesAuto::Remove(const VARIANT FAR& item) 
 {
-	// TODO: Add your dispatch handler code here
+	if (GetBlockModel()) {
+		CObArray outgoingEdges;
+		GetBlockModel()->GetOutgoingEdges(outgoingEdges);
+		CProMoEdgeModel* pModel = dynamic_cast<CProMoEdgeModel*>(FindModel(item, outgoingEdges));
+		if (pModel) {
+			CProMoEdgeView* pView = dynamic_cast<CProMoEdgeView*>(pModel->GetFirstSegment());
+			if (pView) {
+				GetContainer()->Snapshot();
+				pView->SetSource(NULL);
+				GetDiagramAutoObject()->NotifyChange();
+				return TRUE;
+			}
+		}
+	}
 
-	return TRUE;
+	return FALSE;
 }
 
 VARIANT CProMoOutgoingEdgesAuto::GetIDs() 
