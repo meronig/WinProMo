@@ -1858,6 +1858,7 @@ BuildCmds= \
 
 SOURCE=.\GeometryUtils\DoubleRect.cpp
 DEP_CPP_DOUBL=\
+	".\GeometryUtils\DoublePoint.h"\
 	".\GeometryUtils\DoubleRect.h"\
 	
 NODEP_CPP_DOUBL=\
@@ -2876,6 +2877,7 @@ DEP_CPP_PROMOI=\
 	".\automation\ProMoBlockChildAuto.h"\
 	".\Automation\ProMoDiagramAutoAbs.h"\
 	".\Automation\ProMoDiagramChildAuto.h"\
+	".\automation\ProMoEdgeAuto.h"\
 	".\Automation\ProMoElementAuto.h"\
 	".\automation\ProMoElementChildAuto.h"\
 	".\automation\ProMoIncomingEdgesAuto.h"\
@@ -2944,6 +2946,7 @@ DEP_CPP_PROMOS=\
 	".\Automation\ProMoAppAutoAbs.h"\
 	".\Automation\ProMoAppChildAuto.h"\
 	".\Automation\ProMoAutomationHost.h"\
+	".\automation\ProMoBlockAuto.h"\
 	".\automation\ProMoBlockChildAuto.h"\
 	".\Automation\ProMoDiagramAutoAbs.h"\
 	".\Automation\ProMoDiagramChildAuto.h"\
@@ -3014,6 +3017,7 @@ DEP_CPP_PROMOBO=\
 	".\Automation\ProMoAppAutoAbs.h"\
 	".\Automation\ProMoAppChildAuto.h"\
 	".\Automation\ProMoAutomationHost.h"\
+	".\automation\ProMoBlockAuto.h"\
 	".\automation\ProMoBlockChildAuto.h"\
 	".\automation\ProMoBoundaryBlocksAuto.h"\
 	".\Automation\ProMoDiagramAutoAbs.h"\
@@ -3711,6 +3715,7 @@ DEP_CPP_PROMOO=\
 	".\automation\ProMoBlockChildAuto.h"\
 	".\Automation\ProMoDiagramAutoAbs.h"\
 	".\Automation\ProMoDiagramChildAuto.h"\
+	".\automation\ProMoEdgeAuto.h"\
 	".\Automation\ProMoElementAuto.h"\
 	".\automation\ProMoElementChildAuto.h"\
 	".\Automation\ProMoOutgoingEdgesAuto.h"\

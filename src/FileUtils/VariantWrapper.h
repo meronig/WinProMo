@@ -40,7 +40,8 @@ public:
 private:
 	VARIANT m_var;
 	
-	virtual BOOL ParseInt(const CString& str, int& outValue);
-	virtual BOOL ParseDouble(const CString& str, double& outValue);
+	virtual void NormalizeVariant();
+	static BOOL ParseInt(const CString& str, int& outValue);
+	static BOOL ParseDouble(const CString& str, double& outValue);
 };
 #endif //_VARIANTWRAPPER_H_

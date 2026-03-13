@@ -23,13 +23,13 @@ library WinProMo
 			[id(4)] BSTR FontName;
 			[id(5)] short FontSize;
 			[id(6)] short FontWeight;
-			[id(7)] VARIANT_BOOL FontItalic;
-			[id(8)] VARIANT_BOOL FontUnderline;
-			[id(9)] VARIANT_BOOL FontStrikeOut;
+			[id(7)] boolean FontItalic;
+			[id(8)] boolean FontUnderline;
+			[id(9)] boolean FontStrikeOut;
 			[id(10)] OLE_COLOR TextColor;
 			[id(11)] OLE_COLOR BkColor;
 			[id(12)] short BkMode;
-			[id(13)] VARIANT_BOOL TextMultiLine;
+			[id(13)] boolean TextMultiLine;
 			[id(14)] short TextHorizontalAlignment;
 			[id(15)] short TextVerticalAlignment;
 			[id(16)] BSTR ID;
@@ -39,7 +39,7 @@ library WinProMo
 			[id(20)] short LockFlags;
 			// Native
 			[id(21)] OLE_COLOR FillColor;
-			[id(22)] VARIANT_BOOL FillPattern;
+			[id(22)] boolean FillPattern;
 			[id(23)] short FillStyle;
 			[id(24)] IDispatch* Parent;
 			[id(25)] IDispatch* SubBlocks;
@@ -59,8 +59,8 @@ library WinProMo
 			// NOTE - ClassWizard will maintain method information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoBlockAuto)
-			[id(36)] VARIANT_BOOL IsBoundaryBlock();
-			[id(37)] VARIANT_BOOL IsSubBlock();
+			[id(36)] boolean IsBoundaryBlock();
+			[id(37)] boolean IsSubBlock();
 			// from IProMoElementAuto
 			[id(38)] void Copy();
 			[id(39)] void Cut();
@@ -98,8 +98,8 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoBoundaryBlocksAuto)
 			[id(2)] short Count();
-			[id(3)] VARIANT_BOOL Add(IDispatch* item, short attachment);
-			[id(4)] VARIANT_BOOL Remove(VARIANT item);
+			[id(3)] boolean Add(IDispatch* item, short attachment);
+			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
@@ -138,13 +138,13 @@ library WinProMo
 			[id(4)] BSTR FontName;
 			[id(5)] short FontSize;
 			[id(6)] short FontWeight;
-			[id(7)] VARIANT_BOOL FontItalic;
-			[id(8)] VARIANT_BOOL FontUnderline;
-			[id(9)] VARIANT_BOOL FontStrikeOut;
+			[id(7)] boolean FontItalic;
+			[id(8)] boolean FontUnderline;
+			[id(9)] boolean FontStrikeOut;
 			[id(10)] OLE_COLOR TextColor;
 			[id(11)] OLE_COLOR BkColor;
 			[id(12)] short BkMode;
-			[id(13)] VARIANT_BOOL TextMultiLine;
+			[id(13)] boolean TextMultiLine;
 			[id(14)] short TextHorizontalAlignment;
 			[id(15)] short TextVerticalAlignment;
 			[id(16)] BSTR ID;
@@ -278,7 +278,7 @@ library WinProMo
 			//{{AFX_ODL_METHOD(CProMoElementsAuto)
 			[id(2)] short Count();
 			[id(3)] IDispatch* Add(VARIANT elementType);
-			[id(4)] VARIANT_BOOL Remove(VARIANT item);
+			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoDiagramChildAuto
@@ -316,8 +316,8 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoIncomingEdgesAuto)
 			[id(2)] short Count();
-			[id(3)] VARIANT_BOOL Add(IDispatch* item);
-			[id(4)] VARIANT_BOOL Remove(VARIANT item);
+			[id(3)] boolean Add(IDispatch* item);
+			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
@@ -352,13 +352,13 @@ library WinProMo
 			[id(1)] BSTR FontName;
 			[id(2)] short FontSize;
 			[id(3)] short FontWeight;
-			[id(4)] VARIANT_BOOL FontItalic;
-			[id(5)] VARIANT_BOOL FontUnderline;
-			[id(6)] VARIANT_BOOL FontStrikeOut;
+			[id(4)] boolean FontItalic;
+			[id(5)] boolean FontUnderline;
+			[id(6)] boolean FontStrikeOut;
 			[id(7)] OLE_COLOR TextColor;
 			[id(8)] OLE_COLOR BkColor;
 			[id(9)] short BkMode;
-			[id(10)] VARIANT_BOOL TextMultiLine;
+			[id(10)] boolean TextMultiLine;
 			[id(11)] short TextHorizontalAlignment;
 			[id(12)] short TextVerticalAlignment;
 			[id(13)] BSTR Text;
@@ -415,8 +415,8 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoLabelsAuto)
 			[id(2)] short Count();
-			[id(3)] VARIANT_BOOL Add(IDispatch* item);
-			[id(4)] VARIANT_BOOL Remove(VARIANT item);
+			[id(3)] boolean Add(IDispatch* item);
+			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
@@ -456,8 +456,8 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoOutgoingEdgesAuto)
 			[id(2)] short Count();
-			[id(3)] VARIANT_BOOL Add(IDispatch* item);
-			[id(4)] VARIANT_BOOL Remove(VARIANT item);
+			[id(3)] boolean Add(IDispatch* item);
+			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
@@ -538,12 +538,12 @@ library WinProMo
 			// NOTE - ClassWizard will maintain method information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoPropertyAuto)
-			[id(5)] VARIANT_BOOL IsReadOnly();
-			[id(6)] VARIANT_BOOL IsComposite();
-			[id(7)] VARIANT_BOOL IsMultivalue();
+			[id(5)] boolean IsReadOnly();
+			[id(6)] boolean IsComposite();
+			[id(7)] boolean IsMultivalue();
 			[id(8)] IDispatch* Label();
 			[id(9)] IDispatch* Add();
-			[id(10)] VARIANT_BOOL Remove(short idx);
+			[id(10)] boolean Remove(short idx);
 			[id(11)] short Count();
 			[id(12), propget] IDispatch* Item(VARIANT idx);
 			[id(12), propputref] void Item(VARIANT idx, IDispatch* newValue);
@@ -584,8 +584,8 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoSubBlocksAuto)
 			[id(2)] short Count();
-			[id(3)] VARIANT_BOOL Add(IDispatch* item);
-			[id(4)] VARIANT_BOOL Remove(VARIANT item);
+			[id(3)] boolean Add(IDispatch* item);
+			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto

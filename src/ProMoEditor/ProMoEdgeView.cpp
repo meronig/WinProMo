@@ -956,7 +956,9 @@ CProMoEdgeView* CProMoEdgeView::Split()
 			//clear duplicated properties
 			newEdge->SetTitle(_T(""));
 			//add new edge to parent
-			GetParent()->Add(newEdge);
+			if (GetParent()) {
+				GetParent()->Add(newEdge);
+			}
 			return newEdge;
 		}
 	}

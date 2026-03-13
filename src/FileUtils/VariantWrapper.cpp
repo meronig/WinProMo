@@ -46,6 +46,7 @@ CVariantWrapper::CVariantWrapper(const VARIANT& var)
 {
 	VariantInit(&m_var);
 	(void)VariantCopy(&m_var, (VARIANT*)&var);
+	NormalizeVariant();
 }
 
 CVariantWrapper::CVariantWrapper(const CVariantWrapper& var)
@@ -62,6 +63,7 @@ CVariantWrapper::CVariantWrapper(const CVariantWrapper& var)
 {
 	VariantInit(&m_var);
 	(void)VariantCopy(&m_var, (VARIANT*)&var.m_var);
+	NormalizeVariant();
 }
 
 CVariantWrapper& CVariantWrapper::operator=(const CVariantWrapper& var)
@@ -76,6 +78,7 @@ CVariantWrapper& CVariantWrapper::operator=(const CVariantWrapper& var)
 	{
 		VariantClear(&m_var);
 		(void)VariantCopy(&m_var, (VARIANT*)&var.m_var);
+		NormalizeVariant();
 	}
 	return *this;
 }
@@ -271,6 +274,10 @@ BOOL CVariantWrapper::GetBool() const
 		return m_var.dblVal != 0;
 	case VT_BSTR:
 		return m_var.bstrVal && *m_var.bstrVal != 0;
+	case VT_EMPTY:
+	case VT_NULL:
+	case VT_ERROR:
+		return FALSE;
 	}
 	return FALSE;
 }
@@ -292,12 +299,19 @@ int CVariantWrapper::GetInt() const
 		
 		case VT_I4:
 			return m_var.lVal;
+		case VT_BSTR:
+		{
+			int val = 0;
+			ParseInt(m_var.bstrVal ? CString(m_var.bstrVal) : _T(""), val);
+			return val;
+		}
 		case VT_R8:
 			return (int)GetDouble();
 		case VT_BOOL:
 			return GetBool();
 		case VT_EMPTY:
 		case VT_NULL:
+		case VT_ERROR:
 			return 0;
 	}
 	return 0;
@@ -319,6 +333,12 @@ double CVariantWrapper::GetDouble() const
 	{
 	case VT_R8:
 		return m_var.dblVal;
+	case VT_BSTR:
+	{
+		double val = 0.0;
+		ParseDouble(m_var.bstrVal ? CString(m_var.bstrVal) : _T(""), val);
+		return val;
+	}
 	}
 	return GetInt();
 }
@@ -349,6 +369,14 @@ CString CVariantWrapper::GetString() const
 		case VT_I4:
 		case VT_BOOL:
 			result.Format(_T("%d"), GetInt());
+			break;
+		case VT_EMPTY:
+		case VT_NULL:
+		case VT_ERROR:
+			result = _T(""); // Safe default
+			break;
+		default:
+			result = _T(""); // Unknown type fallback
 			break;
 	}
 	return result;
@@ -395,6 +423,60 @@ const VARIANT* CVariantWrapper::GetVARIANT() const
    ============================================================*/
 {
 	return &m_var;
+}
+
+void CVariantWrapper::NormalizeVariant()
+{
+	// Handle ByRef
+	if (m_var.vt & VT_BYREF)
+	{
+		VARTYPE baseType = m_var.vt & ~VT_BYREF;
+
+		switch (baseType)
+		{
+		case VT_I2:
+			m_var.iVal = *m_var.piVal;
+			break;
+		case VT_I4: 
+			m_var.lVal = *m_var.plVal; 
+			break;
+		case VT_R4:
+			m_var.fltVal = *m_var.pfltVal;
+			break;
+		case VT_R8: 
+			m_var.dblVal = *m_var.pdblVal; 
+			break;
+		case VT_BOOL: 
+			//unsupported by older MSVC versions
+			//m_var.boolVal = *m_var.pboolVal; 
+			break;
+		case VT_BSTR: 
+			m_var.bstrVal = SysAllocString(*m_var.pbstrVal); 
+			break;
+		default: 
+			break; // Keep original if unknown
+		}
+
+		m_var.vt = baseType;
+	}
+	
+	// Normalize datatypes
+	switch (m_var.vt)
+	{
+	case VT_I2:
+		m_var.lVal = m_var.iVal;
+		m_var.vt = VT_I4;
+		break;
+
+	case VT_R4:
+		m_var.dblVal = m_var.fltVal;
+		m_var.vt = VT_R8;
+		break;
+	case VT_ERROR:
+		VariantClear(&m_var);
+		m_var.vt = VT_EMPTY;
+		break;
+	}
 }
 
 BOOL CVariantWrapper::ParseInt(const CString& str, int& outValue)

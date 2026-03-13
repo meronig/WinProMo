@@ -78,7 +78,7 @@ LPDISPATCH CProMoDiagramsAutoAbs::Add(const VARIANT FAR& documentType)
 
 	CVariantWrapper wrapper(documentType);
 
-	if (GetAppAutoObject()->CanCreateDiagram(documentType)) {
+	if (GetAppAutoObject()->CanCreateDiagram(wrapper.GetString())) {
 
 		CProMoDiagramAutoAbs* pDiagramAuto = AddNewDiagram(wrapper.GetString());
 		if (pDiagramAuto) {
