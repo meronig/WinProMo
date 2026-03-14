@@ -156,8 +156,16 @@ LPDISPATCH CProMoAppAutoAbs::ActiveDiagram()
 
 void CProMoAppAutoAbs::Quit(BOOL saveChanges)
 {
-	// TODO: Add your dispatch handler code here
+	if (!saveChanges)
+	{
+		ForceQuit();
+	}
 
+	CWnd* pMainWnd = AfxGetMainWnd();
+	if (pMainWnd && ::IsWindow(pMainWnd->GetSafeHwnd()))
+		pMainWnd->PostMessage(WM_CLOSE);
+	else
+		PostQuitMessage(0);
 }
 
 VARIANT CProMoAppAutoAbs::GetCreatableDiagramTypes() 

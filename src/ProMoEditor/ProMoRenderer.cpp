@@ -93,7 +93,7 @@ void CProMoRenderer::RenderCanvasAsMetafile(CDC& dc, double zoom)
 
 	Return :		void
 	Parameters :	CDC& dc				-	DC to render to
-					unsigned int zoom	-	Zoom factor
+					double zoom			-	Zoom factor
 
    ============================================================*/
 {
@@ -140,7 +140,7 @@ void CProMoRenderer::RenderDiagramAsMetafile(CDC& dc, double zoom)
 
 	Return :		void
 	Parameters :	CDC& dc				-	DC to render to
-					unsigned int zoom	-	Zoom factor
+					double zoom			-	Zoom factor
 
    ============================================================*/
 {
@@ -192,7 +192,7 @@ void CProMoRenderer::RenderSelectionAsMetafile(CDC& dc, double zoom)
 
 	Return :		void
 	Parameters :	CDC& dc				-	DC to render to
-					unsigned int zoom	-	Zoom factor
+					double zoom			-	Zoom factor
 
    ============================================================*/
 {
@@ -279,10 +279,10 @@ void CProMoRenderer::RenderAsRaster(const CObArray& elements, CDibHelper& dib, u
 
 		memDC.SetMapMode(MM_TEXT);
 		memDC.SetViewportOrg(
-			-LONG(scaledStartX),
-			-LONG(scaledStartY));
+			-LONG(0),
+			-LONG(0));
 
-		memDC.FillSolidRect(scaledStartX, scaledStartY, scaledWidth, scaledHeight, RGB(255, 255, 255));
+		memDC.FillSolidRect(0, 0, scaledWidth, scaledHeight, RGB(255, 255, 255));
 
 		RenderAsMetafile(elements, memDC, scaling, start, size);
 
@@ -304,7 +304,7 @@ void CProMoRenderer::RenderAsMetafile(const CObArray& elements, CDC& dc, double 
 	Return :		void
 	Parameters :	CObArray& elements		-	Objects to render
 					CDC& dc					-	DC to render to
-					unsigned int zoom		-	Zoom factor
+					double zoom				-	Zoom factor
 					CPoint start			-	Top-left point of
 												the area to render
 					CSize size				-	Size of the area
@@ -312,6 +312,12 @@ void CProMoRenderer::RenderAsMetafile(const CObArray& elements, CDC& dc, double 
    ============================================================*/
 {
 	//only needed for vector
+	start.x = (int)(start.x * zoom);
+	start.y = (int)(start.y * zoom);
+
+	size.cx = (int)(size.cx * zoom);
+	size.cy = (int)(size.cy * zoom);
+	
 	dc.SetWindowOrg(start);
 	dc.SetWindowExt(size); 
 	
@@ -329,13 +335,6 @@ void CProMoRenderer::RenderAsMetafile(const CObArray& elements, CDC& dc, double 
 	}
 	
 	SelectElements(oldSelection);
-
-	start.x = (int)(start.x * zoom);
-	start.y = (int)(start.y * zoom);
-
-	size.cx = (int)(size.cx * zoom);
-	size.cy = (int)(size.cy * zoom);
-
 }
 
 void CProMoRenderer::PickSelectedElements(CObArray& elements)

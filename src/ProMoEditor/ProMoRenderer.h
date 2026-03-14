@@ -11,6 +11,19 @@
 #include "ProMoEntityContainer.h"
 #include "../FileUtils/DibHelper.h"
 
+enum ExportFormat
+{
+	EXPORT_RASTER = 0,
+	EXPORT_METAFILE = 1
+};
+
+enum ExportElement
+{
+	EXPORT_SELECTION = 0,
+	EXPORT_DIAGRAM = 1,
+	EXPORT_CANVAS = 2
+};
+
 class AFX_EXT_CLASS CProMoRenderer :
     public CObject
 {

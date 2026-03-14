@@ -35,7 +35,7 @@ protected:
 	virtual CProMoDiagramsAutoAbs* CreateDiagramsAutoObject() = 0;
 	virtual CProMoDiagramAutoAbs* GetActiveDiagram() = 0;
 	virtual void GetRegisteredDiagrams(CStringArray& diagramTypes) = 0;
-
+	virtual void ForceQuit() = 0;
 
 	// Overrides
 		// ClassWizard generated virtual function overrides

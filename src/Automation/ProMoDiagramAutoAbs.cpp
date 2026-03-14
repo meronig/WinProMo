@@ -111,12 +111,6 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoDiagramAutoAbs message handlers
 
-void CProMoDiagramAutoAbs::Activate()
-{
-	// TODO: Add your dispatch handler code here
-
-}
-
 void CProMoDiagramAutoAbs::Redo(short times)
 {
 	for (short i = 0; i < times; ++i) {
@@ -140,8 +134,9 @@ void CProMoDiagramAutoAbs::Undo(short times)
 BSTR CProMoDiagramAutoAbs::Path()
 {
 	CString strResult;
-	// TODO: Add your dispatch handler code here
-
+	
+	strResult = GetFilePath();
+	
 	return strResult.AllocSysString();
 }
 
@@ -153,6 +148,13 @@ BSTR CProMoDiagramAutoAbs::Type()
 	}
 
 	return strResult.AllocSysString();
+}
+
+void CProMoDiagramAutoAbs::Export(const VARIANT FAR& fileName, ExportFormat format, ExportElement scope, double zoom, short resolution)
+{
+	if (GetContainer()) {
+		ExportDiagram(CVariantWrapper(fileName).GetString(), format, scope, zoom, resolution);
+	}
 }
 
 LPDISPATCH CProMoDiagramAutoAbs::GetElements()

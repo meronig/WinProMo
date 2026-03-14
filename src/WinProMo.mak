@@ -1115,6 +1115,7 @@ DEP_CPP_PROMO=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\FileParser.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -1131,6 +1132,7 @@ DEP_CPP_PROMO=\
 	".\ProMoEditor\ProMoNameFactory.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMO=\
@@ -1309,6 +1311,7 @@ DEP_CPP_PROMOE=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\FileParser.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -1323,6 +1326,7 @@ DEP_CPP_PROMOE=\
 	".\ProMoEditor\ProMoNameFactory.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOE=\
@@ -1381,6 +1385,7 @@ DEP_CPP_PROMOED=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\FileParser.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -1395,6 +1400,7 @@ DEP_CPP_PROMOED=\
 	".\ProMoEditor\ProMoNameFactory.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOED=\
@@ -1517,6 +1523,7 @@ DEP_CPP_PROMOEN=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\FileParser.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -1531,6 +1538,7 @@ DEP_CPP_PROMOEN=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOEN=\
@@ -1586,6 +1594,7 @@ DEP_CPP_PROMOM=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\FileParser.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -1599,6 +1608,7 @@ DEP_CPP_PROMOM=\
 	".\ProMoEditor\ProMoNameFactory.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOM=\
@@ -1692,6 +1702,7 @@ DEP_CPP_PROMOB=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\FileParser.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -1706,6 +1717,7 @@ DEP_CPP_PROMOB=\
 	".\ProMoEditor\ProMoNameFactory.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOB=\
@@ -2033,6 +2045,7 @@ DEP_CPP_PROMOP=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\FileParser.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -2045,6 +2058,7 @@ DEP_CPP_PROMOP=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOP=\
@@ -2102,6 +2116,7 @@ DEP_CPP_PROMOL=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\FileParser.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -2116,6 +2131,7 @@ DEP_CPP_PROMOL=\
 	".\ProMoEditor\ProMoNameFactory.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOL=\
@@ -2273,6 +2289,7 @@ DEP_CPP_PROMOEL=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -2285,6 +2302,7 @@ DEP_CPP_PROMOEL=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOEL=\
@@ -2381,6 +2399,7 @@ DEP_CPP_PROMOD=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -2393,6 +2412,7 @@ DEP_CPP_PROMOD=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOD=\
@@ -2444,6 +2464,7 @@ DEP_CPP_PROMODI=\
 	".\DiagramEditor\DiagramPropertyDlg.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
 	".\GeometryUtils\DoubleRect.h"\
@@ -2454,6 +2475,7 @@ DEP_CPP_PROMODI=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMODI=\
@@ -2505,6 +2527,7 @@ DEP_CPP_PROMODIA=\
 	".\DiagramEditor\DiagramPropertyDlg.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -2516,6 +2539,7 @@ DEP_CPP_PROMODIA=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMODIA=\
@@ -2574,6 +2598,7 @@ DEP_CPP_PROMOELE=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
 	".\GeometryUtils\DoubleRect.h"\
@@ -2585,6 +2610,7 @@ DEP_CPP_PROMOELE=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOELE=\
@@ -2636,6 +2662,7 @@ DEP_CPP_PROMOAP=\
 	".\DiagramEditor\DiagramPropertyDlg.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -2647,6 +2674,7 @@ DEP_CPP_PROMOAP=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOAP=\
@@ -2747,6 +2775,7 @@ DEP_CPP_PROMOBL=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
 	".\GeometryUtils\DoubleRect.h"\
@@ -2759,6 +2788,7 @@ DEP_CPP_PROMOBL=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOBL=\
@@ -2819,6 +2849,7 @@ DEP_CPP_PROMOEDG=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
 	".\GeometryUtils\DoubleRect.h"\
@@ -2831,6 +2862,7 @@ DEP_CPP_PROMOEDG=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOEDG=\
@@ -2890,6 +2922,7 @@ DEP_CPP_PROMOI=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -2903,6 +2936,7 @@ DEP_CPP_PROMOI=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOI=\
@@ -2962,6 +2996,7 @@ DEP_CPP_PROMOS=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -2974,6 +3009,7 @@ DEP_CPP_PROMOS=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOS=\
@@ -3033,6 +3069,7 @@ DEP_CPP_PROMOBO=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -3045,6 +3082,7 @@ DEP_CPP_PROMOBO=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOBO=\
@@ -3103,6 +3141,7 @@ DEP_CPP_PROMOLA=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -3115,6 +3154,7 @@ DEP_CPP_PROMOLA=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOLA=\
@@ -3173,6 +3213,7 @@ DEP_CPP_PROMOPR=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -3185,6 +3226,7 @@ DEP_CPP_PROMOPR=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOPR=\
@@ -3243,6 +3285,7 @@ DEP_CPP_PROMOPRO=\
 	".\DiagramEditor\HitParamsRect.h"\
 	".\DiagramEditor\Tokenizer.h"\
 	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
 	".\FileUtils\SafeArrayWrapper.h"\
 	".\FileUtils\VariantWrapper.h"\
 	".\GeometryUtils\DoublePoint.h"\
@@ -3255,6 +3298,7 @@ DEP_CPP_PROMOPRO=\
 	".\ProMoEditor\ProMoLabel.h"\
 	".\ProMoEditor\ProMoProperty.h"\
 	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
 	".\ProMoEditor\ProMoView.h"\
 	
 NODEP_CPP_PROMOPRO=\
@@ -3291,6 +3335,57 @@ BuildCmds= \
 # Begin Source File
 
 SOURCE=.\Automation\ProMoLabelAuto.cpp
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+DEP_CPP_PROMOLAB=\
+	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
+	".\Automation\..\ProMoEditor\ProMoModel.h"\
+	".\Automation\..\stdafx.h"\
+	".\Automation\ProMoAppAutoAbs.h"\
+	".\Automation\ProMoAppChildAuto.h"\
+	".\Automation\ProMoAutomationHost.h"\
+	".\Automation\ProMoDiagramAutoAbs.h"\
+	".\Automation\ProMoDiagramChildAuto.h"\
+	".\Automation\ProMoElementAuto.h"\
+	".\automation\ProMoElementChildAuto.h"\
+	".\automation\ProMoLabelAuto.h"\
+	".\automation\ProMoPropertyAuto.h"\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramLine.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\HitParams.h"\
+	".\DiagramEditor\HitParamsRect.h"\
+	".\DiagramEditor\Tokenizer.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
+	".\FileUtils\VariantWrapper.h"\
+	".\GeometryUtils\DoublePoint.h"\
+	".\GeometryUtils\DoubleRect.h"\
+	".\ProMoEditor\ProMoBlockModel.h"\
+	".\ProMoEditor\ProMoBlockView.h"\
+	".\ProMoEditor\ProMoControlFactory.h"\
+	".\ProMoEditor\ProMoEdgeView.h"\
+	".\ProMoEditor\ProMoEntity.h"\
+	".\ProMoEditor\ProMoLabel.h"\
+	".\ProMoEditor\ProMoProperty.h"\
+	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
+	".\ProMoEditor\ProMoView.h"\
+	
+NODEP_CPP_PROMOLAB=\
+	".\Automation\stdafx.h"\
+	
+
+"$(INTDIR)\ProMoLabelAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOLAB) "$(INTDIR)"\
+ "$(INTDIR)\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
 DEP_CPP_PROMOLAB=\
 	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
 	".\Automation\..\ProMoEditor\ProMoModel.h"\
@@ -3330,17 +3425,6 @@ NODEP_CPP_PROMOLAB=\
 	".\Automation\stdafx.h"\
 	
 
-!IF  "$(CFG)" == "WinProMo - Win32 Release"
-
-
-"$(INTDIR)\ProMoLabelAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOLAB) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
-
-
 BuildCmds= \
 	$(CPP) $(CPP_PROJ) $(SOURCE) \
 	
@@ -3360,6 +3444,59 @@ BuildCmds= \
 # Begin Source File
 
 SOURCE=.\Automation\ProMoEdgeSegmentsAuto.cpp
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+DEP_CPP_PROMOEDGE=\
+	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
+	".\Automation\..\ProMoEditor\ProMoModel.h"\
+	".\Automation\..\stdafx.h"\
+	".\Automation\ProMoAppAutoAbs.h"\
+	".\Automation\ProMoAppChildAuto.h"\
+	".\Automation\ProMoAutomationHost.h"\
+	".\Automation\ProMoDiagramAutoAbs.h"\
+	".\Automation\ProMoDiagramChildAuto.h"\
+	".\automation\ProMoEdgeChildAuto.h"\
+	".\Automation\ProMoEdgeSegmentAuto.h"\
+	".\Automation\ProMoEdgeSegmentsAuto.h"\
+	".\Automation\ProMoElementAuto.h"\
+	".\automation\ProMoElementChildAuto.h"\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramLine.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\HitParams.h"\
+	".\DiagramEditor\HitParamsRect.h"\
+	".\DiagramEditor\Tokenizer.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
+	".\FileUtils\VariantWrapper.h"\
+	".\GeometryUtils\DoublePoint.h"\
+	".\GeometryUtils\DoubleRect.h"\
+	".\ProMoEditor\ProMoBlockModel.h"\
+	".\ProMoEditor\ProMoBlockView.h"\
+	".\ProMoEditor\ProMoControlFactory.h"\
+	".\ProMoEditor\ProMoEdgeModel.h"\
+	".\ProMoEditor\ProMoEdgeView.h"\
+	".\ProMoEditor\ProMoEntity.h"\
+	".\ProMoEditor\ProMoLabel.h"\
+	".\ProMoEditor\ProMoProperty.h"\
+	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
+	".\ProMoEditor\ProMoView.h"\
+	
+NODEP_CPP_PROMOEDGE=\
+	".\Automation\stdafx.h"\
+	
+
+"$(INTDIR)\ProMoEdgeSegmentsAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOEDGE)\
+ "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
 DEP_CPP_PROMOEDGE=\
 	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
 	".\Automation\..\ProMoEditor\ProMoModel.h"\
@@ -3401,17 +3538,6 @@ NODEP_CPP_PROMOEDGE=\
 	".\Automation\stdafx.h"\
 	
 
-!IF  "$(CFG)" == "WinProMo - Win32 Release"
-
-
-"$(INTDIR)\ProMoEdgeSegmentsAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOEDGE)\
- "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
-
-
 BuildCmds= \
 	$(CPP) $(CPP_PROJ) $(SOURCE) \
 	
@@ -3431,6 +3557,58 @@ BuildCmds= \
 # Begin Source File
 
 SOURCE=.\Automation\ProMoEdgeSegmentAuto.cpp
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+DEP_CPP_PROMOEDGES=\
+	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
+	".\Automation\..\ProMoEditor\ProMoModel.h"\
+	".\Automation\..\stdafx.h"\
+	".\Automation\ProMoAppAutoAbs.h"\
+	".\Automation\ProMoAppChildAuto.h"\
+	".\Automation\ProMoAutomationHost.h"\
+	".\Automation\ProMoDiagramAutoAbs.h"\
+	".\Automation\ProMoDiagramChildAuto.h"\
+	".\automation\ProMoEdgeChildAuto.h"\
+	".\Automation\ProMoEdgeSegmentAuto.h"\
+	".\Automation\ProMoElementAuto.h"\
+	".\automation\ProMoElementChildAuto.h"\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramLine.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\HitParams.h"\
+	".\DiagramEditor\HitParamsRect.h"\
+	".\DiagramEditor\Tokenizer.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
+	".\FileUtils\VariantWrapper.h"\
+	".\GeometryUtils\DoublePoint.h"\
+	".\GeometryUtils\DoubleRect.h"\
+	".\ProMoEditor\ProMoBlockModel.h"\
+	".\ProMoEditor\ProMoBlockView.h"\
+	".\ProMoEditor\ProMoControlFactory.h"\
+	".\ProMoEditor\ProMoEdgeModel.h"\
+	".\ProMoEditor\ProMoEdgeView.h"\
+	".\ProMoEditor\ProMoEntity.h"\
+	".\ProMoEditor\ProMoLabel.h"\
+	".\ProMoEditor\ProMoProperty.h"\
+	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
+	".\ProMoEditor\ProMoView.h"\
+	
+NODEP_CPP_PROMOEDGES=\
+	".\Automation\stdafx.h"\
+	
+
+"$(INTDIR)\ProMoEdgeSegmentAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOEDGES)\
+ "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
 DEP_CPP_PROMOEDGES=\
 	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
 	".\Automation\..\ProMoEditor\ProMoModel.h"\
@@ -3471,17 +3649,6 @@ NODEP_CPP_PROMOEDGES=\
 	".\Automation\stdafx.h"\
 	
 
-!IF  "$(CFG)" == "WinProMo - Win32 Release"
-
-
-"$(INTDIR)\ProMoEdgeSegmentAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOEDGES)\
- "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
-
-
 BuildCmds= \
 	$(CPP) $(CPP_PROJ) $(SOURCE) \
 	
@@ -3501,6 +3668,55 @@ BuildCmds= \
 # Begin Source File
 
 SOURCE=.\Automation\ProMoElementChildAuto.cpp
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+DEP_CPP_PROMOELEM=\
+	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
+	".\Automation\..\ProMoEditor\ProMoModel.h"\
+	".\Automation\..\stdafx.h"\
+	".\Automation\ProMoAppAutoAbs.h"\
+	".\Automation\ProMoAppChildAuto.h"\
+	".\Automation\ProMoAutomationHost.h"\
+	".\Automation\ProMoDiagramAutoAbs.h"\
+	".\Automation\ProMoDiagramChildAuto.h"\
+	".\Automation\ProMoElementAuto.h"\
+	".\automation\ProMoElementChildAuto.h"\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramLine.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\HitParams.h"\
+	".\DiagramEditor\HitParamsRect.h"\
+	".\DiagramEditor\Tokenizer.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
+	".\FileUtils\VariantWrapper.h"\
+	".\GeometryUtils\DoublePoint.h"\
+	".\GeometryUtils\DoubleRect.h"\
+	".\ProMoEditor\ProMoBlockModel.h"\
+	".\ProMoEditor\ProMoBlockView.h"\
+	".\ProMoEditor\ProMoControlFactory.h"\
+	".\ProMoEditor\ProMoEdgeView.h"\
+	".\ProMoEditor\ProMoEntity.h"\
+	".\ProMoEditor\ProMoLabel.h"\
+	".\ProMoEditor\ProMoProperty.h"\
+	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
+	".\ProMoEditor\ProMoView.h"\
+	
+NODEP_CPP_PROMOELEM=\
+	".\Automation\stdafx.h"\
+	
+
+"$(INTDIR)\ProMoElementChildAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOELEM)\
+ "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
 DEP_CPP_PROMOELEM=\
 	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
 	".\Automation\..\ProMoEditor\ProMoModel.h"\
@@ -3538,17 +3754,6 @@ NODEP_CPP_PROMOELEM=\
 	".\Automation\stdafx.h"\
 	
 
-!IF  "$(CFG)" == "WinProMo - Win32 Release"
-
-
-"$(INTDIR)\ProMoElementChildAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOELEM)\
- "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
-
-
 BuildCmds= \
 	$(CPP) $(CPP_PROJ) $(SOURCE) \
 	
@@ -3568,6 +3773,57 @@ BuildCmds= \
 # Begin Source File
 
 SOURCE=.\Automation\ProMoEdgeChildAuto.cpp
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+DEP_CPP_PROMOEDGEC=\
+	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
+	".\Automation\..\ProMoEditor\ProMoModel.h"\
+	".\Automation\..\stdafx.h"\
+	".\Automation\ProMoAppAutoAbs.h"\
+	".\Automation\ProMoAppChildAuto.h"\
+	".\Automation\ProMoAutomationHost.h"\
+	".\Automation\ProMoDiagramAutoAbs.h"\
+	".\Automation\ProMoDiagramChildAuto.h"\
+	".\automation\ProMoEdgeChildAuto.h"\
+	".\Automation\ProMoElementAuto.h"\
+	".\automation\ProMoElementChildAuto.h"\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramLine.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\HitParams.h"\
+	".\DiagramEditor\HitParamsRect.h"\
+	".\DiagramEditor\Tokenizer.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
+	".\FileUtils\VariantWrapper.h"\
+	".\GeometryUtils\DoublePoint.h"\
+	".\GeometryUtils\DoubleRect.h"\
+	".\ProMoEditor\ProMoBlockModel.h"\
+	".\ProMoEditor\ProMoBlockView.h"\
+	".\ProMoEditor\ProMoControlFactory.h"\
+	".\ProMoEditor\ProMoEdgeModel.h"\
+	".\ProMoEditor\ProMoEdgeView.h"\
+	".\ProMoEditor\ProMoEntity.h"\
+	".\ProMoEditor\ProMoLabel.h"\
+	".\ProMoEditor\ProMoProperty.h"\
+	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
+	".\ProMoEditor\ProMoView.h"\
+	
+NODEP_CPP_PROMOEDGEC=\
+	".\Automation\stdafx.h"\
+	
+
+"$(INTDIR)\ProMoEdgeChildAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOEDGEC)\
+ "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
 DEP_CPP_PROMOEDGEC=\
 	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
 	".\Automation\..\ProMoEditor\ProMoModel.h"\
@@ -3607,17 +3863,6 @@ NODEP_CPP_PROMOEDGEC=\
 	".\Automation\stdafx.h"\
 	
 
-!IF  "$(CFG)" == "WinProMo - Win32 Release"
-
-
-"$(INTDIR)\ProMoEdgeChildAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOEDGEC)\
- "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
-
-
 BuildCmds= \
 	$(CPP) $(CPP_PROJ) $(SOURCE) \
 	
@@ -3637,6 +3882,56 @@ BuildCmds= \
 # Begin Source File
 
 SOURCE=.\Automation\ProMoBlockChildAuto.cpp
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+DEP_CPP_PROMOBLO=\
+	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
+	".\Automation\..\ProMoEditor\ProMoModel.h"\
+	".\Automation\..\stdafx.h"\
+	".\Automation\ProMoAppAutoAbs.h"\
+	".\Automation\ProMoAppChildAuto.h"\
+	".\Automation\ProMoAutomationHost.h"\
+	".\automation\ProMoBlockChildAuto.h"\
+	".\Automation\ProMoDiagramAutoAbs.h"\
+	".\Automation\ProMoDiagramChildAuto.h"\
+	".\Automation\ProMoElementAuto.h"\
+	".\automation\ProMoElementChildAuto.h"\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramLine.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\HitParams.h"\
+	".\DiagramEditor\HitParamsRect.h"\
+	".\DiagramEditor\Tokenizer.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
+	".\FileUtils\VariantWrapper.h"\
+	".\GeometryUtils\DoublePoint.h"\
+	".\GeometryUtils\DoubleRect.h"\
+	".\ProMoEditor\ProMoBlockModel.h"\
+	".\ProMoEditor\ProMoBlockView.h"\
+	".\ProMoEditor\ProMoControlFactory.h"\
+	".\ProMoEditor\ProMoEdgeView.h"\
+	".\ProMoEditor\ProMoEntity.h"\
+	".\ProMoEditor\ProMoLabel.h"\
+	".\ProMoEditor\ProMoProperty.h"\
+	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
+	".\ProMoEditor\ProMoView.h"\
+	
+NODEP_CPP_PROMOBLO=\
+	".\Automation\stdafx.h"\
+	
+
+"$(INTDIR)\ProMoBlockChildAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOBLO) "$(INTDIR)"\
+ "$(INTDIR)\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
 DEP_CPP_PROMOBLO=\
 	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
 	".\Automation\..\ProMoEditor\ProMoModel.h"\
@@ -3675,17 +3970,6 @@ NODEP_CPP_PROMOBLO=\
 	".\Automation\stdafx.h"\
 	
 
-!IF  "$(CFG)" == "WinProMo - Win32 Release"
-
-
-"$(INTDIR)\ProMoBlockChildAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOBLO) "$(INTDIR)"\
- "$(INTDIR)\WinProMo.pch"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
-
-
 BuildCmds= \
 	$(CPP) $(CPP_PROJ) $(SOURCE) \
 	
@@ -3705,6 +3989,60 @@ BuildCmds= \
 # Begin Source File
 
 SOURCE=.\Automation\ProMoOutgoingEdgesAuto.cpp
+
+!IF  "$(CFG)" == "WinProMo - Win32 Release"
+
+DEP_CPP_PROMOO=\
+	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
+	".\Automation\..\ProMoEditor\ProMoModel.h"\
+	".\Automation\..\stdafx.h"\
+	".\Automation\ProMoAppAutoAbs.h"\
+	".\Automation\ProMoAppChildAuto.h"\
+	".\Automation\ProMoAutomationHost.h"\
+	".\automation\ProMoBlockChildAuto.h"\
+	".\Automation\ProMoDiagramAutoAbs.h"\
+	".\Automation\ProMoDiagramChildAuto.h"\
+	".\automation\ProMoEdgeAuto.h"\
+	".\Automation\ProMoElementAuto.h"\
+	".\automation\ProMoElementChildAuto.h"\
+	".\Automation\ProMoOutgoingEdgesAuto.h"\
+	".\DiagramEditor\DiagramClipboardHandler.h"\
+	".\DiagramEditor\DiagramEntity.h"\
+	".\DiagramEditor\DiagramEntityContainer.h"\
+	".\DiagramEditor\DiagramLine.h"\
+	".\DiagramEditor\DiagramPropertyDlg.h"\
+	".\DiagramEditor\HitParams.h"\
+	".\DiagramEditor\HitParamsRect.h"\
+	".\DiagramEditor\Tokenizer.h"\
+	".\DiagramEditor\UndoItem.h"\
+	".\FileUtils\DibHelper.h"\
+	".\FileUtils\SafeArrayWrapper.h"\
+	".\FileUtils\VariantWrapper.h"\
+	".\GeometryUtils\DoublePoint.h"\
+	".\GeometryUtils\DoubleRect.h"\
+	".\ProMoEditor\ProMoBlockModel.h"\
+	".\ProMoEditor\ProMoBlockView.h"\
+	".\ProMoEditor\ProMoControlFactory.h"\
+	".\ProMoEditor\ProMoEdgeModel.h"\
+	".\ProMoEditor\ProMoEdgeView.h"\
+	".\ProMoEditor\ProMoEntity.h"\
+	".\ProMoEditor\ProMoLabel.h"\
+	".\ProMoEditor\ProMoProperty.h"\
+	".\ProMoEditor\ProMoPropertyOwner.h"\
+	".\ProMoEditor\ProMoRenderer.h"\
+	".\ProMoEditor\ProMoView.h"\
+	
+NODEP_CPP_PROMOO=\
+	".\Automation\stdafx.h"\
+	
+
+"$(INTDIR)\ProMoOutgoingEdgesAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOO)\
+ "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
+   $(CPP) $(CPP_PROJ) $(SOURCE)
+
+
+!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
+
 DEP_CPP_PROMOO=\
 	".\Automation\..\ProMoEditor\ProMoEntityContainer.h"\
 	".\Automation\..\ProMoEditor\ProMoModel.h"\
@@ -3746,17 +4084,6 @@ DEP_CPP_PROMOO=\
 NODEP_CPP_PROMOO=\
 	".\Automation\stdafx.h"\
 	
-
-!IF  "$(CFG)" == "WinProMo - Win32 Release"
-
-
-"$(INTDIR)\ProMoOutgoingEdgesAuto.obj" : $(SOURCE) $(DEP_CPP_PROMOO)\
- "$(INTDIR)" "$(INTDIR)\WinProMo.pch"
-   $(CPP) $(CPP_PROJ) $(SOURCE)
-
-
-!ELSEIF  "$(CFG)" == "WinProMo - Win32 Debug"
-
 
 BuildCmds= \
 	$(CPP) $(CPP_PROJ) $(SOURCE) \

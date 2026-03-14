@@ -16,6 +16,7 @@
 #include "ProMoAppChildAuto.h"
 #include "../ProMoEditor/ProMoEntityContainer.h"
 #include "ProMoAppAutoAbs.h"
+#include "../ProMoEditor/ProMoRenderer.h"
 
 class AFX_EXT_CLASS CProMoLabelsAuto;
 
@@ -38,13 +39,15 @@ public:
 	virtual void ReleaseLabelsAutoObject();
 
 	virtual void NotifyChange();
+
+	virtual CString GetFilePath() = 0;
 	
 protected:
 	
 	virtual void SaveDiagramAs(const CString& fileName) = 0;
 	virtual void SaveDiagram(BOOL noPrompt) = 0;
 	virtual void CloseDiagram() = 0;
-	
+	virtual void ExportDiagram(const CString& fileName, ExportFormat format, ExportElement scope, double zoom, short resolution) = 0;
 
 // Overrides
 	// ClassWizard generated virtual function overrides
@@ -78,13 +81,13 @@ public:
 	afx_msg VARIANT GetCreatableElementTypes();
 	afx_msg void SetCreatableElementTypes(const VARIANT FAR& newValue);
 	afx_msg void SaveAs(const VARIANT FAR& fileName);
-	afx_msg void Activate();
 	afx_msg void Close(BOOL saveChanges);
 	afx_msg void Redo(short times);
 	afx_msg void Save(BOOL noPrompt);
 	afx_msg void Undo(short times);
 	afx_msg BSTR Path();
 	afx_msg BSTR Type();
+	afx_msg void Export(const VARIANT FAR& fileName, ExportFormat format, ExportElement scope, double zoom, short resolution);
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
 	DECLARE_INTERFACE_MAP()
