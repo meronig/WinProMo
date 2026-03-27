@@ -415,7 +415,7 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoLabelsAuto)
 			[id(2)] short Count();
-			[id(3)] boolean Add(IDispatch* item);
+			[id(3)] IDispatch* Add();
 			[id(4)] boolean Remove(VARIANT item);
 			[id(5), propget] IDispatch* Item(VARIANT item);
 			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);

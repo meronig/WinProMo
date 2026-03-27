@@ -155,6 +155,81 @@ namespace CProMoPropertyTests
             Assert::AreEqual(10, parent.GetChildrenCount());
         }
 
+        TEST_METHOD(FindChild_CompositeProperty_ReturnsCorrectElement)
+        {
+            CVariantWrapper nullVal;
+            CVariantWrapper strVal;
+            strVal.SetString(_T("val"));
+
+            CProMoProperty* root = new CProMoProperty(_T("root"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+
+            CProMoProperty* c1 = new CProMoProperty(_T("child1"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
+
+            CProMoProperty* leaf = new CProMoProperty(_T("leaf"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1, NULL);
+
+            CProMoProperty* leafRef = root->FindChild(CString("child1.leaf"));
+
+            CProMoProperty* c1Ref = root->FindChild(CString("child1"));
+
+            CProMoProperty* noRef = root->FindChild(CString("foo"));
+
+            TestHelpers::PointerAssert::AreEqual(c1Ref, c1);
+            TestHelpers::PointerAssert::AreEqual(leafRef, leaf);
+            TestHelpers::PointerAssert::IsNull(noRef);
+
+            delete root;
+            
+        }
+
+        TEST_METHOD(RemoveChild_CompositeProperty_RemoveChild)
+        {
+            CVariantWrapper nullVal;
+            CVariantWrapper strVal;
+            strVal.SetString(_T("val"));
+
+            CProMoProperty templateChild(_T("child"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL);
+            CProMoProperty parent(_T("parent"), PROPTYPE_STRING, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, NULL, &templateChild);
+            parent.AddChild();
+
+            CProMoProperty* child = parent.GetChild(0);
+
+            TestHelpers::PointerAssert::IsNotNull(child);
+
+            parent.RemoveChild(0);
+
+            TestHelpers::PointerAssert::IsNull(parent.GetChild(0));
+            
+        }
+
+        TEST_METHOD(GetChildrenNames_WhenInvoked_ReturnsCorrectList)
+        {
+            CVariantWrapper nullVal;
+            CVariantWrapper strVal;
+            strVal.SetString(_T("val"));
+
+            CProMoProperty* root = new CProMoProperty(_T("root"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL);
+
+            CProMoProperty* c1 = new CProMoProperty(_T("child1"), PROPTYPE_COMPOSITE, nullVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
+
+            CProMoProperty* leaf = new CProMoProperty(_T("leaf"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, c1, NULL);
+
+            CStringArray list;
+            c1->GetChildrenNames(list, FALSE);
+
+            Assert::AreEqual((INT_PTR)1, list.GetSize());
+            Assert::AreEqual(list.GetAt(0), CString("leaf"));
+
+            list.RemoveAll();
+            root->GetChildrenNames(list, TRUE);
+
+            Assert::AreEqual((INT_PTR)2, list.GetSize());
+            Assert::AreEqual(list.GetAt(0), CString("child1"));
+            Assert::AreEqual(list.GetAt(1), CString("child1.leaf"));
+
+            delete root;
+
+        }
+
         TEST_METHOD(SerializeCompositeTree_FullRoundTrip_PropertiesMatch)
         {
             CVariantWrapper nullVal;
@@ -340,6 +415,8 @@ namespace CProMoPropertyTests
             CProMoProperty* child = new CProMoProperty(_T("child"), PROPTYPE_STRING, strVal, FALSE, TRUE, TRUE, NULL, NULL, NULL, NULL, root, NULL);
 
             CString fullName = child->GetFullName();
+            Assert::IsTrue(root->IsComposite());
+            Assert::IsFalse(child->IsComposite());
             Assert::IsTrue(fullName.Find(_T("root")) != -1);
             Assert::IsTrue(fullName.Find(_T("root.child")) != -1);
 

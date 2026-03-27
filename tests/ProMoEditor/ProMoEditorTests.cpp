@@ -1067,6 +1067,28 @@ namespace CProMoEditorTests
             Assert::AreNotEqual(expected, m_editor.GetTextVerticalAlignment());
         }
 
+        TEST_METHOD(SetTextMultiline_ValidValue_SetsAlignment)
+        {
+            // Arrange
+            m_a->Select(TRUE);
+            m_x->Select(TRUE);
+            m_lb->Select(TRUE);
+            
+            // Act
+            m_editor.SetTextMultiline(TRUE);
+
+            // Assert
+            Assert::IsTrue(m_editor.IsTextMultiline());
+            Assert::IsTrue(m_a->IsTextMultiline());
+            Assert::IsTrue(m_x->IsTextMultiline());
+            Assert::IsTrue(m_la->IsTextMultiline());
+            Assert::IsTrue(m_lx->IsTextMultiline());
+            Assert::IsTrue(m_lb->IsTextMultiline());
+            
+            m_a2->Select(TRUE);
+            Assert::IsFalse(m_editor.IsTextMultiline());
+        }
+
         TEST_METHOD(SetTextAlignmentFlag_ValidValue_SetsAlignment)
         {
             // Arrange

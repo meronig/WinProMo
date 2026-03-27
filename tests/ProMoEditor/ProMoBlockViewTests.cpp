@@ -56,6 +56,14 @@ namespace CProMoBlockViewTests
             TestHelpers::PointerAssert::IsNotNull(view.GetModel());
         }
 
+        TEST_METHOD(HasType_WhenInvoked_ReturnsCorrectValue)
+        {
+            CProMoBlockView view;
+            
+            Assert::IsTrue(view.HasType(CString("promo_block_view")));
+            Assert::IsFalse(view.HasType(CString("test")));
+        }
+
 #pragma endregion
 
 #pragma region FormattingTests
@@ -287,6 +295,7 @@ namespace CProMoBlockViewTests
             Assert::IsTrue(result);
             Assert::AreEqual(DT_RIGHT, (int)view.GetTextHorizontalAlignment());
             Assert::AreEqual(vAlignment, view.GetTextVerticalAlignment());
+            Assert::IsTrue(view.IsTextMultiline());
             Assert::AreEqual(DT_RIGHT | vAlignment | otherFlag, view.GetTextAlignment());
 
             result = view.SetTextVerticalAlignment(DT_TOP);
@@ -294,7 +303,15 @@ namespace CProMoBlockViewTests
             Assert::IsTrue(result);
             Assert::AreEqual(DT_RIGHT, (int)view.GetTextHorizontalAlignment());
             Assert::AreEqual(DT_TOP, (int)view.GetTextVerticalAlignment());
+            Assert::IsTrue(view.IsTextMultiline());
             Assert::AreEqual(DT_RIGHT | DT_TOP | otherFlag, view.GetTextAlignment());
+
+            result = view.SetTextMultiline(FALSE);
+            Assert::IsTrue(result);
+            Assert::AreEqual(DT_RIGHT, (int)view.GetTextHorizontalAlignment());
+            Assert::AreEqual(DT_TOP, (int)view.GetTextVerticalAlignment());
+            Assert::IsFalse(view.IsTextMultiline());
+            Assert::AreEqual((unsigned int)(DT_RIGHT | DT_TOP | DT_SINGLELINE), view.GetTextAlignment());
 
         }
 
@@ -878,6 +895,19 @@ namespace CProMoBlockViewTests
 
 #pragma region SerializationTests
 
+        TEST_METHOD(Create_WhenCorrectTypeIsPassed_CreatesObject)
+        {
+            CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(CProMoBlockView::Create(CString("promo_block_view")));
+            Assert::IsNotNull(view);
+            Assert::AreEqual(CString("promo_block_view"), view->GetType());
+        }
+
+        TEST_METHOD(Create_WhenIncorrectTypeIsPassed_ReturnsNull)
+        {
+            CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(CProMoBlockView::Create(CString("test")));
+            Assert::IsNull(view);
+        }
+
         TEST_METHOD(GetDefaultGetString_WhenInvoked_ReturnsCorrectString)
         {
             CProMoBlockViewTestStub view;
@@ -908,6 +938,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub viewStub;
             CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(viewStub.CreateFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model,524288,65535,2,65280,1,2,255,1,5;")));
 
+            Assert::IsNotNull(view);
             Assert::AreEqual(CString("promo_block_view"), view->GetType());
             Assert::AreEqual(CString("View"), view->GetName());
             Assert::AreEqual(CString("My View"), view->GetTitle());
@@ -932,6 +963,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub viewStub;
             CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(viewStub.CreateFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model,524288,65535,2,65280,1,2,255,1,5,Extra1,Extra2;")));
 
+            Assert::IsNotNull(view);
             Assert::AreEqual(CString("promo_block_view"), view->GetType());
             Assert::AreEqual(CString("View"), view->GetName());
             Assert::AreEqual(CString("My View"), view->GetTitle());
@@ -955,6 +987,7 @@ namespace CProMoBlockViewTests
             CProMoBlockViewTestStub viewStub;
             CProMoBlockView* view = dynamic_cast<CProMoBlockView*>(viewStub.CreateFromString(CString("promo_block_view:View,100.000000,50.000000,250.000000,120.000000,My View,0,Model,524288,65535;")));
 
+            Assert::IsNotNull(view);
             Assert::AreEqual(CString("promo_block_view"), view->GetType());
             Assert::AreEqual(CString("View"), view->GetName());
             Assert::AreEqual(CString("My View"), view->GetTitle());

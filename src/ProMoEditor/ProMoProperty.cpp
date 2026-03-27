@@ -691,8 +691,7 @@ CProMoProperty* CProMoProperty::FindChild(const CString& name) const
 	Description :	Returns the child having the specified name.
 					Only applicable to composite and multi-value
 					properties. The search is performed only on
-					the direct children of the property, and does
-					not include grandchildren or other descendants.
+					the descendants of the property.
 	Access :		Public
 	Return :		CProMoProperty*	-	the child having the
 										specified name
@@ -704,7 +703,7 @@ CProMoProperty* CProMoProperty::FindChild(const CString& name) const
 	for (int i = 0; i < m_childProperties.GetSize(); i++) {
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_childProperties.GetAt(i));
 		if (prop) {
-			result = FindChildR(name, prop, prop);
+			result = FindChildR(name, prop, this);
 			if (result) {
 				return result;
 			}
@@ -720,8 +719,8 @@ void CProMoProperty::GetChildrenNames(CStringArray& array, const BOOL& recursive
 					properties of the current property. If
 					"recursive" is "TRUE", also fills the array
 					with the names of all descendant properties,
-					prefixed with the path to reach them (e.g.,
-					"ChildProperty.0.GrandChildProperty").
+					prefixed with the relative path to reach them
+					(e.g., "ChildProperty.0.GrandChildProperty").
 	Access :		Public
 	Return :		void
 	Parameters :	CStringArray& array	-	the array to be filled
@@ -737,11 +736,11 @@ void CProMoProperty::GetChildrenNames(CStringArray& array, const BOOL& recursive
 	for (int i = 0; i < m_childProperties.GetSize(); i++) {
 		CProMoProperty* prop = dynamic_cast<CProMoProperty*>(m_childProperties.GetAt(i));
 		if (recursive) {
-			GetChildrenNamesR(array, prop, prop);
+			GetChildrenNamesR(array, prop, this);
 		}
 		else {
 			if (prop) {
-				array.Add(prop->GetFullName());
+				array.Add(prop->GetName());
 			}
 		}
 	}

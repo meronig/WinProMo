@@ -667,9 +667,10 @@ CDiagramEntity* CProMoEntityContainer::CloneEntity(IProMoEntity* obj)
 	CObArray elements;
 	CObArray labels;
 	CObArray newElements;
+	IProMoView* view = dynamic_cast<IProMoView*>(obj);
 		
 	CProMoModel* model = obj->GetModel();
-	if (model) {
+	if (view && model) {
 		//get all views
 		model->GetViews(elements);
 		model->GetLabels(labels);

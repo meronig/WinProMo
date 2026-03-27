@@ -78,6 +78,9 @@
     <ClCompile Include="ProMoEditor\ProMoRendererTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FileUtils\SafeArrayWrapperTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

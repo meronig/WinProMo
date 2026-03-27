@@ -48,6 +48,79 @@ namespace CProMoEntityContainerTests
 
 #pragma endregion
 
+#pragma region DuplicationTests
+
+        TEST_METHOD(Duplicate_WhenInvoked_CreatesACopy)
+        {
+            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoBlockView* block = new CProMoBlockView();
+            CProMoEdgeView* edge = new CProMoEdgeView();
+
+            CObArray labels;
+            block->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            edge->GetModel()->RecreateLabels(labels);
+            CProMoLabel* le = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            c.Add(block);
+            c.Add(edge);
+            c.Add(lb);
+            c.Add(le);
+
+            Assert::AreEqual(4, c.GetSize());
+
+            c.Duplicate(block);
+            
+            Assert::AreEqual(6, c.GetSize());
+
+        }
+
+        TEST_METHOD(CloneEntity_WhenInvoked_CreatesACopy)
+        {
+            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoBlockView* block = new CProMoBlockView();
+            
+            CObArray labels;
+            block->GetModel()->RecreateLabels(labels);
+            CProMoLabel* lb = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            
+            CProMoBlockView* e = dynamic_cast<CProMoBlockView*>(c.CloneEntity(block));
+            
+            Assert::IsNotNull(e);
+            Assert::IsNotNull(e->GetBlockModel());
+            
+            Assert::AreEqual(e->GetLeft(), block->GetLeft() + 10);
+            Assert::AreEqual(e->GetRight(), block->GetRight() + 10);
+            Assert::AreEqual(e->GetTop(), block->GetTop() + 10);
+            Assert::AreEqual(e->GetBottom(), block->GetBottom() + 10);
+
+            e->GetBlockModel()->GetLabels(labels);
+            CProMoLabel* le = dynamic_cast<CProMoLabel*>(labels.GetAt(0));
+            labels.RemoveAll();
+
+            Assert::IsNotNull(le);
+            Assert::AreEqual(le->GetLeft(), lb->GetLeft() + 10);
+            Assert::AreEqual(le->GetRight(), lb->GetRight() + 10);
+            Assert::AreEqual(le->GetTop(), lb->GetTop() + 10);
+            Assert::AreEqual(le->GetBottom(), lb->GetBottom() + 10);
+
+            CProMoLabel* lc = dynamic_cast<CProMoLabel*>(c.CloneEntity(le));
+
+            Assert::IsNotNull(lc);
+            Assert::AreEqual(lc->GetLeft(), le->GetLeft() + 10);
+            Assert::AreEqual(lc->GetRight(), le->GetRight() + 10);
+            Assert::AreEqual(lc->GetTop(), le->GetTop() + 10);
+            Assert::AreEqual(lc->GetBottom(), le->GetBottom() + 10);
+
+        }
+
+#pragma endregion
+
 #pragma region RemovalTests
 
         TEST_METHOD(RemoveAt_WhenInvoked_RemoveElementAndLabels)

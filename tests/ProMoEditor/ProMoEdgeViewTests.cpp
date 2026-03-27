@@ -40,6 +40,14 @@ namespace CProMoEdgeViewTests
             TestHelpers::PointerAssert::IsNotNull(view.GetModel());
         }
 
+        TEST_METHOD(HasType_WhenInvoked_ReturnsCorrectValue)
+        {
+            CProMoEdgeView view;
+
+            Assert::IsTrue(view.HasType(CString("promo_edge_view")));
+            Assert::IsFalse(view.HasType(CString("test")));
+        }
+
 #pragma endregion
 
 #pragma region FormattingTests
@@ -271,6 +279,7 @@ namespace CProMoEdgeViewTests
             Assert::IsTrue(result);
             Assert::AreEqual(DT_RIGHT, (int)view.GetTextHorizontalAlignment());
             Assert::AreEqual(vAlignment, view.GetTextVerticalAlignment());
+            Assert::IsTrue(view.IsTextMultiline());
             Assert::AreEqual(DT_RIGHT | vAlignment | otherFlag, view.GetTextAlignment());
 
             result = view.SetTextVerticalAlignment(DT_TOP);
@@ -278,7 +287,15 @@ namespace CProMoEdgeViewTests
             Assert::IsTrue(result);
             Assert::AreEqual(DT_RIGHT, (int)view.GetTextHorizontalAlignment());
             Assert::AreEqual(DT_TOP, (int)view.GetTextVerticalAlignment());
+            Assert::IsTrue(view.IsTextMultiline());
             Assert::AreEqual(DT_RIGHT | DT_TOP | otherFlag, view.GetTextAlignment());
+
+            result = view.SetTextMultiline(FALSE);
+            Assert::IsTrue(result);
+            Assert::AreEqual(DT_RIGHT, (int)view.GetTextHorizontalAlignment());
+            Assert::AreEqual(DT_TOP, (int)view.GetTextVerticalAlignment());
+            Assert::IsFalse(view.IsTextMultiline());
+            Assert::AreEqual((unsigned int)(DT_RIGHT | DT_TOP | DT_SINGLELINE), view.GetTextAlignment());
 
         }
 
@@ -695,6 +712,19 @@ namespace CProMoEdgeViewTests
 #pragma endregion
 
 #pragma region SerializationTests
+
+        TEST_METHOD(Create_WhenCorrectTypeIsPassed_CreatesObject)
+        {
+            CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(CProMoEdgeView::Create(CString("promo_edge_view")));
+            Assert::IsNotNull(view);
+            Assert::AreEqual(CString("promo_edge_view"), view->GetType());
+        }
+
+        TEST_METHOD(Create_WhenIncorrectTypeIsPassed_ReturnsNull)
+        {
+            CProMoEdgeView* view = dynamic_cast<CProMoEdgeView*>(CProMoEdgeView::Create(CString("test")));
+            Assert::IsNull(view);
+        }
 
         TEST_METHOD(GetDefaultGetString_WhenInvoked_ReturnsCorrectString)
         {

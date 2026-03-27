@@ -73,6 +73,14 @@ namespace CDoubleRectTests
 
         }
 
+        TEST_METHOD(CenterPoint_WhenInvoked_ReturnsCorrectPoint)
+        {
+            CDoubleRect rect(10.1, 20.2, 30.3, 40.4);
+            Assert::AreEqual(20.2, rect.CenterPoint().x, 1e-9);
+            Assert::AreEqual(30.3, rect.CenterPoint().y, 1e-9);
+
+        }
+
         TEST_METHOD(Ratio_WhenInvoked_ReturnsCorrectRatio)
         {
             CDoubleRect rect(10.1, 20.2, 30.3, 60.6);

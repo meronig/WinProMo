@@ -2,7 +2,7 @@
 #include "../Helpers/MfcAssertHelpers.h"
 #include "../Helpers/PointerAssertHelpers.h"
 #include "../WinProMoTests.h"
-#include "../../src/FileUtils/VariantWrapper.h"   // adjust include path
+#include "../../src/FileUtils/VariantWrapper.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -22,6 +22,68 @@ namespace CVariantWrapperTests
 		{
 			CVariantWrapper var;
 			Assert::AreEqual((VARTYPE)VT_EMPTY, var.GetType());
+		}
+
+		TEST_METHOD(Constructor_VARIANT_CopyVariant)
+		{
+			VARIANT v;
+			VariantInit(&v);
+			v.lVal = 42;
+			v.vt = VT_I4;
+			CVariantWrapper var(v);
+			Assert::AreEqual((VARTYPE)VT_I4, var.GetType());
+			Assert::AreEqual((int)v.lVal, var.GetInt());
+		}
+
+		TEST_METHOD(Constructor_VARIANT_DereferenceBool)
+		{
+			VARIANT v;
+			VariantInit(&v);
+			VARIANT_BOOL val = VARIANT_TRUE;
+			v.piVal = &val;
+			v.vt = VT_BOOL | VT_BYREF;
+			CVariantWrapper var(v);
+			Assert::AreEqual((VARTYPE)VT_BOOL, var.GetType());
+			Assert::IsTrue(var.GetBool());
+		}
+
+		TEST_METHOD(Constructor_VARIANT_DereferenceInt)
+		{
+			VARIANT v;
+			VariantInit(&v);
+			long val = 42;
+			v.plVal = &val;
+			v.vt = VT_I4 | VT_BYREF;
+			CVariantWrapper var(v);
+			Assert::AreEqual((VARTYPE)VT_I4, var.GetType());
+			Assert::AreEqual((int)val, var.GetInt());
+		}
+		
+		TEST_METHOD(Constructor_VARIANT_DereferenceDouble)
+		{
+			VARIANT v;
+			VariantInit(&v);
+			double val = 3.14;
+			v.pdblVal = &val;
+			v.vt = VT_R8 | VT_BYREF;
+			CVariantWrapper var(v);
+			Assert::AreEqual((VARTYPE)VT_R8, var.GetType());
+			Assert::AreEqual(val, var.GetDouble());
+		}
+
+		TEST_METHOD(Constructor_VARIANT_DereferenceString)
+		{
+			BSTR src = SysAllocString(L"Hello");
+
+			VARIANT v;
+			VariantInit(&v);
+			v.vt = VT_BSTR | VT_BYREF;
+			v.pbstrVal = &src;
+
+			CVariantWrapper var(v);
+
+			Assert::AreEqual((VARTYPE)VT_BSTR, var.GetType());
+			Assert::AreEqual(src, var.GetString());
 		}
 
 		TEST_METHOD(SetBool_WhenValueIsSet_SetsTypeAndValue)
@@ -60,6 +122,19 @@ namespace CVariantWrapperTests
 
 			Assert::AreEqual((VARTYPE)VT_BSTR, var.GetType());
 			Assert::AreEqual(CString(L"Hello"), var.GetString());
+		}
+
+		TEST_METHOD(SetVariant_WhenValueIsSet_SetsTypeAndValue)
+		{
+			CVariantWrapper var;
+			VARIANT v;
+			VariantInit(&v);
+			v.lVal = 42;
+			v.vt = VT_I4;
+			var.SetVariant(v);
+
+			Assert::AreEqual((VARTYPE)VT_I4, var.GetType());
+			Assert::AreEqual((int)v.lVal, var.GetInt());
 		}
 
 		TEST_METHOD(CopyConstructor_WithExistingValue_CreatesEquivalentCopy)
@@ -182,6 +257,34 @@ namespace CVariantWrapperTests
 			Assert::IsFalse(var.GetBool());
 		}
 
+		TEST_METHOD(SetVariant_WhenValueIsShort_CastToLong)
+		{
+			CVariantWrapper var;
+			short val = 42;
+			VARIANT v;
+			VariantInit(&v);
+			v.piVal = &val;
+			v.vt = VT_I2 | VT_BYREF;
+			var.SetVariant(v);
+
+			Assert::AreEqual((VARTYPE)VT_I4, var.GetType());
+			Assert::AreEqual((int)val, var.GetInt());
+		}
+
+		TEST_METHOD(SetVariant_WhenValueIsFloat_CastToDouble)
+		{
+			CVariantWrapper var;
+			float val = 3.14;
+			VARIANT v;
+			VariantInit(&v);
+			v.pfltVal = &val;
+			v.vt = VT_R4 | VT_BYREF;
+			var.SetVariant(v);
+
+			Assert::AreEqual((VARTYPE)VT_R8, var.GetType());
+			Assert::AreEqual((double)val, var.GetDouble());
+		}
+
 #pragma endregion
 
 #pragma region EdgeCases
@@ -239,6 +342,14 @@ namespace CVariantWrapperTests
 			Assert::AreEqual(42.0, var.GetDouble(), 1e-9);
 		}
 
+		TEST_METHOD(GetDouble_WithStringValue_PerformsConversion)
+		{
+			CVariantWrapper var;
+			var.SetString(L"42.0");
+
+			Assert::AreEqual(42.0, var.GetDouble(), 1e-9);
+		}
+
 		TEST_METHOD(GetString_WithBoolTRUE_Returns1)
 		{
 			CVariantWrapper var;
@@ -280,6 +391,17 @@ namespace CVariantWrapperTests
 			BOOL ok = var.SetFromString(L"something", VT_DATE);
 
 			Assert::IsFalse(ok);
+		}
+
+		TEST_METHOD(SetVariant_WhenInError_SetToEmpty)
+		{
+			CVariantWrapper var;
+			VARIANT v;
+			VariantInit(&v);
+			v.vt = VT_ERROR;
+			var.SetVariant(v);
+
+			Assert::AreEqual((VARTYPE)VT_EMPTY, var.GetType());
 		}
 
 #pragma endregion

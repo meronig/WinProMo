@@ -150,7 +150,7 @@ LPDISPATCH CProMoLabelsAuto::Add()
 			GetContainer()->Snapshot();
 			pContainer->Add(element);
 			GetDiagramAutoObject()->NotifyChange();
-			CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(element->GetAutomationObject());
+			CProMoLabelAuto* pElementAuto = dynamic_cast<CProMoLabelAuto*>(element->GetAutomationObject());
 			if (pElementAuto) {
 				pElementAuto->SetDiagramAutoObject(GetDiagramAutoObject());
 				return pElementAuto->GetIDispatch(TRUE);

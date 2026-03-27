@@ -187,6 +187,7 @@ long CProMoDiagramAutoAbs::GetWidth()
 void CProMoDiagramAutoAbs::SetWidth(long nNewValue)
 {
 	if (GetContainer()) {
+		GetContainer()->Snapshot();
 		GetContainer()->SetVirtualSize(CSize(nNewValue, GetContainer()->GetVirtualSize().cy));
 		NotifyChange();
 	}
@@ -204,6 +205,7 @@ long CProMoDiagramAutoAbs::GetHeight()
 void CProMoDiagramAutoAbs::SetHeight(long nNewValue)
 {
 	if (GetContainer()) {
+		GetContainer()->Snapshot();
 		GetContainer()->SetVirtualSize(CSize(GetContainer()->GetVirtualSize().cx, nNewValue));
 		NotifyChange();
 	}

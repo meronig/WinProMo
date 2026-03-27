@@ -1010,6 +1010,7 @@ void CDiagramEditor::SetVirtualSize( const CSize& size )
 {
 
 	ASSERT( m_objs );
+	m_objs->Snapshot();
 	SetInternalVirtualSize( size );
 	m_objs->SetModified( TRUE );
 

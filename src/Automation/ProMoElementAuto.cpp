@@ -243,10 +243,12 @@ LPDISPATCH CProMoElementAuto::Duplicate()
 	GetDiagramAutoObject()->NotifyChange();
 
 	if (newView) {
-		CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(newView->GetAutomationObject());
-		if (pElementAuto) {
-			pElementAuto->SetDiagramAutoObject(GetDiagramAutoObject());
-			return pElementAuto->GetIDispatch(TRUE);
+		if (newView->GetModel()) {
+			CProMoElementAuto* pElementAuto = dynamic_cast<CProMoElementAuto*>(newView->GetModel()->GetAutomationObject());
+			if (pElementAuto) {
+				pElementAuto->SetDiagramAutoObject(GetDiagramAutoObject());
+				return pElementAuto->GetIDispatch(TRUE);
+			}
 		}
 	}
 	
@@ -323,7 +325,7 @@ void CProMoElementAuto::SetLineWidth(short nNewValue)
 short CProMoElementAuto::GetLineStyle() 
 {
 	if (GetMainView()) {
-		return GetMainView()->GetLineWidth();
+		return GetMainView()->GetLineStyle();
 	}
 
 	return 0;

@@ -10,7 +10,7 @@
 
 #include "../StdAfx.h"
 
-class CSafeArrayWrapper
+class AFX_EXT_CLASS CSafeArrayWrapper
 {
 public:
     CSafeArrayWrapper();

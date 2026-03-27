@@ -1,6 +1,6 @@
 /* ==========================================================================
 
-	Copyright © 2025 Technical University of Denmark
+	Copyright © 2025-26 Technical University of Denmark
 
 	CFileParser
 
@@ -100,6 +100,15 @@ CVariantWrapper::~CVariantWrapper()
 }
 
 void CVariantWrapper::Clear()
+/* ============================================================
+	Function :		CVariantWrapper::Clear
+	Description :	Clears the value
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
 	VariantClear(&m_var);
 	VariantInit(&m_var);
@@ -198,6 +207,7 @@ void CVariantWrapper::SetVariant(const VARIANT& val)
 {
 	Clear();
 	(void)VariantCopy(&m_var, (VARIANT*)&val);
+	NormalizeVariant();
 }
 
 BOOL CVariantWrapper::SetFromString(const CString& val, const VARTYPE& type)
@@ -426,6 +436,17 @@ const VARIANT* CVariantWrapper::GetVARIANT() const
 }
 
 void CVariantWrapper::NormalizeVariant()
+/* ============================================================
+	Function :		CVariantWrapper::NormalizeVariant
+	Description :	Normalizes the input VARIANT by dereferencing
+					it and casting the content to the most 
+					expressive data type
+	Access :		Private
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
 	// Handle ByRef
 	if (m_var.vt & VT_BYREF)
@@ -435,22 +456,27 @@ void CVariantWrapper::NormalizeVariant()
 		switch (baseType)
 		{
 		case VT_I2:
-			m_var.iVal = *m_var.piVal;
+			if (m_var.piVal)
+				m_var.iVal = *m_var.piVal;
 			break;
 		case VT_I4: 
-			m_var.lVal = *m_var.plVal; 
+			if (m_var.plVal)
+				m_var.lVal = *m_var.plVal;
 			break;
 		case VT_R4:
-			m_var.fltVal = *m_var.pfltVal;
+			if (m_var.pfltVal)
+				m_var.fltVal = *m_var.pfltVal;
 			break;
 		case VT_R8: 
-			m_var.dblVal = *m_var.pdblVal; 
+			if (m_var.pdblVal)
+				m_var.dblVal = *m_var.pdblVal; 
 			break;
-		case VT_BOOL: 
-			//unsupported by older MSVC versions
-			//m_var.boolVal = *m_var.pboolVal; 
+		case VT_BOOL:
+			if (m_var.piVal)
+				m_var.boolVal = *m_var.piVal; 
 			break;
 		case VT_BSTR: 
+			VariantClear(&m_var);
 			m_var.bstrVal = SysAllocString(*m_var.pbstrVal); 
 			break;
 		default: 
@@ -480,6 +506,19 @@ void CVariantWrapper::NormalizeVariant()
 }
 
 BOOL CVariantWrapper::ParseInt(const CString& str, int& outValue)
+/* ============================================================
+	Function :		CVariantWrapper::ParseInt
+	Description :	Tries to parse an input string into an integer
+	Access :		Private
+
+	Return :		BOOL			-	"TRUE" if the string
+										was correctly parsed,
+										"FALSE" otherwise.
+	Parameters :	CString str		-	The string to parse.
+					int outValue	-	The integer value parsed
+										from the input string
+
+   ============================================================*/
 {
 	if (str.IsEmpty())
 		return FALSE;
@@ -499,6 +538,19 @@ BOOL CVariantWrapper::ParseInt(const CString& str, int& outValue)
 }
 
 BOOL CVariantWrapper::ParseDouble(const CString& str, double& outValue)
+/* ============================================================
+	Function :		CVariantWrapper::ParseDouble
+	Description :	Tries to parse an input string into a double
+	Access :		Private
+
+	Return :		BOOL			-	"TRUE" if the string
+										was correctly parsed,
+										"FALSE" otherwise.
+	Parameters :	CString str		-	The string to parse.
+					double outValue	-	The double value parsed
+										from the input string
+
+   ============================================================*/
 {
 	if (str.IsEmpty())
 		return FALSE;

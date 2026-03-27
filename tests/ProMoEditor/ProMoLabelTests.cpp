@@ -51,6 +51,14 @@ namespace CProMoLabelTests
             Assert::AreEqual((unsigned int)0, label.GetLock());
         }
 
+        TEST_METHOD(HasType_WhenInvoked_ReturnsCorrectValue)
+        {
+            CProMoLabel view;
+
+            Assert::IsTrue(view.HasType(CString("promo_label")));
+            Assert::IsFalse(view.HasType(CString("test")));
+        }
+
 #pragma endregion
 
 #pragma region FormattingTests
@@ -260,6 +268,7 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(DT_RIGHT, (int)label.GetTextHorizontalAlignment());
 			Assert::AreEqual(vAlignment, label.GetTextVerticalAlignment());
+            Assert::IsTrue(label.IsTextMultiline());
             Assert::AreEqual(DT_RIGHT | vAlignment | otherFlag, label.GetTextAlignment());
 
             result = label.SetTextVerticalAlignment(DT_TOP);
@@ -267,8 +276,15 @@ namespace CProMoLabelTests
             Assert::IsTrue(result);
             Assert::AreEqual(DT_RIGHT, (int)label.GetTextHorizontalAlignment());
             Assert::AreEqual(DT_TOP, (int)label.GetTextVerticalAlignment());
+            Assert::IsTrue(label.IsTextMultiline());
             Assert::AreEqual(DT_RIGHT | DT_TOP | otherFlag, label.GetTextAlignment());
 
+            result = label.SetTextMultiline(FALSE);
+            Assert::IsTrue(result);
+            Assert::AreEqual(DT_RIGHT, (int)label.GetTextHorizontalAlignment());
+            Assert::AreEqual(DT_TOP, (int)label.GetTextVerticalAlignment());
+            Assert::IsFalse(label.IsTextMultiline());
+            Assert::AreEqual((unsigned int)(DT_RIGHT | DT_TOP | DT_SINGLELINE), label.GetTextAlignment());
         }
 
         TEST_METHOD(SetTextAlignmentFlag_ValidValue_SetsAlignment)
@@ -558,6 +574,19 @@ namespace CProMoLabelTests
 #pragma endregion
 
 #pragma region SerializationTests
+
+        TEST_METHOD(Create_WhenCorrectTypeIsPassed_CreatesObject)
+        {
+            CProMoLabel* label = dynamic_cast<CProMoLabel*>(CProMoLabel::Create(CString("promo_label")));
+            Assert::IsNotNull(label);
+            Assert::AreEqual(CString("promo_label"), label->GetType());
+        }
+
+        TEST_METHOD(Create_WhenIncorrectTypeIsPassed_ReturnsNull)
+        {
+            CProMoLabel* label = dynamic_cast<CProMoLabel*>(CProMoLabel::Create(CString("test")));
+            Assert::IsNull(label);
+        }
 
         TEST_METHOD(GetDefaultGetString_WhenInvoked_ReturnsCorrectString)
         {
