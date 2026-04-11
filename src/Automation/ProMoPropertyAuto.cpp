@@ -98,7 +98,7 @@ BEGIN_DISPATCH_MAP(CProMoPropertyAuto, CProMoElementChildAuto)
 	DISP_FUNCTION(CProMoPropertyAuto, "IsMultivalue", IsMultivalue, VT_BOOL, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Label", Label, VT_DISPATCH, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Add", Add, VT_DISPATCH, VTS_NONE)
-	DISP_FUNCTION(CProMoPropertyAuto, "Remove", Remove, VT_BOOL, VTS_NONE)
+	DISP_FUNCTION(CProMoPropertyAuto, "Remove", Remove, VT_BOOL, VTS_I2)
 	DISP_FUNCTION(CProMoPropertyAuto, "Count", Count, VT_I2, VTS_NONE)
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
@@ -407,10 +407,10 @@ BOOL CProMoPropertyAuto::Remove(short index)
    ============================================================ */
 {
 	if (GetProperty()) {
-		if (IsMultivalue() && !IsReadOnly()) {
-			if (GetProperty()->GetChild(index)) {
+		if (IsMultivalue() && !IsReadOnly() && index > 0) {
+			if (GetProperty()->GetChild(index - 1)) {
 				GetContainer()->Snapshot();
-				GetProperty()->RemoveChild(index);
+				GetProperty()->RemoveChild(index - 1);
 				GetDiagramAutoObject()->NotifyChange();
 				return TRUE;
 			}
@@ -453,7 +453,9 @@ LPDISPATCH CProMoPropertyAuto::GetItem(const VARIANT FAR& Item)
 		CVariantWrapper wrapper(Item);
 		CProMoProperty* childProperty = NULL;
 		if (wrapper.GetType() != VT_BSTR) {
-			childProperty = GetProperty()->GetChild(wrapper.GetInt());
+			if (wrapper.GetInt() > 0) {
+				childProperty = GetProperty()->GetChild(wrapper.GetInt() - 1);
+			}
 		}
 		else {
 			if (IsMultivalue()) {

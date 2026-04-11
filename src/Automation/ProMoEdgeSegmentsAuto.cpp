@@ -148,7 +148,7 @@ LPDISPATCH CProMoEdgeSegmentsAuto::GetItem(short Item)
 {
 	if (GetEdgeModel()) {
 		CProMoEdgeView* pView = GetEdgeModel()->GetFirstSegment();
-		for (int i = 0; pView && i < Item; i++) {
+		for (int i = 1; pView && i < Item; i++) {
 			pView = dynamic_cast<CProMoEdgeView*>(pView->GetDestination());
 		}
 		if (pView) {

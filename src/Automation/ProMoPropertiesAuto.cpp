@@ -147,8 +147,9 @@ LPDISPATCH CProMoPropertiesAuto::GetItem(const VARIANT FAR& Item)
 	if (GetModel()) {
 
 		if (wrapper.GetType() != VT_BSTR) {
-			pProperty = GetModel()->GetProperty(wrapper.GetInt());
-
+			if (wrapper.GetInt() > 0) {
+				pProperty = GetModel()->GetProperty(wrapper.GetInt() - 1);
+			}
 		}
 		else {
 			pProperty = GetModel()->FindProperty(wrapper.GetString());

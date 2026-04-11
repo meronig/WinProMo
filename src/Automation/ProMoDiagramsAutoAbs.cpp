@@ -257,7 +257,7 @@ void CProMoDiagramsAutoAbs::Save(BOOL noPrompt)
 {
 	ThrowIfNoAppAutoObject();
 	
-	for (int i = GetOpenDiagramsCount() - 1; i >= 0; --i) {
+	for (int i = GetOpenDiagramsCount(); i > 0; --i) {
 		CProMoDiagramAutoAbs* pDiagramAuto = GetDiagramAutoObject(i);
 		if (pDiagramAuto) {
 			pDiagramAuto->Save(noPrompt);

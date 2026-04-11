@@ -166,8 +166,8 @@ CProMoLabel* CProMoLabelsAuto::FindLabel(const VARIANT& Item, const CObArray& co
 	CProMoLabel* pModel = NULL;
 
 	if (wrapper.GetType() != VT_BSTR) {
-		if (wrapper.GetInt() >= 0 && wrapper.GetInt() < collection.GetSize()) {
-			pModel = dynamic_cast<CProMoLabel*>(collection.GetAt(wrapper.GetInt()));
+		if (wrapper.GetInt() > 0 && wrapper.GetInt() <= collection.GetSize()) {
+			pModel = dynamic_cast<CProMoLabel*>(collection.GetAt(wrapper.GetInt() - 1));
 		}
 	}
 	else {

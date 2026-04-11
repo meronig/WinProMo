@@ -184,8 +184,8 @@ CProMoModel* CProMoDiagramChildAuto::FindModel(const VARIANT& Item, const CObArr
 	CProMoModel* pModel = NULL;
 
 	if (wrapper.GetType() != VT_BSTR) {
-		if (wrapper.GetInt() >= 0 && wrapper.GetInt() < collection.GetSize()) {
-			pModel = dynamic_cast<CProMoModel*>(collection.GetAt(wrapper.GetInt()));
+		if (wrapper.GetInt() > 0 && wrapper.GetInt() <= collection.GetSize()) {
+			pModel = dynamic_cast<CProMoModel*>(collection.GetAt(wrapper.GetInt() - 1));
 		}
 	}
 	else {
