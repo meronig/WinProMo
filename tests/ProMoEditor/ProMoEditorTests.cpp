@@ -347,7 +347,7 @@ namespace CProMoEditorTests
         {
             CStringArray diagram;
             
-            diagram.Add(CString("custom:762,1091;"));
+            diagram.Add(CString("custom:762,1091,2;"));
             diagram.Add(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4;"));
             diagram.Add(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30;"));
             diagram.Add(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,,0,72;"));

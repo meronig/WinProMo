@@ -48,8 +48,8 @@ protected:
 	//{{AFX_DISPATCH(CProMoPropertyAuto)
 	afx_msg BSTR GetName();
 	afx_msg void SetName(LPCTSTR lpszNewValue);
-	afx_msg short GetType();
-	afx_msg void SetType(short nNewValue);
+	afx_msg long GetType();
+	afx_msg void SetType(long nNewValue);
 	afx_msg VARIANT GetValue();
 	afx_msg void SetValue(const VARIANT FAR& newValue);
 	afx_msg VARIANT GetChildNames();

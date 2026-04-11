@@ -543,7 +543,7 @@ void CProMoElementAuto::SetLineWidth(short nNewValue)
 
 }
 
-short CProMoElementAuto::GetLineStyle() 
+long CProMoElementAuto::GetLineStyle() 
 /* ============================================================
 	Function :		CProMoElementAuto::GetLineStyle
 	Description :	Get the line style of this element
@@ -560,7 +560,7 @@ short CProMoElementAuto::GetLineStyle()
 	return 0;
 }
 
-void CProMoElementAuto::SetLineStyle(short nNewValue) 
+void CProMoElementAuto::SetLineStyle(long nNewValue) 
 /* ============================================================
 	Function :		CProMoElementAuto::SetLineStyle
 	Description :	Set the line style of this element
@@ -989,13 +989,13 @@ void CProMoElementAuto::SetBkColor(OLE_COLOR nNewValue)
 
 }
 
-short CProMoElementAuto::GetBkMode() 
+long CProMoElementAuto::GetBkMode() 
 /* ============================================================
 	Function :		CProMoElementAuto::GetBkMode
 	Description :	Get the background mode of this element
 	Access :		Public
 
-	Return :		short	-	the background mode of this element
+	Return :		long	-	the background mode of this element
 	Parameters :	none
    ============================================================ */
 {
@@ -1006,14 +1006,14 @@ short CProMoElementAuto::GetBkMode()
 	return 0;
 }
 
-void CProMoElementAuto::SetBkMode(short nNewValue) 
+void CProMoElementAuto::SetBkMode(long nNewValue) 
 /* ============================================================
 	Function :		CProMoElementAuto::SetBkMode
 	Description :	Set the background mode of this element
 	Access :		Public
 
 	Return :		void
-	Parameters :	short nNewValue	-	the new background mode 
+	Parameters :	long nNewValue	-	the new background mode 
 										of this element
    ============================================================ */
 {
@@ -1085,14 +1085,14 @@ void CProMoElementAuto::SetTextMultiLine(BOOL bNewValue)
 	GetDiagramAutoObject()->NotifyChange();
 }
 
-short CProMoElementAuto::GetTextHorizontalAlignment() 
+long CProMoElementAuto::GetTextHorizontalAlignment() 
 /* ============================================================
 	Function :		CProMoElementAuto::GetTextHorizontalAlignment
 	Description :	Get the horizontal alignment of the text of this 
 					element
 	Access :		Public
 
-	Return :		short	-	the horizontal alignment of the text 
+	Return :		long	-	the horizontal alignment of the text 
 								of this element
 	Parameters :	none
    ============================================================ */
@@ -1104,7 +1104,7 @@ short CProMoElementAuto::GetTextHorizontalAlignment()
 	return 0;
 }
 
-void CProMoElementAuto::SetTextHorizontalAlignment(short nNewValue) 
+void CProMoElementAuto::SetTextHorizontalAlignment(long nNewValue) 
 /* ============================================================
 	Function :		CProMoElementAuto::SetTextHorizontalAlignment
 	Description :	Set the horizontal alignment of the text of this 
@@ -1112,7 +1112,7 @@ void CProMoElementAuto::SetTextHorizontalAlignment(short nNewValue)
 	Access :		Public
 
 	Return :		void
-	Parameters :	short nNewValue	-	the new horizontal alignment 
+	Parameters :	long nNewValue	-	the new horizontal alignment 
 										of the text of this element
    ============================================================ */
 {
@@ -1133,14 +1133,14 @@ void CProMoElementAuto::SetTextHorizontalAlignment(short nNewValue)
 
 }
 
-short CProMoElementAuto::GetTextVerticalAlignment() 
+long CProMoElementAuto::GetTextVerticalAlignment() 
 /* ============================================================
 	Function :		CProMoElementAuto::GetTextVerticalAlignment
 	Description :	Get the vertical alignment of the text of this 
 					element
 	Access :		Public
 
-	Return :		short	-	the vertical alignment of the text 
+	Return :		long	-	the vertical alignment of the text 
 								of this element
 	Parameters :	none
    ============================================================ */
@@ -1152,7 +1152,7 @@ short CProMoElementAuto::GetTextVerticalAlignment()
 	return 0;
 }
 
-void CProMoElementAuto::SetTextVerticalAlignment(short nNewValue) 
+void CProMoElementAuto::SetTextVerticalAlignment(long nNewValue) 
 /* ============================================================
 	Function :		CProMoElementAuto::SetTextVerticalAlignment
 	Description :	Set the vertical alignment of the text of this 
@@ -1160,7 +1160,7 @@ void CProMoElementAuto::SetTextVerticalAlignment(short nNewValue)
 	Access :		Public
 
 	Return :		void
-	Parameters :	short nNewValue	-	the new vertical alignment 
+	Parameters :	long nNewValue	-	the new vertical alignment 
 										of the text of this element
    ============================================================ */
 {

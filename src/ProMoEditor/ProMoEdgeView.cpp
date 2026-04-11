@@ -2750,7 +2750,7 @@ BOOL CProMoEdgeView::SetLineStyle(const unsigned int& style)
 
    ============================================================*/
 {
-	if (IsLocked(LOCK_LINESTYLE))
+	if (IsLocked(LOCK_LINESTYLE) || style == PS_NULL)
 		return FALSE;
 	m_lineStyle = style;
 	return TRUE;

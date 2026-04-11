@@ -90,7 +90,7 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoPropertyAuto, CProMoElementChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoPropertyAuto)
 	DISP_PROPERTY_EX(CProMoPropertyAuto, "Name", GetName, SetName, VT_BSTR)
-	DISP_PROPERTY_EX(CProMoPropertyAuto, "Type", GetType, SetType, VT_I2)
+	DISP_PROPERTY_EX(CProMoPropertyAuto, "Type", GetType, SetType, VT_I4)
 	DISP_PROPERTY_EX(CProMoPropertyAuto, "Value", GetValue, SetValue, VT_VARIANT)
 	DISP_PROPERTY_EX(CProMoPropertyAuto, "ChildNames", GetChildNames, SetChildNames, VT_VARIANT)
 	DISP_FUNCTION(CProMoPropertyAuto, "IsReadOnly", IsReadOnly, VT_BOOL, VTS_NONE)
@@ -184,14 +184,14 @@ BOOL CProMoPropertyAuto::IsReadOnly()
 	return TRUE;
 }
 
-short CProMoPropertyAuto::GetType() 
+long CProMoPropertyAuto::GetType() 
 /* ============================================================
 	Function :		CProMoPropertyAuto::GetType
 	Description :	Returns the data type of the property 
 					represented by this	automation object.
 	Access :		Public
 
-	Return :		short	-	the type of the property represented by this
+	Return :		long	-	the type of the property represented by this
 								automation object.
 	Parameters :	none
 	============================================================ */
@@ -203,7 +203,7 @@ short CProMoPropertyAuto::GetType()
 	return 0;
 }
 
-void CProMoPropertyAuto::SetType(short nNewValue)
+void CProMoPropertyAuto::SetType(long nNewValue)
 /* ============================================================
 	Function :		CProMoPropertyAuto::SetType
 	Description :	Set the data type of this property. This property
@@ -212,7 +212,7 @@ void CProMoPropertyAuto::SetType(short nNewValue)
 	Access :		Public
 
 	Return :		void
-	Parameters :	short nNewValue	-	the new type of this property
+	Parameters :	long nNewValue	-	the new type of this property
    ============================================================ */
 {
 	SetNotSupported();

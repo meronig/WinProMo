@@ -112,10 +112,10 @@ BEGIN_DISPATCH_MAP(CProMoLabelAuto, CProMoElementChildAuto)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "FontStrikeOut", GetFontStrikeOut, SetFontStrikeOut, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "BkMode", GetBkMode, SetBkMode, VT_I2)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "BkMode", GetBkMode, SetBkMode, VT_I4)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "TextMultiLine", GetTextMultiLine, SetTextMultiLine, VT_BOOL)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
-	DISP_PROPERTY_EX(CProMoLabelAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I4)
+	DISP_PROPERTY_EX(CProMoLabelAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I4)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Text", GetText, SetText, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "ID", GetName, SetName, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoLabelAuto, "Top", GetTop, SetTop, VT_R8)
@@ -743,16 +743,16 @@ void CProMoLabelAuto::SetBkColor(OLE_COLOR nNewValue)
 	}
 }
 
-short CProMoLabelAuto::GetBkMode() 
+long CProMoLabelAuto::GetBkMode() 
 /* ============================================================
 	Function :		CProMoLabelAuto::GetBkMode
 	Description :	Returns the background mode of this label.
 	Access :		Public
 
-	Return :		short	-	The background mode of this label.
+	Return :		long	-	The background mode of this label.
 								Possible values are:
-								"0" (transparent background) and
-								"1" (opaque background).
+								"1" (transparent background) and
+								"2" (opaque background).
 	Parameters :	none
    ============================================================*/
 {
@@ -763,7 +763,7 @@ short CProMoLabelAuto::GetBkMode()
 	return 0;
 }
 
-void CProMoLabelAuto::SetBkMode(short nNewValue) 
+void CProMoLabelAuto::SetBkMode(long nNewValue) 
 /* ============================================================
 	Function :		CProMoLabelAuto::SetBkMode
 	Description :	Sets the background mode of this label to the given
@@ -771,7 +771,7 @@ void CProMoLabelAuto::SetBkMode(short nNewValue)
 	Access :		Public
 
 	Return :		void
-	Parameters :	short nNewValue	-	the new background mode of this
+	Parameters :	long nNewValue	-	the new background mode of this
 										label. 
    ============================================================*/
 {
@@ -784,14 +784,14 @@ void CProMoLabelAuto::SetBkMode(short nNewValue)
 	}
 }
 
-short CProMoLabelAuto::GetTextHorizontalAlignment() 
+long CProMoLabelAuto::GetTextHorizontalAlignment() 
 /* ============================================================
 	Function :		CProMoLabelAuto::GetTextHorizontalAlignment
 	Description :	Returns the horizontal alignment of the text of this
 					label.
 	Access :		Public
 
-	Return :		short	-	The horizontal alignment of the 
+	Return :		long	-	The horizontal alignment of the 
 								text of this label. 
 	Parameters :	none
    ============================================================*/
@@ -803,14 +803,14 @@ short CProMoLabelAuto::GetTextHorizontalAlignment()
 	return 0;
 }
 
-void CProMoLabelAuto::SetTextHorizontalAlignment(short nNewValue) 
+void CProMoLabelAuto::SetTextHorizontalAlignment(long nNewValue) 
 /* ============================================================
 	Function :		CProMoLabelAuto::SetTextHorizontalAlignment
 	Description :	Sets the horizontal alignment of the text of this
 					label to the given value.
 	Access :		Public
 	Return :		void
-	Parameters :	short nNewValue	-	the new horizontal alignment of the
+	Parameters :	long nNewValue	-	the new horizontal alignment of the
 										text of this label. 
    ============================================================*/
 {
@@ -823,13 +823,13 @@ void CProMoLabelAuto::SetTextHorizontalAlignment(short nNewValue)
 	}
 }
 
-short CProMoLabelAuto::GetTextVerticalAlignment() 
+long CProMoLabelAuto::GetTextVerticalAlignment() 
 /* ============================================================
 	Function :		CProMoLabelAuto::GetTextVerticalAlignment
 	Description :	Returns the vertical alignment of the text of this
 					label.
 	Access :		Public
-	Return :		short	-	The vertical alignment of the text 
+	Return :		long	-	The vertical alignment of the text 
 								of this	label. 
 	Parameters :	none
    ============================================================*/
@@ -841,7 +841,7 @@ short CProMoLabelAuto::GetTextVerticalAlignment()
 	return 0;
 }
 
-void CProMoLabelAuto::SetTextVerticalAlignment(short nNewValue) 
+void CProMoLabelAuto::SetTextVerticalAlignment(long nNewValue) 
 /* ============================================================
 	Function :		CProMoLabelAuto::SetTextVerticalAlignment
 	Description :	Sets the vertical alignment of the text of this
@@ -849,7 +849,7 @@ void CProMoLabelAuto::SetTextVerticalAlignment(short nNewValue)
 	Access :		Public
 
 	Return :		void
-	Parameters :	short nNewValue	-	the new vertical alignment of the
+	Parameters :	long nNewValue	-	the new vertical alignment of the
 										text of this label. 
    ============================================================*/
 {

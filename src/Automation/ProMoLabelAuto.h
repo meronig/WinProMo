@@ -78,12 +78,12 @@ protected:
 	afx_msg void SetTextColor(OLE_COLOR nNewValue);
 	afx_msg OLE_COLOR GetBkColor();
 	afx_msg void SetBkColor(OLE_COLOR nNewValue);
-	afx_msg short GetBkMode();
-	afx_msg void SetBkMode(short nNewValue);
-	afx_msg short GetTextHorizontalAlignment();
-	afx_msg void SetTextHorizontalAlignment(short nNewValue);
-	afx_msg short GetTextVerticalAlignment();
-	afx_msg void SetTextVerticalAlignment(short nNewValue);
+	afx_msg long GetBkMode();
+	afx_msg void SetBkMode(long nNewValue);
+	afx_msg long GetTextHorizontalAlignment();
+	afx_msg void SetTextHorizontalAlignment(long nNewValue);
+	afx_msg long GetTextVerticalAlignment();
+	afx_msg void SetTextVerticalAlignment(long nNewValue);
 	afx_msg BSTR GetText();
 	afx_msg void SetText(LPCTSTR lpszNewValue);
 	afx_msg BSTR GetName();

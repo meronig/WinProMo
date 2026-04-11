@@ -403,7 +403,7 @@ BEGIN_DISPATCH_MAP(CProMoBlockAuto, CProMoElementAuto)
 	//Common to CProMoElementAuto
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineColor", GetLineColor, SetLineColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "LineWidth", GetLineWidth, SetLineWidth, VT_I2)
-	DISP_PROPERTY_EX(CProMoElementAuto, "LineStyle", GetLineStyle, SetLineStyle, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "LineStyle", GetLineStyle, SetLineStyle, VT_I4)
 	DISP_PROPERTY_EX(CProMoElementAuto, "FontName", GetFontName, SetFontName, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "FontSize", GetFontSize, SetFontSize, VT_I2)
 	DISP_PROPERTY_EX(CProMoElementAuto, "FontWeight", GetFontWeight, SetFontWeight, VT_I2)
@@ -412,10 +412,10 @@ BEGIN_DISPATCH_MAP(CProMoBlockAuto, CProMoElementAuto)
 	DISP_PROPERTY_EX(CProMoElementAuto, "FontStrikeOut", GetFontStrikeOut, SetFontStrikeOut, VT_BOOL)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextColor", GetTextColor, SetTextColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "BkColor", GetBkColor, SetBkColor, VT_COLOR)
-	DISP_PROPERTY_EX(CProMoElementAuto, "BkMode", GetBkMode, SetBkMode, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "BkMode", GetBkMode, SetBkMode, VT_I4)
 	DISP_PROPERTY_EX(CProMoElementAuto, "TextMultiLine", GetTextMultiLine, SetTextMultiLine, VT_BOOL)
-	DISP_PROPERTY_EX(CProMoElementAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I2)
-	DISP_PROPERTY_EX(CProMoElementAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I2)
+	DISP_PROPERTY_EX(CProMoElementAuto, "TextHorizontalAlignment", GetTextHorizontalAlignment, SetTextHorizontalAlignment, VT_I4)
+	DISP_PROPERTY_EX(CProMoElementAuto, "TextVerticalAlignment", GetTextVerticalAlignment, SetTextVerticalAlignment, VT_I4)
 	DISP_PROPERTY_EX(CProMoElementAuto, "ID", GetName, SetName, VT_BSTR)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Labels", GetLabels, SetLabels, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoElementAuto, "Properties", GetProperties, SetProperties, VT_DISPATCH)
@@ -424,11 +424,11 @@ BEGIN_DISPATCH_MAP(CProMoBlockAuto, CProMoElementAuto)
 	//Specific to CProMoBlockAuto
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillColor", GetFillColor, SetFillColor, VT_COLOR)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "FillPattern", GetFillPattern, SetFillPattern, VT_BOOL)
-	DISP_PROPERTY_EX(CProMoBlockAuto, "FillStyle", GetFillStyle, SetFillStyle, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "FillStyle", GetFillStyle, SetFillStyle, VT_I4)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "Parent", GetParent, SetParent, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "SubBlocks", GetSubBlocks, SetSubBlocks, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "BoundaryBlocks", GetBoundaryBlocks, SetBoundaryBlocks, VT_DISPATCH)
-	DISP_PROPERTY_EX(CProMoBlockAuto, "BoundaryAttachment", GetBoundaryAttachment, SetBoundaryAttachment, VT_I2)
+	DISP_PROPERTY_EX(CProMoBlockAuto, "BoundaryAttachment", GetBoundaryAttachment, SetBoundaryAttachment, VT_I4)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "OutgoingEdges", GetOutgoingEdges, SetOutgoingEdges, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "IncomingEdges", GetIncomingEdges, SetIncomingEdges, VT_DISPATCH)
 	DISP_PROPERTY_EX(CProMoBlockAuto, "Top", GetTop, SetTop, VT_R8)
@@ -492,8 +492,8 @@ void CProMoBlockAuto::SetFillColor(OLE_COLOR nNewValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	nNewValue	-	the new fill color of the block, 
-									as an OLE_COLOR value.
+	Parameters :	OLE_COLOR nNewValue	-	the new fill color of the block, 
+											as an OLE_COLOR value.
    ============================================================*/
 {
 	COLORREF color;
@@ -543,10 +543,10 @@ void CProMoBlockAuto::SetFillPattern(BOOL bNewValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	bNewValue	-	"TRUE" to set the block to 
-									have a fill pattern, or 
-									"FALSE" to set it to have no 
-									fill pattern.
+	Parameters :	BOOL bNewValue	-	"TRUE" to set the block to 
+										have a fill pattern, or 
+										"FALSE" to set it to have no 
+										fill pattern.
    ============================================================*/
 {
 	CObArray views;
@@ -567,13 +567,13 @@ void CProMoBlockAuto::SetFillPattern(BOOL bNewValue)
 	GetDiagramAutoObject()->NotifyChange();
 }
 
-short CProMoBlockAuto::GetFillStyle() 
+long CProMoBlockAuto::GetFillStyle() 
 /* ============================================================
 	Function :		CProMoBlockAuto::GetFillStyle
 	Description :	Returns the fill style of the block.
 	Access :		Public
 	
-	Return :		short	-	the fill style of the block, as a 
+	Return :		long	-	the fill style of the block, as a 
 								short integer value. The specific 
 								values and their meanings depend on 
 								the implementation of the block view.
@@ -587,17 +587,17 @@ short CProMoBlockAuto::GetFillStyle()
 	return 0;
 }
 
-void CProMoBlockAuto::SetFillStyle(short nNewValue) 
+void CProMoBlockAuto::SetFillStyle(long nNewValue) 
 /* ============================================================
 	Function :		CProMoBlockAuto::SetFillStyle
 	Description :	Sets the fill style of the block.
 	Access :		Public
 	
 	Return :		void
-	Parameters :	nNewValue	-	the new fill style of the block, as a 
-									short integer value. The specific 
-									values and their meanings depend on 
-									the implementation of the block view.
+	Parameters :	long nNewValue	-	the new fill style of the block, as a 
+										short integer value. The specific 
+										values and their meanings depend on 
+										the implementation of the block view.
    ============================================================*/
 {
 	CObArray views;
@@ -664,9 +664,9 @@ void CProMoBlockAuto::SetParent(LPDISPATCH newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	a pointer to the automation object that 
-									represents the new parent block of 
-									this block.
+	Parameters :	LPDISPATCH newValue	-	a pointer to the automation object that 
+											represents the new parent block of 
+											this block.
    ============================================================*/
 {
 	SetNotSupported();
@@ -707,9 +707,9 @@ void CProMoBlockAuto::SetSubBlocks(LPDISPATCH newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	a pointer to the automation object that 
-									represents the new collection of 
-									sub-blocks contained in this block.
+	Parameters :	LPDISPATCH newValue	-	a pointer to the automation object that 
+											represents the new collection of 
+											sub-blocks contained in this block.
    ============================================================*/
 {
 	SetNotSupported();
@@ -752,16 +752,16 @@ void CProMoBlockAuto::SetBoundaryBlocks(LPDISPATCH newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	a pointer to the automation object 
-									that represents the new collection of 
-									boundary blocks contained in this block.
+	Parameters :	LPDISPATCH newValue	-	a pointer to the automation object 
+											that represents the new collection of 
+											boundary blocks contained in this block.
    ============================================================*/
 {
 	SetNotSupported();
 
 }
 
-short CProMoBlockAuto::GetBoundaryAttachment() 
+long CProMoBlockAuto::GetBoundaryAttachment() 
 /* ============================================================
 	Function :		CProMoBlockAuto::GetBoundaryAttachment
 	Description :	Returns the boundary attachment of this block, 
@@ -771,7 +771,7 @@ short CProMoBlockAuto::GetBoundaryAttachment()
 					the return value is undefined.
 	Access :		Public
 	
-	Return :		short	-	the boundary attachment of this 
+	Return :		long	-	the boundary attachment of this 
 								block, as a short integer value. 
 								The specific values and	their 
 								meanings depend on the implementation
@@ -786,7 +786,7 @@ short CProMoBlockAuto::GetBoundaryAttachment()
 	return 0;
 }
 
-void CProMoBlockAuto::SetBoundaryAttachment(short nNewValue) 
+void CProMoBlockAuto::SetBoundaryAttachment(long nNewValue) 
 /* ============================================================
 	Function :		CProMoBlockAuto::SetBoundaryAttachment
 	Description :	Sets the boundary attachment of this block to the 
@@ -799,8 +799,8 @@ void CProMoBlockAuto::SetBoundaryAttachment(short nNewValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	nNewValue	-	the new boundary attachment of this 
-									block, as a short integer value.
+	Parameters :	long nNewValue	-	the new boundary attachment of this 
+										block, as a short integer value.
    ============================================================*/
 {
 	SetNotSupported();
@@ -878,10 +878,10 @@ void CProMoBlockAuto::SetOutgoingEdges(LPDISPATCH newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	a pointer to the automation 
-									object that represents the new 
-									collection of outgoing edges 
-									connected to this block.
+	Parameters :	LPDISPATCH newValue	-	a pointer to the automation 
+											object that represents the new 
+											collection of outgoing edges 
+											connected to this block.
    ============================================================*/
 {
 	SetNotSupported();
@@ -924,9 +924,9 @@ void CProMoBlockAuto::SetIncomingEdges(LPDISPATCH newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	a pointer to the automation object 
-									that represents the new collection of 
-									incoming edges connected to this block.
+	Parameters :	LPDISPATCH newValue	-	a pointer to the automation object 
+											that represents the new collection of 
+											incoming edges connected to this block.
    ============================================================*/
 {
 	SetNotSupported();
@@ -960,8 +960,8 @@ void CProMoBlockAuto::SetTop(double newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	the new top coordinate of 
-									this block.
+	Parameters :	double newValue	-	the new top coordinate of 
+										this block.
    ============================================================*/
 {
 	if (GetMainBlockView()) {
@@ -1000,8 +1000,8 @@ void CProMoBlockAuto::SetBottom(double newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	the new bottom coordinate of 
-									this block.
+	Parameters :	double newValue	-	the new bottom coordinate of 
+										this block.
    ============================================================*/
 {
 	if (GetMainBlockView()) {
@@ -1040,8 +1040,8 @@ void CProMoBlockAuto::SetLeft(double newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	the new left coordinate of 
-									this block.
+	Parameters :	double newValue	-	the new left coordinate of 
+										this block.
    ============================================================*/
 {
 	if (GetMainBlockView()) {
@@ -1080,8 +1080,8 @@ void CProMoBlockAuto::SetRight(double newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	the new right coordinate of 
-									this block.
+	Parameters :	double newValue	-	the new right coordinate of 
+										this block.
    ============================================================*/
 {
 	if (GetMainBlockView()) {
@@ -1122,7 +1122,7 @@ void CProMoBlockAuto::SetWidth(double newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	the new width of this block.
+	Parameters :	double newValue	-	the new width of this block.
    ============================================================*/
 {
 	if (GetMainBlockView()) {
@@ -1172,7 +1172,7 @@ void CProMoBlockAuto::SetHeight(double newValue)
 	Access :		Public
 	
 	Return :		void
-	Parameters :	newValue	-	the new height of this block.
+	Parameters :	double newValue	-	the new height of this block.
    ============================================================*/
 {
 	if (GetMainBlockView()) {

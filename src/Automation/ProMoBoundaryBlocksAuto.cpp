@@ -88,7 +88,7 @@ BEGIN_DISPATCH_MAP(CProMoBoundaryBlocksAuto, CProMoBlockChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoBoundaryBlocksAuto)
 	DISP_PROPERTY_EX(CProMoBoundaryBlocksAuto, "IDs", GetIDs, SetIDs, VT_VARIANT)
 	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Count", Count, VT_I2, VTS_NONE)
-	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Add", Add, VT_BOOL, VTS_DISPATCH VTS_I2)
+	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Add", Add, VT_BOOL, VTS_DISPATCH VTS_I4)
 	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
@@ -117,7 +117,7 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoBoundaryBlocksAuto message handlers
 
-BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH item, short attachment) 
+BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH item, long attachment) 
 /* ============================================================
 	Function :		CProMoBoundaryBlocksAuto::Add
 	Description :	Adds a block to the collection. The block to add
@@ -135,7 +135,7 @@ BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH item, short attachment)
 											the block automation
 											object to add as a
 											boundary block.
-					short attachment	-	the side of the block
+					long attachment	-	the side of the block
 											to which the boundary
 											block should be attached;
 											it can be one of the

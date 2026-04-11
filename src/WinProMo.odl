@@ -8,6 +8,62 @@ library WinProMo
 	importlib("stdole32.tlb");
 	importlib("stdole2.tlb");
 
+	// Enum for background mode
+	typedef enum tagBkMode
+	{
+		bkTransparent = 1,
+		bkOpaque = 2
+	} BkMode;
+	
+	// Enum for horizontal alignment
+	typedef enum tagHorizontalAlignment
+	{
+		haLeft = 0x00000000,
+		haCenter = 0x00000001,
+		haRight = 0x00000002
+	} HorizontalAlignment;
+
+	// Enum for vertical alignment
+	typedef enum tagVerticalAlignment
+	{
+		vaTop = 0x00000000,
+		vaCenter = 0x00000004,
+		vaBottom = 0x00000008
+	} VerticalAlignment;
+
+	// Enum for line style
+	typedef enum tagLineStyle
+	{
+		lsSolid = 0,
+		lsDashed = 1,
+		lsDotted = 2,
+		lsDashDot = 3,
+		lsDashDotDot = 4,
+		lsTransparent = 5
+	} LineStyle;
+
+	// Enum for fill style
+	typedef enum tagFillStyle
+	{
+		fsHorizontal = 0,
+		fsVertical = 1,
+		fsFDiagonal = 2,
+		fsBDiagonal = 3,
+		fsCross = 4,
+		fsDiagCross = 5
+	} FillStyle;
+
+	// Enum for boundary attachment
+	typedef enum tagBoundaryAttachment
+	{
+		baNone = 0,
+		baAny = 1,
+		baTop = 11,
+		baBottom = 12,
+		baLeft = 13,
+		baRight = 14
+	} BoundaryAttachment;
+
 	//  Primary dispatch interface for CProMoBlockAuto
 	[uuid(38EA3760-08C3-11F1-9744-000C2976A615)]
 		dispinterface IBlock
@@ -19,7 +75,7 @@ library WinProMo
 			// from IProMoElementAuto
 			[id(1)] OLE_COLOR LineColor;
 			[id(2)] short LineWidth;
-			[id(3)] short LineStyle;
+			[id(3)] LineStyle LineStyle;
 			[id(4)] BSTR FontName;
 			[id(5)] short FontSize;
 			[id(6)] short FontWeight;
@@ -28,10 +84,10 @@ library WinProMo
 			[id(9)] boolean FontStrikeOut;
 			[id(10)] OLE_COLOR TextColor;
 			[id(11)] OLE_COLOR BkColor;
-			[id(12)] short BkMode;
+			[id(12)] BkMode BkMode;
 			[id(13)] boolean TextMultiLine;
-			[id(14)] short TextHorizontalAlignment;
-			[id(15)] short TextVerticalAlignment;
+			[id(14)] HorizontalAlignment TextHorizontalAlignment;
+			[id(15)] VerticalAlignment TextVerticalAlignment;
 			[id(16)] BSTR ID;
 			[id(17)] IDispatch* Labels;
 			[id(18)] IDispatch* Properties;
@@ -40,11 +96,11 @@ library WinProMo
 			// Native
 			[id(21)] OLE_COLOR FillColor;
 			[id(22)] boolean FillPattern;
-			[id(23)] short FillStyle;
+			[id(23)] FillStyle FillStyle;
 			[id(24)] IDispatch* Parent;
 			[id(25)] IDispatch* SubBlocks;
 			[id(26)] IDispatch* BoundaryBlocks;
-			[id(27)] short BoundaryAttachment;
+			[id(27)] BoundaryAttachment BoundaryAttachment;
 			[id(28)] IDispatch* OutgoingEdges;
 			[id(29)] IDispatch* IncomingEdges;
 			[id(30)] double Top;
@@ -98,7 +154,7 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoBoundaryBlocksAuto)
 			[id(2)] short Count();
-			[id(3)] boolean Add(IDispatch* item, short attachment);
+			[id(3)] boolean Add(IDispatch* item, BoundaryAttachment attachment);
 			[id(4)] boolean Remove(VARIANT item);
 			// from IProMoElementChildAuto
 			[id(5)] IDispatch* Element();
@@ -134,7 +190,7 @@ library WinProMo
 			// from IProMoElementAuto
 			[id(1)] OLE_COLOR LineColor;
 			[id(2)] short LineWidth;
-			[id(3)] short LineStyle;
+			[id(3)] LineStyle LineStyle;
 			[id(4)] BSTR FontName;
 			[id(5)] short FontSize;
 			[id(6)] short FontWeight;
@@ -143,10 +199,10 @@ library WinProMo
 			[id(9)] boolean FontStrikeOut;
 			[id(10)] OLE_COLOR TextColor;
 			[id(11)] OLE_COLOR BkColor;
-			[id(12)] short BkMode;
+			[id(12)] BkMode BkMode;
 			[id(13)] boolean TextMultiLine;
-			[id(14)] short TextHorizontalAlignment;
-			[id(15)] short TextVerticalAlignment;
+			[id(14)] HorizontalAlignment TextHorizontalAlignment;
+			[id(15)] VerticalAlignment TextVerticalAlignment;
 			[id(16)] BSTR ID;
 			[id(17)] IDispatch* Labels;
 			[id(18)] IDispatch* Properties;
@@ -361,10 +417,10 @@ library WinProMo
 			[id(6)] boolean FontStrikeOut;
 			[id(7)] OLE_COLOR TextColor;
 			[id(8)] OLE_COLOR BkColor;
-			[id(9)] short BkMode;
+			[id(9)] BkMode BkMode;
 			[id(10)] boolean TextMultiLine;
-			[id(11)] short TextHorizontalAlignment;
-			[id(12)] short TextVerticalAlignment;
+			[id(11)] HorizontalAlignment TextHorizontalAlignment;
+			[id(12)] VerticalAlignment TextVerticalAlignment;
 			[id(13)] BSTR Text;
 			[id(14)] BSTR ID;
 			[id(15)] double Top;
@@ -525,6 +581,15 @@ library WinProMo
 		[default] dispinterface IProperties;
 	};
 
+	//	Enum for property type
+	typedef enum tagPropertyType
+	{
+		ptComposite = 0,
+		ptInt = 1,
+		ptDouble = 2,
+		ptString = 3,
+		ptBoolean = 4,
+	} PropertyType;
 
 	//  Primary dispatch interface for CProMoPropertyAuto
 	[uuid(38EA376B-08C3-11F1-9744-000C2976A615)]
@@ -536,7 +601,7 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_PROP(CProMoPropertyAuto)
 			[id(1)] BSTR Name;
-			[id(2)] short Type;
+			[id(2)] PropertyType Type;
 			[id(3)] VARIANT Value;
 			[id(4)] VARIANT ChildNames;
 			//}}AFX_ODL_PROP

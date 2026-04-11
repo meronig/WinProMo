@@ -552,7 +552,7 @@ namespace CProMoEntityContainerTests
 
             c.SetVirtualSize(CSize(300, 400));
             
-            Assert::AreEqual(CString("custom:300,400;"), c.GetString());
+            Assert::AreEqual(CString("custom:300,400,2;"), c.GetString());
 
         }
 
@@ -561,7 +561,7 @@ namespace CProMoEntityContainerTests
             CProMoClipboardHandler clip;
             CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
 
-            BOOL result = c.FromString(CString("custom:300,400;"));
+            BOOL result = c.FromString(CString("custom:300,400,2;"));
 
             Assert::IsTrue(result);
             Assert::AreEqual(CString("custom"), c.GetModelType());
@@ -575,7 +575,7 @@ namespace CProMoEntityContainerTests
             CProMoClipboardHandler clip;
             CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
 
-            BOOL result = c.FromString(CString("custom:300,400,Extra1,Extra2;"));
+            BOOL result = c.FromString(CString("custom:300,400,2,Extra1,Extra2;"));
 
             Assert::IsTrue(result);
             Assert::AreEqual(CString("custom"), c.GetModelType());
@@ -589,7 +589,7 @@ namespace CProMoEntityContainerTests
             CProMoClipboardHandler clip;
             CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
 
-            BOOL result = c.FromString(CString("wrong_type:300,400;"));
+            BOOL result = c.FromString(CString("wrong_type:300,400,2;"));
 
             Assert::IsFalse(result);
         }
@@ -601,7 +601,7 @@ namespace CProMoEntityContainerTests
 
             CStringArray diagram;
             
-            diagram.Add(CString("custom:762,1091;"));
+            diagram.Add(CString("custom:762,1091,2;"));
             diagram.Add(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4;"));
             diagram.Add(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30;"));
             diagram.Add(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,,0,72;"));
@@ -674,7 +674,7 @@ namespace CProMoEntityContainerTests
 
             CStringArray diagram;
             
-            diagram.Add(CString("custom:762,1091;"));
+            diagram.Add(CString("custom:762,1091,2;"));
             diagram.Add(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4;"));
             diagram.Add(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30;"));
             diagram.Add(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,,0,72;"));
@@ -895,7 +895,7 @@ namespace CProMoEntityContainerTests
             c.Add(lx);
             c.Add(lz);
 
-            diagram.AddTail(CString("custom:800,1000;"));
+            diagram.AddTail(CString("custom:800,1000,2;"));
             diagram.AddTail(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4,0,-1,1,0,1,0,16777215,0,4;"));
             diagram.AddTail(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30,0,-1,1,0,1,0,16777215,0,4;"));
             diagram.AddTail(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,,0,72,0,-1,1,0,1,0,16777215,0,4;"));
