@@ -61,6 +61,7 @@ CProMoEntityContainer::CProMoEntityContainer(CProMoControlFactory* factory, CDia
 	m_modelType = _T("promo");
 	m_autoObject = NULL;
 	m_factory = factory;
+	m_version = PROMO_DIAGRAM_VERSION;
 }
 
 CProMoEntityContainer::CProMoEntityContainer(CProMoControlFactory* factory, CString modelType, CDiagramClipboardHandler* clip)
@@ -98,6 +99,7 @@ CProMoEntityContainer::CProMoEntityContainer(CProMoControlFactory* factory, CStr
 	m_modelType = modelType;
 	m_autoObject = NULL;
 	m_factory = factory;
+	m_version = PROMO_DIAGRAM_VERSION;
 }
 
 CProMoEntityContainer::~CProMoEntityContainer()
@@ -318,15 +320,39 @@ void CProMoEntityContainer::Load(const CStringArray& stra)
 
 	CObArray models;
 
-	LoadModels(stra, models);
-	LoadViews(stra, models);
-	LoadProperties(stra, models);
+	int max = static_cast<int>(stra.GetSize());
+	int t = 0;
 
-	LinkViews(stra, models);
-	LinkModels(stra, models);
-	LoadLabels(stra, models);
-	
-	SetModified(FALSE);
+	BOOL isDiagramParsed = FALSE;
+
+	for (t = 0; t < max; t++)
+	{
+		CString str = stra.GetAt(t);
+		if (FromString(str)) {
+			isDiagramParsed = TRUE;
+			if (m_version > PROMO_DIAGRAM_VERSION) {
+				AfxMessageBox(_T("The diagram was created with a newer version of this plug-in library. Some information may not be loaded correctly."));
+			} else if (m_version < PROMO_DIAGRAM_VERSION) {
+				AfxMessageBox(_T("The diagram was created with an older version of this plug-in library. If saved, the diagram will be upgraded to the current version."));
+			}
+		}
+	}
+
+	if (isDiagramParsed) {
+
+		LoadModels(stra, models);
+		LoadViews(stra, models);
+		LoadProperties(stra, models);
+
+		LinkViews(stra, models);
+		LinkModels(stra, models);
+		LoadLabels(stra, models);
+
+		SetModified(FALSE);
+	}
+	else {
+		AfxMessageBox(_T("The diagram file is corrupted or was created with an incompatible version of this plug-in library. No data was loaded."));
+	}
 }
 
 void CProMoEntityContainer::Save(CStringArray& stra)
@@ -1030,17 +1056,14 @@ void CProMoEntityContainer::LoadModels(const CStringArray& stra, CObArray& model
 	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			//check for unicity
-			CProMoModel* model = m_factory->CreateModelFromString(str);
-			if (model) {
-				if (!GetNamedModel(models, model->GetName())) {
-					models.Add(model);
-				}
-				else {
-					delete model;
-				}
+		//check for unicity
+		CProMoModel* model = m_factory->CreateModelFromString(str);
+		if (model) {
+			if (!GetNamedModel(models, model->GetName())) {
+				models.Add(model);
+			}
+			else {
+				delete model;
 			}
 		}
 	}
@@ -1079,27 +1102,24 @@ void CProMoEntityContainer::LoadViews(const CStringArray& stra, const CObArray& 
 	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			CDiagramEntity* obj = NULL;
+		CDiagramEntity* obj = NULL;
 
-			CString nodeName = CProMoBlockView::GetNameFromString(str);
-			CString modelName = CProMoBlockView::GetModelFromString(str);
+		CString nodeName = CProMoBlockView::GetNameFromString(str);
+		CString modelName = CProMoBlockView::GetModelFromString(str);
 
-			if (!GetNamedView(nodeName)) {
-				CProMoModel* blockModel = GetNamedModel(models, modelName);
-				if (blockModel) {
-					obj = m_factory->CreateViewFromString(str, blockModel);
-				}
+		if (!GetNamedView(nodeName)) {
+			CProMoModel* blockModel = GetNamedModel(models, modelName);
+			if (blockModel) {
+				obj = m_factory->CreateViewFromString(str, blockModel);
 			}
+		}
 				
-			//If no model exists for that view, create one from scratch
-			if (!obj) {
-				obj = m_factory->CreateViewFromString(str);
-			}
-			if (obj) {
-				Add(obj);
-			}
+		//If no model exists for that view, create one from scratch
+		if (!obj) {
+			obj = m_factory->CreateViewFromString(str);
+		}
+		if (obj) {
+			Add(obj);
 		}
 	}
 
@@ -1138,27 +1158,24 @@ void CProMoEntityContainer::LoadLabels(const CStringArray& stra, const CObArray&
 	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			CDiagramEntity* obj = NULL;
+		CDiagramEntity* obj = NULL;
 
-			CString nodeName = CProMoBlockView::GetNameFromString(str);
-			CString modelName = CProMoBlockView::GetModelFromString(str);
+		CString nodeName = CProMoBlockView::GetNameFromString(str);
+		CString modelName = CProMoBlockView::GetModelFromString(str);
 
-			if (!GetNamedView(nodeName)) {
-				CProMoModel* blockModel = GetNamedModel(models, modelName);
-				if (blockModel) {
-					obj = m_factory->CreateLabelFromString(str, blockModel);
-				}
+		if (!GetNamedView(nodeName)) {
+			CProMoModel* blockModel = GetNamedModel(models, modelName);
+			if (blockModel) {
+				obj = m_factory->CreateLabelFromString(str, blockModel);
 			}
+		}
 
-			//If no model exists for that label, create the label as unlinked
-			if (!obj) {
-				obj = m_factory->CreateLabelFromString(str);
-			}
-			if (obj) {
-				Add(obj);
-			}
+		//If no model exists for that label, create the label as unlinked
+		if (!obj) {
+			obj = m_factory->CreateLabelFromString(str);
+		}
+		if (obj) {
+			Add(obj);
 		}
 	}
 }
@@ -1233,52 +1250,49 @@ void CProMoEntityContainer::LinkModels(const CStringArray& stra, const CObArray&
 	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			BOOL result = FALSE;
+		BOOL result = FALSE;
 			
-			CString nodeName = CProMoModel::GetNameFromString(str);
+		CString nodeName = CProMoModel::GetNameFromString(str);
 
-			//current element is a block model
-			CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, nodeName));
-			if (blockModel) {
-				CString parentName = blockModel->GetParentFromString(str);
-				unsigned int attachment = blockModel->GetAttachmentTypeFromString(str);
+		//current element is a block model
+		CProMoBlockModel* blockModel = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, nodeName));
+		if (blockModel) {
+			CString parentName = blockModel->GetParentFromString(str);
+			unsigned int attachment = blockModel->GetAttachmentTypeFromString(str);
 
-				CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
-				if (parent && blockModel->GetMainBlockView()) {
-					if (attachment != DEHT_NONE) {
-						if (attachment == DEHT_BODY) {
-							parent->GetMainBlockView()->LinkSubBlock(blockModel->GetMainBlockView());
-						}
-						else {
-							parent->GetMainBlockView()->LinkBoundaryBlock(blockModel->GetMainBlockView(), attachment);
-						}
+			CProMoBlockModel* parent = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, parentName));
+			if (parent && blockModel->GetMainBlockView()) {
+				if (attachment != DEHT_NONE) {
+					if (attachment == DEHT_BODY) {
+						parent->GetMainBlockView()->LinkSubBlock(blockModel->GetMainBlockView());
+					}
+					else {
+						parent->GetMainBlockView()->LinkBoundaryBlock(blockModel->GetMainBlockView(), attachment);
 					}
 				}
-						
 			}
-
-			//current element is an edge model
-			CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, nodeName));
-			if (edgeModel) {
-				CString sourceName = edgeModel->GetSourceFromString(str);
-				CString destName = edgeModel->GetDestinationFromString(str);
-
-				CProMoBlockModel* source = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, sourceName));
-				if (source && edgeModel->GetFirstSegment()) {
-					edgeModel->GetFirstSegment()->SetSource(source->GetMainBlockView());
-				}
-				CProMoBlockModel* dest = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, destName));
-				if (dest && edgeModel->GetLastSegment()) {
-					edgeModel->GetLastSegment()->SetDestination(dest->GetMainBlockView());
-				}
 						
+		}
+
+		//current element is an edge model
+		CProMoEdgeModel* edgeModel = dynamic_cast<CProMoEdgeModel*>(GetNamedModel(models, nodeName));
+		if (edgeModel) {
+			CString sourceName = edgeModel->GetSourceFromString(str);
+			CString destName = edgeModel->GetDestinationFromString(str);
+
+			CProMoBlockModel* source = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, sourceName));
+			if (source && edgeModel->GetFirstSegment()) {
+				edgeModel->GetFirstSegment()->SetSource(source->GetMainBlockView());
 			}
+			CProMoBlockModel* dest = dynamic_cast<CProMoBlockModel*>(GetNamedModel(models, destName));
+			if (dest && edgeModel->GetLastSegment()) {
+				edgeModel->GetLastSegment()->SetDestination(dest->GetMainBlockView());
+			}
+						
 		}
 	}
-
 }
+
 
 void CProMoEntityContainer::LinkViews(const CStringArray& stra, const CObArray& models)
 /* ============================================================
@@ -1306,31 +1320,27 @@ void CProMoEntityContainer::LinkViews(const CStringArray& stra, const CObArray& 
 	for (t = 0; t < max; t++)
 	{
 		CString str = stra.GetAt(t);
-		if (!FromString(str))
-		{
-			BOOL result = FALSE;
+		BOOL result = FALSE;
 
-			CString nodeName = CProMoBlockView::GetNameFromString(str);
+		CString nodeName = CProMoBlockView::GetNameFromString(str);
 			
-			//current element is an edge view
-			CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedView(nodeName));
-			if (edgeView) {
+		//current element is an edge view
+		CProMoEdgeView* edgeView = dynamic_cast<CProMoEdgeView*>(GetNamedView(nodeName));
+		if (edgeView) {
 
-				CString sourceName = edgeView->GetSourceFromString(str);
-				CString destName = edgeView->GetDestinationFromString(str);
+			CString sourceName = edgeView->GetSourceFromString(str);
+			CString destName = edgeView->GetDestinationFromString(str);
 
-				CDiagramEntity* source = GetNamedView(sourceName);
-				if (source) {
-					edgeView->SetSource(source);
-				}
-				CDiagramEntity* dest = GetNamedView(destName);
-				if (dest) {
-					edgeView->SetDestination(dest);
-				}
+			CDiagramEntity* source = GetNamedView(sourceName);
+			if (source) {
+				edgeView->SetSource(source);
+			}
+			CDiagramEntity* dest = GetNamedView(destName);
+			if (dest) {
+				edgeView->SetDestination(dest);
 			}
 		}
 	}
-
 }
 
 void CProMoEntityContainer::SaveProperties(CStringArray& stra, CProMoProperty* prop)
@@ -1382,7 +1392,8 @@ CString CProMoEntityContainer::GetString() const
 {
 
 	CString str;
-	str.Format(_T("%s:%i,%i;"), (LPCTSTR)m_modelType, GetVirtualSize().cx, GetVirtualSize().cy);
+	//The diagram version being saved is the same as the library (i.e., older diagrams are silently upgraded)
+	str.Format(_T("%s:%i,%i,%i;"), (LPCTSTR)m_modelType, GetVirtualSize().cx, GetVirtualSize().cy, PROMO_DIAGRAM_VERSION);
 	return str;
 
 }
@@ -1419,11 +1430,18 @@ BOOL CProMoEntityContainer::FromString(const CString& str)
 		{
 			int right;
 			int bottom;
+			int version = 1;
 
 			tok->GetAt(0, right);
 			tok->GetAt(1, bottom);
 
 			SetVirtualSize(CSize(right, bottom));
+
+			if (size >= 3) {
+				tok->GetAt(2, version);
+			}
+			m_version = version;
+
 			result = TRUE;
 		}
 		delete tok;
@@ -1447,6 +1465,20 @@ CString CProMoEntityContainer::GetModelType() const
 
 	return m_modelType;
 
+}
+
+unsigned int CProMoEntityContainer::GetModelVersion() const
+/* ============================================================
+	Function :		CProMoEntityContainer::GetModelVersion
+	Description :	Returns the version of the model supported
+					by this container.
+	Access :		Public
+
+	Return :		unsigned int	-	Version number
+	Parameters :	none
+   ============================================================*/
+{
+	return m_version;
 }
 
 CSize CProMoEntityContainer::GetSelectionTotalSize()

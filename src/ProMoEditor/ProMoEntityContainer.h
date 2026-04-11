@@ -15,6 +15,8 @@
 #include "ProMoProperty.h"
 #include "../Automation/ProMoAutomationHost.h"
 
+#define PROMO_DIAGRAM_VERSION 2
+
 class AFX_EXT_CLASS CProMoEntityContainer : public CDiagramEntityContainer, public IProMoAutomationHost {
 public:
 	// Construction/initialization/destruction
@@ -42,6 +44,7 @@ public:
 	virtual CProMoControlFactory* GetControlFactory() const;
 
 	virtual CString GetModelType() const;
+	virtual unsigned int GetModelVersion() const;
 
 	virtual CSize	GetSelectionTotalSize();
 	virtual CPoint	GetSelectionStartPoint();
@@ -61,6 +64,7 @@ private:
 	CString m_modelType;
 	CProMoAppChildAuto* m_autoObject;
 	CProMoControlFactory* m_factory;
+	unsigned int m_version;
 
 // Implements
 public:
