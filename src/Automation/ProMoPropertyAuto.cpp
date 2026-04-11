@@ -36,10 +36,32 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoPropertyAuto, CProMoElementChildAuto)
 
 CProMoPropertyAuto::CProMoPropertyAuto()
+/* ============================================================
+	Function :		CProMoPropertyAuto::CProMoPropertyAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
-CProMoProperty* CProMoPropertyAuto::GetProperty() {
+CProMoProperty* CProMoPropertyAuto::GetProperty() 
+/* ============================================================
+	Function :		CProMoPropertyAuto::GetProperty
+	Description :	Returns the property represented by this automation
+					object.
+	Access :		Public
+
+	Return :		CProMoProperty*	-	The property represented 
+										by this automation
+										object, or NULL if the 
+										automation object is not
+										attached to any property.
+	Parameters :	none
+	============================================================ */
+{
 	ThrowIfDetached();
 	ThrowIfNoElementAutoObject();
 
@@ -47,6 +69,14 @@ CProMoProperty* CProMoPropertyAuto::GetProperty() {
 }
 
 CProMoPropertyAuto::~CProMoPropertyAuto()
+/* ============================================================
+	Function :		CProMoPropertyAuto::~CProMoPropertyAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
@@ -70,14 +100,15 @@ BEGIN_DISPATCH_MAP(CProMoPropertyAuto, CProMoElementChildAuto)
 	DISP_FUNCTION(CProMoPropertyAuto, "Add", Add, VT_DISPATCH, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Remove", Remove, VT_BOOL, VTS_NONE)
 	DISP_FUNCTION(CProMoPropertyAuto, "Count", Count, VT_I2, VTS_NONE)
-	DISP_PROPERTY_PARAM(CProMoPropertyAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
-	DISP_DEFVALUE(CProMoPropertyAuto, "Item")
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
 	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
 	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	//Default property
+	DISP_PROPERTY_PARAM(CProMoPropertyAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
+	DISP_DEFVALUE(CProMoPropertyAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -97,6 +128,16 @@ END_INTERFACE_MAP()
 // CProMoPropertyAuto message handlers
 
 BSTR CProMoPropertyAuto::GetName() 
+/* ============================================================
+	Function :		CProMoPropertyAuto::GetName
+	Description :	Returns the name of the property represented 
+					by this automation object.
+	Access :		Public
+	Return :		BSTR	-	The name of the property represented by this
+								automation object, or an empty string if the
+								automation object is not attached to any property.
+	Parameters :	none
+	============================================================ */
 {
 	CString strResult;
 	
@@ -107,13 +148,34 @@ BSTR CProMoPropertyAuto::GetName()
 	return strResult.AllocSysString();
 }
 
-void CProMoPropertyAuto::SetName(LPCTSTR lpszNewValue) 
+void CProMoPropertyAuto::SetName(LPCTSTR lpszNewValue)
+/* ============================================================
+	Function :		CProMoElementAuto::SetName
+	Description :	Set the name of this property. This property
+					is read-only, so this function simply raises
+					an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	LPCTSTR lpszNewValue	-	the new name of this
+												property
+   ============================================================ */
+
 {
 	SetNotSupported();
 
 }
 
-BOOL CProMoPropertyAuto::IsReadOnly() 
+BOOL CProMoPropertyAuto::IsReadOnly()
+/* ============================================================
+	Function :		CProMoPropertyAuto::IsReadOnly
+	Description :	Returns whether the property represented by this
+					automation object is read-only.
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the property is read-only,
+								"FALSE"	otherwise.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetProperty()) {
 		return GetProperty()->IsReadOnly();
@@ -123,6 +185,16 @@ BOOL CProMoPropertyAuto::IsReadOnly()
 }
 
 short CProMoPropertyAuto::GetType() 
+/* ============================================================
+	Function :		CProMoPropertyAuto::GetType
+	Description :	Returns the data type of the property 
+					represented by this	automation object.
+	Access :		Public
+
+	Return :		short	-	the type of the property represented by this
+								automation object.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetProperty()) {
 		return GetProperty()->GetType();
@@ -131,13 +203,38 @@ short CProMoPropertyAuto::GetType()
 	return 0;
 }
 
-void CProMoPropertyAuto::SetType(short nNewValue) 
+void CProMoPropertyAuto::SetType(short nNewValue)
+/* ============================================================
+	Function :		CProMoPropertyAuto::SetType
+	Description :	Set the data type of this property. This property
+					is read-only, so this function simply raises
+					an exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	short nNewValue	-	the new type of this property
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
 LPDISPATCH CProMoPropertyAuto::Label() 
+/* ============================================================
+	Function :		CProMoPropertyAuto::Label
+	Description :	Returns the label that displays the value of
+					the property represented by this automation 
+					object, if any.
+	Access :		Public
+
+	Return :		LPDISPATCH	-	A dispatch interface to the label
+									associated with the property represented
+									by this automation object, or NULL if
+									the property has no label or if the
+									automation object is not attached to
+									any property.
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetProperty() && GetModel()) {
 		CObArray labels;
@@ -160,6 +257,16 @@ LPDISPATCH CProMoPropertyAuto::Label()
 }
 
 BOOL CProMoPropertyAuto::IsComposite() 
+/* ============================================================
+	Function :		CProMoPropertyAuto::IsComposite
+	Description :	Returns whether the property represented by this
+					automation object is composite (made of child
+					properties).
+	Access :		Public
+	Return :		BOOL	-	"TRUE" if the property is composite,
+								"FALSE"	otherwise.
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetProperty()) {
 		return GetProperty()->IsComposite();
@@ -169,6 +276,16 @@ BOOL CProMoPropertyAuto::IsComposite()
 }
 
 BOOL CProMoPropertyAuto::IsMultivalue() 
+/* ============================================================
+	Function :		CProMoPropertyAuto::IsMultivalue
+	Description :	Returns whether the property represented by this
+					automation object is multi-value (i.e. it can have
+					multiple values, like a list).
+	Access :		Public
+	Return :		BOOL	-	"TRUE" if the property is multi-value,
+								"FALSE"	otherwise.
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetProperty()) {
 		return GetProperty()->IsMultiValue();
@@ -178,6 +295,21 @@ BOOL CProMoPropertyAuto::IsMultivalue()
 }
 
 VARIANT CProMoPropertyAuto::GetValue() 
+/* ============================================================
+	Function :		CProMoPropertyAuto::GetValue
+	Description :	Returns the value of the property represented by
+					this automation object. This method is only
+					applicable if the property is a single-value simple
+					property; if the property is composite or multi-value,
+					this method raises an exception.
+	Access :		Public
+
+	Return :		VARIANT	-	the value of the property represented by this
+								automation object. If the automation object
+								is not attached to any property, an empty
+								variant is returned.
+	Parameters :	none
+   ============================================================ */
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -196,6 +328,18 @@ VARIANT CProMoPropertyAuto::GetValue()
 }
 
 void CProMoPropertyAuto::SetValue(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoPropertyAuto::SetValue
+	Description :	Sets the value of the property represented by this
+					automation object. This method is only applicable if
+					the property is a single-value simple property; if the
+					property is composite or multi-value, this method raises
+					an exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	VARIANT FAR& newValue	-	the new value of the property
+   ============================================================ */
 {
 	if (GetProperty()) {
 		if (IsMultivalue() || IsComposite() | IsReadOnly()) {
@@ -211,6 +355,22 @@ void CProMoPropertyAuto::SetValue(const VARIANT FAR& newValue)
 }
 
 LPDISPATCH CProMoPropertyAuto::Add()
+/* ============================================================
+	Function :		CProMoPropertyAuto::Add
+	Description :	Adds a new value to the property represented by
+					this automation object and returns the automation
+					object of the new value. This method is only
+					applicable if the property is multi-value.
+	Access :		Public
+
+	Return :		LPDISPATCH	-	a dispatch interface to the automation
+									object of the new value added to the
+									property represented by this automation
+									object, or NULL if the property is not
+									multi-value or if the automation object
+									is not attached to any property.
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetProperty()) {
 		if (IsMultivalue() && !IsReadOnly()) {
@@ -230,7 +390,21 @@ LPDISPATCH CProMoPropertyAuto::Add()
 	return NULL;
 }
 
-BOOL CProMoPropertyAuto::Remove(short index) 
+BOOL CProMoPropertyAuto::Remove(short index)
+/* ============================================================
+	Function :		CProMoPropertyAuto::Remove
+	Description :	Removes the value with the specified index from the
+					property represented by this automation object. This
+					method is only applicable if the property is multi-value.
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the value was successfully removed,
+									"FALSE" if the value was not removed because
+									the index was out of range, or if the property
+									is not multi-value or if the automation object
+									is not attached to any property.
+	Parameters :	short index	-	the index of the value to remove.
+   ============================================================ */
 {
 	if (GetProperty()) {
 		if (IsMultivalue() && !IsReadOnly()) {
@@ -247,6 +421,28 @@ BOOL CProMoPropertyAuto::Remove(short index)
 }
 
 LPDISPATCH CProMoPropertyAuto::GetItem(const VARIANT FAR& Item) 
+/* ============================================================
+	Function :		CProMoPropertyAuto::GetItem
+	Description :	Returns the value with the specified index or name
+					from the property represented by this automation object.
+					This method is only applicable if the property is composite
+					or multi-value; if the property is a single-value simple
+					property, this method raises an exception.
+	Access :		Public
+
+	Return :		LPDISPATCH			-	a pointer to the IDispatch 
+											interface of the value
+											corresponding to the specified 
+											index or name, or "NULL"
+											if no value with the specified 
+											index or name is found, or if
+											the property is a single-value 
+											simple property, or if the
+											automation object is not 
+											attached to any property.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the 
+											value to return.
+   ============================================================ */
 {
 	if (!IsMultivalue() && !IsComposite()) {
 		GetNotSupported();
@@ -282,12 +478,40 @@ LPDISPATCH CProMoPropertyAuto::GetItem(const VARIANT FAR& Item)
 }
 
 void CProMoPropertyAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoPropertyAuto::SetItem
+	Description :	Sets the value with the specified index or name
+					in the property represented by this automation object.
+					This property is read-only, so this function simply
+					raises an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the 
+											value to set.
+					LPDISPATCH newValue -	a dispatch interface 
+											to the new value.
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
-short CProMoPropertyAuto::Count() 
+short CProMoPropertyAuto::Count()
+/* ============================================================
+	Function :		CProMoPropertyAuto::Count
+	Description :	Returns the number of values contained in the
+					property represented by this automation object. This
+					method is only applicable if the property is composite
+					or multi-value.
+	Access :		Public
+
+	Return :		short	-	the number of values contained in the
+								property represented by this automation
+								object, or 0 if the property is a single-value
+								simple property or if the automation object is not
+								attached to any property.
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetProperty()) {
 		return GetProperty()->GetChildrenCount();
@@ -296,7 +520,19 @@ short CProMoPropertyAuto::Count()
 	return 0;
 }
 
-VARIANT CProMoPropertyAuto::GetChildNames() 
+VARIANT CProMoPropertyAuto::GetChildNames()
+/* ============================================================
+	Function :		CProMoPropertyAuto::GetChildNames
+	Description :	Returns the names of the child properties of the
+					property represented by this automation object. This
+					method is only applicable if the property is composite.
+	Access :		Public
+	Return :		VARIANT	-	a VARIANT containing a SAFEARRAY
+								of BSTRs with the names of the
+								child properties of the property 
+								represented by this automation object.
+	Parameters :	none
+   ============================================================ */
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -315,6 +551,19 @@ VARIANT CProMoPropertyAuto::GetChildNames()
 }
 
 void CProMoPropertyAuto::SetChildNames(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoPropertyAuto::SetChildNames
+	Description :	Sets the names of the child properties of the
+					property represented by this automation object. This
+					property is read-only, so this function simply raises
+					an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT FAR& newValue	-	a VARIANT containing a SAFEARRAY
+												of BSTRs with the new names of the
+												child properties of the property 
+												represented by this automation object.
+   ============================================================ */
 {
 	SetNotSupported();
 

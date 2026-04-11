@@ -41,15 +41,43 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNAMIC(CProMoDiagramsAutoAbs, CProMoAppChildAuto)
 
 CProMoDiagramsAutoAbs::CProMoDiagramsAutoAbs()
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::CProMoDiagramsAutoAbs
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 }
 
 CProMoDiagramsAutoAbs::~CProMoDiagramsAutoAbs()
-{
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::~CProMoDiagramsAutoAbs
+	Description :	Destructor
+	Access :		Public
 
+	Return :		void
+	Parameters :	none
+   ============================================================ */
+{
 }
 
 void CProMoDiagramsAutoAbs::SetAppAutoObject(CProMoAppAutoAbs* pAppAuto)
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::SetAppAutoObject
+	Description :	Sets the application automation object to the 
+					object passed as a parameter. Overridden
+					to avoid creating circular references between 
+					COM objects that would prevent them from being
+					released.
+	Access :		Public
+	Return :		void
+	Parameters :	pAppAuto	-	a pointer to the application 
+									automation object to set for this 
+									diagrams automation object.
+   ============================================================ */
 {
 	m_pAppAuto = pAppAuto;
 
@@ -73,6 +101,22 @@ END_INTERFACE_MAP()
 // CProMoDiagramsAutoAbs message handlers
 
 LPDISPATCH CProMoDiagramsAutoAbs::Add(const VARIANT FAR& documentType)
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::Add
+	Description :	Creates a new diagram of the specified type and 
+					returns the corresponding diagram automation object.
+	Access :		Public
+	Return :		LPDISPATCH					-	a pointer to the 
+													IDispatch interface
+													of the created 
+													diagram 
+													automation object, 
+													or "NULL" if the 
+													diagram	could not
+													be created.
+	Parameters :	VARIANT FAR& documentType	-	the type of the 
+													diagram to create.
+   ============================================================ */
 {
 	ThrowIfNoAppAutoObject();
 
@@ -91,6 +135,21 @@ LPDISPATCH CProMoDiagramsAutoAbs::Add(const VARIANT FAR& documentType)
 }
 
 LPDISPATCH CProMoDiagramsAutoAbs::Open(const VARIANT FAR& fileName)
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::Open
+	Description :	Opens the diagram stored in the specified file and 
+					returns the corresponding diagram automation object.
+	Access :		Public
+	Return :		LPDISPATCH			-	a pointer to the 
+											IDispatch interface 
+											of the opened diagram 
+											automation object, or
+											"NULL" if the diagram
+											could not be opened.
+	Parameters :	VARIANT FAR& fileName	-	the name of the file 
+											that contains the diagram
+											to open.
+   ============================================================ */
 {
 	ThrowIfNoAppAutoObject();
 
@@ -104,6 +163,23 @@ LPDISPATCH CProMoDiagramsAutoAbs::Open(const VARIANT FAR& fileName)
 }
 
 LPDISPATCH CProMoDiagramsAutoAbs::GetItem(const VARIANT FAR& Item)
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::GetItem
+	Description :	Returns the diagram automation object corresponding 
+					to the specified index or name.
+	Access :		Public
+	Return :		LPDISPATCH			-	a pointer to the 
+											IDispatch interface 
+											of the diagram 
+											automation object 
+											corresponding to the 
+											specified index or name, 
+											or "NULL" if no diagram
+											 with the specified index
+											 or name is found.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the 
+											diagram to return.
+   ============================================================ */
 {
 	ThrowIfNoAppAutoObject();
 
@@ -128,12 +204,36 @@ LPDISPATCH CProMoDiagramsAutoAbs::GetItem(const VARIANT FAR& Item)
 }
 
 void CProMoDiagramsAutoAbs::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue)
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::SetItem
+	Description :	Sets the diagram automation object corresponding 
+					to the specified index or name. This property is 
+					read-only, so this function simply raises an 
+					exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the 
+											diagram to set.
+					LPDISPATCH newValue	-	a pointer to the new 
+											IDispatch interface of the
+											diagram automation object to
+											set for the specified index or
+											name.
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
 short CProMoDiagramsAutoAbs::Count()
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::Count
+	Description :	Returns the number of open diagrams.
+	Access :		Public
+
+	Return :		short	-	the number of open diagrams.
+	Parameters :	none
+   ============================================================ */
 {
 	ThrowIfNoAppAutoObject();
 	
@@ -141,6 +241,19 @@ short CProMoDiagramsAutoAbs::Count()
 }
 
 void CProMoDiagramsAutoAbs::Save(BOOL noPrompt)
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::Save
+	Description :	Saves all open diagrams. If "noPrompt" is 
+					"TRUE", the diagrams are saved without prompting
+					the user. If "noPrompt" is "FALSE", the user is
+					prompted for each diagram whether to save it or not.
+	Access :		Public
+
+	Return :		void
+	Parameters :	noPrompt	-	a boolean value that indicates 
+									whether to save the diagrams 
+									without prompting the user.
+   ============================================================ */
 {
 	ThrowIfNoAppAutoObject();
 	
@@ -153,6 +266,21 @@ void CProMoDiagramsAutoAbs::Save(BOOL noPrompt)
 }
 
 void CProMoDiagramsAutoAbs::Close(BOOL saveChanges)
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::Close
+	Description :	Closes all open diagrams. If "saveChanges" is 
+					"TRUE", the user is prompted to save any unsaved
+					changes for each diagram before closing it. If 
+					"saveChanges" is "FALSE", the diagrams are closed
+					immediately without prompting the user.
+	Access :		Public
+
+	Return :		void
+	Parameters :	saveChanges	-	a boolean value that indicates 
+									whether to prompt the user to 
+									save any unsaved changes before
+									closing the diagrams.
+   ============================================================ */
 {
 	ThrowIfNoAppAutoObject();
 	
@@ -165,6 +293,17 @@ void CProMoDiagramsAutoAbs::Close(BOOL saveChanges)
 
 }
 VARIANT CProMoDiagramsAutoAbs::GetIDs() 
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::GetIDs
+	Description :	Returns a list of the names of the open diagrams.
+	Access :		Public
+
+	Return :		VARIANT			-	a VARIANT containing a 
+										safe array of BSTRs with 
+										the names of the open 
+										diagrams.
+	Parameters :	none
+   ============================================================ */
 {
 	ThrowIfNoAppAutoObject();
 
@@ -182,6 +321,17 @@ VARIANT CProMoDiagramsAutoAbs::GetIDs()
 }
 
 void CProMoDiagramsAutoAbs::SetIDs(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoDiagramsAutoAbs::SetIDs
+	Description :	Sets the list of the names of the open diagrams. 
+					This property is read-only, so this function simply
+					raises an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	newValue	-	a VARIANT containing a safe array of 
+									BSTRs with the names of the open 
+									diagrams to set.
+   ============================================================ */
 {
 	SetNotSupported();
 

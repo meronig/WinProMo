@@ -36,30 +36,99 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoLabelsAuto, CProMoElementChildAuto)
 
 CProMoLabelsAuto::CProMoLabelsAuto()
+/* ============================================================
+	Function :		CProMoLabelsAuto::CProMoLabelsAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoLabelsAuto::~CProMoLabelsAuto()
+/* ============================================================
+	Function :		CProMoLabelsAuto::~CProMoLabelsAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
-void CProMoLabelsAuto::SetDiagramAutoObject(CProMoDiagramAutoAbs* pDiagramAuto) {
+void CProMoLabelsAuto::SetDiagramAutoObject(CProMoDiagramAutoAbs* pDiagramAuto) 
+/* ============================================================
+	Function :		CProMoLabelsAuto::SetDiagramAutoObject
+	Description :	Sets the diagram automation object to the
+					object passed as a parameter. Overridden
+					to avoid creating circular references between
+					COM objects that would prevent them from being
+					released.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoDiagramAutoAbs* pDiagramAuto	-	The diagram
+															automation
+															object to set.
+   ============================================================*/
+{
 	SetAppAutoObject(pDiagramAuto ? pDiagramAuto->GetAppAutoObject() : NULL);
 	m_pDiagramAuto = pDiagramAuto;
 }
 
-void CProMoLabelsAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+void CProMoLabelsAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) 
+/* ============================================================
+	Function :		CProMoLabelsAuto::SetElementAutoObject
+	Description :	Sets the element automation object to the
+					object passed as a parameter. Overridden
+					to avoid creating circular references between
+					COM objects that would prevent them from being
+					released.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoElementAuto* pElementAuto	-	The element
+														automation
+														object to set.
+   ============================================================*/
+{
 	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
 
 CProMoElementAuto* CProMoLabelsAuto::GetElementAutoObject() const
+/* ============================================================
+	Function :		CProMoLabelsAuto::GetElementAutoObject
+	Description :	Returns the element automation object.
+					Overridden not to throw an exception if the 
+					element automation object is not set, because 
+					in this case the collection is associated to 
+					the diagram, and not to an element.
+	Access :		Public
+
+	Return :		CProMoElementAuto*	-	The element automation
+											object.
+	Parameters :	none
+   ============================================================*/
 {
 	ThrowIfNoDiagramAutoObject();
 	return m_pElementAuto;
 }
 
 void CProMoLabelsAuto::GetLabels(CObArray& labels)
+/* ============================================================
+	Function :		CProMoLabelsAuto::GetLabels
+	Description :	Fills the array passed as a parameter with the
+					labels of the collection.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	CObArray& labels	-	The array to fill with the
+											labels of the collection.
+   ============================================================*/
 {
 	if (GetElementAutoObject()) {
 		// Collection is associated to an element, so we return the labels of the element
@@ -75,6 +144,23 @@ void CProMoLabelsAuto::GetLabels(CObArray& labels)
 }
 
 CProMoLabel* CProMoLabelsAuto::FindLabel(const VARIANT& Item, const CObArray& collection)
+/* ============================================================
+	Function :		CProMoLabelsAuto::FindLabel
+	Description :	Finds the label in the collection that is 
+					identified by the parameter "Item". "Item" can
+					be either the name or the index of the label to
+					find.
+	Access :		Protected
+
+	Return :		CProMoLabel*			-	The label identified by the
+												parameter "Item", or NULL if
+												the parameter does not identify
+												a label in the collection.
+	Parameters :	VARIANT& Item			-	The name or index
+												of the label to find.
+					CObArray& collection	-	The collection of
+												labels to search in.
+   ============================================================*/
 {
 	CVariantWrapper wrapper(Item);
 	CProMoLabel* pModel = NULL;
@@ -109,14 +195,15 @@ BEGIN_DISPATCH_MAP(CProMoLabelsAuto, CProMoElementChildAuto)
 	DISP_FUNCTION(CProMoLabelsAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CProMoLabelsAuto, "Add", Add, VT_DISPATCH, VTS_NONE)
 	DISP_FUNCTION(CProMoLabelsAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
-	DISP_PROPERTY_PARAM(CProMoLabelsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
-	DISP_DEFVALUE(CProMoLabelsAuto, "Item")
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
 	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
 	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	//Default property
+	DISP_PROPERTY_PARAM(CProMoLabelsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
+	DISP_DEFVALUE(CProMoLabelsAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -136,6 +223,19 @@ END_INTERFACE_MAP()
 // CProMoLabelsAuto message handlers
 
 LPDISPATCH CProMoLabelsAuto::Add() 
+/* ============================================================
+	Function :		CProMoLabelsAuto::Add
+	Description :	Adds a new label to the collection. If the
+					collection is associated to an element, an
+					exception is thrown. If the collection
+					is associated to the diagram, the new label is
+					added to the diagram.
+	Access :		Public
+
+	Return :		LPDISPATCH	-	The automation object of the new
+									label added to the collection.
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetElementAutoObject()) {
 		// Collection is associated to an element, so we cannot add a label to it
@@ -162,6 +262,14 @@ LPDISPATCH CProMoLabelsAuto::Add()
 }
 
 short CProMoLabelsAuto::Count() 
+/* ============================================================
+	Function :		CProMoLabelsAuto::Count
+	Description :	Returns the number of labels in the collection.
+	Access :		Public
+
+	Return :		short	-	The number of labels in the collection.
+	Parameters :	none
+	============================================================ */
 {
 	CObArray labels;
 	GetLabels(labels);
@@ -169,6 +277,20 @@ short CProMoLabelsAuto::Count()
 }
 
 BOOL CProMoLabelsAuto::Remove(const VARIANT FAR& item) 
+/* ============================================================
+	Function :		CProMoLabelsAuto::Remove
+	Description :	Removes the label identified by the parameter
+					"Item" from the collection. "Item" can be
+					either the name or the index of the label to
+					remove.
+	Access :		Public
+	Return :		BOOL			-	"TRUE" if a label identified by
+										the parameter "Item" was found
+										in the collection and removed;
+										"FALSE" otherwise.
+	Parameters :	VARIANT Item 	-	the name or index of the
+										label to remove.
+   ============================================================ */
 {
 	CObArray labels;
 	GetLabels(labels);
@@ -184,6 +306,23 @@ BOOL CProMoLabelsAuto::Remove(const VARIANT FAR& item)
 }
 
 LPDISPATCH CProMoLabelsAuto::GetItem(const VARIANT FAR& item) 
+/* ============================================================
+	Function :		CProMoLabelsAuto::GetItem
+	Description :	Returns the label automation object corresponding
+					to the specified index or name.
+	Access :		Public
+	Return :		LPDISPATCH			-	a pointer to the
+											IDispatch interface
+											of the label
+											automation object
+											corresponding to the
+											specified index or name,
+											or "NULL" if no label
+											with the specified index
+											or name is found.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the
+											label to return.
+   ============================================================ */
 {
 	CObArray labels;
 	GetLabels(labels);
@@ -207,12 +346,39 @@ LPDISPATCH CProMoLabelsAuto::GetItem(const VARIANT FAR& item)
 }
 
 void CProMoLabelsAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoLabelsAuto::SetItem
+	Description :	Sets the label automation object corresponding
+					to the specified index or name. This property is
+					read-only, so this function simply raises an
+					exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the
+											label to set.
+					LPDISPATCH newValue	-	a pointer to the new
+											IDispatch interface of the
+											label automation object to
+											set for the specified index or
+											name.
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
 VARIANT CProMoLabelsAuto::GetIDs() 
+/* ============================================================
+	Function :		CProMoLabelsAuto::GetIDs
+	Description :	Returns a SAFEARRAY of VARIANT containing the names
+					of the labels in the collection.
+	Access :		Public
+
+	Return :		VARIANT	-	a VARIANT containing a SAFEARRAY
+								of BSTRs with the names of the
+								labels in the collection.
+	Parameters :	none
+   ============================================================ */
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -237,6 +403,20 @@ VARIANT CProMoLabelsAuto::GetIDs()
 }
 
 void CProMoLabelsAuto::SetIDs(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoLabelsAuto::SetIDs
+	Description :	Sets the list of the names of the labels.
+					This property is read-only, so this function simply
+					raises an exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	VARIANT FAR& newValue	-	a VARIANT containing 
+												a safe array of
+												BSTRs with the 
+												names of the labels
+												to set.
+   ============================================================ */
 {
 	SetNotSupported();
 

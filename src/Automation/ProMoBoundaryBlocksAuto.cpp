@@ -34,14 +34,45 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoBoundaryBlocksAuto, CProMoBlockChildAuto)
 
 CProMoBoundaryBlocksAuto::CProMoBoundaryBlocksAuto()
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::CProMoBoundaryBlocksAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoBoundaryBlocksAuto::~CProMoBoundaryBlocksAuto()
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::~CProMoBoundaryBlocksAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
-void CProMoBoundaryBlocksAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+void CProMoBoundaryBlocksAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) 
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::SetElementAutoObject
+	Description :	Sets the element automation object to the
+					object passed as a parameter. Overridden
+					to avoid creating circular references between
+					COM objects that would prevent them from being
+					released.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoElementAuto* pElementAuto	-	The element
+														automation
+														object to set.
+   ============================================================*/
+{
 	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
@@ -57,16 +88,17 @@ BEGIN_DISPATCH_MAP(CProMoBoundaryBlocksAuto, CProMoBlockChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoBoundaryBlocksAuto)
 	DISP_PROPERTY_EX(CProMoBoundaryBlocksAuto, "IDs", GetIDs, SetIDs, VT_VARIANT)
 	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Count", Count, VT_I2, VTS_NONE)
-	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Add", Add, VT_BOOL, VTS_DISPATCH VTS_I4)
+	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Add", Add, VT_BOOL, VTS_DISPATCH VTS_I2)
 	DISP_FUNCTION(CProMoBoundaryBlocksAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
-	DISP_PROPERTY_PARAM(CProMoBoundaryBlocksAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
-	DISP_DEFVALUE(CProMoBoundaryBlocksAuto, "Item")
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
 	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
 	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	//Default property
+	DISP_PROPERTY_PARAM(CProMoBoundaryBlocksAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
+	DISP_DEFVALUE(CProMoBoundaryBlocksAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -86,6 +118,31 @@ END_INTERFACE_MAP()
 // CProMoBoundaryBlocksAuto message handlers
 
 BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH item, short attachment) 
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::Add
+	Description :	Adds a block to the collection. The block to add
+					is specified by passing a pointer to its automation
+					object's IDispatch interface as a parameter. The block
+					is added as a boundary block of the block associted to the
+					current automation object, with the specified attachment.
+	Access :		Public
+
+	Return :		BOOL				-	"TRUE" if the block is added
+											successfully, "FALSE"
+											otherwise.
+	Parameters :	LPDISPATCH item		-	a pointer to the
+											IDispatch interface of
+											the block automation
+											object to add as a
+											boundary block.
+					short attachment	-	the side of the block
+											to which the boundary
+											block should be attached;
+											it can be one of the
+											following values:
+											DEHT_TOP, DEHT_BOTTOM,
+											DEHT_LEFT, DEHT_RIGHT.
+   ============================================================ */
 {
 	if (GetBlockModel()) {
 		if (item) {
@@ -137,6 +194,14 @@ BOOL CProMoBoundaryBlocksAuto::Add(LPDISPATCH item, short attachment)
 }
 
 short CProMoBoundaryBlocksAuto::Count() 
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::Count
+	Description :	Returns the number of boundary blocks in the block.
+	Access :		Public
+
+	Return :		short	-	The number of boundary blocks in the block.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray boundaryBlocks;
@@ -148,6 +213,22 @@ short CProMoBoundaryBlocksAuto::Count()
 }
 
 BOOL CProMoBoundaryBlocksAuto::Remove(const VARIANT FAR& item) 
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::Remove
+	Description :	Removes a block from the collection. The block to remove
+					is specified by passing its index or name as a parameter.
+					The block is removed from being a boundary block of the block
+					represented by the current automation object, and becomes
+					a top-level block in the diagram.
+	Access :		Public
+	Return :		BOOL				-	"TRUE" if the block is 
+											successfully removed
+											from the collection, 
+											"FALSE" otherwise.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of 
+											the block to remove 
+											from the collection.
+	============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray boundaryBlocks;
@@ -169,6 +250,23 @@ BOOL CProMoBoundaryBlocksAuto::Remove(const VARIANT FAR& item)
 }
 
 LPDISPATCH CProMoBoundaryBlocksAuto::GetItem(const VARIANT FAR& item) 
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::GetItem
+	Description :	Returns the block automation object corresponding
+					to the specified index or name.
+	Access :		Public
+	Return :		LPDISPATCH			-	a pointer to the
+											IDispatch interface
+											of the block
+											automation object
+											corresponding to the
+											specified index or name,
+											or "NULL" if no block
+											with the specified index
+											or name is found.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the
+											block to return.
+   ============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray boundaryBlocks;
@@ -188,12 +286,40 @@ LPDISPATCH CProMoBoundaryBlocksAuto::GetItem(const VARIANT FAR& item)
 }
 
 void CProMoBoundaryBlocksAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::SetItem
+	Description :	Sets the block automation object corresponding
+					to the specified index or name. This property is
+					read-only, so this function simply raises an
+					exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the
+											block to set.
+					LPDISPATCH newValue	-	a pointer to the new
+											IDispatch interface of the
+											block automation object to
+											set for the specified index or
+											name.
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
 VARIANT CProMoBoundaryBlocksAuto::GetIDs() 
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::GetIDs
+	Description :	Returns a SAFEARRAY of VARIANT containing the names
+					of the boundary blocks in the collection.
+	Access :		Public
+
+	Return :		VARIANT	-	a VARIANT containing a SAFEARRAY
+								of BSTRs with the names of the
+								boundary blocks in the collection.
+	Parameters :	none
+   ============================================================ */
+
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -220,6 +346,18 @@ VARIANT CProMoBoundaryBlocksAuto::GetIDs()
 }
 
 void CProMoBoundaryBlocksAuto::SetIDs(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoBoundaryBlocksAuto::SetIDs
+	Description :	Sets the list of the names of the boundary blocks.
+					This property is read-only, so this function simply
+					raises an exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	newValue	-	a VARIANT containing a safe array of
+									BSTRs with the names of the
+									boundary blocks to set.
+   ============================================================ */
 {
 	SetNotSupported();
 

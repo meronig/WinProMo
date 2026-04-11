@@ -32,14 +32,45 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoPropertiesAuto, CProMoElementChildAuto)
 
 CProMoPropertiesAuto::CProMoPropertiesAuto()
+/* ============================================================
+	Function :		CProMoPropertiesAuto::CProMoPropertiesAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoPropertiesAuto::~CProMoPropertiesAuto()
+/* ============================================================
+	Function :		CProMoPropertiesAuto::~CProMoPropertiesAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
-void CProMoPropertiesAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+void CProMoPropertiesAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) 
+/* ============================================================
+	Function :		CProMoPropertiesAuto::SetElementAutoObject
+	Description :	Sets the element automation object to the
+					object passed as a parameter. Overridden
+					to avoid creating circular references between
+					COM objects that would prevent them from being
+					released.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoElementAuto* pElementAuto	-	The element
+														automation
+														object to set.
+   ============================================================*/
+{
 	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
@@ -54,14 +85,15 @@ BEGIN_DISPATCH_MAP(CProMoPropertiesAuto, CProMoElementChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoPropertiesAuto)
 	DISP_PROPERTY_EX(CProMoPropertiesAuto, "Names", GetNames, SetNames, VT_VARIANT)
 	DISP_FUNCTION(CProMoPropertiesAuto, "Count", Count, VT_I2, VTS_NONE)
-	DISP_PROPERTY_PARAM(CProMoPropertiesAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
-	DISP_DEFVALUE(CProMoPropertiesAuto, "Item")
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
 	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
 	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	//Default property
+	DISP_PROPERTY_PARAM(CProMoPropertiesAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
+	DISP_DEFVALUE(CProMoPropertiesAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -81,6 +113,14 @@ END_INTERFACE_MAP()
 // CProMoPropertiesAuto message handlers
 
 short CProMoPropertiesAuto::Count() 
+/* ============================================================
+	Function :		CProMoPropertiesAuto::Count
+	Description :	Returns the number of properties in the collection.
+	Access :		Public
+
+	Return :		short	-	The number of properties
+	Parameters :	none
+	============================================================ */
 {
 	if (GetModel()) {
 		return GetModel()->GetPropertiesCount();
@@ -90,6 +130,15 @@ short CProMoPropertiesAuto::Count()
 }
 
 LPDISPATCH CProMoPropertiesAuto::GetItem(const VARIANT FAR& Item) 
+/* ============================================================
+	Function :		CProMoPropertiesAuto::GetItem
+	Description :	Returns the property with the specified name or index.
+	Access :		Public
+	Return :		LPDISPATCH			-	The property with the 
+											specified name or index.
+	Parameters :	VARIANT FAR& Item	-	The name or index of the property
+											to return.
+	============================================================ */
 {
 	CVariantWrapper wrapper(Item);
 
@@ -118,12 +167,34 @@ LPDISPATCH CProMoPropertiesAuto::GetItem(const VARIANT FAR& Item)
 }
 
 void CProMoPropertiesAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoPropertiesAuto::SetItem
+	Description :	Sets the property with the specified name or index.
+					This property is read-only, so this function simply
+					raises an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT FAR& Item	-	The name or index of the property
+											to set.
+					LPDISPATCH newValue -	The new value of the property.
+	============================================================ */
 {
 	SetNotSupported();
 
 }
 
 VARIANT CProMoPropertiesAuto::GetNames() 
+/* ============================================================
+	Function :		CProMoPropertiesAuto::GetNames
+	Description :	Returns a SAFEARRAY of VARIANT containing the names
+					of the properties in the collection.
+	Access :		Public
+
+	Return :		VARIANT	-	a VARIANT containing a SAFEARRAY
+								of BSTRs with the names of the
+								properties in the collection.
+	Parameters :	none
+   ============================================================ */
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -142,6 +213,18 @@ VARIANT CProMoPropertiesAuto::GetNames()
 }
 
 void CProMoPropertiesAuto::SetNames(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoPropertiesAuto::SetNames
+	Description :	Sets the list of the names of the properties.
+					This property is read-only, so this function simply
+					raises an exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	newValue	-	a VARIANT containing a safe array of
+									BSTRs with the names of the properties
+									to set.
+   ============================================================ */
 {
 	SetNotSupported();
 

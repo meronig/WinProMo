@@ -39,22 +39,49 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoElementChildAuto, CProMoDiagramChildAuto)
 
 CProMoElementChildAuto::CProMoElementChildAuto()
+/* ============================================================
+	Function :		CProMoElementChildAuto::CProMoElementChildAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	m_pElementAuto = NULL;
 }
 
 void CProMoElementChildAuto::OnFinalRelease()
-{
-	// When the last reference for an automation object is released
-	// OnFinalRelease is called.  The base class will automatically
-	// deletes the object.  Add additional cleanup required for your
-	// object before calling the base class.
+/* ============================================================
+	Function :		CProMoElementChildAuto::OnFinalRelease
+	Description :	Release the automation object. Called when
+					the last reference for an automation object
+					is released. The base class will
+					automatically delete the object.
+	Access :		Public
 
+	Return :		void
+	Parameters :	none
+
+	Usage:			Overridden to release the element automation
+					object by setting it to NULL.
+
+   ============================================================*/
+{
 	SetElementAutoObject(NULL);
 	CProMoDiagramChildAuto::OnFinalRelease();
 }
 
 CProMoModel* CProMoElementChildAuto::GetModel()
+/* ============================================================
+	Function :		CProMoElementChildAuto::GetModel
+	Description :	Get the model associated with this element
+	Access :		Public
+
+	Return :		CProMoModel*	-	the model associated with
+										this element
+	Parameters :	none
+   ============================================================ */
 {
 	ThrowIfNoElementAutoObject();
 
@@ -65,12 +92,35 @@ CProMoModel* CProMoElementChildAuto::GetModel()
 }
 
 CProMoElementAuto* CProMoElementChildAuto::GetElementAutoObject() const
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::GetElementAutoObject
+	Description :	Returns the element automation object.
+	Access :		Public
+
+	Return :		CProMoElementAuto*	-	The element automation 
+											object.
+	Parameters :	none
+   ============================================================*/
 {
 	ThrowIfNoElementAutoObject();
 	return m_pElementAuto;
 }
 
 void CProMoElementChildAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto)
+/* ============================================================
+	Function :		CProMoElementChildAuto::SetElementAutoObject
+	Description :	Sets the element automation object to the
+					object passed as a parameter. If the new object
+					is different from the current one, the reference
+					count of the old object is released and the new
+					object is AddRef'ed.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoElementAuto* pDiagramAuto	-	The element 
+														automation 
+														object to set.
+   ============================================================*/
 {
 	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	
@@ -89,6 +139,15 @@ void CProMoElementChildAuto::SetElementAutoObject(CProMoElementAuto* pElementAut
 }
 
 void CProMoElementChildAuto::ThrowIfNoElementAutoObject() const
+/* ============================================================
+	Function :		CProMoElementChildAuto::ThrowIfNoElementAutoObject
+	Description :	Checks if the element automation object is
+					available, and if not, throws an OLE exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	ThrowIfNoDiagramAutoObject();
 	if (!m_pElementAuto) {
@@ -99,6 +158,14 @@ void CProMoElementChildAuto::ThrowIfNoElementAutoObject() const
 
 
 CProMoElementChildAuto::~CProMoElementChildAuto()
+/* ============================================================
+	Function :		CProMoElementChildAuto::~CProMoElementChildAuto
+	Description :	Destructor
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 }
 
@@ -120,6 +187,18 @@ END_INTERFACE_MAP()
 // CProMoElementChildAuto message handlers
 
 LPDISPATCH CProMoElementChildAuto::Element() 
+/* ============================================================
+	Function :		CProMoElementChildAuto::Element
+	Description :	Returns the element automation object.
+	Access :		Public
+	Return :		LPDISPATCH			-	a pointer to the
+											IDispatch interface
+											of the element
+											automation object,
+											or "NULL" if no
+											object is set.
+	Parameters :	none
+   ============================================================*/
 {
 	if (m_pElementAuto) {
 		return m_pElementAuto->GetIDispatch(TRUE);

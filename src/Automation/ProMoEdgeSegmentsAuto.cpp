@@ -31,15 +31,46 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoEdgeSegmentsAuto, CProMoEdgeChildAuto)
 
 CProMoEdgeSegmentsAuto::CProMoEdgeSegmentsAuto()
+/* ============================================================
+	Function :		CProMoEdgeSegmentsAuto::CProMoEdgeSegmentsAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoEdgeSegmentsAuto::~CProMoEdgeSegmentsAuto()
+/* ============================================================
+	Function :		CProMoEdgeSegmentsAuto::~CProMoEdgeSegmentsAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 
-void CProMoEdgeSegmentsAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+void CProMoEdgeSegmentsAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) 
+/* ============================================================
+	Function :		CProMoEdgeSegmentsAuto::SetElementAutoObject
+	Description :	Sets the element automation object to the
+					object passed as a parameter. Overridden
+					to avoid creating circular references between 
+					COM objects that would prevent them from being
+					released.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoElementAuto* pElementAuto	-	The element
+														automation
+														object to set.
+   ============================================================*/
+{
 	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
@@ -53,14 +84,15 @@ END_MESSAGE_MAP()
 BEGIN_DISPATCH_MAP(CProMoEdgeSegmentsAuto, CProMoEdgeChildAuto)
 	//{{AFX_DISPATCH_MAP(CProMoEdgeSegmentsAuto)
 	DISP_FUNCTION(CProMoEdgeSegmentsAuto, "Count", Count, VT_I2, VTS_NONE)
-	DISP_PROPERTY_PARAM(CProMoEdgeSegmentsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_I2)
-	DISP_DEFVALUE(CProMoEdgeSegmentsAuto, "Item")
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
 	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
 	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	//Default property
+	DISP_PROPERTY_PARAM(CProMoEdgeSegmentsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_I2)
+	DISP_DEFVALUE(CProMoEdgeSegmentsAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -80,6 +112,14 @@ END_INTERFACE_MAP()
 // CProMoEdgeSegmentsAuto message handlers
 
 short CProMoEdgeSegmentsAuto::Count() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentsAuto::Count
+	Description :	Returns the number of segments composing this edge.
+	Access :		Public
+
+	Return :		short	-	the number of segments composing this edge
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetEdgeModel()) {
 		CObArray edgeViews;
@@ -90,7 +130,21 @@ short CProMoEdgeSegmentsAuto::Count()
 	return 0;
 }
 
-LPDISPATCH CProMoEdgeSegmentsAuto::GetItem(short Item) 
+LPDISPATCH CProMoEdgeSegmentsAuto::GetItem(short Item)
+/* ============================================================
+	Function :		CProMoEdgeSegmentsAuto::GetItem
+	Description :	Returns the segment automation object corresponding
+					to the specified index.
+	Access :		Public
+
+	Return :		LPDISPATCH	-	a pointer to the IDispatch interface of
+									the segment automation object corresponding
+									to the specified index, or "NULL" if no
+									segment automation object corresponds to
+									the specified index.
+	Parameters :	short Item -	the index of the segment automation object
+									to return.
+   ============================================================ */
 {
 	if (GetEdgeModel()) {
 		CProMoEdgeView* pView = GetEdgeModel()->GetFirstSegment();
@@ -110,6 +164,20 @@ LPDISPATCH CProMoEdgeSegmentsAuto::GetItem(short Item)
 }
 
 void CProMoEdgeSegmentsAuto::SetItem(short Item, LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoEdgeSegmentsAuto::SetItem
+	Description :	Sets the segment automation object corresponding
+					to the specified index. This property is read-only,
+					so this function simply raises an exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	short Item			-	the index of the segment automation object
+											to set.
+					LPDISPATCH newValue	-	a pointer to the new IDispatch interface of
+											the segment automation object to set for the
+											specified index.
+   ============================================================ */
 {
 	SetNotSupported();
 

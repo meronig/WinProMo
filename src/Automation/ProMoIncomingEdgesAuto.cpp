@@ -34,14 +34,46 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoIncomingEdgesAuto, CProMoBlockChildAuto)
 
 CProMoIncomingEdgesAuto::CProMoIncomingEdgesAuto()
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::CProMoIncomingEdgesAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoIncomingEdgesAuto::~CProMoIncomingEdgesAuto()
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::~CProMoIncomingEdgesAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
-void CProMoIncomingEdgesAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+void CProMoIncomingEdgesAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) 
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::SetElementAutoObject
+	Description :	Sets the element automation object to the
+					object passed as a parameter. Overridden
+					to avoid creating circular references between
+					COM objects that would prevent them from being
+					released.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoElementAuto* pElementAuto	-	The element
+														automation
+														object to set.
+   ============================================================*/
+
+{
 	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL);
 	m_pElementAuto = pElementAuto;
 }
@@ -59,14 +91,15 @@ BEGIN_DISPATCH_MAP(CProMoIncomingEdgesAuto, CProMoBlockChildAuto)
 	DISP_FUNCTION(CProMoIncomingEdgesAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CProMoIncomingEdgesAuto, "Add", Add, VT_BOOL, VTS_DISPATCH)
 	DISP_FUNCTION(CProMoIncomingEdgesAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
-	DISP_PROPERTY_PARAM(CProMoIncomingEdgesAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
-	DISP_DEFVALUE(CProMoIncomingEdgesAuto, "Item")
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
 	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
 	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	//Defaut property
+	DISP_PROPERTY_PARAM(CProMoIncomingEdgesAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
+	DISP_DEFVALUE(CProMoIncomingEdgesAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -86,6 +119,14 @@ END_INTERFACE_MAP()
 // CProMoIncomingEdgesAuto message handlers
 
 short CProMoIncomingEdgesAuto::Count() 
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::Count
+	Description :	Returns the number of incoming edges in the block.
+	Access :		Public
+
+	Return :		short	-	The number of incoming edges.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray incomingEdges;
@@ -96,7 +137,24 @@ short CProMoIncomingEdgesAuto::Count()
 	return 0;
 }
 
-LPDISPATCH CProMoIncomingEdgesAuto::GetItem(const VARIANT FAR& item) 
+LPDISPATCH CProMoIncomingEdgesAuto::GetItem(const VARIANT FAR& item)
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::GetItem
+	Description :	Returns the edge automation object corresponding
+					to the specified index or name.
+	Access :		Public
+	Return :		LPDISPATCH			-	a pointer to the
+											IDispatch interface
+											of the edge
+											automation object
+											corresponding to the
+											specified index or name,
+											or "NULL" if no edge
+											with the specified index
+											or name is found.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the
+											edge to return.
+   ============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray incomingEdges;
@@ -115,19 +173,49 @@ LPDISPATCH CProMoIncomingEdgesAuto::GetItem(const VARIANT FAR& item)
 	return NULL;
 }
 
-void CProMoIncomingEdgesAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue) 
+void CProMoIncomingEdgesAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue)
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::SetItem
+	Description :	Sets the edge automation object corresponding
+					to the specified index or name. This property is
+					read-only, so this function simply raises an
+					exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the
+											edge to set.
+					LPDISPATCH newValue	-	a pointer to the new
+											IDispatch interface of the
+											edge automation object to
+											set for the specified index or
+											name.
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
 BOOL CProMoIncomingEdgesAuto::Add(LPDISPATCH item) 
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::Add
+	Description :	Adds an edge to the collection. The edge to add
+					is specified by passing a pointer to its automation
+					object's IDispatch interface as a parameter. The edge
+					is added as an incoming edge of the block associated
+					to the current automation object.
+	Access :		Public
+	Return :		BOOL			-	"TRUE" if the edge is successfully added
+										to the collection, "FALSE" otherwise.
+	Parameters :	LPDISPATCH item -	a pointer to the IDispatch interface of
+										the edge automation object corresponding
+										to the edge to add to the collection.
+   ============================================================ */
 {
 	if (GetBlockModel()) {
 		if (item) {
 			CProMoEdgeAuto* pEdgeAuto = CProMoEdgeAuto::FromIDispatch(item);
 			if (pEdgeAuto) {
-				return pEdgeAuto->SetSourceBlock(GetBlockModel());
+				return pEdgeAuto->SetDestinationBlock(GetBlockModel());
 			}
 		}
 	}
@@ -136,6 +224,21 @@ BOOL CProMoIncomingEdgesAuto::Add(LPDISPATCH item)
 }
 
 BOOL CProMoIncomingEdgesAuto::Remove(const VARIANT FAR& item) 
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::Remove
+	Description :	Removes an edge from the collection. The edge to remove
+					is specified by passing its index or name as a parameter.
+					The edge is removed from being an incoming edge of the block
+					represented by the current automation object.
+	Access :		Public
+	Return :		BOOL				-	"TRUE" if the edge is 
+											successfully removed
+											from the collection, 
+											"FALSE" otherwise.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of 
+											the edge to remove 
+											from the collection.
+   ============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray incomingEdges;
@@ -156,6 +259,17 @@ BOOL CProMoIncomingEdgesAuto::Remove(const VARIANT FAR& item)
 }
 
 VARIANT CProMoIncomingEdgesAuto::GetIDs() 
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::GetIDs
+	Description :	Returns a SAFEARRAY containing the names of the
+					incoming edges in the block.
+	Access :		Public
+
+	Return :		VARIANT	-	a VARIANT containing a SAFEARRAY
+								of BSTRs with the names of the edges
+								in the collection.
+	Parameters :	none
+   ============================================================ */
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -182,6 +296,20 @@ VARIANT CProMoIncomingEdgesAuto::GetIDs()
 }
 
 void CProMoIncomingEdgesAuto::SetIDs(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoIncomingEdgesAuto::SetIDs
+	Description :	Sets the list of the names of the incoming edges.
+					This property is read-only, so this function simply
+					raises an exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	VARIANT FAR& newValue	-	a VARIANT containing
+												a safe array of
+												BSTRs with the
+												names of the incoming
+												edges to set.
+   ============================================================ */
 {
 	SetNotSupported();
 

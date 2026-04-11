@@ -40,27 +40,68 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoDiagramChildAuto, CProMoAppChildAuto)
 
 CProMoDiagramChildAuto::CProMoDiagramChildAuto()
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::CProMoDiagramChildAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	m_pDiagramAuto = NULL;
 }
 
 void CProMoDiagramChildAuto::OnFinalRelease()
-{
-	// When the last reference for an automation object is released
-	// OnFinalRelease is called.  The base class will automatically
-	// deletes the object.  Add additional cleanup required for your
-	// object before calling the base class.
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::OnFinalRelease
+	Description :	Release the automation object. Called when
+					the last reference for an automation object
+					is released. The base class will
+					automatically delete the object.
+	Access :		Public
 
+	Return :		void
+	Parameters :	none
+
+	Usage:			Overridden to release the diagram automation 
+					object by setting it to NULL.
+
+   ============================================================*/
+{
 	SetDiagramAutoObject(NULL);
 	CProMoAppChildAuto::OnFinalRelease();
 }
 
 CProMoDiagramAutoAbs* CProMoDiagramChildAuto::GetDiagramAutoObject() const
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::GetDiagramAutoObject
+	Description :	Returns the diagram automation object.
+	Access :		Public
+
+	Return :		CProMoDiagramAutoAbs*	-	The diagram 
+												automation object.
+	Parameters :	none
+   ============================================================*/
 {
 	return m_pDiagramAuto;
 }
 
 void CProMoDiagramChildAuto::SetDiagramAutoObject(CProMoDiagramAutoAbs* pDiagramAuto)
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::SetDiagramAutoObject
+	Description :	Sets the diagram automation object to the 
+					object passed as a parameter. If the new object 
+					is different from the current one, the reference 
+					count of the old object is released and the new 
+					object is AddRef'ed.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoDiagramAutoAbs* pDiagramAuto	-	The diagram 
+															automation 
+															object to set.
+   ============================================================*/
 {
 	SetAppAutoObject(pDiagramAuto ? pDiagramAuto->GetAppAutoObject() : NULL);
 	
@@ -80,6 +121,15 @@ void CProMoDiagramChildAuto::SetDiagramAutoObject(CProMoDiagramAutoAbs* pDiagram
 }
 
 void CProMoDiagramChildAuto::ThrowIfNoDiagramAutoObject() const
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::ThrowIfNoDiagramAutoObject
+	Description :	Checks if the diagram automation object is 
+					available, and if not, throws an OLE exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	
 	if (!m_pDiagramAuto) {
@@ -89,6 +139,17 @@ void CProMoDiagramChildAuto::ThrowIfNoDiagramAutoObject() const
 }
 
 CProMoEntityContainer* CProMoDiagramChildAuto::GetContainer() 
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::GetContainer
+	Description :	Returns the container of the diagram, which is 
+					used to manage the elements of the diagram.
+	Access :		Public
+
+	Return :		CProMoEntityContainer*
+					The container of the diagram, or "NULL" if the 
+					diagram automation object is not set.
+	Parameters :	none
+   ============================================================*/
 {
 	ThrowIfNoDiagramAutoObject();
 
@@ -99,6 +160,25 @@ CProMoEntityContainer* CProMoDiagramChildAuto::GetContainer()
 }
 
 CProMoModel* CProMoDiagramChildAuto::FindModel(const VARIANT& Item, const CObArray& collection)
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::FindModel
+	Description :	Finds a model in the given collection based on 
+					the specified item, which can be either the index 
+					of the model in the collection or the name of the 
+					model.
+	Access :		Protected
+
+	Return :		CProMoModel*			-	A pointer to the 
+												model found, or 
+												"NULL" if no model 
+												matching the 
+												specified item is 
+												found.
+	Parameters :	VARIANT& Item 			-	the index or name 
+												of the model to find.
+					CObArray& collection	-	the collection of 
+												models to search.
+   ============================================================*/
 {
 	CVariantWrapper wrapper(Item);
 	CProMoModel* pModel = NULL;
@@ -116,6 +196,14 @@ CProMoModel* CProMoDiagramChildAuto::FindModel(const VARIANT& Item, const CObArr
 }
 
 CProMoDiagramChildAuto::~CProMoDiagramChildAuto()
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::~CProMoDiagramChildAuto
+	Description :	Destructor
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 }
 
@@ -138,6 +226,18 @@ END_INTERFACE_MAP()
 
 
 LPDISPATCH CProMoDiagramChildAuto::Diagram()
+/* ============================================================
+	Function :		CProMoDiagramChildAuto::Diagram
+	Description :	Returns the diagram automation object.
+	Access :		Public
+	Return :		LPDISPATCH			-	a pointer to the 
+											IDispatch interface 
+											of the diagram 
+											automation object, 
+											or "NULL" if no
+											object is set.
+	Parameters :	none
+   ============================================================*/
 {
 	if (m_pDiagramAuto) {
 		return m_pDiagramAuto->GetIDispatch(TRUE);

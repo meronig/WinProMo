@@ -32,16 +32,49 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoEdgeAuto, CProMoElementAuto)
 
 CProMoEdgeAuto::CProMoEdgeAuto()
+/* ============================================================
+	Function :		CProMoEdgeAuto::CProMoEdgeAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	m_pSegments = NULL;
 }
 
-CProMoEdgeModel* CProMoEdgeAuto::GetEdgeModel() {
-	
+CProMoEdgeModel* CProMoEdgeAuto::GetEdgeModel() 
+/* ============================================================
+	Function :		CProMoEdgeAuto::GetEdgeModel
+	Description :	Get the edge model associated with this edge
+	Access :		Public
+	Return :		CProMoEdgeModel*	-	the edge model 
+											associated with 
+											this edge
+	Parameters :	none
+   ============================================================ */
+{
 	return dynamic_cast<CProMoEdgeModel*>(GetModel());
 }
 
 CProMoEdgeSegmentsAuto* CProMoEdgeAuto::GetSegmentsAutoObject()
+/* ============================================================
+	Function :		CProMoEdgeAuto::GetSegmentsAutoObject
+	Description :	Returns a pointer to the automation object that
+					represents the collection of segments composing
+					this edge. If the automation object does not
+					exist, it is created.
+	Access :		Public
+
+	Return :		CProMoSubBlocksAuto*	-	a pointer to the
+												automation object
+												that represents the
+												collection of
+												segments composing 
+												this edge.
+	Parameters :	none
+   ============================================================*/
 {
 	ThrowIfDetached();
 	ThrowIfNoDiagramAutoObject();
@@ -56,6 +89,16 @@ CProMoEdgeSegmentsAuto* CProMoEdgeAuto::GetSegmentsAutoObject()
 }
 
 void CProMoEdgeAuto::ReleaseSegmentsAutoObject()
+/* ============================================================
+	Function :		CProMoEdgeAuto::ReleaseSegmentsAutoObject
+	Description :	Releases the automation object that represents
+					the collection of segments composing this edge,
+					if it exists.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	if (m_pSegments) {
 		m_pSegments->SetElementAutoObject(NULL);
@@ -65,6 +108,20 @@ void CProMoEdgeAuto::ReleaseSegmentsAutoObject()
 }
 
 BOOL CProMoEdgeAuto::SetSourceBlock(CProMoBlockModel* pSource)
+/* ============================================================
+	Function :		CProMoEdgeAuto::SetSourceBlock
+	Description :	Sets the source block of this edge to the given
+					block.
+	Access :		Public
+	Return :		BOOL						-	"TRUE" if the 
+													source block has been
+													successfully set, 
+													"FALSE" otherwise
+	Parameters :	CProMoBlockModel* pSource	-	a pointer to the 
+													block model to be set 
+													as source block of 
+													this edge.
+   ============================================================*/
 {
 	if (GetEdgeModel()) {
 		CProMoBlockModel* pOldSource = GetEdgeModel()->GetSource();
@@ -104,6 +161,20 @@ BOOL CProMoEdgeAuto::SetSourceBlock(CProMoBlockModel* pSource)
 }
 
 BOOL CProMoEdgeAuto::SetDestinationBlock(CProMoBlockModel* pDest)
+/* ============================================================
+	Function :		CProMoEdgeAuto::SetDestinationBlock
+	Description :	Sets the destination block of this edge to the 
+					given block.
+	Access :		Public
+	Return :		BOOL						-	"TRUE" if the 
+													destination block has been
+													successfully set, 
+													"FALSE" otherwise
+	Parameters :	CProMoBlockModel* pDest		-	a pointer to the 
+													block model to be set 
+													as destination block of 
+													this edge.
+   ============================================================*/
 {
 	if (GetEdgeModel()) {
 		CProMoBlockModel* pOldDest = GetEdgeModel()->GetDestination();
@@ -144,10 +215,32 @@ BOOL CProMoEdgeAuto::SetDestinationBlock(CProMoBlockModel* pDest)
 }
 
 CProMoEdgeAuto::~CProMoEdgeAuto()
+/* ============================================================
+	Function :		CProMoEdgeAuto::~CProMoEdgeAuto
+	Description :	Destructor
+	Access :		Public
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 }
 
 CProMoEdgeAuto* CProMoEdgeAuto::FromIDispatch(LPDISPATCH obj)
+/* ============================================================
+	Function :		CProMoEdgeAuto::FromIDispatch
+	Description :	Returns a pointer to the "CProMoEdgeAuto" 
+					object that corresponds to the given IDispatch
+					interface pointer.
+	Access :		Public
+	Return :		CProMoEdgeAuto*	-	a pointer to the 
+										"CProMoEdgeAuto" object that 
+										corresponds to the given 
+										IDispatch interface pointer.
+	Parameters :	LPDISPATCH obj	-	the IDispatch interface 
+										pointer for which the 
+										corresponding "CProMoEdgeAuto"
+										object is to be returned.
+   ============================================================*/
 {
 	CCmdTarget* pTarget = CCmdTarget::FromIDispatch(obj);
 
@@ -161,6 +254,21 @@ CProMoEdgeAuto* CProMoEdgeAuto::FromIDispatch(LPDISPATCH obj)
 }
 
 CProMoEdgeModel* CProMoEdgeAuto::GetModelFromIDispatch(LPDISPATCH obj)
+/* ============================================================
+	Function :		CProMoEdgeAuto::GetModelFromIDispatch
+	Description :	Returns a pointer to the "CProMoEdgeModel" 
+					object that corresponds to the given IDispatch
+					interface pointer.
+	Access :		Public
+	Return :		CProMoEdgeModel*	-	a pointer to the 
+											"CProMoEdgeModel" object that 
+											corresponds to the given 
+											IDispatch interface pointer.
+	Parameters :	LPDISPATCH obj		-	the IDispatch interface 
+											pointer for which the 
+											corresponding "CProMoEdgeModel"
+											object is to be returned.
+   ============================================================*/
 {
 	CProMoEdgeAuto* pAuto = FromIDispatch(obj);
 	if (pAuto) {
@@ -170,11 +278,26 @@ CProMoEdgeModel* CProMoEdgeAuto::GetModelFromIDispatch(LPDISPATCH obj)
 }
 
 void CProMoEdgeAuto::OnFinalRelease()
+/* ============================================================
+	Function :		CProMoEdgeAuto::OnFinalRelease
+	Description :	Release the automation object. Called when
+					the last reference for an automation object
+					is released. The base class will
+					automatically delete the object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage:			Overridden to release the automation objects
+					for the segments of this edge, if
+					it exist. The base class implementation will
+					delete the object when the application
+					automation object is released.
+
+   ============================================================*/
+
 {
-	// When the last reference for an automation object is released
-	// OnFinalRelease is called.  The base class will automatically
-	// deletes the object.  Add additional cleanup required for your
-	// object before calling the base class.
 	ReleaseSegmentsAutoObject();
 	CProMoElementAuto::OnFinalRelease();
 }
@@ -240,6 +363,17 @@ END_INTERFACE_MAP()
 // CProMoEdgeAuto message handlers
 
 LPDISPATCH CProMoEdgeAuto::GetSource() 
+/* ============================================================
+	Function :		CProMoEdgeAuto::GetSource
+	Description :	Returns the source block of this edge.
+	Access :		Public
+	Return :		LPDISPATCH	-	a pointer to the IDispatch 
+									interface of the source block 
+									of this edge. "NULL" if no 
+									source block is connected to 
+									this edge.
+	Parameters :	none
+   ============================================================*/
 {
 	if (GetEdgeModel()) {
 		CProMoBlockModel* pSource = GetEdgeModel()->GetSource();
@@ -256,6 +390,21 @@ LPDISPATCH CProMoEdgeAuto::GetSource()
 }
 
 void CProMoEdgeAuto::SetSource(LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoEdgeAuto::SetSource
+	Description :	Sets the source block of this edge to the block
+					corresponding to the given IDispatch interface
+					pointer.
+	Access :		Public
+	Return :		void
+	Parameters :	LPDISPATCH newValue	-	the IDispatch interface 
+											pointer corresponding to 
+											the block to be set as 
+											source block of this edge. 
+											If "NULL" is passed, the 
+											source block of this edge 
+											is set to "NULL".
+   ============================================================*/
 {
 	// something is passed
 	if (newValue) {
@@ -273,6 +422,17 @@ void CProMoEdgeAuto::SetSource(LPDISPATCH newValue)
 }
 
 LPDISPATCH CProMoEdgeAuto::GetDestination() 
+/* ============================================================
+	Function :		CProMoEdgeAuto::GetDestination
+	Description :	Returns the destination block of this edge.
+	Access :		Public
+	Return :		LPDISPATCH	-	a pointer to the IDispatch 
+									interface of the destination 
+									block of this edge. "NULL" if 
+									no destination block is 
+									connected to this edge.
+	Parameters :	none
+   ============================================================*/
 {
 	if (GetEdgeModel()) {
 		CProMoBlockModel* pDest = GetEdgeModel()->GetDestination();
@@ -289,6 +449,21 @@ LPDISPATCH CProMoEdgeAuto::GetDestination()
 }
 
 void CProMoEdgeAuto::SetDestination(LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoEdgeAuto::SetDestination
+	Description :	Sets the destination block of this edge to the 
+					block corresponding to the given IDispatch 
+					interface pointer.
+	Access :		Public
+	Return :		void
+	Parameters :	LPDISPATCH newValue	-	the IDispatch interface 
+											pointer corresponding to 
+											the block to be set as 
+											destination block of this 
+											edge. If "NULL" is passed, 
+											the destination block of 
+											this edge is set to "NULL".
+   ============================================================*/
 {
 	// something is passed
 	if (newValue) {
@@ -306,6 +481,17 @@ void CProMoEdgeAuto::SetDestination(LPDISPATCH newValue)
 }
 
 LPDISPATCH CProMoEdgeAuto::GetSegments() 
+/* ============================================================
+	Function :		CProMoEdgeAuto::GetSegments
+	Description :	Returns a pointer to the automation object that 
+					represents the collection of segments composing
+					this edge.
+	Access :		Public
+	Return :		LPDISPATCH	-	a pointer to the automation object 
+									that represents the collection of 
+									segments composing this edge.
+	Parameters :	none
+   ============================================================*/
 {
 	if (GetSegmentsAutoObject())
 	{
@@ -316,6 +502,23 @@ LPDISPATCH CProMoEdgeAuto::GetSegments()
 }
 
 void CProMoEdgeAuto::SetSegments(LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoEdgeAuto::SetSegments
+	Description :	Sets the collection of segments composing this 
+					edge to the collection represented by the given 
+					automation object.
+					This property is read-only, so this function
+					simply raises an exception. To modify the 
+					segments composing this edge, the "Segments" collection 
+					of this edge should be used.
+	Access :		Public
+	
+	Return :		void
+	Parameters :	newValue	-	a pointer to the automation object that 
+									represents the new collection of 
+									segments composing this edge.
+
+   ============================================================*/
 {
 	SetNotSupported();
 

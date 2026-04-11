@@ -100,15 +100,15 @@ library WinProMo
 			[id(2)] short Count();
 			[id(3)] boolean Add(IDispatch* item, short attachment);
 			[id(4)] boolean Remove(VARIANT item);
-			[id(5), propget] IDispatch* Item(VARIANT item);
-			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
-			[id(6)] IDispatch* Element();
+			[id(5)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
-			[id(7)] IDispatch* Diagram();
+			[id(6)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(8)] IDispatch* Application();
-			// native
+			[id(7)] IDispatch* Application();
+			// default property, must be last in the list
+			[id(8), propget] IDispatch* Item(VARIANT item);
+			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -239,14 +239,16 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoEdgeSegmentsAuto)
 			[id(1)] short Count();
-			[id(2), propget] IDispatch* Item(short item);
-			[id(2), propputref] void Item(short item, IDispatch* newValue);
 			// from IProMoElementChildAuto
-			[id(3)] IDispatch* Element();
+			[id(2)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
-			[id(4)] IDispatch* Diagram();
+			[id(3)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(5)] IDispatch* Application(); [id(0), propget] IDispatch* _Item(short item);
+			[id(4)] IDispatch* Application(); 
+			// default property, must be last in the list
+			[id(5), propget] IDispatch* Item(short item);
+			[id(5), propputref] void Item(short item, IDispatch* newValue);
+			[id(0), propget] IDispatch* _Item(short item);
 			[id(0), propputref] void _Item(short item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
 			
@@ -279,12 +281,13 @@ library WinProMo
 			[id(2)] short Count();
 			[id(3)] IDispatch* Add(VARIANT elementType);
 			[id(4)] boolean Remove(VARIANT item);
-			[id(5), propget] IDispatch* Item(VARIANT item);
-			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoDiagramChildAuto
-			[id(6)] IDispatch* Diagram();
+			[id(5)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(7)] IDispatch* Application(); 
+			[id(6)] IDispatch* Application(); 
+			// default property, must be last in the list
+			[id(7), propget] IDispatch* Item(VARIANT item);
+			[id(7), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -318,14 +321,15 @@ library WinProMo
 			[id(2)] short Count();
 			[id(3)] boolean Add(IDispatch* item);
 			[id(4)] boolean Remove(VARIANT item);
-			[id(5), propget] IDispatch* Item(VARIANT item);
-			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
-			[id(6)] IDispatch* Element();
+			[id(5)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
-			[id(7)] IDispatch* Diagram();
+			[id(6)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(8)] IDispatch* Application(); 
+			[id(7)] IDispatch* Application(); 
+			// default property, must be last in the list
+			[id(8), propget] IDispatch* Item(VARIANT item);
+			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -363,24 +367,24 @@ library WinProMo
 			[id(12)] short TextVerticalAlignment;
 			[id(13)] BSTR Text;
 			[id(14)] BSTR ID;
-			[id(15)] IDispatch* Property;
-			[id(16)] double Top;
-			[id(17)] double Bottom;
-			[id(18)] double Left;
-			[id(19)] double Right;
-			[id(20)] double Width;
-			[id(21)] double Height;
-			[id(22)] short LockFlags;
+			[id(15)] double Top;
+			[id(16)] double Bottom;
+			[id(17)] double Left;
+			[id(18)] double Right;
+			[id(19)] double Width;
+			[id(20)] double Height;
+			[id(21)] short LockFlags;
 			//}}AFX_ODL_PROP
 
 		methods:
 			// NOTE - ClassWizard will maintain method information here.
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoLabelAuto)
-			[id(23)] void Cut();
-			[id(24)] void Copy();
-			[id(25)] void Delete();
-			[id(26)] IDispatch* Duplicate();
+			[id(22)] void Cut();
+			[id(23)] void Copy();
+			[id(24)] void Delete();
+			[id(25)] IDispatch* Duplicate();
+			[id(26)] IDispatch* Property();
 			// from IProMoElementChildAuto
 			[id(27)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
@@ -417,14 +421,15 @@ library WinProMo
 			[id(2)] short Count();
 			[id(3)] IDispatch* Add();
 			[id(4)] boolean Remove(VARIANT item);
-			[id(5), propget] IDispatch* Item(VARIANT item);
-			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
-			[id(6)] IDispatch* Element();
+			[id(5)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
-			[id(7)] IDispatch* Diagram();
+			[id(6)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(8)] IDispatch* Application(); 
+			[id(7)] IDispatch* Application(); 
+			// default property, must be last in the list
+			[id(8), propget] IDispatch* Item(VARIANT item);
+			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -458,14 +463,15 @@ library WinProMo
 			[id(2)] short Count();
 			[id(3)] boolean Add(IDispatch* item);
 			[id(4)] boolean Remove(VARIANT item);
-			[id(5), propget] IDispatch* Item(VARIANT item);
-			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
-			[id(6)] IDispatch* Element();
+			[id(5)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
-			[id(7)] IDispatch* Diagram();
+			[id(6)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(8)] IDispatch* Application(); 
+			[id(7)] IDispatch* Application(); 
+			// default property, must be last in the list
+			[id(8), propget] IDispatch* Item(VARIANT item);
+			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -497,14 +503,15 @@ library WinProMo
 			//    Use extreme caution when editing this section.
 			//{{AFX_ODL_METHOD(CProMoPropertiesAuto)
 			[id(2)] short Count();
-			[id(3), propget] IDispatch* Item(VARIANT item);
-			[id(3), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
-			[id(4)] IDispatch* Element();
+			[id(3)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
-			[id(5)] IDispatch* Diagram();
+			[id(4)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(6)] IDispatch* Application(); 
+			[id(5)] IDispatch* Application(); 
+			// default property, must be last in the list
+			[id(6), propget] IDispatch* Item(VARIANT item);
+			[id(6), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -545,14 +552,15 @@ library WinProMo
 			[id(9)] IDispatch* Add();
 			[id(10)] boolean Remove(short idx);
 			[id(11)] short Count();
-			[id(12), propget] IDispatch* Item(VARIANT idx);
-			[id(12), propputref] void Item(VARIANT idx, IDispatch* newValue);
 			// from IProMoElementChildAuto
-			[id(13)] IDispatch* Element();
+			[id(12)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
-			[id(14)] IDispatch* Diagram();
+			[id(13)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(15)] IDispatch* Application();
+			[id(14)] IDispatch* Application();
+			// default property, must be last in the list
+			[id(15), propget] IDispatch* Item(VARIANT idx);
+			[id(15), propputref] void Item(VARIANT idx, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT idx);
 			[id(0), propputref] void _Item(VARIANT idx, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -586,14 +594,15 @@ library WinProMo
 			[id(2)] short Count();
 			[id(3)] boolean Add(IDispatch* item);
 			[id(4)] boolean Remove(VARIANT item);
-			[id(5), propget] IDispatch* Item(VARIANT item);
-			[id(5), propputref] void Item(VARIANT item, IDispatch* newValue);
 			// from IProMoElementChildAuto
-			[id(6)] IDispatch* Element();
+			[id(5)] IDispatch* Element();
 			// from IProMoDiagramChildAuto
-			[id(7)] IDispatch* Diagram();
+			[id(6)] IDispatch* Diagram();
 			// from IProMoAppChildAuto
-			[id(8)] IDispatch* Application(); 
+			[id(7)] IDispatch* Application(); 
+			// default property, must be last in the list
+			[id(8), propget] IDispatch* Item(VARIANT item);
+			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD

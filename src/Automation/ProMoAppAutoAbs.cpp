@@ -42,6 +42,15 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNAMIC(CProMoAppAutoAbs, CCmdTarget)
 
 CProMoAppAutoAbs::CProMoAppAutoAbs()
+/* ============================================================
+	Function :		CProMoAppAutoAbs::CProMoAppAutoAbs
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
 	EnableAutomation();
 
@@ -54,6 +63,15 @@ CProMoAppAutoAbs::CProMoAppAutoAbs()
 }
 
 CProMoAppAutoAbs::~CProMoAppAutoAbs()
+/* ============================================================
+	Function :		CProMoAppAutoAbs::~CProMoAppAutoAbs
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+   ============================================================*/
 {
 	// To terminate the application when all objects created with
 	// 	with OLE automation, the destructor calls AfxOleUnlockApp.
@@ -64,16 +82,44 @@ CProMoAppAutoAbs::~CProMoAppAutoAbs()
 
 
 void CProMoAppAutoAbs::OnFinalRelease()
+/* ============================================================
+	Function :		CProMoAppAutoAbs::OnFinalRelease
+	Description :	Release the automation object. Called when 
+					the last reference for an automation object 
+					is released. The base class will 
+					automatically delete the object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage:			Overridden to release the diagrams automation 
+					object when the application automation object 
+					is released.
+
+   ============================================================*/
 {
-	// When the last reference for an automation object is released
-	// OnFinalRelease is called.  The base class will automatically
-	// deletes the object.  Add additional cleanup required for your
-	// object before calling the base class.
 	ReleaseDiagramsAutoObject();
 	CCmdTarget::OnFinalRelease();
 }
 
 CProMoDiagramsAutoAbs* CProMoAppAutoAbs::GetDiagramsAutoObject()
+/* ============================================================
+	Function :		CProMoAppAutoAbs::GetDiagramsAutoObject
+	Description :	Returns a pointer to the automation object that 
+					represents the collection of diagrams currently
+					open. If the automation object does not
+					exist, it is created.
+	Access :		Public
+
+	Return :		CProMoLabelsAuto*	-	a pointer to the
+											automation object
+											that represents the
+											collection of
+											open diagrams.
+	Parameters :	none
+
+   ============================================================*/
 {
 	if (!m_pDiagrams)
 	{
@@ -87,6 +133,15 @@ CProMoDiagramsAutoAbs* CProMoAppAutoAbs::GetDiagramsAutoObject()
 }
 
 void CProMoAppAutoAbs::ReleaseDiagramsAutoObject()
+/* ============================================================
+	Function :		CProMoAppAutoAbs::ReleaseDiagramsAutoObject
+	Description :	Releases the automation object that represents 
+					the collection of open diagrams, if it exists.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	if (m_pDiagrams)
 	{
@@ -97,6 +152,19 @@ void CProMoAppAutoAbs::ReleaseDiagramsAutoObject()
 }
 
 BOOL CProMoAppAutoAbs::CanCreateDiagram(const CString& diagramType)
+/* ============================================================
+	Function :		CProMoAppAutoAbs::CanCreateDiagram
+	Description :	Checks if a diagram of the specified type 
+					can be created.
+	Access :		Public
+
+	Return :		BOOL					-	"TRUE" if a diagram
+												of the specified 
+												type can be created, 
+												"FALSE" otherwise.
+	Parameters :	CString& diagramType	-	the type of the 
+												diagram to check.
+   ============================================================*/
 {
 	CStringArray types;
 	GetRegisteredDiagrams(types);
@@ -128,6 +196,17 @@ END_INTERFACE_MAP()
 // CProMoAppAutoAbs message handlers
 
 LPDISPATCH CProMoAppAutoAbs::GetDiagrams()
+/* ============================================================
+	Function :		CProMoAppAutoAbs::GetDiagrams
+	Description :	Returns the diagrams collection automation object.
+	Access :		Public
+	
+	Return :		LPDISPATCH			-	a pointer to the 
+											IDispatch interface 
+											of the diagrams 
+											automation object.
+	Parameters :	none
+   ============================================================*/
 {
 	if (GetDiagramsAutoObject())
 	{
@@ -137,11 +216,37 @@ LPDISPATCH CProMoAppAutoAbs::GetDiagrams()
 }
 
 void CProMoAppAutoAbs::SetDiagrams(LPDISPATCH newValue)
+/* ============================================================
+	Function :		CProMoAppAutoAbs::SetDiagrams
+	Description :	Sets the diagrams collection automation object. 
+					This property is read-only, so this function 
+					simply raises an exception.
+	Access :		Public
+	
+	Return :		void
+	Parameters :	LPDISPATCH newValue	-	a pointer to the 
+											IDispatch interface 
+											of the new diagrams 
+											automation object.
+   ============================================================*/ 
 {
 	SetNotSupported();
 }
 
 LPDISPATCH CProMoAppAutoAbs::ActiveDiagram()
+/* ============================================================
+	Function :		CProMoAppAutoAbs::ActiveDiagram
+	Description :	Returns the active diagram automation object.
+	Access :		Public
+	
+	Return :		LPDISPATCH			-	a pointer to the 
+											IDispatch interface 
+											of the active diagram 
+											automation object, or 
+											"NULL" if there is no 
+											active diagram.
+	Parameters :	none
+   ============================================================*/
 {
 	CProMoDiagramAutoAbs* pActiveDiagram = GetActiveDiagram();
 
@@ -155,6 +260,22 @@ LPDISPATCH CProMoAppAutoAbs::ActiveDiagram()
 }
 
 void CProMoAppAutoAbs::Quit(BOOL saveChanges)
+/* ============================================================
+	Function :		CProMoAppAutoAbs::Quit
+	Description :	Closes the application.
+	Access :		Public
+	
+	Return :		void
+	Parameters :	BOOL saveChanges	-	"TRUE" if the application 
+											should prompt the user 
+											to save any unsaved 
+											changes before quitting.
+											"FALSE" if the application 
+											should quit immediately 
+											without prompting
+											(any unsaved diagram
+											will be discarded).
+   ============================================================*/
 {
 	if (!saveChanges)
 	{
@@ -168,7 +289,18 @@ void CProMoAppAutoAbs::Quit(BOOL saveChanges)
 		PostQuitMessage(0);
 }
 
-VARIANT CProMoAppAutoAbs::GetCreatableDiagramTypes() 
+VARIANT CProMoAppAutoAbs::GetCreatableDiagramTypes()
+/* ============================================================
+	Function :		CProMoAppAutoAbs::GetCreatableDiagramTypes
+	Description :	Returns the list of creatable diagram types.
+	Access :		Public
+	
+	Return :		VARIANT				-	a VARIANT containing a 
+											SafeArray of BSTRs, 
+											each representing a 
+											creatable diagram type.
+	Parameters :	none
+   ============================================================*/
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -184,6 +316,19 @@ VARIANT CProMoAppAutoAbs::GetCreatableDiagramTypes()
 }
 
 void CProMoAppAutoAbs::SetCreatableDiagramTypes(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoAppAutoAbs::SetCreatableDiagramTypes
+	Description :	Sets the list of creatable diagram types. This 
+					property is read-only, so this function simply 
+					raises an exception.
+	Access :		Public
+	
+	Return :		void
+	Parameters :	VARIANT newValue	-	a VARIANT containing a 
+											SafeArray of BSTRs, 
+											each representing a new 
+											creatable diagram type.
+   ============================================================*/
 {
 	SetNotSupported();
 

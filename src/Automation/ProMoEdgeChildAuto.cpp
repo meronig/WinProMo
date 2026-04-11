@@ -34,15 +34,41 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoEdgeChildAuto, CProMoElementChildAuto)
 
 CProMoEdgeChildAuto::CProMoEdgeChildAuto()
+/* ============================================================
+	Function :		CProMoEdgeChildAuto::CProMoEdgeChildAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoEdgeModel* CProMoEdgeChildAuto::GetEdgeModel()
+/* ============================================================
+	Function :		CProMoEdgeChildAuto::GetEdgeModel
+	Description :	Get the model associated with this edge
+	Access :		Public
+
+	Return :		CProMoEdgeModel*	-	the model associated 
+											with this edge
+	Parameters :	none
+   ============================================================ */
+
 {
 	return dynamic_cast<CProMoEdgeModel*>(GetModel());
 }
 
 CProMoEdgeChildAuto::~CProMoEdgeChildAuto()
+/* ============================================================
+	Function :		CProMoEdgeChildAuto::~CProMoEdgeChildAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 

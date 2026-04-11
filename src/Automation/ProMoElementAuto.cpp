@@ -35,12 +35,29 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoElementAuto, CProMoDiagramChildAuto)
 
 CProMoElementAuto::CProMoElementAuto()
+/* ============================================================
+	Function :		CProMoElementAuto::CProMoElementAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	m_pLabels = NULL;
 	m_pProperties = NULL;
 }
 
 CProMoModel* CProMoElementAuto::GetModel()
+/* ============================================================
+	Function :		CProMoElementAuto::GetModel
+	Description :	Get the model associated with this element
+	Access :		Public
+
+	Return :		CProMoModel*	-	the model associated with 
+										this element
+	Parameters :	none
+   ============================================================ */
 {
 	ThrowIfDetached();
 	ThrowIfNoDiagramAutoObject();
@@ -49,6 +66,16 @@ CProMoModel* CProMoElementAuto::GetModel()
 }
 
 void CProMoElementAuto::GetViews(CObArray& viewList)
+/* ============================================================
+	Function :		CProMoElementAuto::GetViews
+	Description :	Get the views associated with this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	CObArray& viewList	-	the list to fill with 
+											the views associated 
+											with this element
+   ============================================================ */
 {
 	viewList.RemoveAll();
 
@@ -58,6 +85,17 @@ void CProMoElementAuto::GetViews(CObArray& viewList)
 }
 
 IProMoView* CProMoElementAuto::GetMainView()
+/* ============================================================
+	Function :		CProMoElementAuto::GetMainView
+	Description :	Get the main view associated with this element
+	Access :		Public
+
+	Return :		IProMoView*	-	the main view associated 
+									with this element, or 
+									"NULL" if there is no
+									main view
+	Parameters :	none
+   ============================================================ */
 {
 	CObArray viewList;
 	GetViews(viewList);
@@ -68,6 +106,16 @@ IProMoView* CProMoElementAuto::GetMainView()
 }
 
 void CProMoElementAuto::GetAttachedLabels(CObArray& labelList)
+/* ============================================================
+	Function :		CProMoElementAuto::GetAttachedLabels
+	Description :	Get the labels attached to this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	CObArray& labelList	-	the list to fill with 
+											the labels attached 
+											to this element
+   ============================================================ */
 {
 	labelList.RemoveAll();
 	if (GetModel()) {
@@ -76,10 +124,34 @@ void CProMoElementAuto::GetAttachedLabels(CObArray& labelList)
 }
 
 CProMoElementAuto::~CProMoElementAuto()
+/* ============================================================
+	Function :		CProMoElementAuto::~CProMoElementAuto
+	Description :	Destructor
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 }
 
 CProMoLabelsAuto* CProMoElementAuto::GetLabelsAutoObject()
+/* ============================================================
+	Function :		CProMoElementAuto::GetLabelsAutoObject
+	Description :	Returns a pointer to the automation object that 
+					represents the collection of labels associated
+					to this element. If the automation object does not
+					exist, it is created.
+	Access :		Public
+
+	Return :		CProMoLabelsAuto*	-	a pointer to the 
+											automation object 
+											that represents the 
+											collection of 
+											labels associated to 
+											this element.
+	Parameters :	none
+   ============================================================ */
 {
 	ThrowIfDetached();
 	ThrowIfNoDiagramAutoObject();
@@ -94,6 +166,16 @@ CProMoLabelsAuto* CProMoElementAuto::GetLabelsAutoObject()
 }
 
 void CProMoElementAuto::ReleaseLabelsAutoObject()
+/* ============================================================
+	Function :		CProMoElementAuto::ReleaseLabelsAutoObject
+	Description :	Releases the automation object that represents 
+					the collection of labels associated to this
+					element, if it exists.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	if (m_pLabels) {
 		m_pLabels->SetElementAutoObject(NULL);
@@ -103,6 +185,22 @@ void CProMoElementAuto::ReleaseLabelsAutoObject()
 }
 
 CProMoPropertiesAuto* CProMoElementAuto::GetPropertiesAutoObject()
+/* ============================================================
+	Function :		CProMoElementAuto::GetPropertiesAutoObject
+	Description :	Returns a pointer to the automation object that 
+					represents the collection of properties of
+					this element. If the automation object does not
+					exist, it is created.
+	Access :		Public
+
+	Return :		CProMoPropertiesAuto*	-	a pointer to the 
+												automation object 
+												that represents the 
+												collection of 
+												properties of
+												this element.
+	Parameters :	none
+   ============================================================ */
 {
 	ThrowIfDetached();
 	ThrowIfNoDiagramAutoObject();
@@ -117,6 +215,16 @@ CProMoPropertiesAuto* CProMoElementAuto::GetPropertiesAutoObject()
 }
 
 void CProMoElementAuto::ReleasePropertiesAutoObject()
+/* ============================================================
+	Function :		CProMoElementAuto::ReleasePropertiesAutoObject
+	Description :	Releases the automation object that represents 
+					the collection of properties of this 
+					element, if it exists.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	if (m_pProperties) {
 		m_pProperties->SetElementAutoObject(NULL);
@@ -126,6 +234,15 @@ void CProMoElementAuto::ReleasePropertiesAutoObject()
 }
 
 void CProMoElementAuto::DeleteViewsAndLabels()
+/* ============================================================
+	Function :		CProMoElementAuto::DeleteViewsAndLabels
+	Description :	Delete all the views and labels associated with 
+					this element
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	CObArray elements;
 	CObArray labels;
@@ -148,6 +265,19 @@ void CProMoElementAuto::DeleteViewsAndLabels()
 }
 
 BOOL CProMoElementAuto::HasLockFlag(unsigned int lockFlag)
+/* ============================================================
+	Function :		CProMoElementAuto::HasLockFlag
+	Description :	Check if the specified lock flag is set for all 
+					the views of this element
+	Access :		Protected
+	Return :		BOOL					-	"TRUE" if the 
+												specified lock 
+												flag is set 
+												for all the views 
+												of this element, 
+												"FALSE"	otherwise
+	Parameters :	unsigned int lockFlag	-	the lock flag to check
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -165,6 +295,15 @@ BOOL CProMoElementAuto::HasLockFlag(unsigned int lockFlag)
 }
 
 void CProMoElementAuto::Select()
+/* ============================================================
+	Function :		CProMoElementAuto::Select
+	Description :	Select all the views and labels associated with 
+					this element
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	GetContainer()->UnselectAll();
 	CObArray elements;
@@ -181,11 +320,25 @@ void CProMoElementAuto::Select()
 }
 
 void CProMoElementAuto::OnFinalRelease()
+/* ============================================================
+	Function :		CProMoElementAuto::OnFinalRelease
+	Description :	Release the automation object. Called when
+					the last reference for an automation object
+					is released. The base class will
+					automatically delete the object.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+
+	Usage:			Overridden to release the automation object
+					for the labels and properties of this element,
+					if they exists. The base class implementation 
+					will delete the object when the application
+					automation object is released.
+
+   ============================================================*/
 {
-	// When the last reference for an automation object is released
-	// OnFinalRelease is called.  The base class will automatically
-	// deletes the object.  Add additional cleanup required for your
-	// object before calling the base class.
 	ReleasePropertiesAutoObject();
 	ReleaseLabelsAutoObject();
 	CProMoDiagramChildAuto::OnFinalRelease();
@@ -209,6 +362,14 @@ END_INTERFACE_MAP()
 // CProMoElementAuto message handlers
 
 void CProMoElementAuto::Copy() 
+/* ============================================================
+	Function :		CProMoElementAuto::Copy
+	Description :	Copy this element to the clipboard
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetModel()) {
 		Select();
@@ -217,6 +378,14 @@ void CProMoElementAuto::Copy()
 }
 
 void CProMoElementAuto::Cut() 
+/* ============================================================
+	Function :		CProMoElementAuto::Cut
+	Description :	Cut this element to the clipboard
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetModel()) {
 		GetContainer()->Snapshot();
@@ -227,11 +396,29 @@ void CProMoElementAuto::Cut()
 }
 
 void CProMoElementAuto::Delete() 
+/* ============================================================
+	Function :		CProMoElementAuto::Delete
+	Description :	Delete this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 	DeleteViewsAndLabels();
 }
 
 LPDISPATCH CProMoElementAuto::Duplicate() 
+/* ============================================================
+	Function :		CProMoElementAuto::Duplicate
+	Description :	Duplicate this element
+	Access :		Public
+
+	Return :		LPDISPATCH	-	the duplicated element, or 
+									"NULL" if the duplication 
+									failed
+	Parameters :	none
+   ============================================================ */
 {
 	if (!GetModel()) {
 		return NULL;
@@ -256,6 +443,14 @@ LPDISPATCH CProMoElementAuto::Duplicate()
 }
 
 OLE_COLOR CProMoElementAuto::GetLineColor() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetLineColor
+	Description :	Get the line color of this element
+	Access :		Public
+
+	Return :		OLE_COLOR	-	the line color of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		COLORREF color = GetMainView()->GetLineColor();
@@ -266,6 +461,15 @@ OLE_COLOR CProMoElementAuto::GetLineColor()
 }
 
 void CProMoElementAuto::SetLineColor(OLE_COLOR nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetLineColor
+	Description :	Set the line color of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	OLE_COLOR nNewValue	-	the new line color of 
+											this element
+   ============================================================ */
 {
 	COLORREF color;
 	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
@@ -293,6 +497,14 @@ void CProMoElementAuto::SetLineColor(OLE_COLOR nNewValue)
 }
 
 short CProMoElementAuto::GetLineWidth() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetLineWidth
+	Description :	Get the line width of this element
+	Access :		Public
+
+	Return :		short	-	the line width of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->GetLineWidth();
@@ -302,6 +514,15 @@ short CProMoElementAuto::GetLineWidth()
 }
 
 void CProMoElementAuto::SetLineWidth(short nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetLineWidth
+	Description :	Set the line width of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	short nNewValue	-	the new line width of 
+										this element
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -323,6 +544,14 @@ void CProMoElementAuto::SetLineWidth(short nNewValue)
 }
 
 short CProMoElementAuto::GetLineStyle() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetLineStyle
+	Description :	Get the line style of this element
+	Access :		Public
+
+	Return :		short	-	the line style of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->GetLineStyle();
@@ -332,6 +561,15 @@ short CProMoElementAuto::GetLineStyle()
 }
 
 void CProMoElementAuto::SetLineStyle(short nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetLineStyle
+	Description :	Set the line style of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	short nNewValue	-	the new line style of 
+										this element
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -353,6 +591,14 @@ void CProMoElementAuto::SetLineStyle(short nNewValue)
 }
 
 BSTR CProMoElementAuto::GetFontName() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetFontName
+	Description :	Get the font name of this element
+	Access :		Public
+
+	Return :		BSTR	-	the font name of this element
+	Parameters :	none
+   ============================================================ */
 {
 	CString strResult;
 
@@ -364,6 +610,15 @@ BSTR CProMoElementAuto::GetFontName()
 }
 
 void CProMoElementAuto::SetFontName(LPCTSTR lpszNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetFontName
+	Description :	Set the font name of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	LPCTSTR lpszNewValue	-	the new font name of 
+											this element
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -385,6 +640,14 @@ void CProMoElementAuto::SetFontName(LPCTSTR lpszNewValue)
 }
 
 short CProMoElementAuto::GetFontSize() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetFontSize
+	Description :	Get the font size of this element
+	Access :		Public
+
+	Return :		short	-	the font size of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->GetFontSize();
@@ -394,6 +657,15 @@ short CProMoElementAuto::GetFontSize()
 }
 
 void CProMoElementAuto::SetFontSize(short nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetFontSize
+	Description :	Set the font size of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	short nNewValue	-	the new font size of 
+										this element
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -415,6 +687,14 @@ void CProMoElementAuto::SetFontSize(short nNewValue)
 }
 
 short CProMoElementAuto::GetFontWeight() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetFontWeight
+	Description :	Get the font weight of this element
+	Access :		Public
+
+	Return :		short	-	the font weight of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->GetFontWeight();
@@ -424,6 +704,15 @@ short CProMoElementAuto::GetFontWeight()
 }
 
 void CProMoElementAuto::SetFontWeight(short nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetFontWeight
+	Description :	Set the font weight of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	short nNewValue	-	the new font weight of 
+										this element
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -445,6 +734,16 @@ void CProMoElementAuto::SetFontWeight(short nNewValue)
 }
 
 BOOL CProMoElementAuto::GetFontItalic() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetFontItalic
+	Description :	Get the font italic attribute of this element
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the font of this 
+								element is italic, "FALSE" 
+								otherwise
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->IsFontItalic();
@@ -454,6 +753,17 @@ BOOL CProMoElementAuto::GetFontItalic()
 }
 
 void CProMoElementAuto::SetFontItalic(BOOL bNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetFontItalic
+	Description :	Set the font italic attribute of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL bNewValue	-	"TRUE" if the font of 
+										this element must be 
+										italic, "FALSE" 
+										otherwise
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -475,6 +785,16 @@ void CProMoElementAuto::SetFontItalic(BOOL bNewValue)
 }
 
 BOOL CProMoElementAuto::GetFontUnderline() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetFontUnderline
+	Description :	Get the font underline attribute of this element
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the font of this 
+								element is underlined, "FALSE" 
+								otherwise
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->IsFontUnderline();
@@ -484,6 +804,17 @@ BOOL CProMoElementAuto::GetFontUnderline()
 }
 
 void CProMoElementAuto::SetFontUnderline(BOOL bNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetFontUnderline
+	Description :	Set the font underline attribute of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL bNewValue	-	"TRUE" if the font of 
+										this element must be 
+										underlined, "FALSE" 
+										otherwise
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -505,6 +836,16 @@ void CProMoElementAuto::SetFontUnderline(BOOL bNewValue)
 }
 
 BOOL CProMoElementAuto::GetFontStrikeOut() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetFontStrikeOut
+	Description :	Get the font strikeout attribute of this element
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the font of this 
+								element is strikeout, "FALSE" 
+								otherwise
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->IsFontStrikeOut();
@@ -514,6 +855,17 @@ BOOL CProMoElementAuto::GetFontStrikeOut()
 }
 
 void CProMoElementAuto::SetFontStrikeOut(BOOL bNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetFontStrikeOut
+	Description :	Set the font strikeout attribute of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL bNewValue	-	"TRUE" if the font of 
+										this element must be 
+										strikeout, "FALSE" 
+										otherwise
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -535,6 +887,14 @@ void CProMoElementAuto::SetFontStrikeOut(BOOL bNewValue)
 }
 
 OLE_COLOR CProMoElementAuto::GetTextColor() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetTextColor
+	Description :	Get the text color of this element
+	Access :		Public
+
+	Return :		OLE_COLOR	-	the text color of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		COLORREF color = GetMainView()->GetTextColor();
@@ -545,6 +905,15 @@ OLE_COLOR CProMoElementAuto::GetTextColor()
 }
 
 void CProMoElementAuto::SetTextColor(OLE_COLOR nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetTextColor
+	Description :	Set the text color of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	OLE_COLOR nNewValue	-	the new text color of 
+											this element
+   ============================================================ */
 {
 	COLORREF color;
 	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
@@ -570,6 +939,15 @@ void CProMoElementAuto::SetTextColor(OLE_COLOR nNewValue)
 }
 
 OLE_COLOR CProMoElementAuto::GetBkColor() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetBkColor
+	Description :	Get the background color of this element
+	Access :		Public
+
+	Return :		OLE_COLOR	-	the background color of this 
+								element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		COLORREF color = GetMainView()->GetBkColor();
@@ -580,6 +958,15 @@ OLE_COLOR CProMoElementAuto::GetBkColor()
 }
 
 void CProMoElementAuto::SetBkColor(OLE_COLOR nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetBkColor
+	Description :	Set the background color of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	OLE_COLOR nNewValue	-	the new background 
+											color of this element
+   ============================================================ */
 {
 	COLORREF color;
 	HRESULT hr = OleTranslateColor(nNewValue, NULL, &color);
@@ -603,6 +990,14 @@ void CProMoElementAuto::SetBkColor(OLE_COLOR nNewValue)
 }
 
 short CProMoElementAuto::GetBkMode() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetBkMode
+	Description :	Get the background mode of this element
+	Access :		Public
+
+	Return :		short	-	the background mode of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->GetBkMode();
@@ -612,6 +1007,15 @@ short CProMoElementAuto::GetBkMode()
 }
 
 void CProMoElementAuto::SetBkMode(short nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetBkMode
+	Description :	Set the background mode of this element
+	Access :		Public
+
+	Return :		void
+	Parameters :	short nNewValue	-	the new background mode 
+										of this element
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -633,6 +1037,15 @@ void CProMoElementAuto::SetBkMode(short nNewValue)
 }
 
 BOOL CProMoElementAuto::GetTextMultiLine()
+/* ============================================================
+	Function :		CProMoElementAuto::GetTextMultiLine
+	Description :	Check if the text of this element is multiline
+	Access :		Public
+
+	Return :		BOOL	-	"TRUE" if the text of this element 
+								is multiline, "FALSE" otherwise
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->IsTextMultiline();
@@ -642,6 +1055,17 @@ BOOL CProMoElementAuto::GetTextMultiLine()
 }
 
 void CProMoElementAuto::SetTextMultiLine(BOOL bNewValue)
+/* ============================================================
+	Function :		CProMoElementAuto::SetTextMultiLine
+	Description :	Set the text of this element as multiline or 
+					single line
+	Access :		Public
+
+	Return :		void
+	Parameters :	BOOL bNewValue	-	"TRUE" if the text of this 
+										element must be multiline, 
+										"FALSE" otherwise
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -662,6 +1086,16 @@ void CProMoElementAuto::SetTextMultiLine(BOOL bNewValue)
 }
 
 short CProMoElementAuto::GetTextHorizontalAlignment() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetTextHorizontalAlignment
+	Description :	Get the horizontal alignment of the text of this 
+					element
+	Access :		Public
+
+	Return :		short	-	the horizontal alignment of the text 
+								of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->GetTextHorizontalAlignment();
@@ -671,6 +1105,16 @@ short CProMoElementAuto::GetTextHorizontalAlignment()
 }
 
 void CProMoElementAuto::SetTextHorizontalAlignment(short nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetTextHorizontalAlignment
+	Description :	Set the horizontal alignment of the text of this 
+					element
+	Access :		Public
+
+	Return :		void
+	Parameters :	short nNewValue	-	the new horizontal alignment 
+										of the text of this element
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -690,6 +1134,16 @@ void CProMoElementAuto::SetTextHorizontalAlignment(short nNewValue)
 }
 
 short CProMoElementAuto::GetTextVerticalAlignment() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetTextVerticalAlignment
+	Description :	Get the vertical alignment of the text of this 
+					element
+	Access :		Public
+
+	Return :		short	-	the vertical alignment of the text 
+								of this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->GetTextVerticalAlignment();
@@ -699,6 +1153,16 @@ short CProMoElementAuto::GetTextVerticalAlignment()
 }
 
 void CProMoElementAuto::SetTextVerticalAlignment(short nNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetTextVerticalAlignment
+	Description :	Set the vertical alignment of the text of this 
+					element
+	Access :		Public
+
+	Return :		void
+	Parameters :	short nNewValue	-	the new vertical alignment 
+										of the text of this element
+   ============================================================ */
 {
 	CObArray views;
 	GetViews(views);
@@ -718,6 +1182,14 @@ void CProMoElementAuto::SetTextVerticalAlignment(short nNewValue)
 }
 
 BSTR CProMoElementAuto::GetName() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetName
+	Description :	Get the ID of this element
+	Access :		Public
+
+	Return :		BSTR	-	the ID of this element
+	Parameters :	none
+   ============================================================ */
 {
 	CString strResult;
 	
@@ -729,12 +1201,31 @@ BSTR CProMoElementAuto::GetName()
 }
 
 void CProMoElementAuto::SetName(LPCTSTR lpszNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetName
+	Description :	Set the ID of this element. This property 
+					is read-only, so this function simply raises 
+					an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	LPCTSTR lpszNewValue	-	the new name of this 
+												element
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
-LPDISPATCH CProMoElementAuto::GetLabels() 
+LPDISPATCH CProMoElementAuto::GetLabels()
+/* ============================================================
+	Function :		CProMoElementAuto::GetLabels
+	Description :	Returns the labels collection automation object.
+	Access :		Public
+	Return :		LPDISPATCH	-	A dispatch interface to the
+									collection of labels in the
+									element.
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetLabelsAutoObject())
 	{
@@ -745,12 +1236,32 @@ LPDISPATCH CProMoElementAuto::GetLabels()
 }
 
 void CProMoElementAuto::SetLabels(LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetLabels
+	Description :	Sets the labels collection automation object.
+					This property is read-only, so this function
+					simply raises an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	LPDISPATCH newValue	-	A dispatch interface to the
+											new collection of labels in
+											the element (not supported).
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
 LPDISPATCH CProMoElementAuto::GetProperties() 
+/* ============================================================
+	Function :		CProMoElementAuto::GetProperties
+	Description :	Returns the properties collection automation object.
+	Access :		Public
+	Return :		LPDISPATCH	-	A dispatch interface to the
+									collection of properties in the
+									element.
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetPropertiesAutoObject())
 	{
@@ -761,12 +1272,31 @@ LPDISPATCH CProMoElementAuto::GetProperties()
 }
 
 void CProMoElementAuto::SetProperties(LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetProperties
+	Description :	Sets the properties collection automation object.
+					This property is read-only, so this function
+					simply raises an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	LPDISPATCH newValue	-	A dispatch interface to the
+											new collection of properties in
+											the element (not supported).
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
-BSTR CProMoElementAuto::GetType() 
+BSTR CProMoElementAuto::GetType()
+/****************************************************
+	Function :		CProMoElementAuto::GetType
+	Description :	Get the type of this element
+	Access :		Public
+
+	Return :		BSTR	-	the type of this element
+	Parameters :	none
+   ============================================================ */
 {
 	CString strResult;
 
@@ -780,12 +1310,30 @@ BSTR CProMoElementAuto::GetType()
 }
 
 void CProMoElementAuto::SetType(LPCTSTR lpszNewValue) 
+/* ============================================================
+	Function :		CProMoElementAuto::SetType
+	Description :	Set the type of this element. This property is 
+					read-only, so this function simply raises an 
+					exception.
+	Access :		Public
+	Return :		void
+	Parameters :	LPCTSTR lpszNewValue	-	the new type of this 
+												element
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
 short CProMoElementAuto::GetLockFlags()
+/* ============================================================
+	Function :		CProMoElementAuto::GetLockFlags
+	Description :	Get the lock flags for this element
+	Access :		Public
+
+	Return :		short	-	the lock flags for this element
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetMainView()) {
 		return GetMainView()->GetLock();
@@ -795,6 +1343,16 @@ short CProMoElementAuto::GetLockFlags()
 }
 
 void CProMoElementAuto::SetLockFlags(short nNewValue)
+/* ============================================================
+	Function :		CProMoElementAuto::SetLockFlags
+	Description :	Set the lock flags for this element. This 
+					property is read-only, so this function simply 
+					raises an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	short nNewValue	-	the new lock flags for this 
+										element
+   ============================================================ */
 {
 	SetNotSupported();
 }

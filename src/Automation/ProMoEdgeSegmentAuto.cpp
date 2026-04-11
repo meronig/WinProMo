@@ -31,10 +31,31 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoEdgeSegmentAuto, CProMoEdgeChildAuto)
 
 CProMoEdgeSegmentAuto::CProMoEdgeSegmentAuto()
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::CProMoEdgeSegmentAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoEdgeView* CProMoEdgeSegmentAuto::GetSegment()
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::GetSegment
+	Description :	Returns the edge segment represented by this
+					automation object.
+	Access :		Public
+
+	Return :		CProMoEdgeView*	-	The edge segment represented 
+										by this automation object, 
+										or NULL if the automation 
+										object is not properly 
+										initialized.
+	Parameters :	none
+	============================================================ */
 {
 	ThrowIfDetached();
 	ThrowIfNoElementAutoObject();
@@ -43,6 +64,16 @@ CProMoEdgeView* CProMoEdgeSegmentAuto::GetSegment()
 }
 
 void CProMoEdgeSegmentAuto::KeepElementsConnected()
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::KeepElementsConnected
+	Description :	Invoked after moving or resizing an edge segment, 
+					to keep the source and destination blocks connected
+					to the edge.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 	// resize source and destination blocks (if they exist), so to invoke the logic to keep edges connected
 	if (GetEdgeModel()) {
@@ -57,6 +88,14 @@ void CProMoEdgeSegmentAuto::KeepElementsConnected()
 }
 
 CProMoEdgeSegmentAuto::~CProMoEdgeSegmentAuto()
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::~CProMoEdgeSegmentAuto
+	Description :	Destructor
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
@@ -103,7 +142,17 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoEdgeSegmentAuto message handlers
 
-double CProMoEdgeSegmentAuto::GetTop() 
+double CProMoEdgeSegmentAuto::GetTop()
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::GetTop
+	Description :	Returns the Y coordinate of the start point of the
+					edge segment.
+	Access :		Public
+
+	Return :		double	-	The Y coordinate of the start point of the
+								edge segment.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()) {
 		return GetSegment()->GetTop();
@@ -113,6 +162,16 @@ double CProMoEdgeSegmentAuto::GetTop()
 }
 
 void CProMoEdgeSegmentAuto::SetTop(double newValue) 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::SetTop
+	Description :	Sets the Y coordinate of the start point of the
+					edge segment.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double newValue	-	The Y coordinate of the start point of the
+										edge segment.
+	============================================================ */
 {
 	if (GetSegment()) {
 		GetContainer()->Snapshot();
@@ -122,7 +181,17 @@ void CProMoEdgeSegmentAuto::SetTop(double newValue)
 	}
 }
 
-double CProMoEdgeSegmentAuto::GetLeft() 
+double CProMoEdgeSegmentAuto::GetLeft()
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::GetLeft
+	Description :	Returns the X coordinate of the start point of the
+					edge segment.
+	Access :		Public
+
+	Return :		double	-	The X coordinate of the start point of the
+								edge segment.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()) {
 		return GetSegment()->GetLeft();
@@ -132,6 +201,16 @@ double CProMoEdgeSegmentAuto::GetLeft()
 }
 
 void CProMoEdgeSegmentAuto::SetLeft(double newValue) 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::SetLeft
+	Description :	Sets the X coordinate of the start point of the
+					edge segment.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double newValue	-	The X coordinate of the start point of the
+										edge segment.
+	============================================================ */
 {
 	if (GetSegment()) {
 		GetContainer()->Snapshot();
@@ -143,6 +222,16 @@ void CProMoEdgeSegmentAuto::SetLeft(double newValue)
 }
 
 double CProMoEdgeSegmentAuto::GetBottom() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::GetBottom
+	Description :	Returns the Y coordinate of the end point of the
+					edge segment.
+	Access :		Public
+
+	Return :		double	-	The Y coordinate of the end point of the
+								edge segment.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()) {
 		return GetSegment()->GetBottom();
@@ -152,6 +241,16 @@ double CProMoEdgeSegmentAuto::GetBottom()
 }
 
 void CProMoEdgeSegmentAuto::SetBottom(double newValue) 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::SetBottom
+	Description :	Sets the Y coordinate of the end point of the
+					edge segment.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double newValue	-	The Y coordinate of the end point of the
+										edge segment.
+	============================================================ */
 {
 	if (GetSegment()) {
 		GetContainer()->Snapshot();
@@ -163,6 +262,16 @@ void CProMoEdgeSegmentAuto::SetBottom(double newValue)
 }
 
 double CProMoEdgeSegmentAuto::GetRight() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::GetRight
+	Description :	Returns the X coordinate of the end point of the
+					edge segment.
+	Access :		Public
+
+	Return :		double	-	The X coordinate of the end point of the
+								edge segment.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()) {
 		return GetSegment()->GetRight();
@@ -171,7 +280,17 @@ double CProMoEdgeSegmentAuto::GetRight()
 	return 0.0;
 }
 
-void CProMoEdgeSegmentAuto::SetRight(double newValue) 
+void CProMoEdgeSegmentAuto::SetRight(double newValue)
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::SetRight
+	Description :	Sets the X coordinate of the end point of the
+					edge segment.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double newValue	-	The X coordinate of the end point of the
+										edge segment.
+	============================================================ */
 {
 	if (GetSegment()) {
 		GetContainer()->Snapshot();
@@ -183,6 +302,14 @@ void CProMoEdgeSegmentAuto::SetRight(double newValue)
 }
 
 double CProMoEdgeSegmentAuto::GetWidth() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::GetWidth
+	Description :	Returns the width of the edge segment.
+	Access :		Public
+
+	Return :		double	-	The width of the edge segment.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()) {
 		return fabs(GetSegment()->GetRect().Width());
@@ -192,11 +319,30 @@ double CProMoEdgeSegmentAuto::GetWidth()
 }
 
 void CProMoEdgeSegmentAuto::SetWidth(double newValue) 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::SetWidth
+	Description :	Sets the width of the edge segment. This property
+					is read-only, since changing the width of an
+					edge segment would change the shape of the edge,
+					and this is not supported by the current edge model.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double newValue	-	The width of the edge segment.
+	============================================================ */
 {
 	SetNotSupported();
 }
 
 double CProMoEdgeSegmentAuto::GetHeight() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::GetHeight
+	Description :	Returns the height of the edge segment.
+	Access :		Public
+
+	Return :		double	-	The height of the edge segment.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()) {
 		return fabs(GetSegment()->GetRect().Height());
@@ -206,12 +352,34 @@ double CProMoEdgeSegmentAuto::GetHeight()
 	return 0.0;
 }
 
-void CProMoEdgeSegmentAuto::SetHeight(double newValue) 
+void CProMoEdgeSegmentAuto::SetHeight(double newValue)
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::SetHeight
+	Description :	Sets the height of the edge segment. This property
+					is read-only, since changing the height of an
+					edge segment would change the shape of the edge,
+					and this is not supported by the current edge model.
+	Access :		Public
+
+	Return :		void
+	Parameters :	double newValue	-	The height of the edge segment.
+	============================================================ */
 {
 	SetNotSupported();
 }
 
 LPDISPATCH CProMoEdgeSegmentAuto::Split() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::Split
+	Description :	Splits the edge segment, by adding a new point in
+					the middle of the segment. The new segment is added
+					after the current one.
+	Access :		Public
+
+	Return :		LPDISPATCH	-	The new edge segment created by the split operation, 
+									or NULL if the split operation failed.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()) {
 		GetContainer()->Snapshot();
@@ -230,6 +398,15 @@ LPDISPATCH CProMoEdgeSegmentAuto::Split()
 }
 
 LPDISPATCH CProMoEdgeSegmentAuto::Prev() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::Prev
+	Description :	Returns the previous edge segment in the edge.
+	Access :		Public
+
+	Return :		LPDISPATCH	-	The previous edge segment in the edge, 
+									or NULL if this is the first segment.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()) {
 		CProMoEdgeView* pPrev = dynamic_cast<CProMoEdgeView*>(GetSegment()->GetSource());
@@ -246,6 +423,15 @@ LPDISPATCH CProMoEdgeSegmentAuto::Prev()
 }
 
 LPDISPATCH CProMoEdgeSegmentAuto::Next() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::Next
+	Description :	Returns the next edge segment in the edge.
+	Access :		Public
+
+	Return :		LPDISPATCH	-	The next edge segment in the edge, 
+									or NULL if this is the last segment.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment()){
 		CProMoEdgeView* pNext = dynamic_cast<CProMoEdgeView*>(GetSegment()->GetDestination());
@@ -262,8 +448,24 @@ LPDISPATCH CProMoEdgeSegmentAuto::Next()
 }
 
 void CProMoEdgeSegmentAuto::Remove() 
+/* ============================================================
+	Function :		CProMoEdgeSegmentAuto::Remove
+	Description :	Removes the edge segment. If this is the only segment
+					in the edge, the operation is not performed, since
+					an edge must have at least one segment.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 	if (GetSegment() && GetContainer()) {
+		CObArray viewList;
+		GetEdgeModel()->GetViews(viewList);
+		if (viewList.GetSize() <= 1) {
+			// if this is the only segment, do not remove it
+			return;
+		}
 		GetContainer()->Snapshot(); 
 		GetContainer()->Remove(GetSegment());
 		GetDiagramAutoObject()->NotifyChange();

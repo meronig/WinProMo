@@ -84,8 +84,6 @@ protected:
 	afx_msg void SetTextHorizontalAlignment(short nNewValue);
 	afx_msg short GetTextVerticalAlignment();
 	afx_msg void SetTextVerticalAlignment(short nNewValue);
-	afx_msg LPDISPATCH GetProperty();
-	afx_msg void SetProperty(LPDISPATCH newValue);
 	afx_msg BSTR GetText();
 	afx_msg void SetText(LPCTSTR lpszNewValue);
 	afx_msg BSTR GetName();
@@ -98,6 +96,7 @@ protected:
 	afx_msg void Copy();
 	afx_msg void Delete();
 	afx_msg LPDISPATCH Duplicate();
+	afx_msg LPDISPATCH Property();
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
 	DECLARE_INTERFACE_MAP()

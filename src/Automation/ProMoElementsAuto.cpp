@@ -32,10 +32,29 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoElementsAuto, CProMoDiagramChildAuto)
 
 CProMoElementsAuto::CProMoElementsAuto()
+/* ============================================================
+	Function :		CProMoElementsAuto::CProMoElementsAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 }
 
 CProMoElementAuto* CProMoElementsAuto::GetElementAutoObject(CProMoModel* pModel)
+/* ============================================================
+	Function :		CProMoElementsAuto::GetElementAutoObject
+	Description :	Get the automation object for the given model
+	Access :		Protected
+
+	Return :		CProMoElementAuto*	-	the automation object 
+											for the given model
+	Parameters :	CProMoModel* pModel	-	the model for which
+											to get the automation
+											object
+   ============================================================ */
 {
 	if (pModel) {
 		return dynamic_cast<CProMoElementAuto*>(pModel->GetAutomationObject());
@@ -44,6 +63,14 @@ CProMoElementAuto* CProMoElementsAuto::GetElementAutoObject(CProMoModel* pModel)
 }
 
 CProMoElementsAuto::~CProMoElementsAuto()
+/* ============================================================
+	Function :		CProMoElementsAuto::~CProMoElementsAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================ */
 {
 }
 
@@ -60,12 +87,13 @@ BEGIN_DISPATCH_MAP(CProMoElementsAuto, CProMoDiagramChildAuto)
 	DISP_FUNCTION(CProMoElementsAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CProMoElementsAuto, "Add", Add, VT_DISPATCH, VTS_VARIANT)
 	DISP_FUNCTION(CProMoElementsAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
-	DISP_PROPERTY_PARAM(CProMoElementsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
-	DISP_DEFVALUE(CProMoElementsAuto, "Item")
 	//Common to CProMoDiagramChildAuto
 	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
 	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	//Default property
+	DISP_PROPERTY_PARAM(CProMoElementsAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
+	DISP_DEFVALUE(CProMoElementsAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -84,7 +112,14 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoElementsAuto message handlers
 
-short CProMoElementsAuto::Count() 
+short CProMoElementsAuto::Count()
+/* ============================================================
+	Function :		CProMoElementsAuto::Count
+	Description :	Returns the number of elements in the diagram.
+	Access :		Public
+	Return :		short	-	the number of elements in the diagram
+	Parameters :	none
+   ============================================================ */
 {
 	if (GetContainer()) {
 		CObArray models;
@@ -95,7 +130,19 @@ short CProMoElementsAuto::Count()
 	return 0;
 }
 
-LPDISPATCH CProMoElementsAuto::GetItem(const VARIANT FAR& item) 
+LPDISPATCH CProMoElementsAuto::GetItem(const VARIANT FAR& item)
+/* ============================================================
+	Function :		CProMoElementsAuto::GetItem
+	Description :	Returns the element specified by the given index or name.
+	Access :		Public
+
+	Return :		LPDISPATCH		-	the automation object for the 
+										element specified by the given 
+										index or name, or NULL if no 
+										such element exists.
+	Parameters :	VARIANT& item 	-	the index or name of the 
+										element to return.
+   ============================================================ */
 {
 	if (GetContainer()) {
 		CObArray models;
@@ -115,12 +162,43 @@ LPDISPATCH CProMoElementsAuto::GetItem(const VARIANT FAR& item)
 }
 
 void CProMoElementsAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoElementsAuto::SetItem
+	Description :	Sets the element specified by the given index or name.
+					This property is read-only, so this function 
+					simply raises an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT& Item		-	the index or name of the 
+											element to set.
+					LPDISPATCH newValue -	the new value for the element
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
-LPDISPATCH CProMoElementsAuto::Add(const VARIANT FAR& elementType) 
+LPDISPATCH CProMoElementsAuto::Add(const VARIANT FAR& elementType)
+/* ============================================================
+	Function :		CProMoElementsAuto::Add
+	Description :	Creates a new element of the specified type and 
+					adds it to the diagram.
+	Access :		Public
+	Return :		LPDISPATCH				-	the automation object 
+												for the newly created 
+												element, or NULL if 
+												the element could not 
+												be created.
+	Parameters :	VARIANT& elementType	-	the type of element to
+												create, specified as 
+												a string. The specific
+												element types that are 
+												creatable depend on 
+												the specific application 
+												and diagram type, and 
+												are determined by the 
+												container of the diagram.
+   ============================================================ */
 {
 	CVariantWrapper wrapper(elementType);
 	CString strType = wrapper.GetString();
@@ -164,6 +242,19 @@ LPDISPATCH CProMoElementsAuto::Add(const VARIANT FAR& elementType)
 }
 
 BOOL CProMoElementsAuto::Remove(const VARIANT FAR& item) 
+/* ============================================================
+	Function :		CProMoElementsAuto::Remove
+	Description :	Removes the element specified by the given 
+					index or name from the diagram.
+	Access :		Public
+
+	Return :		BOOL			-	"TRUE" if the element 
+										was successfully removed, 
+										or "FALSE" if no such 
+										element exists.
+	Parameters :	VARIANT& item 	-	the index or name of the 
+										element to remove.
+   ============================================================ */
 {
 	if (GetContainer()) {
 		CObArray models;
@@ -180,6 +271,17 @@ BOOL CProMoElementsAuto::Remove(const VARIANT FAR& item)
 }
 
 VARIANT CProMoElementsAuto::GetIDs() 
+/* ============================================================
+	Function :		CProMoElementsAuto::GetIDs
+	Description :	Returns an array containing the names of all 
+					elements in the diagram.
+	Access :		Public
+	Return :		VARIANT	-	a SAFEARRAY of strings containing 
+								the names of all elements in the 
+								diagram. If there are no elements, 
+								an empty SAFEARRAY is returned.
+	Parameters :	none
+   ============================================================ */
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -206,6 +308,17 @@ VARIANT CProMoElementsAuto::GetIDs()
 }
 
 void CProMoElementsAuto::SetIDs(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoElementsAuto::SetIDs
+	Description :	Sets the names of all elements in the diagram.
+					This property is read-only, so this function 
+					simply raises an exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT& newValue -	a SAFEARRAY of strings containing 
+										the new names for all elements 
+										in the diagram (not supported).
+   ============================================================ */
 {
 	SetNotSupported();
 

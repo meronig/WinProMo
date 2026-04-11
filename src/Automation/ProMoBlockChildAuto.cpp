@@ -34,15 +34,40 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoBlockChildAuto, CProMoElementChildAuto)
 
 CProMoBlockChildAuto::CProMoBlockChildAuto()
+/* ============================================================
+	Function :		CProMoBlockChildAuto::CProMoBlockChildAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoBlockModel* CProMoBlockChildAuto::GetBlockModel()
+/* ============================================================
+	Function :		CProMoBlockChildAuto::GetBlockModel
+	Description :	Get the model associated with this block
+	Access :		Public
+
+	Return :		CProMoBlockModel*	-	the model associated with
+											this block
+	Parameters :	none
+   ============================================================ */
 {
 	return dynamic_cast<CProMoBlockModel*>(GetModel());
 }
 
 CProMoBlockChildAuto::~CProMoBlockChildAuto()
+/* ============================================================
+	Function :		CProMoBlockChildAuto::~CProMoBlockChildAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 

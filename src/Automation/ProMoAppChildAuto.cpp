@@ -41,6 +41,14 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoAppChildAuto, CCmdTarget)
 
 CProMoAppChildAuto::CProMoAppChildAuto()
+/* ============================================================
+	Function :		CProMoAppChildAuto::CProMoAppChildAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	EnableAutomation();
 	m_pInternalObject = NULL;
@@ -48,10 +56,29 @@ CProMoAppChildAuto::CProMoAppChildAuto()
 }
 
 CProMoAppChildAuto::~CProMoAppChildAuto()
+/* ============================================================
+	Function :		CProMoAppChildAuto::~CProMoAppChildAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 }
 
 void CProMoAppChildAuto::DetachInternalObject()
+/* ============================================================
+	Function :		CProMoAppChildAuto::DetachInternalObject
+	Description :	Detaches the internal automation host object, 
+					if it exists, by calling the host's 
+					ReleaseAutomationObject method and setting the 
+					internal pointer to NULL.
+	Access :		Protected
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	if (m_pInternalObject) {
 		IProMoAutomationHost* host = m_pInternalObject;
@@ -61,28 +88,78 @@ void CProMoAppChildAuto::DetachInternalObject()
 }
 
 void CProMoAppChildAuto::OnFinalRelease()
-{
-	// When the last reference for an automation object is released
-	// OnFinalRelease is called.  The base class will automatically
-	// deletes the object.  Add additional cleanup required for your
-	// object before calling the base class.
+/* ============================================================
+	Function :		CProMoAppChildAuto::OnFinalRelease
+	Description :	Release the automation object. Called when
+					the last reference for an automation object
+					is released. The base class will
+					automatically delete the object.
+	Access :		Public
 
+	Return :		void
+	Parameters :	none
+
+	Usage:			Overridden to detach the internal automation 
+					host object, which will release the reference
+					to the automation object and allow it to be
+					destroyed when all references are released. 
+					Also, the application automation object 
+					reference is released by setting it to NULL. 
+
+   ============================================================*/
+{
 	DetachInternalObject();
 	SetAppAutoObject(NULL);
 	CCmdTarget::OnFinalRelease();
 }
 
 BOOL CProMoAppChildAuto::IsAlive() const
+/* ============================================================
+	Function :		CProMoAppChildAuto::IsAlive
+	Description :	Checks if the automation object is still 
+					attached to a host.
+	Access :		Public
+
+	Return :		BOOL		-	"TRUE" if the automation 
+									object is still attached to a
+									host, "FALSE" otherwise.
+	Parameters :	none
+   ============================================================*/
 {
 	return m_pInternalObject != NULL;
 }
 
 void CProMoAppChildAuto::Initialize(IProMoAutomationHost* obj)
+/* ============================================================
+	Function :		CProMoAppChildAuto::Initialize
+	Description :	Initializes the automation object by setting 
+					the internal automation host object to the 
+					object passed as a parameter. The internal 
+					automation host object is used to manage the 
+					lifetime of the automation objects.
+	Access :		Public
+
+	Return :		void
+	Parameters :	IProMoAutomationHost* obj	-	the internal 
+													automation host
+													object to set.
+   ============================================================*/
 {
 	m_pInternalObject = obj;
 }
 
 void CProMoAppChildAuto::Detach()
+/* ============================================================
+	Function :		CProMoAppChildAuto::Detach
+	Description :	Detaches the automation object from the host, 
+					which will release the reference to the 
+					automation object and allow it to be destroyed 
+					when all references are released.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	if (m_pInternalObject) {
 		DetachInternalObject();
@@ -91,6 +168,15 @@ void CProMoAppChildAuto::Detach()
 }
 
 void CProMoAppChildAuto::ThrowIfDetached() const
+/* ============================================================
+	Function :		CProMoAppChildAuto::ThrowIfDetached
+	Description :	Checks if the automation object is detached from 
+					the host, and if so, throws an OLE exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	if (!m_pInternalObject) {
 		//TODO: consider a more specific error code and message
@@ -99,6 +185,15 @@ void CProMoAppChildAuto::ThrowIfDetached() const
 }
 
 void CProMoAppChildAuto::ThrowIfNoAppAutoObject() const
+/* ============================================================
+	Function :		CProMoAppChildAuto::ThrowIfNoAppAutoObject
+	Description :	Checks if the application automation object is 
+					available, and if not, throws an OLE exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+   ============================================================*/
 {
 	if (!m_pAppAuto) {
 		//TODO: consider a more specific error code and message
@@ -107,6 +202,20 @@ void CProMoAppChildAuto::ThrowIfNoAppAutoObject() const
 }
 
 void CProMoAppChildAuto::SetAppAutoObject(CProMoAppAutoAbs* pAppAuto)
+/* ============================================================
+	Function :		CProMoAppChildAuto::SetAppAutoObject
+	Description :	Sets the application automation object to the 
+					object passed as a parameter. If the new object 
+					is different from the current one, the reference 
+					count of the old object is released and the new 
+					object is AddRef'ed.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoAppAutoAbs* pAppAuto	-	the application 
+													automation object
+													to set.
+   ============================================================*/
 {
 	if (m_pAppAuto == pAppAuto) {
 		return;
@@ -123,6 +232,18 @@ void CProMoAppChildAuto::SetAppAutoObject(CProMoAppAutoAbs* pAppAuto)
 }
 
 CProMoAppAutoAbs* CProMoAppChildAuto::GetAppAutoObject() const
+/* ============================================================
+	Function :		CProMoAppChildAuto::GetAppAutoObject
+	Description :	Returns a pointer to the application automation 
+					object.
+	Access :		Public
+
+	Return :		CProMoAppAutoAbs*	-	a pointer to the 
+											application automation 
+											object, or "NULL" if no
+											object is set.
+	Parameters :	none
+   ============================================================*/
 {
 	return m_pAppAuto;
 }
@@ -145,6 +266,17 @@ END_INTERFACE_MAP()
 // CProMoAppChildAuto message handlers
 
 LPDISPATCH CProMoAppChildAuto::Application()
+/* ============================================================
+	Function :		CProMoAppChildAuto::Application
+	Description :	Returns the IDispatch interface of the application 
+					automation object.
+	Access :		Public
+	Return :		LPDISPATCH	-	the IDispatch interface of the 
+									application automation object, or
+									"NULL" if no application 
+									automation object is set.
+	Parameters :	none
+   ============================================================*/
 {
 	if (m_pAppAuto) {
 		return m_pAppAuto->GetIDispatch(TRUE);

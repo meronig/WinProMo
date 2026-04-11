@@ -34,14 +34,45 @@ static char THIS_FILE[] = __FILE__;
 IMPLEMENT_DYNCREATE(CProMoSubBlocksAuto, CProMoBlockChildAuto)
 
 CProMoSubBlocksAuto::CProMoSubBlocksAuto()
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::CProMoSubBlocksAuto
+	Description :	Constructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
 CProMoSubBlocksAuto::~CProMoSubBlocksAuto()
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::~CProMoSubBlocksAuto
+	Description :	Destructor
+	Access :		Public
+
+	Return :		void
+	Parameters :	none
+	============================================================ */
 {
 }
 
-void CProMoSubBlocksAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) {
+void CProMoSubBlocksAuto::SetElementAutoObject(CProMoElementAuto* pElementAuto) 
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::SetElementAutoObject
+	Description :	Sets the element automation object to the
+					object passed as a parameter. Overridden
+					to avoid creating circular references between
+					COM objects that would prevent them from being
+					released.
+	Access :		Public
+
+	Return :		void
+	Parameters :	CProMoElementAuto* pElementAuto	-	The element
+														automation
+														object to set.
+   ============================================================*/
+{
 	SetDiagramAutoObject(pElementAuto ? pElementAuto->GetDiagramAutoObject() : NULL); 
 	m_pElementAuto = pElementAuto;
 }
@@ -58,14 +89,15 @@ BEGIN_DISPATCH_MAP(CProMoSubBlocksAuto, CProMoBlockChildAuto)
 	DISP_FUNCTION(CProMoSubBlocksAuto, "Count", Count, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CProMoSubBlocksAuto, "Add", Add, VT_BOOL, VTS_DISPATCH)
 	DISP_FUNCTION(CProMoSubBlocksAuto, "Remove", Remove, VT_BOOL, VTS_VARIANT)
-	DISP_PROPERTY_PARAM(CProMoSubBlocksAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
-	DISP_DEFVALUE(CProMoSubBlocksAuto, "Item")
 	//Common to CProMoElementChildAuto
 	DISP_FUNCTION(CProMoElementChildAuto, "Element", Element, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoDiagramChildAuto
 	DISP_FUNCTION(CProMoDiagramChildAuto, "Diagram", Diagram, VT_DISPATCH, VTS_NONE)
 	//Common to CProMoAppChildAuto
 	DISP_FUNCTION(CProMoAppChildAuto, "Application", Application, VT_DISPATCH, VTS_NONE)
+	//Default property
+	DISP_PROPERTY_PARAM(CProMoSubBlocksAuto, "Item", GetItem, SetItem, VT_DISPATCH, VTS_VARIANT)
+	DISP_DEFVALUE(CProMoSubBlocksAuto, "Item")
 	//}}AFX_DISPATCH_MAP
 END_DISPATCH_MAP()
 
@@ -84,7 +116,15 @@ END_INTERFACE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CProMoSubBlocksAuto message handlers
 
-short CProMoSubBlocksAuto::Count() 
+short CProMoSubBlocksAuto::Count()
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::Count
+	Description :	Returns the number of subblocks in the collection.
+	Access :		Public
+
+	Return :		short	-	The number of subblocks in the collection.
+	Parameters :	none
+	============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray subBlocks;
@@ -96,6 +136,23 @@ short CProMoSubBlocksAuto::Count()
 }
 
 LPDISPATCH CProMoSubBlocksAuto::GetItem(const VARIANT FAR& item) 
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::GetItem
+	Description :	Returns the block automation object corresponding
+					to the specified index or name.
+	Access :		Public
+	Return :		LPDISPATCH			-	a pointer to the
+											IDispatch interface
+											of the block
+											automation object
+											corresponding to the
+											specified index or name,
+											or "NULL" if no block
+											with the specified index
+											or name is found.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the
+											block to return.
+   ============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray subBlocks;
@@ -115,12 +172,42 @@ LPDISPATCH CProMoSubBlocksAuto::GetItem(const VARIANT FAR& item)
 }
 
 void CProMoSubBlocksAuto::SetItem(const VARIANT FAR& Item, LPDISPATCH newValue) 
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::SetItem
+	Description :	Sets the block automation object corresponding
+					to the specified index or name. This property is
+					read-only, so this function simply raises an
+					exception.
+	Access :		Public
+	Return :		void
+	Parameters :	VARIANT FAR& Item 	-	the index or name of the
+											block to set.
+					LPDISPATCH newValue	-	a pointer to the new
+											IDispatch interface of the
+											block automation object to
+											set for the specified index or
+											name.
+   ============================================================ */
 {
 	SetNotSupported();
 
 }
 
 BOOL CProMoSubBlocksAuto::Add(LPDISPATCH item) 
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::Add
+	Description :	Adds a block to the collection. The block to add
+					is specified by passing a pointer to its automation
+					object's IDispatch interface as a parameter. The block
+					is added as a subblock of the block associated to the
+					current automation object.
+	Access :		Public
+	Return :		BOOL			-	"TRUE" if the block is successfully added
+										to the collection, "FALSE" otherwise.
+	Parameters :	LPDISPATCH item -	a pointer to the IDispatch interface of
+										the block automation object corresponding
+										to the block to add to the collection.
+   ============================================================ */
 {
 	if (GetBlockModel()) {
 		if (item) {
@@ -156,6 +243,22 @@ BOOL CProMoSubBlocksAuto::Add(LPDISPATCH item)
 }
 
 BOOL CProMoSubBlocksAuto::Remove(const VARIANT FAR& item) 
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::Remove
+	Description :	Removes a block from the collection. The block to remove
+					is specified by passing its index or name as a parameter.
+					The block is removed from being a subblock of the block
+					represented by the current automation object, and becomes
+					a top-level block in the diagram.
+	Access :		Public
+	Return :		BOOL				-	"TRUE" if the block is 
+											successfully removed
+											from the collection, 
+											"FALSE" otherwise.
+	Parameters :	VARIANT FAR& Item 	-	the index or name of 
+											the block to remove 
+											from the collection.
+   ============================================================ */
 {
 	if (GetBlockModel()) {
 		CObArray subBlocks;
@@ -177,6 +280,17 @@ BOOL CProMoSubBlocksAuto::Remove(const VARIANT FAR& item)
 }
 
 VARIANT CProMoSubBlocksAuto::GetIDs()
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::GetIDs
+	Description :	Returns a SAFEARRAY of VARIANT containing the names
+					of the sub-blocks in the collection.
+	Access :		Public
+
+	Return :		VARIANT	-	a VARIANT containing a SAFEARRAY 
+								of BSTRs with the names of the 
+								sub-blocks in the collection.
+	Parameters :	none
+   ============================================================ */
 {
 	VARIANT vaResult;
 	VariantInit(&vaResult);
@@ -203,6 +317,20 @@ VARIANT CProMoSubBlocksAuto::GetIDs()
 }
 
 void CProMoSubBlocksAuto::SetIDs(const VARIANT FAR& newValue) 
+/* ============================================================
+	Function :		CProMoSubBlocksAuto::SetIDs
+	Description :	Sets the list of the names of the sub-blocks.
+					This property is read-only, so this function simply
+					raises an exception.
+	Access :		Public
+
+	Return :		void
+	Parameters :	VARIANT FAR& newValue	-	a VARIANT containing
+												a safe array of
+												BSTRs with the
+												names of the sub-blocks
+												to set.
+   ============================================================ */
 {
 	SetNotSupported();
 }
