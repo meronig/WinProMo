@@ -1,6 +1,6 @@
 /* ==========================================================================
 
-	Copyright © 2025 Technical University of Denmark
+	Copyright © 2025-26 Technical University of Denmark
 
 	Author :		Giovanni Meroni
 
@@ -16,13 +16,13 @@ public CObject {
 
 public:
 // Implementation
-	virtual CDiagramEntity* CreateViewFromString( const CString& str );
-	virtual CDiagramEntity* CreateViewFromString(const CString& str, CProMoModel* model);
+	virtual CDiagramEntity* CreateViewFromString( const CString& str ) = 0;
+	virtual CDiagramEntity* CreateViewFromString(const CString& str, CProMoModel* model) = 0;
 	virtual CDiagramEntity* CreateLabelFromString(const CString& str);
 	virtual CDiagramEntity* CreateLabelFromString(const CString& str, CProMoModel* model);
-	virtual CProMoModel* CreateModelFromString(const CString& str);
-	virtual CDiagramEntity* CreateNewEntity(const CString& str);
-	virtual void GetEntityTypes(CStringArray& typeList);
+	virtual CProMoModel* CreateModelFromString(const CString& str) = 0;
+	virtual CDiagramEntity* CreateNewEntity(const CString& str) = 0;
+	virtual void GetEntityTypes(CStringArray& typeList) = 0;
 
 };
 

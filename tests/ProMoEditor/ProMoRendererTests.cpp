@@ -43,7 +43,7 @@ namespace CProMoRendererTests
         {
             WinProMoTestHelpers::BootstrapMFC();
 
-			m_container = new CProMoEntityContainer(new CProMoControlFactory, CString("custom"));
+			m_container = new CProMoEntityContainer(NULL, CString("custom"));
 
             m_container->SetVirtualSize(CSize(2000, 2000));
 

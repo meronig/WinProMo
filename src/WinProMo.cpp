@@ -1,12 +1,12 @@
 /* ==========================================================================
 
-	Copyright © 2025 Technical University of Denmark
+	Copyright © 2025-26 Technical University of Denmark
 
 	Author :		Giovanni Meroni
 
+	Purpose :		WinProMo DLL initialization routines
+
    ========================================================================*/
-// WinProMo.cpp : Defines the initialization routines for the DLL.
-//
 
 #include "stdafx.h"
 #include <afxdllx.h>
@@ -21,6 +21,16 @@ static AFX_EXTENSION_MODULE WinProMoDLL = { NULL, NULL };
 
 extern "C" int APIENTRY
 DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
+/* =========================================================================
+	Function :		DllMain
+	Description :	DLL entry point
+	Access :		Public
+	Return :    	BOOL (non-zero is OK)
+
+	Parameters :	HINSTANCE hInstance	-	handle to the DLL module
+					DWORD dwReason		-	reason for calling function
+					LPVOID lpReserved	-	reserved
+   ========================================================================*/
 {
 	// Remove this if you use lpReserved
 	UNREFERENCED_PARAMETER(lpReserved);
@@ -44,7 +54,7 @@ DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 		//  the CDynLinkLibrary object will not be attached to the
 		//  Regular DLL's resource chain, and serious problems will
 		//  result.
-// 
+		// 
 		// Insert this DLL into the resource chain
 		new CDynLinkLibrary(WinProMoDLL);
 	}

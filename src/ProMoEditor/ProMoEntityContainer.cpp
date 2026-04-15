@@ -114,8 +114,6 @@ CProMoEntityContainer::~CProMoEntityContainer()
 
    ============================================================*/
 {
-	delete m_factory;
-
 	ClearUndo();
 	
 	ReleaseAutomationObject();

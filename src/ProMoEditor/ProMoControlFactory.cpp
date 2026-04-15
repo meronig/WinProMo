@@ -1,6 +1,6 @@
 /* ==========================================================================
 
-	Copyright © 2025 Technical University of Denmark
+	Copyright © 2025-26 Technical University of Denmark
 
 	CProMoControlFactory
 
@@ -38,70 +38,6 @@ static char THIS_FILE[] = __FILE__;
 
 /////////////////////////////////////////////////////////////////////////////
 // CProMoControlFactory
-
-CDiagramEntity* CProMoControlFactory::CreateViewFromString(const CString& str)
-/* ============================================================
-	Function :		CProMoControlFactory::CreateViewFromString
-	Description :	The function returns an object from the
-					parameter str.
-
-	Return :		CDiagramEntity*		-	The new object, or
-											NULL is str is not a
-											valid representation.
-	Parameters :	const CString& str	-	The string to create
-											a new object from
-
-	Usage :			Call this static function while reading
-					string representations of objects from a
-					text file. Note that the caller is
-					responsible for the allocated memory.
-
-   ============================================================*/
-{
-	CDiagramEntity* obj;
-
-	obj = CProMoBlockView::CreateFromString(str);
-
-	if (!obj)
-		obj = CProMoEdgeView::CreateFromString(str);
-
-	return obj;
-}
-
-CDiagramEntity* CProMoControlFactory::CreateViewFromString(const CString& str, CProMoModel* model)
-/* ============================================================
-	Function :		CProMoControlFactory::CreateViewFromString
-	Description :	The function returns an object from the
-					parameter str.
-
-	Return :		CDiagramEntity*		-	The new object, or
-											NULL is str is not a
-											valid representation.
-	Parameters :	const CString& str	-	The string to create
-											a new object from
-					CProMoModel* model	-	The model that will
-											be linked to the
-											created object
-
-	Usage :			Call this static function while reading
-					string representations of objects from a
-					text file. Note that the caller is
-					responsible for the allocated memory of
-					the created object only. The created object
-					will take ownership of the model being
-					passed, which should be created on the heap.
-
-   ============================================================*/
-{
-	CDiagramEntity* obj;
-
-	obj = CProMoBlockView::CreateFromString(str, model);
-
-	if (!obj)
-		obj = CProMoEdgeView::CreateFromString(str, model);
-
-	return obj;
-}
 
 CDiagramEntity* CProMoControlFactory::CreateLabelFromString(const CString& str)
 /* ============================================================
@@ -159,91 +95,4 @@ CDiagramEntity* CProMoControlFactory::CreateLabelFromString(const CString& str, 
 	obj = CProMoLabel::CreateFromString(str, model);
 
 	return obj;
-}
-
-CProMoModel* CProMoControlFactory::CreateModelFromString(const CString& str)
-/* ============================================================
-	Function :		CProMoControlFactory::CreateModelFromString
-	Description :	The function returns an object from the
-					parameter str.
-
-	Return :		CDiagramEntity*		-	The new object, or
-											NULL is str is not a
-											valid representation.
-	Parameters :	const CString& str	-	The string to create
-											a new object from
-
-	Usage :			Call this static function while reading
-					string representations of objects from a
-					text file. Note that the caller is
-					responsible for the allocated memory.
-
-   ============================================================*/
-{
-	CProMoModel* obj;
-
-	obj = CProMoBlockModel::CreateFromString(str);
-
-	if (!obj)
-		obj = CProMoEdgeModel::CreateFromString(str);
-
-
-	return obj;
-}
-
-CDiagramEntity* CProMoControlFactory::CreateNewEntity(const CString& str)
-/* ============================================================
-	Function :		CProMoControlFactory::CreateNewEntity
-	Description :	The function returns an object with a type
-					corresponding to the parameter str.
-	Return :		CDiagramEntity*		-	The new object, or
-											NULL if str is not a
-											valid object type.
-	Parameters :	const CString& str	-	The object type to
-											create
-	Usage :			Call this static function from the UI or the
-					automation interface to create new objects
-					of the specified type. Note that the caller
-					is responsible for the allocated memory.
-   ============================================================*/
-{
-	CDiagramEntity* obj;
-
-	obj = CProMoBlockView::Create(str);
-
-	if (!obj)
-		obj = CProMoEdgeView::Create(str);
-
-	if (!obj)
-		obj = CProMoLabel::Create(str);
-
-	return obj;
-}
-
-void CProMoControlFactory::GetEntityTypes(CStringArray& typeList)
-/* ============================================================
-	Function :		CProMoControlFactory::GetEntityTypes
-	Description :	Fills the provided list with the types of
-					objects that can be created by this factory.
-	Return :		void
-	Parameters :	CStringArray& typeList	-	The list to fill
-	Usage :			Call this function to get the list of
-					available object types for use in the UI
-					or the automation interface.
-   ============================================================*/
-{
-	// Clear the list
-	typeList.RemoveAll();
-	// Add block types
-	CDiagramEntity* obj = new CProMoBlockView;
-	typeList.Add(obj->GetType());
-	delete obj;
-	// Add edge types
-	obj = new CProMoEdgeView;
-	typeList.Add(obj->GetType());
-	delete obj;
-	// Add label types
-	obj = new CProMoLabel;
-	typeList.Add(obj->GetType());
-	delete obj;
 }

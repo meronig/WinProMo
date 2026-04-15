@@ -1,6 +1,6 @@
 /* ==========================================================================
 
-	Copyright © 2025 Technical University of Denmark
+	Copyright © 2025-26 Technical University of Denmark
 
 	Author :		Giovanni Meroni
 
@@ -13,19 +13,27 @@
 #include "ProMoEditor/ProMoCmdHandler.h"
 #include "ProMoEditor/ProMoRenderer.h"
 
-class CWinProMoPluginInterface
+class AFX_EXT_CLASS CWinProMoPluginInterface
 {
 public:
-	virtual ~CWinProMoPluginInterface() {}
+	CWinProMoPluginInterface(UINT documentID, const CString& documentType, const CString& documentDescrm, CProMoControlFactory* controlFactory);
+	virtual ~CWinProMoPluginInterface();
 	virtual CObArray* GetElements() = 0;
 	virtual CObArray* GetCommands() = 0;
-	virtual const CString GetDocumentType() = 0;
-	virtual const UINT GetDocumentID() = 0;
-	virtual const CString GetDocumentDescr() = 0;
-	virtual void Destroy() = 0;
+	virtual const CString& GetDocumentType();
+	virtual const UINT& GetDocumentID();
+	virtual const CString& GetDocumentDescr();
+	virtual void Destroy();
+	virtual CProMoControlFactory* GetControlFactory();
 	virtual CProMoCmdHandler* GetCmdHandler() = 0;
-	virtual CProMoEntityContainer* GetContainer() = 0;
-	virtual CProMoRenderer* GetRenderer() = 0;
+	virtual CProMoEntityContainer* GetContainer();
+	virtual CProMoRenderer* GetRenderer();
+
+private:
+	CString m_documentType;
+	CString m_documentDescr;
+	UINT m_documentID;
+	CProMoControlFactory* m_controlFactory;
 };
 
 class AFX_EXT_CLASS CWinProMoPluginCommand : public CObject

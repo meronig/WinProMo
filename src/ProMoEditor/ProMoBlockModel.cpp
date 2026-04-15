@@ -813,16 +813,8 @@ void CProMoBlockModel::CustomizeLabel(CProMoLabel* label)
 		if (label->GetPropertyName() == CString("Title") && label->GetModel()) {
 			label->SetFitView(TRUE);
 			label->SetLock(LOCK_REPOSITIONING);
-			CObArray subBlocks;
-			GetSubBlocks(subBlocks);
-			if (subBlocks.GetSize() > 0) {
-				label->SetViewAnchorPoint(DEHT_TOPMIDDLE);
-				label->SetLabelAnchorPoint(DEHT_TOPMIDDLE);
-			}
-			else {
-				label->SetViewAnchorPoint(DEHT_CENTER);
-				label->SetLabelAnchorPoint(DEHT_CENTER);
-			}
+			label->SetViewAnchorPoint(DEHT_CENTER);
+			label->SetLabelAnchorPoint(DEHT_CENTER);
 		}
 	}
 

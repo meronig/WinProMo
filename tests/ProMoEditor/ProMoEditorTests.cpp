@@ -83,7 +83,7 @@ namespace CProMoEditorTests
         {
             //Some MFC-rem_lated assertions still fail
             WinProMoTestHelpers::BootstrapMFC(); 
-            CProMoEntityContainer* c = new CProMoEntityContainer(new CProMoControlFactory, CString("custom"));
+            CProMoEntityContainer* c = new CProMoEntityContainer(NULL, CString("custom"));
             m_editor.SetDiagramEntityContainer(c);
             m_editor.SetVirtualSize(CSize(2000, 2000));
             
@@ -226,7 +226,7 @@ namespace CProMoEditorTests
 
             int lMargin, tMargin, rMargin, bMargin;
 
-            Assert::AreEqual(RGB(250, 250, 230), m_editor.GetBackgroundColor());
+            Assert::AreEqual(RGB(255, 255, 255), m_editor.GetBackgroundColor());
             Assert::IsFalse(m_editor.GetSnapToGrid());
             Assert::IsTrue(m_editor.IsPageBreaksVisible());
             Assert::AreEqual(RESTRAINT_VIRTUAL, m_editor.GetRestraints());
@@ -343,51 +343,16 @@ namespace CProMoEditorTests
 
 #pragma region SerializationTests
 
-        TEST_METHOD(Load_WhenStringArrayIsPassed_CreateDiagramElements)
+        TEST_METHOD(Load_WhenStringArrayIsPassed_CreateDiagram)
         {
             CStringArray diagram;
             
             diagram.Add(CString("custom:762,1091,2;"));
-            diagram.Add(CString("promo_block_view:6,183.000000,105.000000,490.000000,163.000000,,0,4;"));
-            diagram.Add(CString("promo_block_view:32,217.000000,126.000000,345.000000,158.000000,,0,30;"));
-            diagram.Add(CString("promo_block_view:74,357.000000,122.000000,485.000000,154.000000,,0,72;"));
-            diagram.Add(CString("promo_block_view:17,316.000000,238.000000,484.000000,344.000000,,0,15;"));
-            diagram.Add(CString("promo_edge_view:523,438.000000,237.000000,447.000000,154.000000,,0,522,,;"));
-            diagram.Add(CString("promo_block_view:51,340.000000,266.000000,468.000000,298.000000,,0,49;"));
-            diagram.Add(CString("promo_edge_view:392,211.000000,163.000000,210.000000,275.000000,,0,391,,452;"));
-            diagram.Add(CString("promo_edge_view:452,210.000000,275.000000,340.000000,266.000000,,0,391,392,;"));
-            diagram.Add(CString("promo_block_view:121,340.000000,303.000000,468.000000,335.000000,,0,119;"));
-            diagram.Add(CString("promo_block_model:4,,0;"));
-            diagram.Add(CString("promo_block_model:30,4,1;"));
-            diagram.Add(CString("promo_block_model:72,4,1;"));
-            diagram.Add(CString("promo_block_model:15,,0;"));
-            diagram.Add(CString("promo_edge_model:522,15,72;"));
-            diagram.Add(CString("promo_block_model:49,15,1;"));
-            diagram.Add(CString("promo_edge_model:391,4,49;"));
-            diagram.Add(CString("promo_block_model:119,15,1;"));
-            diagram.Add(CString("promo_label:3620,333.000000,105.000000,340.000000,120.000000,,0,4,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:3835,274.000000,135.500000,288.000000,150.500000,,0,30,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:4050,414.000000,130.500000,428.000000,145.500000,,0,72,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:914,460.000000,185.000000,467.000000,200.000000,,0,522,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,20.000000,-3.500000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:3405,396.500000,238.000000,403.500000,253.000000,,0,15,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:965,186.000000,203.000000,193.000000,218.000000,,0,391,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,-21.000000,-8.500000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:2975,397.000000,274.500000,411.000000,289.500000,,0,49,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:3136,397.000000,311.500000,411.000000,326.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("promo_label:1174,97.000000,47.000000,153.000000,62.000000,My Label,0,,,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.Add(CString("property:Title,3,A,4;"));
-            diagram.Add(CString("property:Title,3,A1,30;"));
-            diagram.Add(CString("property:Title,3,A2,72;"));
-            diagram.Add(CString("property:Title,3,B,15;"));
-            diagram.Add(CString("property:Title,3,z,522;"));
-            diagram.Add(CString("property:Title,3,B1,49;"));
-            diagram.Add(CString("property:Title,3,x,391;"));
-            diagram.Add(CString("property:Title,3,B2,119;"));
             
             m_editor.Load(diagram);
 
             CProMoEntityContainer* c = dynamic_cast<CProMoEntityContainer*>(m_editor.GetDiagramEntityContainer());
 
-            Assert::AreEqual(18, c->GetSize());
             Assert::AreEqual(CString("custom"), c->GetModelType());
             Assert::AreEqual((LONG)762, c->GetVirtualSize().cx);
             Assert::AreEqual((LONG)1091, c->GetVirtualSize().cy);

@@ -1,6 +1,6 @@
 /* ==========================================================================
 
-    Copyright © 2026 Technical University of Denmark
+    Copyright © 2025-26 Technical University of Denmark
 
     Author :		Giovanni Meroni
 
@@ -14,11 +14,15 @@ class AFX_EXT_CLASS CProMoCmdHandler :
     public CObject
 {
 public:
-    virtual ~CProMoCmdHandler() {};
+	CProMoCmdHandler(CProMoEditor* editor);
+    virtual ~CProMoCmdHandler();
 
     virtual BOOL OnPluginCommand(UINT cmdID) = 0;
     virtual BOOL OnPluginUpdateCommandUI(CCmdUI * pCmdUI) = 0;
-    virtual CProMoEditor* GetEditor() = 0;
+    virtual CProMoEditor* GetEditor();
+
+private:
+	CProMoEditor* m_editor;
 
 };
 

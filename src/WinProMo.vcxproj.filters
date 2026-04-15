@@ -183,6 +183,12 @@
     <ClCompile Include="Automation\ProMoElementChildAuto.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WinProMoPluginInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProMoEditor\ProMoCmdHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="WinProMo.def">

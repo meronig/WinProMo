@@ -84,12 +84,6 @@ CProMoBlockView::CProMoBlockView()
 	m_autoObject = NULL;
 
 	SetName(CProMoNameFactory::GetID());
-
-	//test: a triangle
-	//m_vertices.Add(new CDoublePoint(0.5, 0));
-	//m_vertices.Add(new CDoublePoint(1, 1));
-	//m_vertices.Add(new CDoublePoint(0, 1));
-	//m_perimeter = SHAPE_POLYGON;
 }
 
 CProMoBlockView::~CProMoBlockView()
@@ -1617,11 +1611,11 @@ CDiagramEntity* CProMoBlockView::CreateFromString(const CString& str, CProMoMode
 /* ============================================================
 	Function :		CProMoBlockView::CreateFromString
 	Description :	Static factory function that creates and
-					returns an instance of this class if str
+					returns an instance of this class if "str"
 					is a valid representation.
 
 	Return :		CDiagramEntity*		-	The object, or NULL
-											if str is not a
+											if "str" is not a
 											representation of
 											this type.
 	Parameters :	const CString& str	-	The string to create

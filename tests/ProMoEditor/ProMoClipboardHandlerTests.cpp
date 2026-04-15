@@ -7,7 +7,6 @@
 #include "../../src/ProMoEditor/ProMoEdgeModel.h"
 #include "../WinProMoTests.h"
 
-
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace CProMoClipboardHandlerTests
@@ -35,7 +34,7 @@ namespace CProMoClipboardHandlerTests
         TEST_METHOD(CopyAllSelected_WhenInvoked_CopySelection)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer sourceC(new CProMoControlFactory, CString("custom"));
+            CProMoEntityContainer sourceC(NULL, CString("custom"));
             
             CProMoBlockView* a = new CProMoBlockView();
             CProMoBlockView* a1 = new CProMoBlockView();
@@ -90,8 +89,8 @@ namespace CProMoClipboardHandlerTests
         TEST_METHOD(Paste_WhenInvoked_PasteObjects)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer sourceC(new CProMoControlFactory, CString("custom"), &clip);
-            CProMoEntityContainer destC(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer sourceC(NULL, CString("custom"), &clip);
+            CProMoEntityContainer destC(NULL, CString("custom"), &clip);
 
             CProMoBlockView* a = new CProMoBlockView();
             CProMoBlockView* a1 = new CProMoBlockView();

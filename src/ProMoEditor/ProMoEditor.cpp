@@ -65,7 +65,6 @@ CProMoEditor::CProMoEditor()
    ============================================================*/
 {
 
-	SetBackgroundColor(RGB(250, 250, 230));
 	SetSnapToGrid(FALSE);
 	SetRestraints(RESTRAINT_VIRTUAL);
 	m_pageBreaksVisible = TRUE;

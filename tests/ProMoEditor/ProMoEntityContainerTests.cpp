@@ -9,6 +9,68 @@
 #include "../WinProMoTests.h"
 
 
+class CProMoControlFactoryTestStub : public CProMoControlFactory
+{
+public:
+    CDiagramEntity* CProMoControlFactoryTestStub::CreateViewFromString(const CString& str)
+    {
+        CDiagramEntity* obj;
+
+        obj = CProMoBlockView::CreateFromString(str);
+        if (!obj)
+            obj = CProMoEdgeView::CreateFromString(str);
+
+        return obj;
+    }
+
+    CDiagramEntity* CProMoControlFactoryTestStub::CreateViewFromString(const CString& str, CProMoModel* model)
+    {
+        CDiagramEntity* obj;
+
+        obj = CProMoBlockView::CreateFromString(str, model);
+        if (!obj)
+            obj = CProMoEdgeView::CreateFromString(str, model);
+
+        return obj;
+    }
+
+    CProMoModel* CProMoControlFactoryTestStub::CreateModelFromString(const CString& str)
+    {
+        CProMoModel* obj;
+
+        obj = CProMoBlockModel::CreateFromString(str);
+        if (!obj)
+            obj = CProMoEdgeModel::CreateFromString(str);
+
+        return obj;
+    }
+
+    CDiagramEntity* CProMoControlFactoryTestStub::CreateNewEntity(const CString& str)
+    {
+        CDiagramEntity* obj;
+
+        obj = CProMoBlockView::Create(str);
+        if (!obj)
+            obj = CProMoEdgeView::Create(str);
+
+        return obj;
+    }
+
+    void CProMoControlFactoryTestStub::GetEntityTypes(CStringArray& typeList)
+    {
+        // Clear the list
+        typeList.RemoveAll();
+        // Add block types
+        CDiagramEntity* obj = new CProMoBlockView;
+        typeList.Add(obj->GetType());
+        delete obj;
+        // Add edge types
+        obj = new CProMoEdgeView;
+        typeList.Add(obj->GetType());
+        delete obj;
+    }
+};
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace CProMoEntityContainerTests
@@ -27,7 +89,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(Constructor_WhenInvokedWithoutParameters_SetDefaultModelType)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
 
             Assert::AreEqual(CString("promo"), c.GetModelType());
             Assert::AreEqual(10, c.GetUndoStackSize());
@@ -38,7 +100,7 @@ namespace CProMoEntityContainerTests
         TEST_METHOD(Constructor_WhenInvokedWithParameters_SetCustomModelTypeAndClipboardHandler)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub, CString("custom"), &clip);
 
             Assert::AreEqual(CString("custom"), c.GetModelType());
             Assert::AreEqual(10, c.GetUndoStackSize());
@@ -52,7 +114,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(Duplicate_WhenInvoked_CreatesACopy)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             CProMoBlockView* block = new CProMoBlockView();
             CProMoEdgeView* edge = new CProMoEdgeView();
 
@@ -80,7 +142,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(CloneEntity_WhenInvoked_CreatesACopy)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             CProMoBlockView* block = new CProMoBlockView();
             
             CObArray labels;
@@ -125,7 +187,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(RemoveAt_WhenInvoked_RemoveElementAndLabels)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             CProMoBlockView* block = new CProMoBlockView();
             CProMoEdgeView* edge = new CProMoEdgeView();
 
@@ -151,7 +213,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(RemoveAt_WhenInvokedOverParentBlock_RemoveSubBlocks)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             CProMoBlockView* parent = new CProMoBlockView();
             CProMoBlockView* child = new CProMoBlockView();
             parent->LinkSubBlock(child);
@@ -170,7 +232,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(SetTarget_WhenInvoked_MarkBlockAsTarget)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             CProMoBlockView* block = new CProMoBlockView();
             CProMoBlockView* block2 = new CProMoBlockView();
 
@@ -185,7 +247,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(GetTarget_WhenInvoked_ReturnTargetBlock)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             CProMoBlockView* block = new CProMoBlockView();
             CProMoBlockView* block2 = new CProMoBlockView();
 
@@ -199,7 +261,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(GetSelectCount_WhenInvoked_CountOnlyBlocks)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             CProMoBlockView* block = new CProMoBlockView();
             CProMoEdgeView* edge = new CProMoEdgeView();
 
@@ -218,7 +280,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(Reorder_WhenInvoked_ReorderElements)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             
             CProMoBlockView* a = new CProMoBlockView();
             CProMoBlockView* a1 = new CProMoBlockView();
@@ -356,7 +418,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(Undo_WhenInvoked_RevertChanges)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
             
             CProMoBlockView* a = new CProMoBlockView();
             CProMoBlockView* a1 = new CProMoBlockView();
@@ -446,7 +508,7 @@ namespace CProMoEntityContainerTests
 
         TEST_METHOD(Redo_WhenInvoked_RestoreChanges)
         {
-            CProMoEntityContainer c(new CProMoControlFactory);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub);
 
             CProMoBlockView* a = new CProMoBlockView();
             CProMoBlockView* a1 = new CProMoBlockView();
@@ -548,7 +610,7 @@ namespace CProMoEntityContainerTests
         TEST_METHOD(GetString_WhenInvoked_ReturnCorrectString)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub, CString("custom"), &clip);
 
             c.SetVirtualSize(CSize(300, 400));
             
@@ -559,7 +621,7 @@ namespace CProMoEntityContainerTests
         TEST_METHOD(CreateFromString_WhenCorrectStringIsPassed_ParseCorrectly)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub, CString("custom"), &clip);
 
             BOOL result = c.FromString(CString("custom:300,400,2;"));
 
@@ -573,7 +635,7 @@ namespace CProMoEntityContainerTests
         TEST_METHOD(CreateFromString_WhenStringWithExtraParametersIsPassed_ParseCorrectly)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub, CString("custom"), &clip);
 
             BOOL result = c.FromString(CString("custom:300,400,2,Extra1,Extra2;"));
 
@@ -587,7 +649,7 @@ namespace CProMoEntityContainerTests
         TEST_METHOD(CreateFromString_WhenIncorrectStringIsPassed_IgnoreParameters)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub, CString("custom"), &clip);
 
             BOOL result = c.FromString(CString("wrong_type:300,400,2;"));
 
@@ -597,7 +659,7 @@ namespace CProMoEntityContainerTests
         TEST_METHOD(Load_WhenStringArrayIsPassed_CreateDiagramElements)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub, CString("custom"), &clip);
 
             CStringArray diagram;
             
@@ -670,7 +732,7 @@ namespace CProMoEntityContainerTests
         TEST_METHOD(Load_WhenStringArrayIsPassed_LinkDiagramElements)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub, CString("custom"), &clip);
 
             CStringArray diagram;
             
@@ -749,12 +811,12 @@ namespace CProMoEntityContainerTests
         TEST_METHOD(Save_WhenInvoked_CreateStringArray)
         {
             CProMoClipboardHandler clip;
-            CProMoEntityContainer c(new CProMoControlFactory, CString("custom"), &clip);
+            CProMoEntityContainer c(new CProMoControlFactoryTestStub, CString("custom"), &clip);
 
             c.SetVirtualSize(CSize(800, 1000));
 
             CList <CString, CString&>  diagram;
-            CProMoControlFactory factory;
+            CProMoControlFactoryTestStub factory;
 
             CProMoBlockView* a = new CProMoBlockView();
             CProMoBlockView* a1 = new CProMoBlockView();
@@ -923,10 +985,10 @@ namespace CProMoEntityContainerTests
             diagram.AddTail(CString("property:Title,3,x,391;"));
             diagram.AddTail(CString("property:Title,3,B2,119;"));
 
-            diagram.AddTail(CString("promo_label:1000,333.000000,105.000000,340.000000,120.000000,,0,4,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.AddTail(CString("promo_label:1000,333.000000,126.500000,340.000000,141.500000,,0,4,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1001,274.000000,134.500000,288.000000,149.500000,,0,30,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1002,414.000000,130.500000,428.000000,145.500000,,0,72,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
-            diagram.AddTail(CString("promo_label:1003,396.500000,238.000000,403.500000,253.000000,,0,15,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,3,3,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
+            diagram.AddTail(CString("promo_label:1003,396.500000,283.500000,403.500000,298.500000,,0,15,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1004,397.000000,274.500000,411.000000,289.500000,,0,49,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1005,397.000000,336.500000,411.000000,351.500000,,0,119,Title,8192,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));
             diagram.AddTail(CString("promo_label:1006,207.000000,211.500000,214.000000,226.500000,,0,391,Title,0,Courier New,12,400,0,0,0,0,-1,1,2085,10,10,0,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,1;"));

@@ -221,6 +221,7 @@
     <ClCompile Include="Automation\ProMoDiagramsAutoAbs.cpp" />
     <ClCompile Include="Automation\ProMoAppAutoAbs.cpp" />
     <ClCompile Include="Automation\ProMoDiagramChildAuto.cpp" />
+    <ClCompile Include="ProMoEditor\ProMoCmdHandler.cpp" />
     <ClCompile Include="ProMoEditor\ProMoLabel.cpp" />
     <ClCompile Include="ProMoEditor\ProMoProperty.cpp" />
     <ClCompile Include="DiagramEditor\DiagramClipboardHandler.cpp" />
@@ -248,6 +249,7 @@
     <ClCompile Include="FileUtils\SafeArrayWrapper.cpp" />
     <ClCompile Include="StdAfx.cpp" />
     <ClCompile Include="WinProMo.cpp" />
+    <ClCompile Include="WinProMoPluginInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\WinProMo.rc2" />

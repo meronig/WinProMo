@@ -188,16 +188,6 @@ void CProMoEdgeView::DrawLine(CDC* dc, CRect rect)
 	dc->MoveTo(rect.TopLeft());
 	dc->LineTo(rect.BottomRight());
 
-	//draw the tip only if it is the last segment
-	if (m_dest == NULL) {
-		DrawHead(dc, rect, 10 * GetZoom());
-	}
-
-	//draw the tail only if it is the last segment
-	if (m_source == NULL) {
-		DrawTail(dc, rect, 10 * GetZoom());
-	}
-
 	dc->SetBkMode(pOldBkMode);
 	dc->SelectObject(pOldPen);
 	dc->SetBkColor(pOldBkColor);
@@ -500,6 +490,15 @@ void CProMoEdgeView::Draw(CDC* dc, CRect rect)
 {
 	if (m_visible) {
 		DrawLine(dc, rect);
+		//draw the tip only if it is the last segment
+		if (m_dest == NULL) {
+			DrawHead(dc, rect, 10 * GetZoom());
+		}
+
+		//draw the tail only if it is the last segment
+		if (m_source == NULL) {
+			DrawTail(dc, rect, 10 * GetZoom());
+		}
 	}
 }
 

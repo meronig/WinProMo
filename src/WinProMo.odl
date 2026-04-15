@@ -163,8 +163,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(7)] IDispatch* Application();
 			// default property, must be last in the list
-			[id(8), propget] IDispatch* Item(VARIANT item);
-			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(VARIANT item);
+			[id(9999), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -302,8 +302,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(4)] IDispatch* Application(); 
 			// default property, must be last in the list
-			[id(5), propget] IDispatch* Item(short item);
-			[id(5), propputref] void Item(short item, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(short item);
+			[id(9999), propputref] void Item(short item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(short item);
 			[id(0), propputref] void _Item(short item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -342,8 +342,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(6)] IDispatch* Application(); 
 			// default property, must be last in the list
-			[id(7), propget] IDispatch* Item(VARIANT item);
-			[id(7), propputref] void Item(VARIANT item, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(VARIANT item);
+			[id(9999), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -384,8 +384,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(7)] IDispatch* Application(); 
 			// default property, must be last in the list
-			[id(8), propget] IDispatch* Item(VARIANT item);
-			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(VARIANT item);
+			[id(9999), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -484,8 +484,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(7)] IDispatch* Application(); 
 			// default property, must be last in the list
-			[id(8), propget] IDispatch* Item(VARIANT item);
-			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(VARIANT item);
+			[id(9999), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -526,8 +526,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(7)] IDispatch* Application(); 
 			// default property, must be last in the list
-			[id(8), propget] IDispatch* Item(VARIANT item);
-			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(VARIANT item);
+			[id(9999), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -566,8 +566,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(5)] IDispatch* Application(); 
 			// default property, must be last in the list
-			[id(6), propget] IDispatch* Item(VARIANT item);
-			[id(6), propputref] void Item(VARIANT item, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(VARIANT item);
+			[id(9999), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -624,8 +624,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(14)] IDispatch* Application();
 			// default property, must be last in the list
-			[id(15), propget] IDispatch* Item(VARIANT idx);
-			[id(15), propputref] void Item(VARIANT idx, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(VARIANT idx);
+			[id(9999), propputref] void Item(VARIANT idx, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT idx);
 			[id(0), propputref] void _Item(VARIANT idx, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
@@ -666,8 +666,8 @@ library WinProMo
 			// from IProMoAppChildAuto
 			[id(7)] IDispatch* Application(); 
 			// default property, must be last in the list
-			[id(8), propget] IDispatch* Item(VARIANT item);
-			[id(8), propputref] void Item(VARIANT item, IDispatch* newValue);
+			[id(9999), propget] IDispatch* Item(VARIANT item);
+			[id(9999), propputref] void Item(VARIANT item, IDispatch* newValue);
 			[id(0), propget] IDispatch* _Item(VARIANT item);
 			[id(0), propputref] void _Item(VARIANT item, IDispatch* newValue);
 			//}}AFX_ODL_METHOD
